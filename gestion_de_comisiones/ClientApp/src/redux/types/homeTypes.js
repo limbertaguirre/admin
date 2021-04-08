@@ -1,0 +1,1 @@
+export const NO_MORE_PAGE= 'NO_MORE_PAGE';
