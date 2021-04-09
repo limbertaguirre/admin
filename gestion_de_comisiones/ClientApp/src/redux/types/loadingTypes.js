@@ -1,0 +1,4 @@
+export const REQUEST_LOADING = 'REQUEST_LOADING';
+export const REQUEST_END = "REQUEST_END";
+export const REQUEST_FAIL = 'REQUEST_FAIL';
+export const REQUEST_ERROR = "REQUEST_ERROR";
