@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+// import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap'; // al habilitar esta linea quitar la de abajo
+import {Container} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -21,7 +22,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
 import ImageIcons from '../components/ImagenIcons';
-// import './NavMenu.css';
+import './NavMenu.css';
 
 const drawerWidth = 240;
 

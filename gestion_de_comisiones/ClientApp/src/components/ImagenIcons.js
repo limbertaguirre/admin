@@ -1,11 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
 import {
     Home,
     LocalAtm,
     BrokenImage,
-    CardGiftcard,
     Receipt,
     ExitToApp,
     Lock,

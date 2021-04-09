@@ -1,15 +1,15 @@
 import * as Types from '../types/homeTypes';
+import {requestGet} from '../../service/request';
 
 export const loadHome= ()=>{
-  return (dispatch)=>{
-    //   console.log('llego al actions')
-      fetch('weatherforecast').then(resp=>{
-         console.log(resp)
-      })
-    //    const data = await response.json();
-    //    console.log('data:', data);
-    // dispatch({
-    //   type:Types.NO_MORE_PAGE,
-    // })
+  return (dispatch)=>{   
+     requestGet('weatherforecast',dispatch).then((res)=>{
+       console.log("ress : ", res);
+     })
+
+      // fetch('weatherforecast').then(resp=>{
+      //    console.log('respod : ',resp)
+      // })
+   
   }
 }
