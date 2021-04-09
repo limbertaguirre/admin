@@ -8,10 +8,11 @@ export class Layout extends Component {
   render () {
     return (
       <div>
-        <NavMenu />
-        <Container>
+        <NavMenu children={this.props.children} />
+        {/* <Container>
           {this.props.children}
-        </Container>
+        </Container> */}
+        
       </div>
     );
   }
