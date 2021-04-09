@@ -3,7 +3,7 @@ import * as Actions from "./../redux/actions/messageAction";
 import { loadingRequest, loadingEndRequest } from "./../redux/actions/loadingAction";
 
 const _hanldeThen = (res, dispatch) => {
-  // dispatch(loadingEndRequest());
+  dispatch(loadingEndRequest());
   const result = res.data;
   if (result && result.status === 0) {
     return Promise.resolve(result);
@@ -20,7 +20,7 @@ const _hanldeThen = (res, dispatch) => {
 };
 
 const _hanldeCatch = (error, dispatch) => {
-  // dispatch(loadingEndRequest());
+  dispatch(loadingEndRequest());
   if (error.response) {
     const { status} = error.response;
 
@@ -65,7 +65,7 @@ const _hanldeCatch = (error, dispatch) => {
 
 
 export const requestGet = (url, data, dispatch) => {    
-  // dispatch(loadingRequest());
+  dispatch(loadingRequest());
 //   const token = localStorage.getItem("token");
   const headers = { ...data, headers: { ...data } };  
   return apiComerce.get(url, headers)
@@ -78,7 +78,7 @@ export const requestGet = (url, data, dispatch) => {
 };
 
 export const requestPost = (url, data, dispatch) => {
-  // dispatch(loadingRequest());
+  dispatch(loadingRequest());
 //   const token = localStorage.getItem("token");
   const config = { headers: { "Content-Type": "application/json"
                           //  ,"token":token 
@@ -94,7 +94,7 @@ export const requestPost = (url, data, dispatch) => {
 };
 
 export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
-  // dispatch(loadingRequest());
+  dispatch(loadingRequest());
 //   const token = localStorage.getItem("token");
   const headers = { ...data, headers: { ...header
                 //   , token: token
@@ -109,7 +109,7 @@ export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
 
 
 export const requestPostWhithHeaders = (url, data,headerParam, dispatch) => {
-  // dispatch(loadingRequest());
+  dispatch(loadingRequest());
 //   const token = localStorage.getItem("token");
   const config = { headers: {...headerParam, "Content-Type": "application/json"
                 //   ,"token":token 
