@@ -5,6 +5,8 @@ import { Home } from './pages/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import Message from './components/message/Message';
+import ProgressDialog from "./components/progressDialog/ProgressDialog";
+
 import './custom.css'
 
 export default class App extends Component {
@@ -14,6 +16,7 @@ export default class App extends Component {
     return (
       <>
       <Message />
+      <ProgressDialog />
       <Layout>
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />

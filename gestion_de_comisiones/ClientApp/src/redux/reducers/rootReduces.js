@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 import messageReducer from './messageReducer';
-import loginReducer from './loadingReducer';
+import loadingReducer from './loadingReducer';
 import homeReducer from '../reducers/homeReducer';
 
 const rootReducer = combineReducers({  
      message:messageReducer,
-     load:loginReducer,
+     requestloading:loadingReducer,
      home:homeReducer, 
 });
 
