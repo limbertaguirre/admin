@@ -4,15 +4,12 @@ import * as Action from './messageAction'
 
 export const loadHome= ()=>{
   return (dispatch)=>{   
-     requestGet('weatherforecast',{},dispatch).then((res)=>{
-       console.log("ress : ", res);
-         dispatch(Action.showMessage({ message: 'pruebaaa', variant: "error" }) );
+       requestGet('weatherforecast',{},dispatch).then((res)=>{
+         console.log("ress : ", res);
+           dispatch(Action.showMessage({ message: 'pruebaaa', variant: "error" }) );
 
-     })
-
-      // fetch('weatherforecast').then(resp=>{
-      //    console.log('respod : ',resp)
-      // })
+       })
+ 
    
   }
 }
