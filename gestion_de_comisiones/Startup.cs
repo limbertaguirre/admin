@@ -1,7 +1,9 @@
+using gestion_de_comisiones.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,11 +25,17 @@ namespace gestion_de_comisiones
 
             services.AddControllersWithViews();
 
+            
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            //configuracion y conexion al db context
+            services.AddDbContext<BDGestorPruebaContext>(options => 
+            options.UseSqlServer(Configuration.GetConnectionString("ConecctionBDPrueba")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
