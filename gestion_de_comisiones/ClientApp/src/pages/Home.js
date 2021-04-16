@@ -20,7 +20,7 @@ export const Home =()=> {
         <ul>
           <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>         
         </ul>
-        <h1>TODOS SE PUEDE CRISTO QUE ME FORTALECE!!!!!!</h1>
+        <h1>TODO SE PUEDE CRISTO QUE ME FORTALECE!!!!!!</h1>
       </>
     );
 
