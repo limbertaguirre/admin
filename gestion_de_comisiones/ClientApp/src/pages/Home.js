@@ -17,7 +17,10 @@ export const Home =()=> {
         </ul>
         <br/>
         <h1>SI FUNCIONA NO LO TOQUES!!!!!!</h1>
-    
+        <ul>
+          <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>         
+        </ul>
+        <h1>TODOS SE PUEDE CRISTO QUE ME FORTALECE!!!!!!</h1>
       </>
     );
 
