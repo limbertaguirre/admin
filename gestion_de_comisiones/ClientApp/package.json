@@ -10,7 +10,7 @@
     "jquery": "^3.4.1",
     "merge": "^1.2.1",
     "oidc-client": "^1.9.0",
-    "react": "^16.0.0",
+    "react": "^16.14.0",
     "react-border-wrapper": "^1.0.3",
     "react-breadcrumbs-dynamic": "^1.2.1",
     "react-dom": "^16.0.0",

@@ -10,7 +10,7 @@ import Pages from './Pages';
   
     return (
       <>       
-        <Router>
+          {/* <Router>
             <Suspense
               fallback={<div>Loading...</div>}
             >
@@ -22,9 +22,8 @@ import Pages from './Pages';
                     <Route  exact  component={Pages.FetchData}  />
                 </Switch>
             </Suspense>
-
-        </Router>
-         {/* <Layout>
+        </Router> */}
+         <Layout>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
                 <Route path='/counter' component={Pages.Counter} />
@@ -32,7 +31,7 @@ import Pages from './Pages';
                 <Route path='/facturacion' component={Pages.Facturacion} />                
                 <Route  component={Pages.Facturacion} />  
             </Switch>
-         </Layout> */}
+         </Layout>
       </>
     );
   
