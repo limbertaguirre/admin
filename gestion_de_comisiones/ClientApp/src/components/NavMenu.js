@@ -173,6 +173,16 @@ export const NavMenu =(props)=> {
                         <ListItemText primary={'Lista'} />                
                     </Link>
                 </ListItem>
+                <ListItem button key={4}>
+                    <ListItemIcon>
+                    <Link to={process.env.PUBLIC_URL + "/"}>                 
+                            <ImageIcons name={'producto'} />
+                    </Link>               
+                    </ListItemIcon>            
+                    <Link to={process.env.PUBLIC_URL + "/facturacion"}>
+                        <ListItemText primary={'Facturacion'} />                
+                    </Link>
+                </ListItem>
           </List>
           <Divider />
             <List>
