@@ -4,13 +4,15 @@ import * as Action from './messageAction'
 
 const menuWeb=[
    {
-     nameMenu:'Gestion de pagos',
+    titleMenu:'Gestion de pagos',
+    iconMenu:'menu',
      listaMenu:{
-       nameSubMenu:'Pagos de comsiones',
+      titleSubMenu:'Pagos de comsiones',
+      iconsSubMenu:'pago',
        listaSubMenu:[
           {
             idpage:1,
-            name:'facturacion',
+            title:'facturacion',
             descripion:'aqui se mostrara el proceso de facturacion',
             namePage:'Facturacion',
             path:'/facturacion',
@@ -18,7 +20,7 @@ const menuWeb=[
            },
            {
             idpage:2,
-            name:'Cargar comisiones',
+            title:'Cargar comisiones',
             descripion:'',
             namePage:'cargaComisiones',
             path:'/cargar/Comisiones',
@@ -26,23 +28,20 @@ const menuWeb=[
            },
            {
             idpage:3,
-            name:'prorrateo',
+            title:'Prorrateo',
             descripion:'aqui se mostrara el proceso de facturacion',
-            namePage:'Prorrateo',
+            namePage:'prorrateo',
             path:'/prorrateo',
             icon:'prorrateo'            
            },
            {
             idpage:4,
-            name:'formaPago',
+            title:'Forma de pago',
             descripion:'aqui se mostrara el proceso de facturacion',
-            namePage:'Forma de pago',
+            namePage:'formaPago',
             path:'/forma/pago',
             icon:'factura'            
            }
-
-
-
 
        ]
      }

@@ -21,6 +21,10 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import ImageIcons from "../ImagenIcons";
 
+import LinkMenu from './LinkMenu';
+
+import {useSelector, useDispatch} from 'react-redux';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -92,6 +96,8 @@ const MenuOne = (props) => {
     setOpen(false);
   };
 
+   const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
+        
   return (
     <>
       <div className={classes.root}>
@@ -137,6 +143,7 @@ const MenuOne = (props) => {
           </div>
           <Divider />
           <List>
+
             <ListItem button key={1}>
               <ListItemIcon>
                 <Link to={process.env.PUBLIC_URL + "/"}>
@@ -147,46 +154,22 @@ const MenuOne = (props) => {
                 <ListItemText primary={"Home"} />
               </Link>
             </ListItem>
-            <ListItem button key={2}>
-              <ListItemIcon>
-                <Link to={process.env.PUBLIC_URL + "/"}>
-                  <ImageIcons name={"producto"} />
-                </Link>
-              </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/Cargar/Comisiones"}>
-                <ListItemText primary={"Cargar Comisiones"} />
-              </Link>
-            </ListItem>
-            <ListItem button key={3}>
-              <ListItemIcon>
-                <Link to={process.env.PUBLIC_URL + "/"}>
-                  <ImageIcons name={"producto"} />
-                </Link>
-              </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/prorrateo"}>
-                <ListItemText primary={"Prorrateo"} />
-              </Link>
-            </ListItem>
-            <ListItem button key={4}>
-              <ListItemIcon>
-                <Link to={process.env.PUBLIC_URL + "/"}>
-                  <ImageIcons name={"producto"} />
-                </Link>
-              </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/facturacion"}>
-                <ListItemText primary={"Facturacion"} />
-              </Link>
-            </ListItem>
-            <ListItem button key={5}>
-              <ListItemIcon>
-                <Link to={process.env.PUBLIC_URL + "/"}>
-                  <ImageIcons name={"producto"} />
-                </Link>
-              </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/forma/pago"}>
-                <ListItemText primary={"Forma de pago"} />
-              </Link>
-            </ListItem>
+
+        
+
+            {menu.map((value, index) => (            
+              <div key={index}>
+                  <ListItem button key={index}>
+                      <ListItemIcon >                                  
+                        <ImageIcons name={value.icons} />                                 
+                      </ListItemIcon>                                
+                          <ListItemText primary={value.titleMenu} />                                   
+                  </ListItem>
+                  <LinkMenu  menu={value} />            
+                </div>
+            ))}
+
+            
           </List>
           <Divider />
           <List>

@@ -9,9 +9,9 @@ import {
     Lock,
     LockOpen,
     Person,
-    LocalMall
+    LocalMall    
 } from '@material-ui/icons';
-
+import PaymentIcon from '@material-ui/icons/Payment';
 const useStyles = makeStyles((theme) => ({
     imgStyle: {
         fontSize:24,
@@ -40,6 +40,8 @@ const ImageIcons = ({name})=>{
             return <LockOpen  className={classes.imgStyle}/>;
         case 'persona':
             return <Person  className={classes.imgStyle}/>;
+        case 'pago':
+            return <PaymentIcon  className={classes.imgStyle}/>;
         default:
             return <BrokenImage  className={classes.imgStyle}/>;
     }
