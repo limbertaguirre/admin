@@ -1,59 +1,44 @@
-import React, { Component } from 'react';
+import React from 'react';
+import {Breadcrumbs,Chip,emphasize, withStyles} from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
 
-export class Prorrateo extends Component {
-  static displayName = Prorrateo.name;
+const StyledBreadcrumb = withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100],
+    height: theme.spacing(3),
+    color: theme.palette.grey[800],
+    fontWeight: theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.grey[300],
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+    },
+  },
+}))(Chip); 
 
-  constructor(props) {
-    super(props);
-    this.state = { forecasts: [], loading: true };
-  }
+const Prorrateo =()=> {
+  
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
 
-  static renderForecastsTable(forecasts) {
-    return (
-      <table className='table table-striped' aria-labelledby="tabelLabel">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    );
-  }
 
-  render() {
-    let contents = this.state.loading
-      ? <p><em>Loading...</em></p>
-      : Prorrateo.renderForecastsTable(this.state.forecasts);
 
     return (
-      <div>
-        <h1 id="tabelLabel" >Prorrateo</h1>
-        <p>This component demonstrates fetching data from the server.</p>
-        {contents}
-      </div>
+      <>
+           <Breadcrumbs aria-label="breadcrumb">
+                    <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                    <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
+                    <StyledBreadcrumb key={3} label="Prorrateo" />
+           </Breadcrumbs>
+            <br />
+           <h1 id="tabelLabel" >Prorrateo</h1>
+           <p>This component demonstrates fetching data from the server.</p>
+        
+      </>
     );
-  }
+  
 
-  async populateWeatherData() {
-    const response = await fetch('weatherforecast');
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
+
 }
+export default Prorrateo;

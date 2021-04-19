@@ -1,7 +1,7 @@
 import  {Home}  from '../pages/Home';
-import {Facturacion} from '../pages/pagoComisiones/Facturacion'
-import { Prorrateo } from '../pages/pagoComisiones/Prorrateo';
-import { CargarComisiones } from '../pages/pagoComisiones/CargarComisiones';
+import Facturacion from '../pages/pagoComisiones/Facturacion'
+import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
+import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';
 import NotFoundLoad from '../components/notfound/NotFoundLoad';
 

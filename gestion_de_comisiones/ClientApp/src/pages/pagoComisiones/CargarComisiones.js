@@ -1,31 +1,44 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export class CargarComisiones extends Component {
-  static displayName = CargarComisiones.name;
+import {Breadcrumbs,Chip,emphasize, withStyles} from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
 
-  constructor(props) {
-    super(props);
-    this.state = { currentCount: 0 };
-    this.incrementCounter = this.incrementCounter.bind(this);
-  }
+const StyledBreadcrumb = withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100],
+    height: theme.spacing(3),
+    color: theme.palette.grey[800],
+    fontWeight: theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.grey[300],
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+    },
+  },
+}))(Chip); 
 
-  incrementCounter() {
-    this.setState({
-      currentCount: this.state.currentCount + 1
-    });
-  }
+const CargarComisiones =()=> {
+  
+    
 
-  render() {
+
     return (
-      <div>
-        <h1>Cargar/Comisiones</h1>
+      <>
+           <Breadcrumbs aria-label="breadcrumb">
+                    <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                    <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
+                    <StyledBreadcrumb key={3} label="Prorrateo" />
+           </Breadcrumbs>
+        <br />
+        <h1>Cargar Comisiones</h1>
 
         <p>This is a simple example of a React component.</p>
 
-        <p aria-live="polite">Current count: <strong>{this.state.currentCount}</strong></p>
-
-        <button className="btn btn-primary" onClick={this.incrementCounter}>Increment</button>
-      </div>
+        
+      </>
     );
-  }
+  
 }
+export default CargarComisiones;
