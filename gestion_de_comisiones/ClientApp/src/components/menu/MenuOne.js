@@ -153,8 +153,8 @@ const MenuOne = (props) => {
                   <ImageIcons name={"producto"} />
                 </Link>
               </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/counter"}>
-                <ListItemText primary={"page2"} />
+              <Link to={process.env.PUBLIC_URL + "/Cargar/Comisiones"}>
+                <ListItemText primary={"Cargar Comisiones"} />
               </Link>
             </ListItem>
             <ListItem button key={3}>
@@ -163,8 +163,8 @@ const MenuOne = (props) => {
                   <ImageIcons name={"producto"} />
                 </Link>
               </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/fetch-data"}>
-                <ListItemText primary={"Lista"} />
+              <Link to={process.env.PUBLIC_URL + "/prorrateo"}>
+                <ListItemText primary={"Prorrateo"} />
               </Link>
             </ListItem>
             <ListItem button key={4}>
@@ -175,6 +175,16 @@ const MenuOne = (props) => {
               </ListItemIcon>
               <Link to={process.env.PUBLIC_URL + "/facturacion"}>
                 <ListItemText primary={"Facturacion"} />
+              </Link>
+            </ListItem>
+            <ListItem button key={5}>
+              <ListItemIcon>
+                <Link to={process.env.PUBLIC_URL + "/"}>
+                  <ImageIcons name={"producto"} />
+                </Link>
+              </ListItemIcon>
+              <Link to={process.env.PUBLIC_URL + "/forma/pago"}>
+                <ListItemText primary={"Forma de pago"} />
               </Link>
             </ListItem>
           </List>
