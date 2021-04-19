@@ -1,13 +1,20 @@
-import React, {  Suspense } from 'react';
+import React, {  Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Layout } from '../components/Layout';
 // import { Route, Switch } from 'react-router';
 import Pages from './Pages';
+import * as Action from '../redux/actions/homeAction';
+import {useSelector, useDispatch} from "react-redux";
 
  const RoutesApp =()=>  {
   
+  const dispatch = useDispatch();
 
-  
+    
+  // useEffect(()=>{
+     dispatch(Action.cargarMenu());
+  // },[])
+
     return (
       <>       
           {/* <Router>

@@ -4,6 +4,7 @@ import * as Type from '../types/homeTypes';
 const defaultState = {
     principal: [],    
     loadMore:false,
+    menu:[],
 };
 
 export default function reducer (state = defaultState, action) {  
@@ -12,7 +13,12 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 loadMore:false,
-            }    
+            }
+        case Type.MENU_PAGE:
+            return{
+                ...state,
+                menu:action.menu,
+            }     
         default: {
             return state;
         }
