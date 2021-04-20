@@ -20,7 +20,7 @@ import ImageIcons from "../ImagenIcons";
 import { useHistory } from 'react-router-dom';
 import LinkMenu from './LinkMenu';
 
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const drawerWidth = 290;
 
@@ -119,8 +119,8 @@ const MenuOne = (props) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
-              GESTOR DE COMISONES
+            <Typography variant="h6" noWrap>              
+              {props.title }
             </Typography>
           </Toolbar>
         </AppBar>

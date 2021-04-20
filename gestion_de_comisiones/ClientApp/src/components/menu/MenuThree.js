@@ -127,8 +127,8 @@ return(
                         >
                         <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" noWrap>
-                          GESTOR DE COMISONES
+                        <Typography variant="h6" noWrap>                         
+                         {props.title}
                         </Typography>
                     </Toolbar>
                 </AppBar>

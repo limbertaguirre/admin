@@ -8,8 +8,8 @@ const  NotFoundLoad =()=>  {
                 No se encontró la   página.
             </Typography>         
             <br />
-            <br />
-            <br />
+            
+         
             <div style={{ width: '100%', display: 'flex',  alignContent:'center', justifyContent: 'center'}} >
                 <img src={process.env.PUBLIC_URL + problema3 } alt="" style={{width: '80%'}} />
             </div>                       
