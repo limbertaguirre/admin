@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Container } from "reactstrap";
-import { Link } from "react-router-dom";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -17,15 +16,13 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 import ImageIcons from "../ImagenIcons";
 import { useHistory } from 'react-router-dom';
 import LinkMenu from './LinkMenu';
 
 import {useSelector, useDispatch} from 'react-redux';
 
-const drawerWidth = 240;
+const drawerWidth = 290;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
 const MenuOne = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   let history = useHistory();
 
   const handleDrawerOpen = () => {
@@ -99,7 +96,7 @@ const MenuOne = (props) => {
   const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
 
   const cerrarSesion =()=>{
-    console.log("clicl cerrar sesion");
+    
   }
         
   return (

@@ -1,6 +1,6 @@
 import React  from 'react';
 import Typography from '@material-ui/core/Typography';
-import problem from '../../assets/problem.png'
+import problem from '../../assets/imageError/problem.png'
 const  NotFoundLoad =()=>  {       
     return (
          <>            
