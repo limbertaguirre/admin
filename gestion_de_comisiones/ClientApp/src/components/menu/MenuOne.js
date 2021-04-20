@@ -20,7 +20,7 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import ImageIcons from "../ImagenIcons";
-
+import { useHistory } from 'react-router-dom';
 import LinkMenu from './LinkMenu';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -88,6 +88,7 @@ const MenuOne = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  let history = useHistory();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -95,8 +96,11 @@ const MenuOne = (props) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
 
-   const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
+  const cerrarSesion =()=>{
+    console.log("clicl cerrar sesion");
+  }
         
   return (
     <>
@@ -143,15 +147,12 @@ const MenuOne = (props) => {
           </div>
           <Divider />
           <List>
-            <ListItem button key={1}>
-              <ListItemIcon>
-                <Link to={process.env.PUBLIC_URL + "/"}>
-                  <ImageIcons name={"home"} />
-                </Link>
-              </ListItemIcon>
-              <Link to={process.env.PUBLIC_URL + "/"}>
-                <ListItemText primary={"Home"} />
-              </Link>
+            <ListItem button key={1}  onClick={()=>history.push('/')} >
+              <ListItemIcon>              
+                  <ImageIcons name={"home"} />              
+              </ListItemIcon>              
+                <ListItemText primary={"Principal"} />
+              
             </ListItem>
         
                 {menu.map((value, index) => (            
@@ -163,14 +164,20 @@ const MenuOne = (props) => {
           </List>
           <Divider />
           <List>
-            {["config"].map((text, index) => (
-              <ListItem button key={text}>
+            
+              <ListItem button key={1} onClick={()=>history.push('/configuraciones')}>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <ImageIcons name={'config'} />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={'Configuraciones'} />
               </ListItem>
-            ))}
+              <ListItem button key={2} onClick={()=> cerrarSesion()}>
+                <ListItemIcon>
+                  <ImageIcons name={'salir'} />
+                </ListItemIcon>
+                <ListItemText primary={'Cerrar sesión'} />
+              </ListItem>
+            
           </List>
         </Drawer>
         <main
@@ -179,7 +186,7 @@ const MenuOne = (props) => {
           })}
         >
           <div className={classes.drawerHeader} />
-		      <Container>
+		          <Container>
                 {props.children}
               </Container>
         </main>        

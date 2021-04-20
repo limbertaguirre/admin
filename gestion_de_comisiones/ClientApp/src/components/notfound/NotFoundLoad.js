@@ -1,12 +1,16 @@
 import React  from 'react';
-
-const  NotFoundLoad =()=>  {   
-
+import Typography from '@material-ui/core/Typography';
+import problem from '../../assets/problem.png'
+const  NotFoundLoad =()=>  {       
     return (
-       <>
-            <h1>NotFound Load</h1>
-            <p> NotFoundLoad menu de la pagina...</p>                
-       </>
+         <>            
+            <Typography variant="h6" gutterBottom>
+                No se encontró la   página.
+            </Typography>         
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center'}} >
+                <img src={process.env.PUBLIC_URL + problem } alt="" style={{width: '75%', alignContent:'center',}} />
+            </div>                       
+         </>
     );
 }
 export default  NotFoundLoad;

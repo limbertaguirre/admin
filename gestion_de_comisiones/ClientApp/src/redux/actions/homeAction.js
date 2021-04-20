@@ -5,7 +5,7 @@ import * as Action from './messageAction'
 const menuWeb=[
    {
     titleMenu:'Gestion de pagos',
-    iconMenu:'menu',
+    iconMenu:'gestionPago',
      listaMenu:{
       titleSubMenu:'Pagos de comsiones',
       iconsSubMenu:'pago',
@@ -51,8 +51,7 @@ const menuWeb=[
 export const loadHome= ()=>{
   return (dispatch)=>{   
        requestGet('weatherforecast',{},dispatch).then((res)=>{
-         console.log("ress : ", res);
-           dispatch(Action.showMessage({ message: 'pruebaaa', variant: "error" }) );
+         
        })    
   }
 }
