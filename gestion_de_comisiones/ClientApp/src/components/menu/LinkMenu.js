@@ -38,6 +38,12 @@ const LinkMenu =({menu})=> {
 
     return (
       <>
+                <ListItem button onClick={handleClickPadre} >
+                      <ListItemIcon >  <ImageIcons name={icons} /> </ListItemIcon>                                
+                        <ListItemText primary={titleMenu} />
+                        {openMenuPadre ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={openMenuPadre} timeout="auto" unmountOnExit>
                     <ListItem button onClick={handleClickHijo}>
                         <ListItemIcon style={{marginLeft:10}}> <ImageIcons name={listaMenu.iconsSubMenu} /> </ListItemIcon>
                         <ListItemText primary={listaMenu.titleSubMenu}   />
@@ -55,7 +61,8 @@ const LinkMenu =({menu})=> {
                                 </div>
                          ))}                  
                         </List>
-                    </Collapse>        
+                    </Collapse>   
+                </Collapse>     
       </>
     );
   
