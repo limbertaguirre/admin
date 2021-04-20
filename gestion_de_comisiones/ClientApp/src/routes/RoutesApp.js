@@ -10,10 +10,7 @@ import {useSelector, useDispatch} from "react-redux";
   
   const dispatch = useDispatch();
 
-    
-  // useEffect(()=>{
      dispatch(Action.cargarMenu());
-  // },[])
 
     return (
       <>       

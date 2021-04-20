@@ -1,14 +1,17 @@
 import React  from 'react';
 import Typography from '@material-ui/core/Typography';
-import problem from '../../assets/imageError/problem.png'
+import problema3 from '../../assets/imageError/problema3.png'
 const  NotFoundLoad =()=>  {       
     return (
          <>            
             <Typography variant="h6" gutterBottom>
                 No se encontró la   página.
             </Typography>         
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center'}} >
-                <img src={process.env.PUBLIC_URL + problem } alt="" style={{width: '75%', alignContent:'center',}} />
+            <br />
+            <br />
+            <br />
+            <div style={{ width: '100%', display: 'flex',  alignContent:'center', justifyContent: 'center'}} >
+                <img src={process.env.PUBLIC_URL + problema3 } alt="" style={{width: '80%'}} />
             </div>                       
          </>
     );
