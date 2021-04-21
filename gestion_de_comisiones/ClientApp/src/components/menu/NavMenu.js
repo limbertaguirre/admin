@@ -15,8 +15,7 @@ import MenuThree from "./MenuThree";
       <div
         style={{ paddingLeft: "0px", paddingRight: "0px" }}
         className={`col-xl-1 d-xl-none  col-lg-1 d-lg-none  col-md-12 col-12 sticky-bar  clearfix `}
-      >
-        {/* <Acordion children={props.children}/> */}
+      >        
         <MenuTwo children={props.children} title={props.title}  />
       </div>
     </header>
