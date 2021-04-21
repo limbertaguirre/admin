@@ -9,9 +9,11 @@ import {
     Lock,
     LockOpen,
     Person,
-    LocalMall
+    LocalMall,            
 } from '@material-ui/icons';
-
+import PaymentIcon from '@material-ui/icons/Payment';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import SettingsIcon from '@material-ui/icons/Settings';
 const useStyles = makeStyles((theme) => ({
     imgStyle: {
         fontSize:24,
@@ -40,6 +42,12 @@ const ImageIcons = ({name})=>{
             return <LockOpen  className={classes.imgStyle}/>;
         case 'persona':
             return <Person  className={classes.imgStyle}/>;
+        case 'pago':
+            return <PaymentIcon  className={classes.imgStyle}/>;
+        case 'gestionPago':
+            return <AccountBalanceIcon  className={classes.imgStyle}/>;
+        case 'config':
+            return <SettingsIcon  className={classes.imgStyle}/>;
         default:
             return <BrokenImage  className={classes.imgStyle}/>;
     }

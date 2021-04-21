@@ -1,13 +1,17 @@
-import React, {  Suspense } from 'react';
+import React, {  Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Layout } from '../components/Layout';
+import  Layout  from '../components/Layout';
 // import { Route, Switch } from 'react-router';
 import Pages from './Pages';
+import * as Action from '../redux/actions/homeAction';
+import {useDispatch} from "react-redux";
 
  const RoutesApp =()=>  {
   
+  const dispatch = useDispatch();
 
-  
+     dispatch(Action.cargarMenu());
+
     return (
       <>       
           {/* <Router>
@@ -16,20 +20,21 @@ import Pages from './Pages';
             >
                 <Switch>
                     <Route  exact path={process.env.PUBLIC_URL + "/"} component={Pages.Home}  />
-                    <Route  exact path={process.env.PUBLIC_URL + "/counter"} component={Pages.Counter}  />
-                    <Route  exact path={process.env.PUBLIC_URL + "/fetch-data"} component={Pages.FetchData}  />
+                    <Route  exact path={process.env.PUBLIC_URL + "/cargar/Comisiones"} component={Pages.CargarComisiones}  />
+                    <Route  exact path={process.env.PUBLIC_URL + "/prorrateo"} component={Pages.Prorrateo}  />
                     <Route  exact path={process.env.PUBLIC_URL + "/facturacion"} component={Pages.Facturacion}  />
-                    <Route  exact  component={Pages.FetchData}  />
+                    <Route  exact  component={Pages.Prorrateo}  />
                 </Switch>
             </Suspense>
         </Router> */}
-         <Layout>
+         <Layout title={'GESTOR DE COMISONES'}>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
-                <Route path='/counter' component={Pages.Counter} />
-                <Route path='/fetch-data' component={Pages.FetchData} />
-                <Route path='/facturacion' component={Pages.Facturacion} />                
-                <Route  component={Pages.Facturacion} />  
+                <Route path='/cargar/Comisiones' component={Pages.CargarComisiones} />
+                <Route path='/prorrateo' component={Pages.Prorrateo} />
+                <Route path='/facturacion' component={Pages.Facturacion} />     
+                <Route path='/forma/pago' component={Pages.FormaPago} />             
+                <Route  component={Pages.NotFoundLoad} />  
             </Switch>
          </Layout>
       </>

@@ -27,7 +27,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   }))(Chip); 
 
 
-export const Facturacion =()=> {
+ const Facturacion =()=> {
 
     const dispatch = useDispatch();
 
@@ -75,3 +75,4 @@ export const Facturacion =()=> {
     );
 
 }
+export default Facturacion;

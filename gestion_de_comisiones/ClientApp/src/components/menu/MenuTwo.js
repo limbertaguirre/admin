@@ -1,6 +1,5 @@
 import React,{useState}  from 'react';
 import {Container} from 'reactstrap';
-import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,12 +16,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import ImageIcons from '../ImagenIcons';
+import {useSelector} from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import LinkMenu from './LinkMenu';
 
-
-const drawerWidth = 240;
+const drawerWidth = 270;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,21 +82,26 @@ const useStyles = makeStyles((theme) => ({
 
 
 const  MenuTwo =(props)=> {
+    let history = useHistory();
     const classes = useStyles();    
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleDrawerOpen = () => {
       setOpen(true);
     };
-    const handleDrawerClose = () => {
+    const handleDrawerClose = () => {      
       setOpen(false);
     };
- 
+    const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
+    const cerrarSesion =()=>{
+    
+    }
+
 
 return(    
      <>
-            <div className={classes.root}>
+            <div className={classes.root} >
                 <CssBaseline />
                 <AppBar
                     position="fixed"
@@ -109,14 +113,14 @@ return(
                         <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
+                        onClick={handleDrawerOpen}                      
                         edge="start"
                         className={clsx(classes.menuButton, open && classes.hide)}
                         >
                         <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" noWrap>
-                        GESTOR DE COMISONES
+                        <Typography variant="h6" noWrap>                          
+                          {props.title}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -124,67 +128,46 @@ return(
                 className={classes.drawer}
                 variant="persistent"
                 anchor="left"
-                open={open}
+                open={open}    
                 classes={{
                     paper: classes.drawerPaper,
                 }}
                 >
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={handleDrawerClose}>
-                    {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                      {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}                      
                     </IconButton>
                 </div>
             <Divider />
             <List>
-                    <ListItem button key={1}>
-                        <ListItemIcon>
-                        <Link to={process.env.PUBLIC_URL + "/"} >                 
-                                <ImageIcons name={'home'} />
-                        </Link>               
-                        </ListItemIcon>            
-                        <Link to={process.env.PUBLIC_URL + "/"} >
-                            <ListItemText primary={"Home"} />                
-                        </Link>
+                    <ListItem button key={1}  onClick={()=>history.push('/')} >
+                      <ListItemIcon>              
+                          <ImageIcons name={"home"} />              
+                      </ListItemIcon>              
+                        <ListItemText primary={"Principal"} />
+                      
                     </ListItem>
-                    <ListItem button key={2}>
-                        <ListItemIcon>
-                        <Link to={process.env.PUBLIC_URL + "/"}>                 
-                                <ImageIcons name={'producto'} />
-                        </Link>               
-                        </ListItemIcon>            
-                        <Link to={process.env.PUBLIC_URL + "/counter"}>
-                            <ListItemText primary={'page2'} />                
-                        </Link>
-                    </ListItem>
-                    <ListItem button key={3}>
-                        <ListItemIcon>
-                        <Link to={process.env.PUBLIC_URL + "/"}>                 
-                                <ImageIcons name={'producto'} />
-                        </Link>               
-                        </ListItemIcon>            
-                        <Link to={process.env.PUBLIC_URL + "/fetch-data"}>
-                            <ListItemText primary={'Lista'} />                
-                        </Link>
-                    </ListItem>
-                    <ListItem button key={4}>
-                        <ListItemIcon>
-                        <Link to={process.env.PUBLIC_URL + "/"}>                 
-                                <ImageIcons name={'producto'} />
-                        </Link>               
-                        </ListItemIcon>            
-                        <Link to={process.env.PUBLIC_URL + "/facturacion"}>
-                            <ListItemText primary={'Facturacion'} />                
-                        </Link>
-                    </ListItem>
+                
+                        {menu.map((value, index) => (            
+                            <div key={index}>                  
+                              <LinkMenu  menu={value} />            
+                            </div>
+                        ))}            
             </List>
             <Divider />
                 <List>
-                {['config'].map((text, index) => (
-                    <ListItem button key={text}>
-                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                    <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                      <ListItem button key={1} onClick={()=>history.push('/configuraciones')}>
+                        <ListItemIcon>
+                          <ImageIcons name={'config'} />
+                        </ListItemIcon>
+                        <ListItemText primary={'Configuraciones'} />
+                      </ListItem>
+                      <ListItem button key={2} onClick={()=> cerrarSesion()}>
+                        <ListItemIcon>
+                          <ImageIcons name={'salir'} />
+                        </ListItemIcon>
+                        <ListItemText primary={'Cerrar sesión'} />
+                      </ListItem>
                 </List>
             </Drawer>
             <main
