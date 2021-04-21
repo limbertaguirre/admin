@@ -9,4 +9,12 @@ export const iniciarSesion= ()=>{
             })      
     }
   }
+
+  export const cerrarSesion= ()=>{
+    return (dispatch)=>{                   
+            dispatch({
+              type: Types.CLOSE_SESION
+            })      
+    }
+  }
   

@@ -23,6 +23,13 @@ export default function reducer(state = defaultState, action){
                 userName:'',
                 loadFail:true
             };
+        case Type.CLOSE_SESION:
+            return {
+                ...state,
+                load:false,
+                userName:'',
+                loadFail:true
+            };
         default:{
             return state;   
         }
