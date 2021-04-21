@@ -14,7 +14,8 @@ export const iniciarSesion= ()=>{
     return (dispatch)=>{                   
             dispatch({
               type: Types.CLOSE_SESION
-            })      
+            })  
+            window.localStorage.clear();                
     }
   }
   

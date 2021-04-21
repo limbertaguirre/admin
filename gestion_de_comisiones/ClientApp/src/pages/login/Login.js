@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   image: {
-    backgroundImage: 'url(http://10.2.10.20:90/Login)',
+    backgroundImage: 'url(https://previews.123rf.com/images/macrovector/macrovector1709/macrovector170900335/85548186-network-for-professional-conceptual-composition-with-social-networking-graph-and-circle-avatars-conn.jpg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -114,8 +114,7 @@ const useStyles = makeStyles((theme) => ({
           }          
       }
       const _handleRegistrar=()=>{         
-          dispatch(Action.iniciarSesion()); 
-        // dispatch(Action.iniciarSesion(carnet, encrypt2(password) ));
+          dispatch(Action.iniciarSesion());         
       };
 
     return (
@@ -127,9 +126,7 @@ const useStyles = makeStyles((theme) => ({
             
             <img className={style.imagelogo} src={LogoSION} alt={'sion'}  ></img>
             <br/>
-            <Typography component="h1" variant="h5">
-            Iniciar sesion
-            </Typography>
+ 
             <div >
              
               <TextField
