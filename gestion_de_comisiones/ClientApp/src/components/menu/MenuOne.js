@@ -19,8 +19,8 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ImageIcons from "../ImagenIcons";
 import { useHistory } from 'react-router-dom';
 import LinkMenu from './LinkMenu';
-
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
+import * as ActionLogin from '../../redux/actions/LoginAction'
 
 const drawerWidth = 290;
 
@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
 const MenuOne = (props) => {
   const classes = useStyles();
   const theme = useTheme();
+  const dispatch= useDispatch();
   const [open, setOpen] = useState(false);
   let history = useHistory();
 
@@ -96,7 +97,7 @@ const MenuOne = (props) => {
   const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
 
   const cerrarSesion =()=>{
-    
+    dispatch(ActionLogin.cerrarSesion(history));
   }
         
   return (
