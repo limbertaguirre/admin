@@ -1,4 +1,5 @@
 import  {Home}  from '../pages/Home';
+import Login from '../pages/login/Login'
 import Facturacion from '../pages/pagoComisiones/Facturacion'
 import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
@@ -13,7 +14,7 @@ import NotFoundLoad from '../components/notfound/NotFoundLoad';
 // const NotFoundLoad = lazy(() =>  import("../components/notfound/NotFoundLoad"));
 
 export default {
-    // Layout,
+    Login,
     Home,
     Facturacion,
     Prorrateo,

@@ -4,14 +4,15 @@ import  Layout  from '../components/Layout';
 // import { Route, Switch } from 'react-router';
 import Pages from './Pages';
 import * as Action from '../redux/actions/homeAction';
-import {useDispatch} from "react-redux";
+import {useSelector,useDispatch} from "react-redux";
 
  const RoutesApp =()=>  {
   
   const dispatch = useDispatch();
-
      dispatch(Action.cargarMenu());
 
+     const {load} =useSelector((stateSelector)=>{ return stateSelector.load});
+    console.log('pagina login : ',load);
     return (
       <>       
           {/* <Router>
@@ -27,6 +28,7 @@ import {useDispatch} from "react-redux";
                 </Switch>
             </Suspense>
         </Router> */}
+        {load?
          <Layout title={'GESTOR DE COMISONES'}>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
@@ -34,9 +36,11 @@ import {useDispatch} from "react-redux";
                 <Route path='/prorrateo' component={Pages.Prorrateo} />
                 <Route path='/facturacion' component={Pages.Facturacion} />     
                 <Route path='/forma/pago' component={Pages.FormaPago} />             
-                <Route  component={Pages.NotFoundLoad} />  
+                <Route  component={Pages.NotFoundLoad} />                
             </Switch>
-         </Layout>
+         </Layout> :
+          <Route  component={Pages.Login} />  
+         }
       </>
     );
   

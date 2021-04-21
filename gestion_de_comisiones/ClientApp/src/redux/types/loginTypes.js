@@ -1,0 +1,2 @@
+export const LOAD_LOGIN = "LOAD_LOGIN";
+export const LOAD_LOGIN_ERROR = "LOAD_LOGIN_ERROR";
