@@ -97,7 +97,7 @@ const MenuOne = (props) => {
   const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
 
   const cerrarSesion =()=>{
-    dispatch(ActionLogin.cerrarSesion());
+    dispatch(ActionLogin.cerrarSesion(history));
   }
         
   return (

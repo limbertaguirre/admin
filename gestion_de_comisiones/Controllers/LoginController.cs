@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace gestion_de_comisiones.Controllers
 {
+
     public class LoginController : Controller
     {
         // GET: Login

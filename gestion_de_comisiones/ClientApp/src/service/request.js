@@ -9,11 +9,9 @@ const _hanldeThen = (res, dispatch) => {
     return Promise.resolve(result);
   } else if (result && result.status === 1) {
     
-    return Promise.resolve(result);
-    //  dispatch(Actions.showMessage({ message: result.mensaje, variant: "error" }) );
+    return Promise.resolve(result);    
   }else if(result && result.status===7){    
     return Promise.resolve(result);
-    // dispatch( ActionAuth.tokenExpire() ); 
   }else {
     return Promise.resolve(result);
   }
