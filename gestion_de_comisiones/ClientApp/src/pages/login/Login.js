@@ -1,18 +1,28 @@
 import React, { useState } from "react";
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { Button, IconButton, TextField,InputAdornment } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { useDispatch } from "react-redux";
+import { Button, IconButton, TextField } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import LogoSION from '../../assets/icons/LogoSION.svg';
+import Link from '@material-ui/core/Link';
+import Typography from '@material-ui/core/Typography';
+import { useDispatch } from "react-redux";
 import * as Action from '../../redux/actions/LoginAction';
+import { makeStyles } from "@material-ui/core/styles";
+import InputAdornment from "@material-ui/core/InputAdornment";
+// core components
+import Header from "../../components/Header/Header.js";
+import HeaderLinks from "../../components/Header/HeaderLinks.js";
+import Footer from "../../components/Footer/Footer.js";
+import GridContainer from "../../components/Grid/GridContainer.js";
+import GridItem from "../../components/Grid/GridItem.js";
+ import Buttonn from "../../components/CustomButtons/Button.js";
+import Card from "../../components/Card/Card.js";
+import CardBody from "../../components/Card/CardBody.js";
+import CardHeader from "../../components/Card/CardHeader.js";
+import CardFooter from "../../components/Card/CardFooter.js";
 
+import styles from "../../assets/jss/material-kit-react/views/loginPage";
+import image from "../../assets/img/bg7.jpg";
+const useStyles = makeStyles(styles);
 
 function Copyright() {
   return (
@@ -27,10 +37,7 @@ function Copyright() {
   );
 }
 
-
-
-
-const useStyles = makeStyles((theme) => ({
+const useStyles2 = makeStyles((theme) => ({
   root: {
     height: '100vh',
     color: theme.palette.text.primary,
@@ -79,10 +86,16 @@ const useStyles = makeStyles((theme) => ({
   
 
 
-  const Login = () => {
-
+  const Login = (props) => {  
+        const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+        setTimeout(function() {
+            setCardAnimation("");
+        }, 700);
+        const classes = useStyles();
+        const { ...rest } = props;
+   //-------------------------logica password
     const dispatch = useDispatch();
-    const style = useStyles();  
+    const style = useStyles2();  
     const [carnet, setCarnet] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, onShowPassword] = useState(false);
@@ -114,86 +127,138 @@ const useStyles = makeStyles((theme) => ({
           }          
       }
       const _handleRegistrar=()=>{         
-          dispatch(Action.iniciarSesion());         
+          dispatch(Action.iniciarSesion(carnet, password));         
       };
 
     return (
-      <Grid container component="main" className={style.root}>
-        <CssBaseline />
-        <Grid item xs={false} sm={4} md={7} className={style.image} />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <div className={style.paper}>
-            
-            <img className={style.imagelogo} src={LogoSION} alt={'sion'}  ></img>
-            <br/>
- 
-            <div >
-             
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Usuario"
-                name="carnet"
-                autoComplete="carnet"
-                autoFocus
-                onChange={onChangeFormulario}
-                error={carnetError}
-                helperText={
-                  carnetError &&  "El carnet debe ser mayor a 3 digitos"
-                }
-              />
+        <div>
+        <Header
+          absolute
+          color="transparent"
+          brand="Gestion de calidad"
+          rightLinks={<HeaderLinks />}
+          {...rest}
+        />
+        <div
+          className={classes.pageHeader}
+          style={{
+            backgroundImage: "url(" + image + ")",
+            backgroundSize: "cover",
+            backgroundPosition: "top center"
+          }}
+        >
+          <div className={classes.container}>
+            <GridContainer justify="center">
+              <GridItem xs={12} sm={12} md={4}>
+                <Card className={classes[cardAnimaton]}>
+                  <div className={classes.form}>
+                    <CardHeader color="primary" className={classes.cardHeader}>
+                      <h4>Iniciar Sesion</h4>
+                      <div >
+                        <Buttonn
+                          justIcon
+                          href="#pablo"
+                          target="_blank"
+                          color="transparent"
+                          onClick={e => e.preventDefault()}
+                        >
+                          <i className={"fab fa-twitter"} />
+                        </Buttonn>
+                        <Buttonn
+                          justIcon
+                          href="#pablo"
+                          target="_blank"
+                          color="transparent"
+                          onClick={e => e.preventDefault()}
+                        >
+                          <i className={"fab fa-facebook"} />
+                        </Buttonn>
+                        <Buttonn
+                          justIcon
+                          href="#pablo"
+                          target="_blank"
+                          color="transparent"
+                          onClick={e => e.preventDefault()}
+                        >
+                          <i className={"fab fa-google-plus-g"} />
+                        </Buttonn>
+                      </div>
+                    </CardHeader>
+                    <p className={classes.divider}>Sion</p>
+                     
+                    <CardBody>
 
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Contraseña"
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                autoComplete="password"
-                onChange={onChangeFormulario}
-                error={passwordError}
-                helperText={
-                  passwordError &&  "La constraseña no cumple los criterios de seguridad"
-                }  
+                  <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Usuario"
+                        name="carnet"
+                        autoComplete="carnet"
+                        autoFocus
+                        onChange={onChangeFormulario}
+                        error={carnetError}
+                        helperText={
+                          carnetError &&  "El carnet debe ser mayor a 3 digitos"
+                        }
+                      />
 
-                InputProps={{ 
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Contraseña"
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        autoComplete="password"
+                        onChange={onChangeFormulario}
+                        error={passwordError}
+                        helperText={
+                          passwordError &&  "La constraseña no cumple los criterios de seguridad"
+                        }  
+
+                        InputProps={{ 
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                              >
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}                          
+                      />              
+                    </CardBody>
+                    <CardFooter className={classes.cardFooter}>
+                        <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={style.submit}
+                        onClick = {_handleRegistrar}
+                        disabled={!isFormValid()} 
                       >
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}                          
-              />              
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={style.submit}
-                onClick = {_handleRegistrar}
-                disabled={!isFormValid()} 
-              >
-                Ingresar
-              </Button>
-        
-              <Box mt={5}>
-                <Copyright />
-              </Box>
-            </div>
+                        Ingresar
+                      </Button>                  
+                    </CardFooter>
+                    <Copyright />
+                    <br />
+                  </div>
+                </Card>
+              </GridItem>
+            </GridContainer>
           </div>
-        </Grid>
-      </Grid>
+          <Footer whiteFont />
+        </div>
+      </div>
+
     );
 
   }

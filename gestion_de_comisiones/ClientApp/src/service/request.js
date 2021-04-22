@@ -5,15 +5,12 @@ import { loadingRequest, loadingEndRequest } from "./../redux/actions/loadingAct
 const _hanldeThen = (res, dispatch) => {
   dispatch(loadingEndRequest());
   const result = res.data;
-  if (result && result.status === 0) {
-    return Promise.resolve(result);
-  } else if (result && result.status === 1) {
-    
-    return Promise.resolve(result);    
-  }else if(result && result.status===7){    
-    return Promise.resolve(result);
+  if (result && result.code === 0) {
+      return Promise.resolve(result);
+  } else if (result && result.code === 1) {    
+      return Promise.resolve(result);    
   }else {
-    return Promise.resolve(result);
+      return Promise.resolve(result);
   }
 };
 

@@ -2,24 +2,22 @@ import * as Types from '../types/loginTypes'
 import {requestPost} from '../../service/request';
 import * as Action from './messageAction'
 
-export const iniciarSesion= ()=>{
+export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{     
         let body={
-            userName:'maria',
-            password:'m12345'
+            userName:userName,
+            password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{
-            
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{            
             if(res.code === 0){
                 dispatch({
                     type: Types.LOAD_LOGIN,
-                    userName:'Maria G',
+                    userName:userName,
                 })   
             }else{
                 Action.showMessage({ message: "Intente mas tarde", variant: "error" })
             }            
-        })                
-              
+        })              
     }
   }
 
@@ -29,8 +27,7 @@ export const iniciarSesion= ()=>{
               type: Types.CLOSE_SESION
             });
             history.push("/"); 
-            window.localStorage.clear(); 
-                          
+            window.localStorage.clear();                          
     }
   }
   

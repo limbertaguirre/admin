@@ -30,10 +30,11 @@ export const Home =()=> {
      
     return (
       <>
-        <Breadcrumbs aria-label="breadcrumb">
-              <StyledBreadcrumb key={1} component="a" label="Home"icon={<HomeIcon fontSize="small" />}  />
-              
-        </Breadcrumbs>
+        <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+          <Breadcrumbs aria-label="breadcrumb">
+                <StyledBreadcrumb key={1} component="a" label="Home"icon={<HomeIcon fontSize="small" />}  />                
+          </Breadcrumbs>
+        </div>
         <br />
         <h1>Hello, que hace!</h1>
         <p>Welcome to your new single-page application, built with:</p>

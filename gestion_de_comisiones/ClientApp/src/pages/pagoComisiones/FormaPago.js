@@ -31,11 +31,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
      
     return (
       <>
-          <Breadcrumbs aria-label="breadcrumb">
-                    <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
-                    <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
-                    <StyledBreadcrumb key={3} label="Forma de pagos" />
-           </Breadcrumbs>
+          <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+              <Breadcrumbs aria-label="breadcrumb">
+                        <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                        <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
+                        <StyledBreadcrumb key={3} label="Forma de pagos" />
+              </Breadcrumbs>
+           </div>           
            <br/>
            <br/>
            <h1> Forma de Pagos </h1>
