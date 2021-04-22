@@ -1,14 +1,9 @@
-import React,{useState} from 'react';
-import {useSelector, useDispatch} from "react-redux";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import React  from 'react';
 import BorderWrapper from 'react-border-wrapper'
 import { emphasize, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-// import * as Action from '../redux/actions/homeAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -27,9 +22,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   }))(Chip); 
 
 
- const Facturacion =()=> {
-
-    const dispatch = useDispatch();
+ const Facturacion =()=> {    
 
     function handleClick(event) {
         event.preventDefault();
@@ -56,8 +49,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                 topElement={ <h2>Facturacion</h2>}
                 topPosition={0.05}
                 topOffset="22px"
-                topGap="4px"
-                // rightElement={rightElement}
+                topGap="4px"                
                 rightPosition={0.1}
                 rightOffset="22px"
                 rightGap="4px"
@@ -69,8 +61,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                
                    <h1> en contruccion </h1>
                         <p>aqui se cargara las comisiones</p>
-                        
-              
+                                      
                 </div>
             </BorderWrapper>
       </>
