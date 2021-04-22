@@ -28,7 +28,7 @@ export default function reducer(state = defaultState, action){
                 ...state,
                 load:false,
                 userName:'',
-                loadFail:true
+                loadFail:false
             };
         default:{
             return state;   

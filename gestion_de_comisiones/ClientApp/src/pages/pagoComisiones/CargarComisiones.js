@@ -22,19 +22,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
 const CargarComisiones = () => {
   return (
     <>
-      <Breadcrumbs aria-label="breadcrumb">
-        <StyledBreadcrumb
-          key={1}
-          component="a"
-          label="Gestion de pagos"
-          icon={<HomeIcon fontSize="small" />}
-        />
-        <StyledBreadcrumb key={2} component="a" label="Pago de comisiones" />
-        <StyledBreadcrumb key={3} label="Cargar Comisiones" />
-      </Breadcrumbs>
+      <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+          <Breadcrumbs aria-label="breadcrumb">
+              <StyledBreadcrumb
+                key={1}
+                component="a"
+                label="Gestion de pagos"
+                icon={<HomeIcon fontSize="small" />}
+              />
+              <StyledBreadcrumb key={2} component="a" label="Pago de comisiones" />
+              <StyledBreadcrumb key={3} label="Cargar Comisiones" />
+          </Breadcrumbs>
+      </div>
       <br />
       <h1>Cargar Comisiones</h1>
-
       <p>This is a simple example of a React component.</p>
     </>
   );

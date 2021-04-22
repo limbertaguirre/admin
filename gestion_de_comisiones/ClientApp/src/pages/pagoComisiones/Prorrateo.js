@@ -19,22 +19,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
 }))(Chip); 
 
 const Prorrateo =()=> {
-  
-
-
-
-
     return (
-      <>
-           <Breadcrumbs aria-label="breadcrumb">
-                    <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
-                    <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
-                    <StyledBreadcrumb key={3} label="Prorrateo" />
-           </Breadcrumbs>
-            <br />
-           <h1 id="tabelLabel" >Prorrateo</h1>
-           <p>This component demonstrates fetching data from the server.</p>
-        
+     <>
+          <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+              <Breadcrumbs aria-label="breadcrumb">
+                        <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                        <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
+                        <StyledBreadcrumb key={3} label="Prorrateo" />
+              </Breadcrumbs>
+          </div>
+          <br />
+          <h1 id="tabelLabel" >Prorrateo</h1>
+          <p>This component demonstrates fetching data from the server.</p>        
       </>
     );
   

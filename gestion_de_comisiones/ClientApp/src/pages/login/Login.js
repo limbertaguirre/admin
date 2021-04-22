@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
           }          
       }
       const _handleRegistrar=()=>{         
-          dispatch(Action.iniciarSesion());         
+          dispatch(Action.iniciarSesion(carnet, password));         
       };
 
     return (
