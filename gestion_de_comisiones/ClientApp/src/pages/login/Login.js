@@ -221,7 +221,7 @@ const useStyles2 = makeStyles((theme) => ({
                         type="submit"
                         fullWidth
                         variant="contained"
-                        color="primary"
+                        // color="primary"
                         className={style.submit}
                         onClick = {_handleRegistrar}
                         disabled={!isFormValid()} 
