@@ -22,6 +22,9 @@ import CardFooter from "../../components/Card/CardFooter.js";
 
 import styles from "../../assets/jss/material-kit-react/views/loginPage";
 import image from "../../assets/img/bg7.jpg";
+import LogoSION from "../../assets/icons/LogoSION.svg";
+import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
+
 const useStyles = makeStyles(styles);
 
 function Copyright() {
@@ -151,40 +154,18 @@ const useStyles2 = makeStyles((theme) => ({
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[cardAnimaton]}>
-                  <div className={classes.form}>
-                    <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Iniciar Sesion</h4>
+                  <div className={classes.form}>                  
+
+                    <CardHeader color="info" className={classes.cardHeader} >
+                     <img src={LogoSION2} alt={'sion'} style={{width:'40%'}} />
+                      
                       <div >
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-twitter"} />
-                        </Buttonn>
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-facebook"} />
-                        </Buttonn>
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-google-plus-g"} />
-                        </Buttonn>
+                        <br/>
+                      <h4>Iniciar Sesion</h4>  
+                   
                       </div>
                     </CardHeader>
-                    <p className={classes.divider}>Sion</p>
+                    {/* <p className={classes.divider}>Sion</p> */}
                      
                     <CardBody>
 
