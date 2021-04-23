@@ -148,14 +148,14 @@ const useStyles2 = makeStyles((theme) => ({
             backgroundPosition: "top center"
           }}
         >
-          <div className={classes.container}>
+          <div className={classes.container} style={{width:'100%'}}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[cardAnimaton]}>
                   <div className={classes.form}>                  
 
                     <CardHeader color="info" className={classes.cardHeader} >
-                     <img src={LogoSION2} alt={'sion'} style={{width:'40%'}} />
+                     <img src={LogoSION2} alt={'sion'} style={{width:'35%'}} />
                       
                       <div >
                         <br/>
