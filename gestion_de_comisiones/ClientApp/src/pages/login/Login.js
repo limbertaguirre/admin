@@ -14,7 +14,6 @@ import HeaderLinks from "../../components/Header/HeaderLinks.js";
 import Footer from "../../components/Footer/Footer.js";
 import GridContainer from "../../components/Grid/GridContainer.js";
 import GridItem from "../../components/Grid/GridItem.js";
- import Buttonn from "../../components/CustomButtons/Button.js";
 import Card from "../../components/Card/Card.js";
 import CardBody from "../../components/Card/CardBody.js";
 import CardHeader from "../../components/Card/CardHeader.js";
@@ -22,7 +21,6 @@ import CardFooter from "../../components/Card/CardFooter.js";
 
 import styles from "../../assets/jss/material-kit-react/views/loginPage";
 import image from "../../assets/img/bg7.jpg";
-import LogoSION from "../../assets/icons/LogoSION.svg";
 import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
 
 const useStyles = makeStyles(styles);
@@ -164,57 +162,54 @@ const useStyles2 = makeStyles((theme) => ({
                       <h4>Iniciar Sesion</h4>  
                    
                       </div>
-                    </CardHeader>
-                    {/* <p className={classes.divider}>Sion</p> */}
-                     
+                    </CardHeader>                     
                     <CardBody>
+                            <TextField
+                                  variant="outlined"
+                                  margin="normal"
+                                  required
+                                  fullWidth
+                                  id="email"
+                                  label="Usuario"
+                                  name="carnet"
+                                  autoComplete="carnet"
+                                  autoFocus
+                                  onChange={onChangeFormulario}
+                                  error={carnetError}
+                                  helperText={
+                                    carnetError &&  "El carnet debe ser mayor a 3 digitos"
+                                  }
+                                />
 
-                  <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Usuario"
-                        name="carnet"
-                        autoComplete="carnet"
-                        autoFocus
-                        onChange={onChangeFormulario}
-                        error={carnetError}
-                        helperText={
-                          carnetError &&  "El carnet debe ser mayor a 3 digitos"
-                        }
-                      />
+                                <TextField
+                                  variant="outlined"
+                                  margin="normal"
+                                  required
+                                  fullWidth
+                                  name="password"
+                                  label="Contraseña"
+                                  type={showPassword ? 'text' : 'password'}
+                                  id="password"
+                                  autoComplete="password"
+                                  onChange={onChangeFormulario}
+                                  error={passwordError}
+                                  helperText={
+                                    passwordError &&  "La constraseña no cumple los criterios de seguridad"
+                                  }  
 
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Contraseña"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        autoComplete="password"
-                        onChange={onChangeFormulario}
-                        error={passwordError}
-                        helperText={
-                          passwordError &&  "La constraseña no cumple los criterios de seguridad"
-                        }  
-
-                        InputProps={{ 
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                              >
-                                {showPassword ? <Visibility /> : <VisibilityOff />}
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}                          
-                      />              
+                                  InputProps={{ 
+                                    endAdornment: (
+                                      <InputAdornment position="end">
+                                        <IconButton
+                                          aria-label="toggle password visibility"
+                                          onClick={handleClickShowPassword}
+                                        >
+                                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                      </InputAdornment>
+                                    )
+                                  }}                          
+                                />              
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                         <Button

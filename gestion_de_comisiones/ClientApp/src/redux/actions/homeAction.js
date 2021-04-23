@@ -1,6 +1,5 @@
 import * as Types from '../types/homeTypes';
 import {requestGet} from '../../service/request';
-import * as Action from './messageAction'
 
 const menuWeb=[
    {

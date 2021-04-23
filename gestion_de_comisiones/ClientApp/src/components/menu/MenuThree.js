@@ -1,7 +1,7 @@
 import React,{useState}  from 'react';
 import {Container} from 'reactstrap';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -14,14 +14,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ImageIcons from '../ImagenIcons';
 import {useSelector} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import LinkMenu from './LinkMenu';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+
 
 
 const drawerWidth = 270;
@@ -91,21 +88,19 @@ const  MenuThree =(props)=> {
     let history = useHistory();
     const classes = useStyles();    
     
-    // const [open, setOpen] = useState(false);
 
     const {menu} = useSelector((stateSelector) =>{ return stateSelector.home});
     const cerrarSesion =()=>{
     
     }
-    const [state, setState] = React.useState({
+    const [state, setState] = useState({
         top: false,
         left: false,
         bottom: false,
         right: false,
     });
     const toggleDrawer = (anchor, open) => (event) => {
-        console.log(event);
-        console.log('open: ',open);
+      
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
           return;
         }
@@ -138,8 +133,7 @@ return(
                             [classes.fullList]: 'left' === 'top' || 'left' === 'bottom',
                         })}
                         role="presentation"
-                        onClick={toggleDrawer('left', false)}
-                        // onKeyDown={toggleDrawer('left', false)}
+                        onClick={toggleDrawer('left', false)}                        
                         >
                           <List>
                                 <ListItem button key={1}  onClick={()=>history.push('/')} >

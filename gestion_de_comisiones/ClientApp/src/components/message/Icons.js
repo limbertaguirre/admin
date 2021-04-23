@@ -1,20 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
-
 import { BrokenImage } from '@material-ui/icons';
 
-const useStyles = makeStyles((theme) => ({
-    imgStyle: {
-        fontSize:24,
-    }
-    }));
 
-const Icons = ({name})=>{
-    const classes = useStyles();    
+const Icons = ({name})=>{     
     switch (name) {
         case 'info':
             return <InfoIcon />;
