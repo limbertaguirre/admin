@@ -1,4 +1,3 @@
-import { User } from 'oidc-client';
 import * as Type from '../types/loginTypes';
 
 const defaultState={

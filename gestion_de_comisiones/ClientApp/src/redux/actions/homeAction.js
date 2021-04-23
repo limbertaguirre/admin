@@ -1,6 +1,5 @@
 import * as Types from '../types/homeTypes';
 import {requestGet} from '../../service/request';
-import * as Action from './messageAction'
 
 const menuWeb=[
    {
@@ -44,46 +43,8 @@ const menuWeb=[
                         }
 
                     ]
-                  },
-                  {
-                    titleSubMenu:'Pagos de comsiones',
-                    iconsSubMenu:'pago',
-                    listaSubMenu:[
-                        {
-                          idpage:1,
-                          title:'facturacion',
-                          descripion:'aqui se mostrara el proceso de facturacion',
-                          namePage:'Facturacion',
-                          path:'/facturacion',
-                          icon:'factura'            
-                        },
-                        {
-                          idpage:2,
-                          title:'Cargar comisiones',
-                          descripion:'',
-                          namePage:'cargaComisiones',
-                          path:'/cargar/Comisiones',
-                          icon:'factura'            
-                        },
-                        {
-                          idpage:3,
-                          title:'Prorrateo',
-                          descripion:'aqui se mostrara el proceso de facturacion',
-                          namePage:'prorrateo',
-                          path:'/prorrateo',
-                          icon:'prorrateo'            
-                        },
-                        {
-                          idpage:4,
-                          title:'Forma de pago',
-                          descripion:'aqui se mostrara el proceso de facturacion',
-                          namePage:'formaPago',
-                          path:'/forma/pago',
-                          icon:'factura'            
-                        }
-
-                    ]
                   }
+                  
                 ]
    },
    

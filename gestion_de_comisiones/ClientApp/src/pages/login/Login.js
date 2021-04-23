@@ -14,7 +14,6 @@ import HeaderLinks from "../../components/Header/HeaderLinks.js";
 import Footer from "../../components/Footer/Footer.js";
 import GridContainer from "../../components/Grid/GridContainer.js";
 import GridItem from "../../components/Grid/GridItem.js";
- import Buttonn from "../../components/CustomButtons/Button.js";
 import Card from "../../components/Card/Card.js";
 import CardBody from "../../components/Card/CardBody.js";
 import CardHeader from "../../components/Card/CardHeader.js";
@@ -22,6 +21,8 @@ import CardFooter from "../../components/Card/CardFooter.js";
 
 import styles from "../../assets/jss/material-kit-react/views/loginPage";
 import image from "../../assets/img/bg7.jpg";
+import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
+
 const useStyles = makeStyles(styles);
 
 function Copyright() {
@@ -147,100 +148,75 @@ const useStyles2 = makeStyles((theme) => ({
             backgroundPosition: "top center"
           }}
         >
-          <div className={classes.container}>
+          <div className={classes.container} style={{width:'100%'}}>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[cardAnimaton]}>
-                  <div className={classes.form}>
-                    <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Iniciar Sesion</h4>
+                  <div className={classes.form}>                  
+
+                    <CardHeader color="info" className={classes.cardHeader} >
+                     <img src={LogoSION2} alt={'sion'} style={{width:'35%'}} />
+                      
                       <div >
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-twitter"} />
-                        </Buttonn>
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-facebook"} />
-                        </Buttonn>
-                        <Buttonn
-                          justIcon
-                          href="#pablo"
-                          target="_blank"
-                          color="transparent"
-                          onClick={e => e.preventDefault()}
-                        >
-                          <i className={"fab fa-google-plus-g"} />
-                        </Buttonn>
+                        <br/>
+                      <h4>Iniciar Sesion</h4>  
+                   
                       </div>
-                    </CardHeader>
-                    <p className={classes.divider}>Sion</p>
-                     
+                    </CardHeader>                     
                     <CardBody>
+                            <TextField
+                                  variant="outlined"
+                                  margin="normal"
+                                  required
+                                  fullWidth
+                                  id="email"
+                                  label="Usuario"
+                                  name="carnet"
+                                  autoComplete="carnet"
+                                  autoFocus
+                                  onChange={onChangeFormulario}
+                                  error={carnetError}
+                                  helperText={
+                                    carnetError &&  "El carnet debe ser mayor a 3 digitos"
+                                  }
+                                />
 
-                  <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Usuario"
-                        name="carnet"
-                        autoComplete="carnet"
-                        autoFocus
-                        onChange={onChangeFormulario}
-                        error={carnetError}
-                        helperText={
-                          carnetError &&  "El carnet debe ser mayor a 3 digitos"
-                        }
-                      />
+                                <TextField
+                                  variant="outlined"
+                                  margin="normal"
+                                  required
+                                  fullWidth
+                                  name="password"
+                                  label="Contraseña"
+                                  type={showPassword ? 'text' : 'password'}
+                                  id="password"
+                                  autoComplete="password"
+                                  onChange={onChangeFormulario}
+                                  error={passwordError}
+                                  helperText={
+                                    passwordError &&  "La constraseña no cumple los criterios de seguridad"
+                                  }  
 
-                      <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Contraseña"
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        autoComplete="password"
-                        onChange={onChangeFormulario}
-                        error={passwordError}
-                        helperText={
-                          passwordError &&  "La constraseña no cumple los criterios de seguridad"
-                        }  
-
-                        InputProps={{ 
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                              >
-                                {showPassword ? <Visibility /> : <VisibilityOff />}
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}                          
-                      />              
+                                  InputProps={{ 
+                                    endAdornment: (
+                                      <InputAdornment position="end">
+                                        <IconButton
+                                          aria-label="toggle password visibility"
+                                          onClick={handleClickShowPassword}
+                                        >
+                                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                      </InputAdornment>
+                                    )
+                                  }}                          
+                                />              
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                         <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        color="primary"
+                        // color="primary"
                         className={style.submit}
                         onClick = {_handleRegistrar}
                         disabled={!isFormValid()} 

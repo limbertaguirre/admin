@@ -1,7 +1,7 @@
 import React from 'react';
 import {Breadcrumbs,Chip,emphasize, withStyles} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-import {useSelector, useDispatch} from "react-redux";
+import { useDispatch} from "react-redux";
 import * as Action from '../redux/actions/homeAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({

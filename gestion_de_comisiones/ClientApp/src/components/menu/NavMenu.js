@@ -1,7 +1,6 @@
 import React from "react";
 import MenuOne from "./MenuOne";
 import MenuTwo from "./MenuTwo";
-import MenuThree from "./MenuThree";
 
  const NavMenu = (props) => {
   return (

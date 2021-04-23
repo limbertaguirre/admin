@@ -1,11 +1,9 @@
 import React from 'react';
-import {useSelector, useDispatch} from "react-redux";
 import { emphasize, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
 
-// import * as Action from '../redux/actions/homeAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -25,8 +23,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 
  const FormaPago =()=> {
-
-    const dispatch = useDispatch();
+    
 
      
     return (

@@ -33,8 +33,9 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    background: "linear-gradient(90deg, #2E3B55, #1872b8)",
   },
-  appBarShift: {
+  appBarShift: {    
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
     transition: theme.transitions.create(["margin", "width"], {
@@ -78,7 +79,8 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginLeft: 0,
-  },
+  }
+
 }));
 
 const MenuOne = (props) => {

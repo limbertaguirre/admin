@@ -94,7 +94,7 @@ export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
   const headers = { ...data, headers: { ...header
                 //   , token: token
                    } };
-  return apiComerce .get(url, headers).then((response) => {
+  return apiComerce.get(url, headers).then((response) => {
          return _hanldeThen(response, dispatch);
     })
     .catch((error) => {

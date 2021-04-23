@@ -30,12 +30,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const variantIcon = {
-    success: "check_circle",
-    warning: "warning",
-    error: "error_outline",
-    info: "info"
-};
 
 const Message = () => {
     const dispatch = useDispatch();

@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    background : '#2E3B55'
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -111,7 +112,7 @@ return(
                     [classes.appBarShift]: open,
                     })}
                 >
-                    <Toolbar>
+                    <Toolbar variant="dense">
                         <IconButton
                         color="inherit"
                         aria-label="open drawer"
