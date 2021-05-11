@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using gestion_de_comisiones.Modelos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.DirectoryServices.AccountManagement;
 
 namespace gestion_de_comisiones.Controllers
 {
@@ -33,7 +34,12 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]        
         public ActionResult Sesion([FromBody] LoginInputModel model)
         {
-            var Result = new GenericDataJson<string>
+            using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
+            {
+
+               bool valid = context.ValidateCredentials(model.userName, model.password);
+
+                var Result = new GenericDataJson<string>
             {
                 Code = 0,
                 Message = "prueba",
@@ -41,7 +47,9 @@ namespace gestion_de_comisiones.Controllers
             };
 
             return Ok(Result);
-            
+            }
+
+
         }
 
         // GET: Login/Edit/5
