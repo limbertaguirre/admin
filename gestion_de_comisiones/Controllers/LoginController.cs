@@ -34,22 +34,28 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]        
         public ActionResult Sesion([FromBody] LoginInputModel model)
         {
-            using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
+            try
             {
+                using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
+                {
 
-               bool valid = context.ValidateCredentials(model.userName, model.password);
-
-                var Result = new GenericDataJson<string>
-            {
-                Code = 0,
-                Message = "prueba",
-                Data = model.userName
-            };
-
-            return Ok(Result);
+                   bool valid = context.ValidateCredentials(model.userName, model.password);
+                    if (valid)
+                    {
+                        var Result = new GenericDataJson<string> { Code = 0, Message = "prueba", Data = model.userName };
+                        return Ok(Result);
+                    }
+                    else
+                    {
+                        var Result = new GenericDataJson<string> { Code = 1, Message = "Credenciales Invalidas de GRUPO SION" };
+                        return Ok(Result);
+                    }
+                }
             }
-
-
+            catch (Exception ex) {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde", Data = ex.Message };
+                return Ok(Result);
+            }
         }
 
         // GET: Login/Edit/5

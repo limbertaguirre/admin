@@ -1,6 +1,6 @@
 import * as Types from '../types/loginTypes'
 import {requestPost} from '../../service/request';
-import * as Action from './messageAction'
+import * as Action from './messageAction';
 
 export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{     
@@ -8,15 +8,20 @@ export const iniciarSesion= (userName,password)=>{
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{            
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{ 
+            console.log("respuesta :", res);           
             if(res.code === 0){
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,
                 })   
-            }else{
-                Action.showMessage({ message: "Intente mas tarde", variant: "error" })
-            }            
+                
+            }else if(res.code === 1){ 
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }else if(res.code === 2){
+                console.log("aqui se registrar el usuario abrir modal");    
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }               
         })              
     }
   }
