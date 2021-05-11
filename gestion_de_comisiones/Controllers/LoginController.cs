@@ -6,6 +6,9 @@ using gestion_de_comisiones.Modelos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.DirectoryServices.AccountManagement;
+using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.Modelos.Usuario;
+using gestion_de_comisiones.Servicios;
 
 namespace gestion_de_comisiones.Controllers
 {
@@ -36,14 +39,27 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
+                BDMultinivelContext contextMulti = new BDMultinivelContext();
+
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
                 {
-
-                   bool valid = context.ValidateCredentials(model.userName, model.password);
+                   
+                    bool valid = context.ValidateCredentials(model.userName, model.password);
                     if (valid)
                     {
-                        var Result = new GenericDataJson<string> { Code = 0, Message = "prueba", Data = model.userName };
-                        return Ok(Result);
+                        LoginService LogiService = new LoginService();
+                        var usuario = LogiService.ObtenerUsuario(model.userName);
+                        if (usuario != null)
+                        {
+                            var Result = new GenericDataJson<string> { Code = 0, Message = "prueba", Data = model.userName };
+                            return Ok(Result);
+                        }
+                        else
+                        {
+                            var Result = new GenericDataJson<string> { Code = 2, Message = "El usaurio no se encuentra registrado"};
+                            return Ok(Result);
+                        }
+                        
                     }
                     else
                     {
