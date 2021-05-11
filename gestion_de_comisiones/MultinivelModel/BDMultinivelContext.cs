@@ -1838,7 +1838,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Sucursal>(entity =>
             {
                 entity.HasKey(e => e.IdSucursal)
-                    .HasName("PK__SUCURSAL__4C7580138DF59E6A");
+                    .HasName("PK__SUCURSAL__4C758013370DBBE5");
 
                 entity.ToTable("SUCURSAL");
 
@@ -1868,9 +1868,9 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("habilitado")
                     .HasComment("Si el registro actual está habilitado el valor será 1 (True), de lo contrario 0 (False).");
 
-                entity.Property(e => e.IdPais)
-                    .HasColumnName("id_pais")
-                    .HasComment("El id_pais es un identificador que hace referencia al campo id_pais de la tabla PAIS.");
+                entity.Property(e => e.IdCiudad)
+                    .HasColumnName("id_ciudad")
+                    .HasComment("El id_ciudad es un identificador que hace referencia al campo id_ciudad de la tabla PAIS.");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
