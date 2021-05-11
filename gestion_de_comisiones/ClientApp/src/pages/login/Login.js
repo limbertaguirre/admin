@@ -113,7 +113,7 @@ const useStyles2 = makeStyles((theme) => ({
         return  carnet.length >= 3;
       };
       const isFormValid=()=> {
-        return carnetError === false && passwordError === false;
+        return isValidCarnet(carnet) && isValidPassword(password);
       }
       const onChangeFormulario = (e)=>{     
           const texfiel = e.target.name;
