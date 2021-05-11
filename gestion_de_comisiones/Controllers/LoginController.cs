@@ -21,17 +21,6 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
 
-        // GET: Login/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Login/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
         // POST: Login/Sesion
         [HttpPost]        
@@ -48,18 +37,8 @@ namespace gestion_de_comisiones.Controllers
                     if (valid)
                     {
                         LoginService LogiService = new LoginService();
-                        var usuario = LogiService.ObtenerUsuario(model.userName);
-                        if (usuario != null)
-                        {
-                            var Result = new GenericDataJson<string> { Code = 0, Message = "prueba", Data = model.userName };
-                            return Ok(Result);
-                        }
-                        else
-                        {
-                            var Result = new GenericDataJson<string> { Code = 2, Message = "El usaurio no se encuentra registrado"};
-                            return Ok(Result);
-                        }
-                        
+                        var usuario = LogiService.VerificarUsuario(model.userName);
+                        return Ok(usuario);                        
                     }
                     else
                     {
@@ -80,44 +59,5 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
 
-        // POST: Login/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Login/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Login/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

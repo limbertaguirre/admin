@@ -9,7 +9,7 @@ namespace gestion_de_comisiones.Repository
     public class UsuarioRepository
     {
         BDMultinivelContext contextMulti = new BDMultinivelContext();
-        public object ObtenerUsuario(string usuario)
+        public object ObtenerUsuarioPorId(string usuario)
         {
             try
             {
