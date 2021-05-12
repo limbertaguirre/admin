@@ -103,4 +103,9 @@ export const iniciarSesion= (userName,password)=>{
             })
     }
   }
+  export const registrarUsuario= (data)=>{
+    return (dispatch)=>{  
+        console.log('data de register', data);
+    }
+  }
   

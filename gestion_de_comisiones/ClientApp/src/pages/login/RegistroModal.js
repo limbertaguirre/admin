@@ -56,7 +56,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const [apellido, setApellido] = useState("");
     const [telefono, setTelefono] = useState("");
     const [corporativo, setCorporativo]= useState("");
-    const [fechaNacimiento, setFechaNacimiento]= useState("");
+    const [fechaNacimiento, setFechaNacimiento]= useState(moment().format("YYYY/MM/DD"));
     const [area, setArea]= useState(0);
     const [sucursal, setSucursal]= useState(0);
     const [usuarioNameError, setUsuarioNameError] = useState(false);
@@ -117,8 +117,9 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
          console.log('fecha elejida',nb);
     }
 
-    const registrarUsuario= () => {
+    const registrarUsuarioNuevo= () => {
        
+        dispatch(Action.registrarUsuario({usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal,}))
     }
 
     return (
@@ -129,8 +130,6 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
             onClose={onHandleClose}
         >
         <DialogContent >
-
-                    <br/>
                     <Grid item xs={12} className={style.contentTitle} >
                       <AssignmentIndIcon className={style.icono} />
                     </Grid>
@@ -244,7 +243,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                     className={style.TextFiel}
                                     label="Fecha de Nacimiento"
                                     format="yyyy/MM/dd"
-                                    value={selectedDate}
+                                    value={fechaNacimiento}
                                     InputAdornmentProps={{ position: "start" }}
                                     invalidDateMessage={'Formato de fecha no válido'}
                                     onChange={_onChangeFechaNacimiento}
@@ -299,7 +298,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                         </Grid>   
                         <Grid item xs={6}  >
                             <Button 
-                               onClick={onHandleClose}
+                               onClick={registrarUsuarioNuevo}
                                variant="contained"
                                fullWidth
                                color="secondary"
