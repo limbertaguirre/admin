@@ -1,3 +1,5 @@
 export const LOAD_LOGIN = "LOAD_LOGIN";
 export const LOAD_LOGIN_ERROR = "LOAD_LOGIN_ERROR";
 export const CLOSE_SESION = "CLOSE_SESION";
+export const OPEN_MODAL_USER = "OPEN_MODAL_USER";
+export const CLOSE_MODAL_USER = "CLOSE_MODAL_USER";

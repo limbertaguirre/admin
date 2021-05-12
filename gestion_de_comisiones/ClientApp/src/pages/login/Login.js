@@ -4,7 +4,7 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import * as Action from '../../redux/actions/LoginAction';
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -22,6 +22,7 @@ import CardFooter from "../../components/Card/CardFooter.js";
 import styles from "../../assets/jss/material-kit-react/views/loginPage";
 import image from "../../assets/img/bg7.jpg";
 import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
+import RegistroModal from './RegistroModal';
 
 const useStyles = makeStyles(styles);
 
@@ -88,12 +89,16 @@ const useStyles2 = makeStyles((theme) => ({
 
 
   const Login = (props) => {  
+
         const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+        const {modalUserNew} = useSelector((stateSelector) =>{ return stateSelector.load});
+
         setTimeout(function() {
             setCardAnimation("");
         }, 700);
         const classes = useStyles();
         const { ...rest } = props;
+
    //-------------------------logica password
     const dispatch = useDispatch();
     const style = useStyles2();  
@@ -130,6 +135,12 @@ const useStyles2 = makeStyles((theme) => ({
       const _handleRegistrar=()=>{         
           dispatch(Action.iniciarSesion(carnet, password));         
       };
+
+      const cerrarModal=()=>{
+        
+      }
+
+        
 
     return (
         <div>
@@ -230,6 +241,14 @@ const useStyles2 = makeStyles((theme) => ({
                 </Card>
               </GridItem>
             </GridContainer>
+
+            <RegistroModal
+              open={modalUserNew}
+              onHandleClose={cerrarModal}
+              mensaje={'pagoDialgMsj ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'}
+              accion={false}
+            />
+
           </div>
           <Footer whiteFont />
         </div>

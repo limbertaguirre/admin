@@ -15,10 +15,13 @@ export const iniciarSesion= (userName,password)=>{
                     type: Types.LOAD_LOGIN,
                     userName:userName,
                 })   
-                
+
             }else if(res.code === 1){ 
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
+                dispatch({
+                    type:Types.OPEN_MODAL_USER
+                })
                 console.log("aqui se registrar el usuario abrir modal");    
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }               

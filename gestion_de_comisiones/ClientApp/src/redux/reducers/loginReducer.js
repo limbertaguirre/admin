@@ -3,7 +3,8 @@ import * as Type from '../types/loginTypes';
 const defaultState={
     load:false,
     userName:'',
-    loadFail:false
+    loadFail:false,
+    modalUserNew:false
 };
 
 export default function reducer(state = defaultState, action){
@@ -29,9 +30,18 @@ export default function reducer(state = defaultState, action){
                 userName:'',
                 loadFail:false
             };
+        case Type.OPEN_MODAL_USER:
+            return {
+                ...state,
+                modalUserNew:true
+            };
+        case Type.CLOSE_MODAL_USER:
+            return {
+                ...state,
+                modalUserNew:true
+            };
         default:{
             return state;   
         }
-
     }
 };
