@@ -9,6 +9,10 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import esLocale from "date-fns/locale/es";
 
 const useStyles = makeStyles((theme) => ({
     icono: {
@@ -22,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
     },
     contentDialog: {
-        // background: green[500],
+         background: '#bgfg55',
         width: '70%',
     },
     TextFiel: {
@@ -57,6 +61,9 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const [fechaNacimientoError, setFechaNacimientoError]= useState(false);
     const [areaError, setAreaError]= useState(false);
     const [sucursalError, setSucursalError]= useState(false);
+
+    const [selectedDate, handleDateChange] = useState(new Date());
+
 
     const _onChangeregistro= (e) => {
             const texfiel = e.target.name;
@@ -103,19 +110,17 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
             open={open}
             onClose={onHandleClose}
         >
-            <DialogContent >
+        <DialogContent >
 
                     <br/>
                     <Grid item xs={12} className={style.contentTitle} >
-                       {accion?<CheckCircleOutlineIcon className={style.icono} />
-                        :<CancelIcon className={style.icono}/> }
+                      <AssignmentIndIcon className={style.icono} />
                     </Grid>
-                    
                     <Grid item xs={12} className={style.contentTitle}  >
-                       {mensaje}
+                        <Typography variant="h4" gutterBottom>
+                           REGISTRATE
+                        </Typography>
                     </Grid>
-                    <br/>
-
                        <TextField
                             id="usuarioName"
                             label="Nombre Usuario"
@@ -175,7 +180,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             }}
                         />
                         <TextField
-                            className={style.boxAmount}
+                            className={style.TextFiel}
                             error={telefonoError}
                             helperText={telefonoError && "Telefono obligatorio incorrecto"}
                             id="telefono"
@@ -190,19 +195,52 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             onChange={_onChangeregistro}
                             value={telefono}
                             variant="outlined" 
+                            required
                             fullWidth
                         />
-
+                        <TextField
+                            id="corporativo"
+                            label="Corporativo"
+                            type={'text'}
+                            variant="outlined"
+                            name="corporativo"
+                            value={corporativo}
+                            onChange={_onChangeregistro}
+                            className={style.TextFiel}
+                            error={corporativoError}
+                            helperText={ corporativoError &&
+                            "El corporativo son es ivalido"
+                            }
+                            required
+                            fullWidth
+                            inputProps={{
+                            maxLength: 20,
+                            }}
+                        />
+                         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
+                            <KeyboardDatePicker
+                                    fullWidth
+                                    autoOk
+                                    variant="inline"
+                                    inputVariant="outlined"
+                                    className={style.TextFiel}
+                                    label="Fecha de Nacimiento"
+                                    format="yyyy/MM/dd"
+                                    value={selectedDate}
+                                    InputAdornmentProps={{ position: "start" }}
+                                    invalidDateMessage={'Formato de fecha no válido'}
+                                    onChange={date => handleDateChange(date)}
+                            />
+                        </MuiPickersUtilsProvider>
                          <FormControl variant="outlined"  fullWidth  className={style.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Are</InputLabel>
+                            <InputLabel id="demo-simple-select-outlined-labelarea">Area</InputLabel>
                             <Select
-                                labelId="demo-simple-select-outlined-label"
+                                labelId="demo-simple-select-outlined-labelarea"
                                 id="demo-simple-select-outlined"
                                 value={area}
                                 name="area"
                                 onChange={_onChangeregistro}
                                 label="Area"
-                                
                                 >
                                 <MenuItem value={0}>
                                     <em>Seleccione un area</em>
@@ -214,9 +252,9 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             <FormHelperText>{areaError&&'Seleccione una area de trabajo'}</FormHelperText>
                         </FormControl>
                         <FormControl  variant="outlined"  fullWidth   className={style.formControl}>
-                            <InputLabel id="demo-simple-select-outlined-label">Sucursal</InputLabel>
+                            <InputLabel id="demo-simple-select-outlined-labelsucursal">Sucursal</InputLabel>
                             <Select
-                                labelId="demo-simple-select-outlined-label"
+                                labelId="demo-simple-select-outlined-labelsucursal"
                                 id="demo-simple-select-outlined"
                                 value={sucursal}
                                 name="sucursal"
@@ -233,13 +271,29 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             </Select>
                             <FormHelperText>{sucursalError&&'Seleccione una sucursal'}</FormHelperText>
                         </FormControl>
-                
-                        
-
-                    <Grid item xs={12} className={style.contentButton} >
-                        <Button onClick={onHandleClose} color={accion? 'primary':'secondary'} autoFocus>
-                            OK
-                        </Button>
+                    <Grid container item xs={12}  >
+                        <Grid item xs={6} >
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={style.submit}
+                                onClick = {onHandleClose}                            
+                           >
+                            CANCELAR
+                        </Button>     
+                        </Grid>   
+                        <Grid item xs={6}  >
+                            <Button 
+                               onClick={onHandleClose}
+                               variant="contained"
+                               fullWidth
+                               color="secondary"
+                                >
+                                REGISTRATE
+                            </Button>
+                        </Grid> 
                     </Grid>
                 
             </DialogContent>
