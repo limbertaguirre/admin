@@ -14,6 +14,8 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/picker
 import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
 import { useSelector,useDispatch } from "react-redux";
+import * as moment from "moment";
+import "moment/locale/es";
 import * as Action from '../../redux/actions/LoginAction';
 
 const useStyles = makeStyles((theme) => ({
@@ -108,6 +110,16 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
            dispatch(Action.cargarAreas());
            dispatch(Action.cargarSucursales());
     },[])
+    const _onChangeFechaNacimiento= (date) => {
+        
+        setFechaNacimiento(moment(date).format("YYYY/MM/DD"));
+         var nb= moment(date).format("YYYY/MM/DD");
+         console.log('fecha elejida',nb);
+    }
+
+    const registrarUsuario= () => {
+       
+    }
 
     return (
         <Dialog
@@ -235,7 +247,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                     value={selectedDate}
                                     InputAdornmentProps={{ position: "start" }}
                                     invalidDateMessage={'Formato de fecha no válido'}
-                                    onChange={date => handleDateChange(date)}
+                                    onChange={_onChangeFechaNacimiento}
                             />
                         </MuiPickersUtilsProvider>
                          <FormControl variant="outlined"  fullWidth  className={style.formControl}>
