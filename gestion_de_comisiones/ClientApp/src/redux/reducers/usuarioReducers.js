@@ -4,7 +4,6 @@ import * as Type from '../types/usuarioType';
 const defaultState = {
     loadMore:false,
     listAreas: [],  
-    listSucursales:[],
 };
 
 export default function reducer (state = defaultState, action) {  
@@ -14,11 +13,7 @@ export default function reducer (state = defaultState, action) {
                 ...state,
                 listAreas:action.areas,
             }
-        case Type.LISTA_SUCURSALES:
-            return{
-                ...state,
-                menu:action.sucursales,
-            }     
+   
         default: {
             return state;
         }

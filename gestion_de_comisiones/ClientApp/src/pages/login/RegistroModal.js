@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{ useEffect, useState} from 'react';
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
@@ -13,6 +13,8 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
+import { useSelector,useDispatch } from "react-redux";
+import * as Action from '../../redux/actions/LoginAction';
 
 const useStyles = makeStyles((theme) => ({
     icono: {
@@ -44,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
 
 const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const style = useStyles();
+    const dispatch = useDispatch();
+    const {listAreas, listSucursales } = useSelector((stateSelector) =>{ return stateSelector.load});
+
     const [usuarioName, setUsuarioName] = useState("");
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
@@ -52,7 +57,6 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const [fechaNacimiento, setFechaNacimiento]= useState("");
     const [area, setArea]= useState(0);
     const [sucursal, setSucursal]= useState(0);
-
     const [usuarioNameError, setUsuarioNameError] = useState(false);
     const [nombreError, setNombreError] = useState(false);
     const [apellidoError, setApellidoError] = useState(false);
@@ -63,7 +67,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const [sucursalError, setSucursalError]= useState(false);
 
     const [selectedDate, handleDateChange] = useState(new Date());
-
+ 
 
     const _onChangeregistro= (e) => {
             const texfiel = e.target.name;
@@ -89,8 +93,6 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                 setCorporativo(value);
                 console.log('escribiendo :', value);
             }
-            console.log('escribiendo :', value);
-            console.log('escribiend otexfiel :', e);
             if (texfiel === "area") {
                 setArea(value);
                 console.log('escribiendo :', value);
@@ -102,6 +104,10 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
             
       };
 
+    useEffect(()=>{
+           dispatch(Action.cargarAreas());
+           dispatch(Action.cargarSucursales());
+    },[])
 
     return (
         <Dialog
@@ -245,9 +251,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                 <MenuItem value={0}>
                                     <em>Seleccione un area</em>
                                 </MenuItem>
-                                <MenuItem value={10}>UIT</MenuItem>
-                                <MenuItem value={20}>CONTABOLIDAD</MenuItem>
-                                <MenuItem value={30}>FINANSAS</MenuItem>                               
+                                {listAreas.map((value,index)=> ( <MenuItem key={index} value={value.id_area}>{value.nombre}</MenuItem> ))}                             
                             </Select>
                             <FormHelperText>{areaError&&'Seleccione una area de trabajo'}</FormHelperText>
                         </FormControl>
@@ -264,10 +268,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                 <MenuItem value={0}>
                                     <em>Seleccione una sucursal</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Canhoto</MenuItem>
-                                <MenuItem value={20}>Ambasador</MenuItem>
-                                <MenuItem value={30}>Mansion</MenuItem>
-                               
+                                {listSucursales.map((value,index)=> ( <MenuItem key={index} value={value.id_sucursal}>{value.nombre}</MenuItem> ))}                               
                             </Select>
                             <FormHelperText>{sucursalError&&'Seleccione una sucursal'}</FormHelperText>
                         </FormControl>

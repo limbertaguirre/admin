@@ -4,7 +4,9 @@ const defaultState={
     load:false,
     userName:'',
     loadFail:false,
-    modalUserNew:false
+    modalUserNew:false,
+    listAreas: [],  
+    listSucursales:[],
 };
 
 export default function reducer(state = defaultState, action){
@@ -38,8 +40,18 @@ export default function reducer(state = defaultState, action){
         case Type.CLOSE_MODAL_USER:
             return {
                 ...state,
-                modalUserNew:true
+                modalUserNew:false
             };
+        case Type.LISTA_AREAS:
+            return{
+                ...state,
+                listAreas:action.areas,
+            }
+        case Type.LISTA_SUCURSALES:
+            return{
+                ...state,
+                listSucursales:action.sucursales,
+            }     
         default:{
             return state;   
         }
