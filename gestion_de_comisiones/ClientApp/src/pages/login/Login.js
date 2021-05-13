@@ -137,7 +137,7 @@ const useStyles2 = makeStyles((theme) => ({
       };
 
       const cerrarModal=()=>{
-        
+        dispatch(Action.cerrarRegistroModal());
       }
 
         
@@ -245,7 +245,7 @@ const useStyles2 = makeStyles((theme) => ({
             <RegistroModal
               open={modalUserNew}
               onHandleClose={cerrarModal}
-              mensaje={'pagoDialgMsj ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'}
+              mensaje={''}
               accion={false}
             />
 

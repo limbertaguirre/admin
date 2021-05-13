@@ -47,22 +47,19 @@ export const iniciarSesion= (userName,password)=>{
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{ 
-            console.log("respuesta :", res);           
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{          
             if(res.code === 0){
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,
                 })   
-
             }else if(res.code === 1){ 
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
                 dispatch({
                     type:Types.OPEN_MODAL_USER
-                })
-                console.log("aqui se registrar el usuario abrir modal");    
-                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                })  
+               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }               
         })              
     }
@@ -104,16 +101,6 @@ export const iniciarSesion= (userName,password)=>{
     }
   }
   export const registrarUsuario= (usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal)=>{
-    let bodye=JSON.stringify({
-            "usuarioName" :usuarioName,
-            "nombre":nombre,
-            "apellido":apellido,
-            "telefono":telefono, 
-            "corporativo":corporativo,
-            "fechaNacimiento":fechaNacimiento,
-            "area":parseInt(area),
-            "sucursal":parseInt(sucursal)
-        });
         let body={
             userName :usuarioName,
             nombre:nombre,
@@ -124,12 +111,16 @@ export const iniciarSesion= (userName,password)=>{
             area:parseInt(area),
             sucursal:parseInt(sucursal)
         };
-        console.log('data de register', body);
-
     return (dispatch)=>{  
-        
         requestPost('Usuario/Registro',body,dispatch).then((res)=>{ 
-            console.log("respuesta :", res); 
+            if(res.code === 0){
+                dispatch({
+                    type: Types.CLOSE_MODAL_USER
+                  });
+                dispatch(Action.showMessage({ message: res.message, variant: "success" }));
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
         })
 
     }

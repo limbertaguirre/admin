@@ -53,7 +53,7 @@ const menuWeb=[
 export const loadHome= ()=>{
   return (dispatch)=>{   
        requestGet('weatherforecast',{},dispatch).then((res)=>{
-         console.log("se ejecuto el load")
+      
        })    
   }
 }

@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Usuario;
+using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,8 +24,8 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                string nombre = "sss";
-                var Result = new GenericDataJson<string> { Code =0 , Message = "SE REGISTRO CON EXITO " };
+                UsuarioService usuario = new UsuarioService();
+                var Result = usuario.RegistraUsuario(model);
                 return Ok(Result);
             }
             catch
