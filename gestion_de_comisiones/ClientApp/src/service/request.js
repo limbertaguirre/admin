@@ -74,7 +74,6 @@ export const requestGet = (url, data, dispatch) => {
 
 export const requestPost = (url, data, dispatch) => {
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
   const config = { headers: { "Content-Type": "application/json"
                           //  ,"token":token 
                  } };

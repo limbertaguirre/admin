@@ -1,0 +1,2 @@
+export const LISTA_AREAS= 'LISTA_AREAS';
+export const LISTA_SUCURSALES= 'LISTA_SUCURSALES';
