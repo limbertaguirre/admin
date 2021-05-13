@@ -119,7 +119,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
 
     const registrarUsuarioNuevo= () => {
        
-        dispatch(Action.registrarUsuario({usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal,}))
+        dispatch(Action.registrarUsuario(usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal));
     }
 
     return (

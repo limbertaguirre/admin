@@ -103,9 +103,35 @@ export const iniciarSesion= (userName,password)=>{
             })
     }
   }
-  export const registrarUsuario= (data)=>{
+  export const registrarUsuario= (usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal)=>{
+    let bodye=JSON.stringify({
+            "usuarioName" :usuarioName,
+            "nombre":nombre,
+            "apellido":apellido,
+            "telefono":telefono, 
+            "corporativo":corporativo,
+            "fechaNacimiento":fechaNacimiento,
+            "area":parseInt(area),
+            "sucursal":parseInt(sucursal)
+        });
+        let body={
+            userName :usuarioName,
+            nombre:nombre,
+            apellido:apellido,
+            telefono:parseInt(telefono), 
+            corporativo:corporativo,
+            fechaNacimiento:fechaNacimiento,
+            area:parseInt(area),
+            sucursal:parseInt(sucursal)
+        };
+        console.log('data de register', body);
+
     return (dispatch)=>{  
-        console.log('data de register', data);
+        
+        requestPost('Usuario/Registro',body,dispatch).then((res)=>{ 
+            console.log("respuesta :", res); 
+        })
+
     }
   }
   

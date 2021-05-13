@@ -51,13 +51,9 @@ namespace gestion_de_comisiones.Controllers
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde", Data = ex.Message };
                 return Ok(Result);
             }
-        }
+        } 
 
-        // GET: Login/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+
 
     }
 }
