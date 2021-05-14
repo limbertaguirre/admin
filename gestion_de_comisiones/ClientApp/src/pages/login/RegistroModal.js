@@ -1,9 +1,7 @@
 import React,{ useEffect, useState} from 'react';
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import CancelIcon from '@material-ui/icons/Cancel';
-import { TextField, Typography, InputAdornment, IconButton } from "@material-ui/core";
+import { TextField, Typography, InputAdornment } from "@material-ui/core";
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -51,7 +49,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   });
 
 const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
-    console.log('nombre usuario :',txtUsuario);
+    
     const style = useStyles();
     const dispatch = useDispatch();
     const {listAreas, listSucursales } = useSelector((stateSelector) =>{ return stateSelector.load});
@@ -72,8 +70,6 @@ const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
     const [fechaNacimientoError, setFechaNacimientoError]= useState(false);
     const [areaError, setAreaError]= useState(false);
     const [sucursalError, setSucursalError]= useState(false);
-
-    const [selectedDate, handleDateChange] = useState(new Date());
    
     const isValidUsuarioName = (usuarioName) => {   
         return  usuarioName.length >= 3 && verificaAlfanumerico(usuarioName);
@@ -164,8 +160,6 @@ const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
     const _onChangeFechaNacimiento= (date) => {
          setFechaNacimiento(moment(date).format("YYYY/MM/DD"));
          setFechaNacimientoError(!isValidFechaNacimiento(date));
-         var nb= moment(date).format("YYYY/MM/DD");
-         console.log('fecha elejida',nb);
     }
     const isFormValid=()=> {
         return isValidUsuarioName(usuarioName) && isValidNombre(nombre) && 

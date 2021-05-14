@@ -87,27 +87,26 @@ export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{   
         requestGet('Configuracion/Areas',{},dispatch).then((res)=>{ 
             console.log('lista areas : ', res.data);
-
-            dispatch({
-                type: Types.LISTA_AREAS,
-                areas:res.data
-            })
-
+            if(res.code === 0){
+                dispatch({
+                    type: Types.LISTA_AREAS,
+                    areas:res.data
+                })
+            }
         })           
-           
-        
     }
   }
   export const cargarSucursales= (history)=>{
     return (dispatch)=>{    
         requestGet('Configuracion/Sucursales',{},dispatch).then((res)=>{ 
-            console.log('lista sucursales : ', res);
-            dispatch({
-                type:Types.LISTA_SUCURSALES,
-                sucursales:res
-            })
+            console.log('lista sucursales : ', res.data);
+            if(res.code === 0){
+                dispatch({
+                    type:Types.LISTA_SUCURSALES,
+                    sucursales:res.data
+                })
+           }
         })                        
-          
     }
   }
   export const registrarUsuario= (usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal)=>{

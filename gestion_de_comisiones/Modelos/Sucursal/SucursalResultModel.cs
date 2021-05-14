@@ -8,7 +8,13 @@ namespace gestion_de_comisiones.Modelos.Sucursal
 {
     public class SucursalResultModel
     {
-        public int id_sucursal { get; set; }
+        public SucursalResultModel(int idSucursal, string nombre)
+        {
+            this.IdSucursal = idSucursal;
+            this.nombre = nombre;
+        }
+
         public string nombre { get; set; }
+        public int IdSucursal { get; }
     }
 }
