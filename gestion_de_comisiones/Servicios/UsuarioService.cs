@@ -19,7 +19,7 @@ namespace gestion_de_comisiones.Servicios
                 var resulrRegister = UserRepos.RegistrarUsuario(user);
                 if (resulrRegister)
                 {
-                    var Result = new GenericDataJson<object> { Code = 0, Message = "se registro correctamente", Data = objetoo };
+                    var Result = new GenericDataJson<object> { Code = 0, Message = "se registro exitosamente", Data = objetoo };
                     return Result;
                 }
                 else

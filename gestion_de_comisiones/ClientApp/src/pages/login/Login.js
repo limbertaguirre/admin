@@ -245,7 +245,7 @@ const useStyles2 = makeStyles((theme) => ({
             <RegistroModal
               open={modalUserNew}
               onHandleClose={cerrarModal}
-              mensaje={''}
+              txtUsuario={carnet}
               accion={false}
             />
 

@@ -1,9 +1,7 @@
 import React,{ useEffect, useState} from 'react';
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import CancelIcon from '@material-ui/icons/Cancel';
-import { TextField, Typography, InputAdornment, IconButton } from "@material-ui/core";
+import { TextField, Typography, InputAdornment } from "@material-ui/core";
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -17,6 +15,8 @@ import { useSelector,useDispatch } from "react-redux";
 import * as moment from "moment";
 import "moment/locale/es";
 import * as Action from '../../redux/actions/LoginAction';
+import { verificaAlfanumerico } from "../../lib/expresiones";
+import Slide from '@material-ui/core/Slide';
 
 const useStyles = makeStyles((theme) => ({
     icono: {
@@ -44,9 +44,12 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
-
-const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
+const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
+    
     const style = useStyles();
     const dispatch = useDispatch();
     const {listAreas, listSucursales } = useSelector((stateSelector) =>{ return stateSelector.load});
@@ -67,59 +70,105 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
     const [fechaNacimientoError, setFechaNacimientoError]= useState(false);
     const [areaError, setAreaError]= useState(false);
     const [sucursalError, setSucursalError]= useState(false);
-
-    const [selectedDate, handleDateChange] = useState(new Date());
- 
+   
+    const isValidUsuarioName = (usuarioName) => {   
+        return  usuarioName.length >= 3 && verificaAlfanumerico(usuarioName);
+    };
+    const isValidNombre = (nombre) => {    
+        return  nombre.length >= 3 && verificaAlfanumerico(nombre);
+    };
+    const isValidApellido = (apellido) => {    
+        return  apellido.length >= 3 && verificaAlfanumerico(nombre);
+    };
+    const isValidTelefono = (telefono) => {    
+        return  telefono.length >= 3;
+    };
+    const isValidCorporativo = (corporativo) => {    
+        if(corporativo.length >= 1){
+          //aqui validar y devolver false para q interprete el componente
+            if(corporativo.length >= 2){
+                return true
+            }else{
+                return false
+            }
+        }else{
+            return  true
+        }
+        
+    };
+    const isValidArea = (area) => {  
+        console.log('el se seleciona ', area);  
+        console.log(area >= 1);
+        return  area >= 1;
+    };
+    const isValidSucursal = (sucursal) => {    
+        return  sucursal >= 1 ;
+    };
+    const isValidFechaNacimiento = (fechaNac) => {   
+        let fechaValida= moment().subtract(17,'y').format("YYYY/MM/DD") 
+        let fechanacimiento= moment(fechaNac).format("YYYY/MM/DD");
+        if(fechanacimiento <= fechaValida){
+            console.log(' si cumple mayor a 17');
+            return  true;
+        }else{
+            console.log('no cumple');
+            return  false;
+        }
+    };
 
     const _onChangeregistro= (e) => {
             const texfiel = e.target.name;
             const value = e.target.value;
-            
             if (texfiel === "usuarioName") {
                 setUsuarioName(value);
-                console.log('escribiendo :', value);
+                setUsuarioNameError(!isValidUsuarioName(value));
             }
             if (texfiel === "nombre") {
                 setNombre(value);
-                console.log('escribiendo :', value);
+                setNombreError(!isValidNombre(value));
             }
             if (texfiel === "apellido") {
                 setApellido(value);
-                console.log('escribiendo :', value);
+                setApellidoError(!isValidApellido(value));
             }
             if (texfiel === "telefono") {
                 setTelefono(value);
-                console.log('escribiendo :', value);
+                setTelefonoError(!isValidTelefono(value));
             }
             if (texfiel === "corporativo") {
                 setCorporativo(value);
-                console.log('escribiendo :', value);
+                setCorporativoError(!isValidCorporativo(value));
             }
             if (texfiel === "area") {
                 setArea(value);
-                console.log('escribiendo :', value);
+                setAreaError(!isValidArea(value));
             }
             if (texfiel === "sucursal") {
                 setSucursal(value);
-                console.log('escribiendo :', value);
+                setSucursalError(!isValidSucursal(value));
             }
             
       };
+    useEffect(()=>{
+        setUsuarioName(txtUsuario);
+    },[txtUsuario]);
 
     useEffect(()=>{
-           dispatch(Action.cargarAreas());
-           dispatch(Action.cargarSucursales());
+        dispatch(Action.cargarAreas());
+        dispatch(Action.cargarSucursales());
     },[])
     const _onChangeFechaNacimiento= (date) => {
-        
-        setFechaNacimiento(moment(date).format("YYYY/MM/DD"));
-         var nb= moment(date).format("YYYY/MM/DD");
-         console.log('fecha elejida',nb);
+         setFechaNacimiento(moment(date).format("YYYY/MM/DD"));
+         setFechaNacimientoError(!isValidFechaNacimiento(date));
     }
-
+    const isFormValid=()=> {
+        return isValidUsuarioName(usuarioName) && isValidNombre(nombre) && 
+                 isValidApellido(apellido) && isValidTelefono(telefono) && 
+                 isValidCorporativo(corporativo) && isValidFechaNacimiento(fechaNacimiento) &&
+                  isValidArea(area) && isValidSucursal(sucursal);
+      }
     const registrarUsuarioNuevo= () => {
-       
-        dispatch(Action.registrarUsuario(usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal));
+        dispatch(Action.registrarUsuario(usuarioName.trim(),nombre.trim(),apellido.trim(),telefono, corporativo,fechaNacimiento,area,sucursal));
     }
 
     return (
@@ -128,6 +177,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
             disableBackdropClick
             open={open}
             onClose={onHandleClose}
+            TransitionComponent={Transition}
         >
         <DialogContent >
                     <Grid item xs={12} className={style.contentTitle} >
@@ -140,7 +190,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                     </Grid>
                        <TextField
                             id="usuarioName"
-                            label="Nombre Usuario"
+                            label="Usuario"
                             type={'text'}
                             variant="outlined"
                             name="usuarioName"
@@ -149,7 +199,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             className={style.TextFiel}
                             error={usuarioNameError}
                             helperText={ usuarioNameError &&
-                            "El usuario no cumple con los requisitos"
+                            "El usuario es requerido, no cumple con los requisitos"
                             }
                             required
                             fullWidth
@@ -169,7 +219,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             className={style.TextFiel}
                             error={nombreError}
                             helperText={ nombreError &&
-                            "El apellido es requerido"
+                            "El nombre es requerido, no cumple con los requisitos"
                             }
                             required
                             fullWidth
@@ -188,7 +238,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                             className={style.TextFiel}
                             error={apellidoError}
                             helperText={ apellidoError &&
-                            "El apellido son requeridos"
+                            "El apellido es requerido, no cumple con los requisitos"
                             }
                             required
                             fullWidth
@@ -199,7 +249,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                         <TextField
                             className={style.TextFiel}
                             error={telefonoError}
-                            helperText={telefonoError && "Telefono obligatorio incorrecto"}
+                            helperText={telefonoError && "El telefono es requerido"}
                             id="telefono"
                             label="Telefono"
                             name="telefono"
@@ -218,20 +268,27 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                         <TextField
                             id="corporativo"
                             label="Corporativo"
-                            type={'text'}
+                            type={'number'}
                             variant="outlined"
                             name="corporativo"
                             value={corporativo}
+                            placeholder=" Ejemplo : 123"
                             onChange={_onChangeregistro}
                             className={style.TextFiel}
                             error={corporativoError}
                             helperText={ corporativoError &&
-                            "El corporativo son es ivalido"
-                            }
-                            required
+                            "Numero de corporativo incorrecto"
+                            }                            
                             fullWidth
+                            InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                     {'#'}
+                                  </InputAdornment>
+                                ),
+                              }}
                             inputProps={{
-                            maxLength: 20,
+                            maxLength: 10,
                             }}
                         />
                          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
@@ -244,12 +301,17 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                     label="Fecha de Nacimiento"
                                     format="yyyy/MM/dd"
                                     value={fechaNacimiento}
+                                    error={fechaNacimientoError}
+                                    helperText={fechaNacimientoError &&'Ingrese un año de nacimiento valido'}
                                     InputAdornmentProps={{ position: "start" }}
                                     invalidDateMessage={'Formato de fecha no válido'}
                                     onChange={_onChangeFechaNacimiento}
                             />
                         </MuiPickersUtilsProvider>
-                         <FormControl variant="outlined"  fullWidth  className={style.formControl}>
+                         <FormControl variant="outlined"  
+                          fullWidth
+                          error={areaError} 
+                          className={style.formControl}>
                             <InputLabel id="demo-simple-select-outlined-labelarea">Area</InputLabel>
                             <Select
                                 labelId="demo-simple-select-outlined-labelarea"
@@ -260,13 +322,16 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                 label="Area"
                                 >
                                 <MenuItem value={0}>
-                                    <em>Seleccione un area</em>
+                                    <em>Seleccione tu Area</em>
                                 </MenuItem>
-                                {listAreas.map((value,index)=> ( <MenuItem key={index} value={value.id_area}>{value.nombre}</MenuItem> ))}                             
+                                {listAreas.map((value,index)=> ( <MenuItem key={index} value={value.idArea}>{value.nombre}</MenuItem> ))}                             
                             </Select>
                             <FormHelperText>{areaError&&'Seleccione una area de trabajo'}</FormHelperText>
                         </FormControl>
-                        <FormControl  variant="outlined"  fullWidth   className={style.formControl}>
+                        <FormControl  variant="outlined"  
+                           fullWidth  
+                           error={sucursalError} 
+                           className={style.formControl}>
                             <InputLabel id="demo-simple-select-outlined-labelsucursal">Sucursal</InputLabel>
                             <Select
                                 labelId="demo-simple-select-outlined-labelsucursal"
@@ -279,7 +344,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                 <MenuItem value={0}>
                                     <em>Seleccione una sucursal</em>
                                 </MenuItem>
-                                {listSucursales.map((value,index)=> ( <MenuItem key={index} value={value.id_sucursal}>{value.nombre}</MenuItem> ))}                               
+                                {listSucursales.map((value,index)=> ( <MenuItem key={index} value={value.idSucursal}>{value.nombre}</MenuItem> ))}                               
                             </Select>
                             <FormHelperText>{sucursalError&&'Seleccione una sucursal'}</FormHelperText>
                         </FormControl>
@@ -289,7 +354,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                color="primary"
+                                color="secondary"
                                 className={style.submit}
                                 onClick = {onHandleClose}                            
                            >
@@ -301,6 +366,7 @@ const RegistroModal = ({ open, mensaje, onHandleClose, accion }) => {
                                onClick={registrarUsuarioNuevo}
                                variant="contained"
                                fullWidth
+                               disabled={!isFormValid()}
                                color="secondary"
                                 >
                                 REGISTRATE

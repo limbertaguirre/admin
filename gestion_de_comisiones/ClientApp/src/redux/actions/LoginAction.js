@@ -1,45 +1,10 @@
 import * as Types from '../types/loginTypes'
-import * as TypesUsuario from '../types/usuarioType'
-import {requestPost} from '../../service/request';
+import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
-const listaAreas=[
-    {
-        id_area:1,
-        nombre:'DESARROLLO'
-    },
-    {
-        id_area:2,
-        nombre:'CONTABILIDAD'
-    },
-    {
-        id_area:3,
-        nombre:'FINANZAS'
-    },
-    {
-        id_area:4,
-        nombre:'UIT'
-    }
-];
 
-const listaSucursales=[
-    {
-        id_sucursal:1,
-        nombre:'CANHOTO'
-    },
-    {
-        id_sucursal:2,
-        nombre:'AMBASADOR'
-    },
-    {
-        id_sucursal:3,
-        nombre:'IRALA'
-    },
-    {
-        id_sucursal:4,
-        nombre:'SAN MARTIN'
-    }
-];
+
+
 
 export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{     
@@ -59,7 +24,6 @@ export const iniciarSesion= (userName,password)=>{
                 dispatch({
                     type:Types.OPEN_MODAL_USER
                 })  
-               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }               
         })              
     }
@@ -84,20 +48,27 @@ export const iniciarSesion= (userName,password)=>{
   }
 
   export const cargarAreas= (history)=>{
-    return (dispatch)=>{                   
-            dispatch({
-                type: Types.LISTA_AREAS,
-                areas:listaAreas
-            })
-        
+    return (dispatch)=>{   
+        requestGet('Configuracion/Areas',{},dispatch).then((res)=>{ 
+            if(res.code === 0){
+                dispatch({
+                    type: Types.LISTA_AREAS,
+                    areas:res.data
+                })
+            }
+        })           
     }
   }
   export const cargarSucursales= (history)=>{
-    return (dispatch)=>{                   
-            dispatch({
-                type:Types.LISTA_SUCURSALES,
-                sucursales:listaSucursales
-            })
+    return (dispatch)=>{    
+        requestGet('Configuracion/Sucursales',{},dispatch).then((res)=>{ 
+            if(res.code === 0){
+                dispatch({
+                    type:Types.LISTA_SUCURSALES,
+                    sucursales:res.data
+                })
+           }
+        })                        
     }
   }
   export const registrarUsuario= (usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal)=>{
