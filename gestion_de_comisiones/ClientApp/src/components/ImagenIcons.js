@@ -14,6 +14,7 @@ import {
 import PaymentIcon from '@material-ui/icons/Payment';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import SettingsIcon from '@material-ui/icons/Settings';
+import ControlPointDuplicateIcon from '@material-ui/icons/ControlPointDuplicate';
 const useStyles = makeStyles((theme) => ({
     imgStyle: {
         fontSize:24,
@@ -48,6 +49,8 @@ const ImageIcons = ({name})=>{
             return <AccountBalanceIcon  className={classes.imgStyle}/>;
         case 'config':
             return <SettingsIcon  className={classes.imgStyle}/>;
+        case 'rol':
+            return <ControlPointDuplicateIcon  className={classes.imgStyle}/>;
         default:
             return <BrokenImage  className={classes.imgStyle}/>;
     }
