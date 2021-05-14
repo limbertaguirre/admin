@@ -1,6 +1,6 @@
 import * as Types from '../types/loginTypes'
 import * as TypesUsuario from '../types/usuarioType'
-import {requestPost} from '../../service/request';
+import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
 const listaAreas=[
@@ -84,20 +84,30 @@ export const iniciarSesion= (userName,password)=>{
   }
 
   export const cargarAreas= (history)=>{
-    return (dispatch)=>{                   
+    return (dispatch)=>{   
+        requestGet('Configuracion/Areas',{},dispatch).then((res)=>{ 
+            console.log('lista areas : ', res.data);
+
             dispatch({
                 type: Types.LISTA_AREAS,
-                areas:listaAreas
+                areas:res.data
             })
+
+        })           
+           
         
     }
   }
   export const cargarSucursales= (history)=>{
-    return (dispatch)=>{                   
+    return (dispatch)=>{    
+        requestGet('Configuracion/Sucursales',{},dispatch).then((res)=>{ 
+            console.log('lista sucursales : ', res);
             dispatch({
                 type:Types.LISTA_SUCURSALES,
-                sucursales:listaSucursales
+                sucursales:res
             })
+        })                        
+          
     }
   }
   export const registrarUsuario= (usuarioName,nombre,apellido,telefono, corporativo,fechaNacimiento,area,sucursal)=>{
