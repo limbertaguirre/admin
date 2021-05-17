@@ -3,15 +3,15 @@ import * as Type from '../types/usuarioType';
 
 const defaultState = {
     loadMore:false,
-    listAreas: [],  
+    listModulos: [],  
 };
 
 export default function reducer (state = defaultState, action) {  
     switch (action.type) {       
-        case Type.LISTA_AREAS:
+        case Type.LISTA_PAGINAS:
             return{
                 ...state,
-                listAreas:action.areas,
+                listModulos:action.paginas,
             }
    
         default: {
