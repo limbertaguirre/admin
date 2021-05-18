@@ -4,6 +4,7 @@ import * as Action from './messageAction';
 
 
 const listaPaginas=[{
+    idModulo:1,
     nombre:'gestion comisiones',
     listmodulos:[ 
         {
@@ -25,6 +26,7 @@ const listaPaginas=[{
     ],
   },
   {
+    idModulo:1,
     nombre:'admin porrateo',
     listmodulos:[ 
         {
@@ -41,7 +43,26 @@ const listaPaginas=[{
         }
     ],
   }
-]
+];
+
+const permisos=[
+    {
+        id_permiso:1,
+        permiso:'CREAR'
+    },
+    {
+        id_permiso:2,
+        permiso:'ACTUALIZAR'
+    },
+    {
+        id_permiso:3,
+        permiso:'ELIMINAR'
+    },
+    {
+        id_permiso:4,
+        permiso:'VISUALIZAR'
+    }
+];
 
 
 export const getPaginas= ()=>{
@@ -49,6 +70,7 @@ export const getPaginas= ()=>{
          dispatch({
              type: Types.LISTA_PAGINAS,
              paginas:listaPaginas,
+             permisos:permisos
          })
                   
     }

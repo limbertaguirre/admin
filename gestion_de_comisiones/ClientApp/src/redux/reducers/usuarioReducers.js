@@ -4,6 +4,26 @@ import * as Type from '../types/usuarioType';
 const defaultState = {
     loadMore:false,
     listModulos: [],  
+    listPermisos: [],
+    historico: [
+        {
+          idmodulo:0,
+          nombreModulo:'',
+          paginas:[
+                { 
+                  idpagina:0,
+                  nombrePagina:'',
+                  permisos:[
+                            { 
+                              idPermiso:0,
+                              permiso:''
+                            }
+                  ]
+                }
+          ]
+        }
+    ],
+    
 };
 
 export default function reducer (state = defaultState, action) {  
@@ -12,6 +32,7 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 listModulos:action.paginas,
+                listPermisos:action.permisos
             }
    
         default: {

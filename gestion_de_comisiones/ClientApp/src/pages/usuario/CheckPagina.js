@@ -14,7 +14,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Paper from '@material-ui/core/Paper';
-//-----------------------------------------------
 
 
 const useStyles = makeStyles((theme) => ({
@@ -71,29 +70,25 @@ const useStyles = makeStyles((theme) => ({
       
 }));
 
-//--------------------------
 
 const  CheckPagina =(props)=>  { 
-    const { pagina, labelId, selecionoPagina, desSelecionoPagina  } = props     
+    const {modulo, pagina, labelId, selecionoPagina, desSelecionoPagina  } = props     
     const style = useStyles();
     const dispatch = useDispatch();
 
-    //----------------------------------------------------------------------------------
     const [checked, setChecked] = React.useState(false);
     
 
     const handleChange = (event) => {
-        console.log("selecciono ", event.target.checked, " : ", pagina.nombre);
+       // console.log("selecciono ", event.target.checked, " : ", modulo);
         if(event.target.checked){
-            selecionoPagina(pagina)
+            selecionoPagina(pagina,modulo.idModulo,modulo.nombre)
         }else{
-            desSelecionoPagina(pagina)
+            desSelecionoPagina(pagina, modulo.idModulo,modulo.nombre)
         }
       setChecked(event.target.checked);
     };
-    const  handleToggle = (idpagina, nombre) => {
-       
-    };
+  
   
 
     return (

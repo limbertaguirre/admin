@@ -1,6 +1,6 @@
 
 
-import React,{useState, useEffect}  from 'react';
+import React,{useState, useEffect, useReducer }  from 'react';
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +8,7 @@ import { verificaAlfanumerico } from "../../lib/expresiones";
 import { useSelector,useDispatch } from "react-redux";
 import * as Action from '../../redux/actions/usuarioAction';
 import CheckPagina from './CheckPagina';
+import CheckPermiso from './CheckPermiso';
 //-----------------------transferencia
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -21,6 +22,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles((theme) => ({
     icono: {
@@ -81,8 +83,7 @@ const useStyles = makeStyles((theme) => ({
     }
     
     function intersection(a, b) {
-        console.log('ejecuata a :', a );
-        console.log('ejecuata b:', b );
+       
         return a.filter((value) => b.indexOf(value) !== -1);
     }
 //--------------------------
@@ -92,8 +93,9 @@ const  Roles =()=>  {
     const dispatch = useDispatch();
     const [rolName, setRolName] = useState("");
     const [rolNameError, setRolNameError] = useState(false);
-    const {listModulos } = useSelector((stateSelector) =>{ return stateSelector.usuario});
+    const {listModulos, listPermisos } = useSelector((stateSelector) =>{ return stateSelector.usuario});
     const [lModulos, setLModulos] = useState([]);
+    const [lPermisos, setLPermisos] = useState([]);
 
 
 
@@ -114,7 +116,8 @@ const  Roles =()=>  {
     },[]);
     useEffect(()=>{
       setLModulos(listModulos);
-  },[lModulos]);
+      console.log('permisos , ', lPermisos);
+  },[lModulos, lPermisos ]);
 
     //----------------------------------------------------------------------------------
     const [checked, setChecked] = React.useState([]);
@@ -135,12 +138,9 @@ const  Roles =()=>  {
           if (currentIndex === -1) {
             var value1= { id_pagina:value, nombre:nombre};
             newChecked.push(value1);
-            console.log('onchange -1');
           } else {
             newChecked.splice(currentIndex, 1);
-            console.log('onchange else');
           }
-          // console.log('final newChecked : ', newChecked);
          setChecked(newChecked);
       console.log('onchange ini------------------------------: ');
     };
@@ -168,11 +168,8 @@ const  Roles =()=>  {
       setRight([]);
     };
     useEffect(()=>{
-  
       console.log('el checked', checked);
-     // console.log('lista izquierda :', leftChecked);
-     // console.log('lista derecha :', leftChecked);
-   },[checked, leftChecked ]);
+   },[checked, ]);
 
      const checkeselecionado = (valuesid) => {
         
@@ -184,17 +181,78 @@ const  Roles =()=>  {
           }
     };
     //---------------------------------------------------------------------------
+    //const appReducer = (state, Action) =>{
+      //  switch(Action.type){
+      //        case 'ADD_PERMISO':{
+        //        historico: [...state.historico, Action.payload];
+         //     }
+       //  }
+  //   }
+    const incializador ={
+     historico: [
+        {
+          idmodulo:0,
+          nombreModulo:'',
+          paginas:[
+                { 
+                  idpagina:0,
+                  nombrePagina:'',
+                  permisos:[
+                            { 
+                              idPermiso:0,
+                              permiso:''
+                            }
+                  ]
+                }
+          ]
+        }
+      ]
+    }
+   // const [historial, setHistorial] = useReducer(appReducer ,incializador);
     const [pageSelected, setPageSelected]= useState({id_pagina:0, nombre: ''})
+    const [moduloSelected, setModuloSelected]= useState({idModulo:0, nombre: ''})
+    const [listPaginaAgregadas, setPListPaginaAgregadas]= useState([])
+    const [componente, setComponente] = useState(false);
 
-    const selecionoPagina = (pagina) => {
-    
-      console.log("se agrego en raiz", pagina)
-    };
-    const desSelecionoPagina = (paginadelecte) => {
-         console.log("se elimino en raiz", paginadelecte )
-    };
+    const selecionoPagina = (pagina,idModulo, nombreModulo) => {
+     // console.log("agregara en el modulo", nombreModulo)
+      //console.log("se agrego en raiz", pagina)
+      setModuloSelected({idModulo:idModulo, nombre: nombreModulo})
+      setLPermisos([]);
+      setTimeout(1000);
+      setPageSelected(pagina);
+      setLPermisos(listPermisos);//se habilita los permisos visibles
 
+    };
+    const desSelecionoPagina = (paginadelecte, idModulo, nombreModulo) => {
+         // console.log("iliminara en el modulo", nombreModulo)
+         //  console.log("se elimino en raiz", paginadelecte );
+         setPageSelected({id_pagina:0, nombre: ''});
+         setLPermisos([]);//se deshabilita los permisos visibles
+    };
+//-----------------------------------------------------------------------
+//-- componente permiso
+      const selecionoPermiso = (permiso) => {
+        console.log("se agrego  permiso", permiso)
+        const objpermiso = [...listPaginaAgregadas];
+        objpermiso.push({idpagina : pageSelected.id_pagina,idpermiso: permiso.id_permiso, nombre: permiso.permiso  })
+        setPListPaginaAgregadas(objpermiso)
+       
+      };
+      const desSelecionoPermiso = (permisoDelete) => {
+          console.log("se elimino permiso", permisoDelete );
+          const tuplaEliminada= listPaginaAgregadas.filter(x => x.idpermiso != parseInt(permisoDelete.id_permiso));
+          console.log('se delete : ', tuplaEliminada);
+          setPListPaginaAgregadas(tuplaEliminada)
+      };
+      useEffect(()=>{
   
+        console.log('lista add pemiso', listPaginaAgregadas);
+     },[listPaginaAgregadas ]);
+  
+     useEffect(()=>{
+      
+   },[ moduloSelected, lPermisos]);
 
     return (
          <>            
@@ -233,7 +291,7 @@ const  Roles =()=>  {
 
             </Grid>
  
-            <Grid container spacing={2} alignItems="center" className={style.root}>
+            <Grid container spacing={1} alignItems="center" className={style.root}>
                 <Grid item >
                   <List dense component="div" role="list"  >
                       <Paper className={style.paper}>
@@ -259,13 +317,12 @@ const  Roles =()=>  {
                                       <AccordionDetails>
                                              <List dense component="div" role="list">
                                                   {value.listmodulos.map((value2,index) => {
-                                                  const labelId = `transfer-list-item-${value.id_pagina}-label`;
-                                        
+                                                  const labelId = `transfer-list-item-${value.idModulo}-label`;
                                                   return (
                                                     <ListItem key={value2.id_pagina} role="listitem" button 
                                                     //onClick={handleToggle(value.id_pagina,value.nombre )}
                                                     >
-                                                      <CheckPagina pagina={value2} labelId={labelId} selecionoPagina={selecionoPagina} desSelecionoPagina={desSelecionoPagina} />
+                                                      <CheckPagina modulo={value} pagina={value2} labelId={labelId} selecionoPagina={selecionoPagina} desSelecionoPagina={desSelecionoPagina} />
                                                     </ListItem>
                                                   );
                                                 })}
@@ -281,7 +338,30 @@ const  Roles =()=>  {
                     </List>            
                 </Grid>
                 <Grid item >
-
+                <Paper className={style.paper}>
+                <List dense component="div" role="list">
+                  <Typography variant="h6" gutterBottom>
+                  {'  '} Asignar permiso a  : <b>{pageSelected.nombre}</b> 
+                  </Typography> 
+                  <Divider />
+              
+                             <>
+                             {lPermisos.map((value2,index) => {
+                             const labelId = `transfer-list-item-${value2.id_permiso}-label`;
+                             return (
+                               <ListItem key={value2.id_permiso} role="listitem" button 
+                               //onClick={handleToggle(value.id_pagina,value.nombre )}
+                               > 
+                                <CheckPermiso permiso={value2} labelId={labelId} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
+                                 
+                               </ListItem>
+                              );
+                             })}
+                           </>
+                           
+                  <ListItem />
+                  </List>
+                </Paper>
                 </Grid>
             </Grid>
 
