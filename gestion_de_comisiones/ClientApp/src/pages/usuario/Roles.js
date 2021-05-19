@@ -246,29 +246,22 @@ const  Roles =()=>  {
 
     };
     const desSelecionoPagina = (paginadelecte, idModulo, nombreModulo) => {
-         // console.log("iliminara en el modulo", nombreModulo)
-         //  console.log("se elimino en raiz", paginadelecte );
+          
+          quitarPagina(paginadelecte.id_pagina, paginadelecte.nombre, idModulo, nombreModulo);
          setPageSelected({id_pagina:0, nombre: ''});
          setLPermisos([]);//se deshabilita los permisos visibles
+
     };
 //-----------------------------------------------------------------------
 //-- componente permiso
       const selecionoPermiso = (permiso) => {
         console.log("se agrego  permiso", permiso)
         addCalculoHisotorico(permiso, moduloSelected.idModulo, moduloSelected.nombre, pageSelected.id_pagina,pageSelected.nombre);
-
-
-        //const objpermiso = [...listPaginaAgregadas];
-       // objpermiso.push({idpagina : pageSelected.id_pagina,idpermiso: permiso.id_permiso, nombre: permiso.permiso  })
-       // setPListPaginaAgregadas(objpermiso)
        
       };
       const desSelecionoPermiso = (permisoDelete) => {
-          console.log("se elimino permiso", permisoDelete );
-
-         // const tuplaEliminada= listPaginaAgregadas.filter(x => x.idpermiso != parseInt(permisoDelete.id_permiso));
-         // console.log('se delete : ', tuplaEliminada);
-         // setPListPaginaAgregadas(tuplaEliminada)
+        //  console.log("se elimino permiso", permisoDelete );
+          eliminarPermisoCheck(permisoDelete, moduloSelected.idModulo, moduloSelected.nombre, pageSelected.id_pagina, pageSelected.nombre);
       };
       useEffect(()=>{
   
@@ -281,13 +274,14 @@ const  Roles =()=>  {
 
     const addCalculoHisotorico =(permiso, idModulo,nombreModulo, idPagina, nombrePagina)=>{
        const backupHistory = [...listHisotrico];
+       console.log('inicia con : ', backupHistory);
         let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(idModulo));//--------------
         let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
         const moBK = [...objmoduloBk];
 
-        console.log(' modulo hisotico elejido',objmodulo);
-        if(objmodulo.length <= 0){
-           console.log('no existe modulo hisotico',objmodulo);
+       // console.log(' modulo hisotico elejido',objmodulo);
+        if(objmodulo.length == 0){
+          // console.log('no existe modulo hisotico',objmodulo);
            const addNew= {
                         idModulo:idModulo,
                         nombreModulo:nombreModulo,
@@ -304,44 +298,161 @@ const  Roles =()=>  {
                               }
                         ]
                       };
+            moBK.push(addNew);
             backupHistory.push(addNew);
-            setListHisotrico(backupHistory)
+            setListHisotrico(moBK);
         }else  {
-          console.log('existe modulo hisotico',objmodulo);
+         // console.log('existe modulo hisotico',objmodulo);
           let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(idPagina));//pagina backup----------------------
           let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(idPagina));
           const paBK= [...objpaginaBK];
-          console.log('pagina backups', objpaginaBK);
-          console.log('pagina select', objpagina);
+        //  console.log('pagina backups', objpaginaBK  );
+        //  console.log('pagina select', objpagina);
+           if(objpagina.length > 0){ 
+                let objPermisoBK= objpagina[0].permisos.filter(x => x.idPermiso != parseInt(permiso.id_permiso));//--------------------
+                let objPermiso= objpagina[0].permisos.filter(x => x.idPermiso == parseInt(permiso.id_permiso));
+                const peBK= [...objPermisoBK];
+             //   console.log('permiso tiene', objPermisoBK);
+               // console.log('permiso nuevo', objPermiso);
+                  
+                  if(objPermiso.length == 0){//add
+                   // console.log('permiso nuevo', permiso);
+                    peBK.push({idPermiso: permiso.id_permiso, permiso:permiso.permiso});
+                    const page= { 
+                      idpagina:idPagina,
+                      nombrePagina:nombrePagina,
+                      permisos:peBK
+                    }
+                    paBK.push(page);
+                    const mode={
+                          idModulo:idModulo,
+                          nombreModulo:nombreModulo,
+                          paginas:paBK
+                    }
+                    moBK.push(mode);
+                    setListHisotrico(moBK);
+                    console.log('permiso agregado al primer objeto',moBK);
+                  }else{
+                    console.log('eliminar aqui');
+                  }
+            }else{
+             // console.log('nueva pagina ,para el modulo, nombre pagina :', nombrePagina );
 
-             let objPermisoBK= objpagina[0].permisos.filter(x => x.idPermiso != parseInt(permiso.idPermiso));//--------------------
-             let objPermiso= objpagina[0].permisos.filter(x => x.idPermiso == parseInt(permiso.idPermiso));
-             const peBK= [...objPermisoBK];
-             console.log('permiso tiene', objPermisoBK);
-             console.log('permiso nuevo', objPermiso);
-              
-              if(objPermiso.length == 0){//add
-                console.log('permiso nuevo', permiso);
-                peBK.push({idPermiso: permiso.id_permiso, permiso:permiso.permiso});
-                const page= { 
-                  idpagina:idPagina,
-                  nombrePagina:nombrePagina,
-                  permisos:peBK
-                }
-                paBK.push(page);
-                const mode={
-                      idModulo:idModulo,
-                      nombreModulo:nombreModulo,
-                      paginas:paBK
-                }
-                moBK.push(mode);
-                setListHisotrico(moBK);
-                console.log('este es el permiso agregado al primer objeto',moBK);
-              }
+                    const newPage=  { 
+                              idpagina:idPagina,
+                              nombrePagina:nombrePagina,
+                              permisos:[ {  idPermiso:permiso.id_permiso, permiso:permiso.permiso }  ]
+                           };
+                  paBK.push(newPage);
+                  const newModulo={
+                              idModulo:idModulo,
+                              nombreModulo:nombreModulo,
+                              paginas:paBK
+                            }
+                  moBK.push(newModulo);
+                  setListHisotrico(moBK);
+                 // console.log('otra modulo + backup', moBK);
+ 
+            }
         }
        
     }
 
+    const eliminarPermisoCheck =(permiso, idModulo,nombreModulo, idPagina, nombrePagina)=>{
+
+       let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(idModulo));//--------------
+        let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
+        const moBK = [...objmoduloBk];
+        if(objmodulo.length >= 1){
+              let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(idPagina));//pagina backup----------------------
+              let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(idPagina));
+              const paBK= [...objpaginaBK];
+    
+              if(objpagina.length > 0){ 
+                
+                  let objPermisoBK= objpagina[0].permisos.filter(x => x.idPermiso != parseInt(permiso.id_permiso));
+                  let objPermiso= objpagina[0].permisos.filter(x => x.idPermiso == parseInt(permiso.id_permiso));
+                  const peBK= [...objPermisoBK];
+
+                  console.log('pagina delete objPermisoBK', objPermisoBK);
+                  console.log('pagina delete objPermiso', objPermiso);
+                  if(objPermiso.length > 0){
+                        const page= { 
+                          idpagina:idPagina,
+                          nombrePagina:nombrePagina,
+                          permisos:peBK
+                        }
+                        paBK.push(page);
+                        console.log('cero paBK 11: ', paBK);
+                        const mode={
+                              idModulo:idModulo,
+                              nombreModulo:nombreModulo,
+                              paginas:paBK
+                        }
+                       
+                     if(peBK.length > 0){ 
+                       //se add el backup y  
+                         moBK.push(mode);                 
+                        setListHisotrico(moBK);
+                     }else{
+                       //aqui lo aqgrega sin la pagina ya que la pagina no tiene permiso
+                       console.log('cero paBK 22: ', paBK);
+                       console.log('cero paBK 22: ', objpaginaBK);
+                       const modesinVacio={
+                        idModulo:idModulo,
+                        nombreModulo:nombreModulo,
+                        paginas:objpaginaBK
+                         }
+                        console.log('cero : ', modesinVacio);
+                        moBK.push(modesinVacio); 
+                        setListHisotrico(moBK);
+
+                     }
+                    
+                   }
+              }
+           
+        }
+    }
+
+    const quitarPagina=(PidPagina, PnombrePagina, pidModulo, pnombreModulo)=>{
+      console.log("se elimino en PidPagina", PidPagina );
+    //  console.log("iliminara en el PnombrePagina", PnombrePagina)
+      console.log("iliminara en el pidModulo", pidModulo)
+      console.log("iliminara en el pnombreModulo", pnombreModulo)
+
+      let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(pidModulo));//--------------
+      let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(pidModulo));
+      const moBK = [...objmoduloBk];
+      console.log("iliminara en el objmoduloBk", objmoduloBk)
+      console.log("iliminara en el objmodulo", objmodulo)
+        if(objmodulo.length >= 1){
+            let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(PidPagina));//pagina backup----------------------
+            let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(PidPagina));
+            
+            console.log("iliminara en el objpaginaBK", objpaginaBK)
+            console.log("iliminara en el objpagina", objpagina)
+            if(objpagina.length > 0){ 
+
+                  const modesinVacio={
+                    idModulo:pidModulo,
+                    nombreModulo:pnombreModulo,
+                    paginas:objpaginaBK
+                    }
+                    console.log('cero : ', modesinVacio);
+                    moBK.push(modesinVacio); 
+                    setListHisotrico(moBK);
+                    console.log('paginas total : ', objpaginaBK);
+                    if(objpaginaBK.length <= 0){
+                      //aqui solo se agregara los modulos consu paginas
+                      console.log('paginas total resul : ', objpaginaBK);
+                     setListHisotrico(objmoduloBk);
+                    }
+            }
+
+        }
+
+    }
     return (
          <>            
             <Typography variant="h6" gutterBottom>
