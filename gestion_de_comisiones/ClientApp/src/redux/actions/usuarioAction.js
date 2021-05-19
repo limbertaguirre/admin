@@ -26,7 +26,7 @@ const listaPaginas=[{
     ],
   },
   {
-    idModulo:1,
+    idModulo:2,
     nombre:'admin porrateo',
     listmodulos:[ 
         {
