@@ -24,7 +24,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
-
+import SearchIcon from '@material-ui/icons/Search';
 const useStyles = makeStyles((theme) => ({
     icono: {
         width: '40px',
@@ -44,6 +44,16 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(1),
         marginTop: theme.spacing(1),
         width: '50%',
+    },
+    TextFielDescripcion: {
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      width: '100%',
+    },
+    TextFielBusqueda:{
+        marginBottom: theme.spacing(1),
+        marginTop: theme.spacing(1),
+        width: '40%',
     },
     formControl: {
         marginBottom: theme.spacing(1),
@@ -94,6 +104,11 @@ const  Roles =()=>  {
     const dispatch = useDispatch();
     const [rolName, setRolName] = useState("");
     const [rolNameError, setRolNameError] = useState(false);
+    const [rolDescripcion, setRolDescripcion] = useState("");
+    const [rolDescripcionError, setRolDescripcionError] = useState(false);
+    const [txtBusqueda, setTxtBusqueda] = useState("");
+    const [txtBusquedaError, setTxtBusquedaError] = useState(false);
+
     const {listModulos, listPermisos } = useSelector((stateSelector) =>{ return stateSelector.usuario});
     const [lModulos, setLModulos] = useState([]);
     const [lPermisos, setLPermisos] = useState([]);
@@ -104,6 +119,12 @@ const  Roles =()=>  {
     const isValidRolName = (usuarioName) => {   
         return  usuarioName.length >= 5 && verificaAlfanumerico(usuarioName);
     };
+    const isValidRolDescripcion = (descripcion) => {   
+      return  descripcion.length >= 5 && verificaAlfanumerico(descripcion);
+    };
+    const isValidtxtBusqueda = (busqueda) => {   
+      return  busqueda.length >= 5;
+  };
     const _onChangeregistro= (e) => {
         const texfiel = e.target.name;
         const value = e.target.value;
@@ -111,6 +132,15 @@ const  Roles =()=>  {
             setRolName(value);
             setRolNameError(!isValidRolName(value));
         }
+        if (texfiel === "rolDescripcion") {
+          setRolDescripcion(value);
+          setRolDescripcionError(!isValidRolDescripcion(value));
+        }
+        if (texfiel === "txtBusqueda") {
+          setTxtBusqueda(value);
+         // setTxtBusquedaError(!isValidtxtBusqueda(value));
+        }
+        console.log('ingreso ',value)
     };
     useEffect(()=>{
         dispatch(Action.getPaginas());
@@ -416,22 +446,15 @@ const  Roles =()=>  {
     }
 
     const quitarPagina=(PidPagina, PnombrePagina, pidModulo, pnombreModulo)=>{
-      console.log("se elimino en PidPagina", PidPagina );
-    //  console.log("iliminara en el PnombrePagina", PnombrePagina)
-      console.log("iliminara en el pidModulo", pidModulo)
-      console.log("iliminara en el pnombreModulo", pnombreModulo)
 
       let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(pidModulo));//--------------
       let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(pidModulo));
       const moBK = [...objmoduloBk];
-      console.log("iliminara en el objmoduloBk", objmoduloBk)
-      console.log("iliminara en el objmodulo", objmodulo)
+    
         if(objmodulo.length >= 1){
             let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(PidPagina));//pagina backup----------------------
             let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(PidPagina));
             
-            console.log("iliminara en el objpaginaBK", objpaginaBK)
-            console.log("iliminara en el objpagina", objpagina)
             if(objpagina.length > 0){ 
 
                   const modesinVacio={
@@ -453,6 +476,16 @@ const  Roles =()=>  {
         }
 
     }
+
+    const onchangeRegistrarRol= ()=>{
+
+          dispatch(Action.registrarRoles(rolName, rolDescripcion, listHisotrico ));
+          
+    }
+
+
+
+
     return (
          <>            
             <Typography variant="h6" gutterBottom>
@@ -479,8 +512,57 @@ const  Roles =()=>  {
                             }}
                         />      
 
+
+           </Grid>
+           <Grid item xs={12} className={style.contentTitle} >
+                         <TextField
+                            id="rolDescripcion"
+                            label="Descripcion"
+                            type={'text'}
+                            variant="outlined"
+                            name="rolDescripcion"
+                            value={rolDescripcion}
+                            onChange={_onChangeregistro}
+                            className={style.TextFielDescripcion}
+                            error={rolDescripcionError}
+                            helperText={ rolDescripcionError &&
+                            "El campo es requerido"
+                            }
+                            required
+                            fullWidth
+                            
+                        />      
+
+
            </Grid>
             <br /> 
+            <Grid item xs={12} className={style.contentTitle} >
+                         <TextField
+                            id="txtBusqueda"
+                            label="Buscar Modulo"
+                            type={'text'}
+                            variant="outlined"
+                            name="txtBusqueda"
+                            value={txtBusqueda}
+                            onChange={_onChangeregistro}
+                            className={style.TextFielBusqueda}
+                            error={txtBusquedaError}
+                            helperText={ txtBusquedaError &&
+                            "El campo es requerido"
+                            }
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <SearchIcon />
+                                </InputAdornment>
+                              ),
+                            }}
+                            
+                        />      
+
+
+           </Grid>
+            <br />
             <Grid item xs={12} >
 
                 <Grid container spacing={2} alignItems="center" className={style.root}>
@@ -578,6 +660,12 @@ const  Roles =()=>  {
                 </Grid>
 
             </Grid>
+            <Grid item xs={12} className={style.contentTitle} >
+            <Button variant="contained" color="primary" onClick={onchangeRegistrarRol} >
+              REGISTRAR ROL
+            </Button>
+
+           </Grid>
 
          </>
     );

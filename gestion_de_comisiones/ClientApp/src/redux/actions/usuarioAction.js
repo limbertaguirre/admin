@@ -75,3 +75,23 @@ export const getPaginas= ()=>{
                   
     }
   }
+
+  export const registrarRoles= (nombre, descripcion,lista)=>{
+    let body={
+        nombre :nombre,
+        descripcion:descripcion,
+        modulos:lista
+    };
+    console.log('body :',body);
+    return (dispatch)=>{  
+        dispatch(Action.showMessage({ message: 'se registro', variant: "success" }));
+        requestPost('Rol/Registrar',body,dispatch).then((res)=>{ 
+            if(res.code === 0){
+                dispatch(Action.showMessage({ message: res.message, variant: "success" }));
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        })
+
+    }
+  }
