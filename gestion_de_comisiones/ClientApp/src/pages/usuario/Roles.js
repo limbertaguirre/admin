@@ -226,7 +226,7 @@ const  Roles =()=>  {
           nombreModulo:'',
           paginas:[
                 { 
-                  idpagina:0,
+                  idPagina:0,
                   nombrePagina:'',
                   permisos:[
                             { 
@@ -245,7 +245,7 @@ const  Roles =()=>  {
            nombreModulo:'',
            paginas:[
                  { 
-                   idpagina:0,
+                   idPagina:0,
                    nombrePagina:'',
                    permisos:[
                              { 
@@ -317,7 +317,7 @@ const  Roles =()=>  {
                         nombreModulo:nombreModulo,
                         paginas:[
                               { 
-                                idpagina:idPagina,
+                                idPagina:idPagina,
                                 nombrePagina:nombrePagina,
                                 permisos:[
                                           { 
@@ -333,8 +333,8 @@ const  Roles =()=>  {
             setListHisotrico(moBK);
         }else  {
          // console.log('existe modulo hisotico',objmodulo);
-          let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(idPagina));//pagina backup----------------------
-          let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(idPagina));
+          let objpaginaBK = objmodulo[0].paginas.filter(x => x.idPagina != parseInt(idPagina));//pagina backup----------------------
+          let objpagina = objmodulo[0].paginas.filter(x => x.idPagina == parseInt(idPagina));
           const paBK= [...objpaginaBK];
         //  console.log('pagina backups', objpaginaBK  );
         //  console.log('pagina select', objpagina);
@@ -349,7 +349,7 @@ const  Roles =()=>  {
                    // console.log('permiso nuevo', permiso);
                     peBK.push({idPermiso: permiso.id_permiso, permiso:permiso.permiso});
                     const page= { 
-                      idpagina:idPagina,
+                      idPagina:idPagina,
                       nombrePagina:nombrePagina,
                       permisos:peBK
                     }
@@ -369,7 +369,7 @@ const  Roles =()=>  {
              // console.log('nueva pagina ,para el modulo, nombre pagina :', nombrePagina );
 
                     const newPage=  { 
-                              idpagina:idPagina,
+                              idPagina:idPagina,
                               nombrePagina:nombrePagina,
                               permisos:[ {  idPermiso:permiso.id_permiso, permiso:permiso.permiso }  ]
                            };
@@ -394,8 +394,8 @@ const  Roles =()=>  {
         let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
         const moBK = [...objmoduloBk];
         if(objmodulo.length >= 1){
-              let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(idPagina));//pagina backup----------------------
-              let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(idPagina));
+              let objpaginaBK = objmodulo[0].paginas.filter(x => x.idPagina != parseInt(idPagina));//pagina backup----------------------
+              let objpagina = objmodulo[0].paginas.filter(x => x.idPagina == parseInt(idPagina));
               const paBK= [...objpaginaBK];
     
               if(objpagina.length > 0){ 
@@ -408,7 +408,7 @@ const  Roles =()=>  {
                   console.log('pagina delete objPermiso', objPermiso);
                   if(objPermiso.length > 0){
                         const page= { 
-                          idpagina:idPagina,
+                          idPagina:idPagina,
                           nombrePagina:nombrePagina,
                           permisos:peBK
                         }
@@ -452,8 +452,8 @@ const  Roles =()=>  {
       const moBK = [...objmoduloBk];
     
         if(objmodulo.length >= 1){
-            let objpaginaBK = objmodulo[0].paginas.filter(x => x.idpagina != parseInt(PidPagina));//pagina backup----------------------
-            let objpagina = objmodulo[0].paginas.filter(x => x.idpagina == parseInt(PidPagina));
+            let objpaginaBK = objmodulo[0].paginas.filter(x => x.idPagina != parseInt(PidPagina));//pagina backup----------------------
+            let objpagina = objmodulo[0].paginas.filter(x => x.idPagina == parseInt(PidPagina));
             
             if(objpagina.length > 0){ 
 
@@ -480,7 +480,7 @@ const  Roles =()=>  {
     const onchangeRegistrarRol= ()=>{
 
           dispatch(Action.registrarRoles(rolName, rolDescripcion, listHisotrico ));
-          
+
     }
 
 

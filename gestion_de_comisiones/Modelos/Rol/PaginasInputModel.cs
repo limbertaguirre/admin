@@ -7,7 +7,9 @@ namespace gestion_de_comisiones.Modelos.Rol
 {
     public class PaginasInputModel
     {
-        public int idPermiso { get; set; }
-        public string permiso { get; set; }
+        public int idPagina { get; set; }
+        public string nombrePagina { get; set; }
+        public List<PermisoInputModel> permisos { get; set; }
+
     }
 }
