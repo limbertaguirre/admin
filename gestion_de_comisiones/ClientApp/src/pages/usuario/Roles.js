@@ -138,9 +138,9 @@ const  Roles =()=>  {
         }
         if (texfiel === "txtBusqueda") {
           setTxtBusqueda(value);
-         // setTxtBusquedaError(!isValidtxtBusqueda(value));
+         
         }
-        console.log('ingreso ',value)
+
     };
     useEffect(()=>{
         dispatch(Action.getPaginas());
@@ -211,34 +211,6 @@ const  Roles =()=>  {
             return true
           }
     };
-    //---------------------------------------------------------------------------
-    //const appReducer = (state, Action) =>{
-      //  switch(Action.type){
-      //        case 'ADD_PERMISO':{
-        //        historico: [...state.historico, Action.payload];
-         //     }
-       //  }
-  //   }
-    const incializador ={
-     historico: [
-        {
-          idmodulo:0,
-          nombreModulo:'',
-          paginas:[
-                { 
-                  idPagina:0,
-                  nombrePagina:'',
-                  permisos:[
-                            { 
-                              idPermiso:0,
-                              permiso:''
-                            }
-                  ]
-                }
-          ]
-        }
-      ]
-    }
     const incioHistori =[
          {
            idmodulo:0,
@@ -282,15 +254,12 @@ const  Roles =()=>  {
          setLPermisos([]);//se deshabilita los permisos visibles
 
     };
-//-----------------------------------------------------------------------
-//-- componente permiso
+
       const selecionoPermiso = (permiso) => {
-        console.log("se agrego  permiso", permiso)
         addCalculoHisotorico(permiso, moduloSelected.idModulo, moduloSelected.nombre, pageSelected.id_pagina,pageSelected.nombre);
        
       };
       const desSelecionoPermiso = (permisoDelete) => {
-        //  console.log("se elimino permiso", permisoDelete );
           eliminarPermisoCheck(permisoDelete, moduloSelected.idModulo, moduloSelected.nombre, pageSelected.id_pagina, pageSelected.nombre);
       };
       useEffect(()=>{
@@ -304,7 +273,7 @@ const  Roles =()=>  {
 
     const addCalculoHisotorico =(permiso, idModulo,nombreModulo, idPagina, nombrePagina)=>{
        const backupHistory = [...listHisotrico];
-       console.log('inicia con : ', backupHistory);
+      // console.log('inicia con : ', backupHistory);
         let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(idModulo));//--------------
         let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
         const moBK = [...objmoduloBk];
@@ -361,9 +330,9 @@ const  Roles =()=>  {
                     }
                     moBK.push(mode);
                     setListHisotrico(moBK);
-                    console.log('permiso agregado al primer objeto',moBK);
+                    //console.log('permiso agregado al primer objeto',moBK);
                   }else{
-                    console.log('eliminar aqui');
+                    //console.log('eliminar aqui');
                   }
             }else{
              // console.log('nueva pagina ,para el modulo, nombre pagina :', nombrePagina );
@@ -404,8 +373,8 @@ const  Roles =()=>  {
                   let objPermiso= objpagina[0].permisos.filter(x => x.idPermiso == parseInt(permiso.id_permiso));
                   const peBK= [...objPermisoBK];
 
-                  console.log('pagina delete objPermisoBK', objPermisoBK);
-                  console.log('pagina delete objPermiso', objPermiso);
+                  //console.log('pagina delete objPermisoBK', objPermisoBK);
+                  // console.log('pagina delete objPermiso', objPermiso);
                   if(objPermiso.length > 0){
                         const page= { 
                           idPagina:idPagina,
@@ -413,7 +382,7 @@ const  Roles =()=>  {
                           permisos:peBK
                         }
                         paBK.push(page);
-                        console.log('cero paBK 11: ', paBK);
+                       // console.log('cero paBK 11: ', paBK);
                         const mode={
                               idModulo:idModulo,
                               nombreModulo:nombreModulo,
@@ -426,14 +395,14 @@ const  Roles =()=>  {
                         setListHisotrico(moBK);
                      }else{
                        //aqui lo aqgrega sin la pagina ya que la pagina no tiene permiso
-                       console.log('cero paBK 22: ', paBK);
-                       console.log('cero paBK 22: ', objpaginaBK);
+                      // console.log('cero paBK 22: ', paBK);
+                       //console.log('cero paBK 22: ', objpaginaBK);
                        const modesinVacio={
                         idModulo:idModulo,
                         nombreModulo:nombreModulo,
                         paginas:objpaginaBK
                          }
-                        console.log('cero : ', modesinVacio);
+                       // console.log('cero : ', modesinVacio);
                         moBK.push(modesinVacio); 
                         setListHisotrico(moBK);
 
@@ -482,14 +451,40 @@ const  Roles =()=>  {
           dispatch(Action.registrarRoles(rolName, rolDescripcion, listHisotrico ));
 
     }
+    const validarBotonHistori=()=> {
+      if(listHisotrico.length > 0){
+          const hist = listHisotrico.length;
+          console.log('cantidad de modulo :',hist);
+          let datos=true;
+          for(let i=0; i<hist; i++){
 
+              if(listHisotrico[i].paginas.length > 0){
+                console.log('true 2');
+                    
+              }else{
+                console.log('false 2');
+                return false
+              }
+          }
 
+         return datos;
 
+      }else{
+        console.log('false 1');
+        return false;
+      }
+    }
+
+    const verificarRegistros= () =>{
+           
+       return isValidRolName(rolName) && isValidRolDescripcion(rolDescripcion) && validarBotonHistori()
+
+    }
 
     return (
          <>            
             <Typography variant="h6" gutterBottom>
-                GESTION DE ROLES
+                NUEVO ROL
             </Typography>   
             <Grid item xs={12} className={style.contentTitle} >
                          <TextField
@@ -661,7 +656,10 @@ const  Roles =()=>  {
 
             </Grid>
             <Grid item xs={12} className={style.contentTitle} >
-            <Button variant="contained" color="primary" onClick={onchangeRegistrarRol} >
+            <Button variant="contained" 
+            color="primary" 
+            disabled={!verificarRegistros()}
+            onClick={onchangeRegistrarRol} >
               REGISTRAR ROL
             </Button>
 

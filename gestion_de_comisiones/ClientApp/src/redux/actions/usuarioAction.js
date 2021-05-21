@@ -67,12 +67,29 @@ const permisos=[
 
 export const getPaginas= ()=>{
     return (dispatch)=>{     
-         dispatch({
-             type: Types.LISTA_PAGINAS,
-             paginas:listaPaginas,
-             permisos:permisos
-         })
-                  
+        requestGet('Rol/Listamodulos',{},dispatch).then((res)=>{ 
+            if(res.code === 0){
+                dispatch({
+                    type: Types.LISTA_PAGINAS,
+                    paginas:res.data,
+                })
+                
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        })
+
+        requestGet('Rol/Listapermisos',{},dispatch).then((res)=>{ 
+            if(res.code === 0){
+                dispatch({
+                    type: Types.LISTA_PERMISOS,
+                    permisos:res.data
+                })
+                
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        })          
     }
   }
 
@@ -86,7 +103,8 @@ export const getPaginas= ()=>{
     console.log('body :',body);
     return (dispatch)=>{        
         requestPost('Rol/Registrar',body,dispatch).then((res)=>{ 
-            if(res.code === 0){
+            if(res.code === 0){                
+                
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
                 window.location.replace('/gestion/roles');
             }else{

@@ -38,6 +38,14 @@ namespace gestion_de_comisiones.Servicios
             result.Data = data;
             return result;
         }
+        public Result<T> ReturnResultdo<T>(int code, string message, T data)
+        {
+            Result<T> result = new Result<T>();
+            result.Code = code;
+            result.Message = message;
+            result.Data = data;
+            return result;
+        }
 
 
     }

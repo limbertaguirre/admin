@@ -1,4 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.Modulo;
+using gestion_de_comisiones.Modelos.Pagina;
+using gestion_de_comisiones.Modelos.Permiso;
 using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Repository;
 using System;
@@ -43,7 +46,7 @@ namespace gestion_de_comisiones.Servicios
                 
                 }
 
-                var Result = new GenericDataJson<string> { Code = 1, Message = "El usuario se encuentra ya registrado" };
+                var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
                 return Result;
 
                 }
@@ -52,6 +55,57 @@ namespace gestion_de_comisiones.Servicios
                     var Result = new GenericDataJson<string> { Code = 1, Message = "El usuario se encuentra ya registrado" };
                     return Result;
                 }                     
+        }
+        public object ObtenerMooduloPaginas()
+        {
+            ConfiguracionService Confi = new ConfiguracionService();
+            ModuloRepository MoRepo = new ModuloRepository();
+            PaginaRepository PaRepo = new PaginaRepository();
+            PermisoRepository PerRepo = new PermisoRepository();
+            List<ModuloResulModel> ListaModulos = new List<ModuloResulModel>();
+
+           var modulos = MoRepo.ObtenerModulos();
+            
+            foreach(var modu in modulos)
+            {
+              //  List<PaginaModel> Lispaginas = new List<PaginaModel>();
+               var Lispaginas = PaRepo.ObtenerPaginas(modu.IdModulo);               
+                if(Lispaginas.Count > 0)
+                {
+                    //add modulo
+                    ModuloResulModel newModulo = new ModuloResulModel();
+                    newModulo.idModulo = modu.IdModulo;
+                    newModulo.nombre = modu.Nombre;
+                    List<PaginaResulModel> ListNewPaginas = new List<PaginaResulModel>();
+                    foreach (var itempagina in Lispaginas)
+                    {
+                        PaginaResulModel newPagina = new PaginaResulModel();
+                        newPagina.idPagina = itempagina.IdPagina;
+                        newPagina.nombre = itempagina.Nombre;
+                        ListNewPaginas.Add(newPagina);
+                    }
+                    //aqui add lis paginas
+                    newModulo.listmodulos = ListNewPaginas;
+                    //add a la lista general
+                    ListaModulos.Add(newModulo);
+                }
+            }
+
+
+            var resul = Confi.ReturnResultdo(0, "OK", ListaModulos);
+            //var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
+            return resul;
+
+            
+           
+        }
+        public object ObtenerPermiso()
+        {
+            ConfiguracionService Confi = new ConfiguracionService();
+            PermisoRepository PerRepo = new PermisoRepository();
+            var listaPermisos = PerRepo.obtenerPermisos();
+            var resul = Confi.ReturnResultdo(0, "OK", listaPermisos);
+            return resul;
         }
     }
 }

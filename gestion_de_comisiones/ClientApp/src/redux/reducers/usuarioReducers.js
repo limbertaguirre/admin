@@ -32,6 +32,10 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 listModulos:action.paginas,
+            }
+        case Type.LISTA_PERMISOS:
+            return{
+                ...state,
                 listPermisos:action.permisos
             }
    

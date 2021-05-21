@@ -12,6 +12,7 @@ namespace gestion_de_comisiones.Controllers
 {
     public class RolController : Controller
     {
+        RolService refeRol = new RolService();
         // GET: RolController
         public ActionResult Index()
         {
@@ -19,18 +20,35 @@ namespace gestion_de_comisiones.Controllers
         }
 
 
-        // POST: RolController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        // GET: RolController/Listamodulos
+        public ActionResult Listamodulos()
         {
+            
             try
             {
-                return RedirectToAction(nameof(Index));
+                var resultado = refeRol.ObtenerMooduloPaginas();
+               // var Result = new GenericDataJson<string> { Code = 0, Message = "SE LISTADO" };
+                return Ok(resultado);
             }
             catch
             {
-                return View();
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO SE ENCONTRO AREAS" };
+                return Ok(Result);
+            }
+        }
+        // GET: RolController/Listapermisos
+        public ActionResult Listapermisos()
+        {
+
+            try
+            {
+                var resultado = refeRol.ObtenerPermiso();
+                return Ok(resultado);
+            }
+            catch
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS" };
+                return Ok(Result);
             }
         }
 
@@ -44,12 +62,12 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 var resulRol = refRol.RegistraRol(objetdatao);
-                var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
-                return Ok(Result);
+               // var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
+                return Ok(resulRol);
             }
             catch (Exception ex)
             {
-                var Result = new GenericDataJson<string> { Code = 1, Message = "NO SE ENCONTRO AREAS" };
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde.." };
                 return Ok(Result);
             }
         }
