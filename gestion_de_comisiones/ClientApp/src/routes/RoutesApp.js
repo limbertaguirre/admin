@@ -20,7 +20,8 @@ import {useSelector,useDispatch} from "react-redux";
                 <Route path='/cargar/Comisiones' component={Pages.CargarComisiones} />
                 <Route path='/prorrateo' component={Pages.Prorrateo} />
                 <Route path='/facturacion' component={Pages.Facturacion} />     
-                <Route path='/forma/pago' component={Pages.FormaPago} />             
+                <Route path='/forma/pago' component={Pages.FormaPago} />  
+                <Route path='/gestion/roles' component={Pages.Roles} />            
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>
          </Layout> :
