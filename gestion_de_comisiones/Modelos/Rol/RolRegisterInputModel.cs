@@ -11,6 +11,7 @@ namespace gestion_de_comisiones.Modelos.Rol
   
         public string nombre { get; set; }
         public string descripcion { get; set; }
+        public int idUsuario { get; set; }
         public List<ModuloInputModel> modulos { get; set; }
 
     }

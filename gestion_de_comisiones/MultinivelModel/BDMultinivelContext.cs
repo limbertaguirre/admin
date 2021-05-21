@@ -59,6 +59,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
+        public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1798,7 +1799,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<RolPaginaPermisoI>(entity =>
             {
                 entity.HasKey(e => e.IdRolPaginaPermisoI)
-                    .HasName("PK__ROL_PAGI__31BAAF4868770EE2");
+                    .HasName("PK__ROL_PAGI__31BAAF489DF83CB2");
 
                 entity.ToTable("ROL_PAGINA_PERMISO_I");
 
@@ -2068,6 +2069,49 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("usuario")
                     .HasComment("Nombre de usuario extraído del dominio que tiene asignado un trabajador en la empresa");
+
+                entity.Property(e => e.UsuarioId)
+                    .HasColumnName("usuario_id")
+                    .HasComment("El usuario_id es el id del último usuario que modificó el registro.");
+            });
+
+            modelBuilder.Entity<UsuriosRole>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuariosRoles)
+                    .HasName("PK__USURIOS___720F812BF87761AA");
+
+                entity.ToTable("USURIOS_ROLES");
+
+                entity.HasIndex(e => e.IdUsuario, "UQ__USURIOS___4E3E04ACF569CC69")
+                    .IsUnique();
+
+                entity.Property(e => e.IdUsuariosRoles)
+                    .HasColumnName("id_usuarios_roles")
+                    .HasComment("Llave primaria incremental de la tabla.");
+
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasComment("Es el estado del requistro booleano true o false");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualización del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creación del registro");
+
+                entity.Property(e => e.IdRol)
+                    .HasColumnName("id_rol")
+                    .HasComment("Llave foranea que hace relacion con la tabla Rol");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("Llave foranea que hace referencia a la tabla usuario");
 
                 entity.Property(e => e.UsuarioId)
                     .HasColumnName("usuario_id")

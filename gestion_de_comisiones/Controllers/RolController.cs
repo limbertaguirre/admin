@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Rol;
+using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -38,9 +39,12 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]
         public ActionResult Registrar([FromBody] RolRegisterInputModel objetdatao)
         {
+            RolService refRol = new RolService();
+
             try
             {
-                var Result = new GenericDataJson<string> { Code = 1, Message = "NO SE ENCONTRO AREAS" };
+                var resulRol = refRol.RegistraRol(objetdatao);
+                var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
                 return Ok(Result);
             }
             catch (Exception ex)
