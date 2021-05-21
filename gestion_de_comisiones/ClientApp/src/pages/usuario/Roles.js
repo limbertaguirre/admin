@@ -457,28 +457,21 @@ const  Roles =()=>  {
           console.log('cantidad de modulo :',hist);
           let datos=true;
           for(let i=0; i<hist; i++){
-
               if(listHisotrico[i].paginas.length > 0){
-                console.log('true 2');
-                    
+  
               }else{
-                console.log('false 2');
                 return false
               }
           }
-
          return datos;
-
-      }else{
+       }else{
         console.log('false 1');
         return false;
       }
     }
 
     const verificarRegistros= () =>{
-           
        return isValidRolName(rolName) && isValidRolDescripcion(rolDescripcion) && validarBotonHistori()
-
     }
 
     return (
