@@ -88,16 +88,6 @@ const useStyles = makeStyles((theme) => ({
       }
       
 }));
-//---------funciona para transferencia--------------
-    function not(a, b) {
-        return a.filter((value) => b.indexOf(value) === -1);
-    }
-    
-    function intersection(a, b) {
-       
-        return a.filter((value) => b.indexOf(value) !== -1);
-    }
-//--------------------------
 
 const  Roles =()=>  {       
     const style = useStyles();
@@ -147,70 +137,19 @@ const  Roles =()=>  {
     },[]);
     useEffect(()=>{
       setLModulos(listModulos);
-     // console.log('permisos , ', lPermisos);
   },[lModulos, lPermisos ]);
 
-    //----------------------------------------------------------------------------------
+
     const [checked, setChecked] = React.useState([]);
 
-    const [left, setLeft] = React.useState([]);
-    const [right, setRight] = React.useState([]);
   
-    const leftChecked = intersection(checked, left);
-   const rightChecked = intersection(checked, right);
   
-    const handleToggle = (value, nombre) => () => {
-      console.log('onchange ini------------------------------: ');
-          const currentIndex = checked.indexOf(value);
-          const newChecked = [...checked];
-          console.log('currentIndex : ', currentIndex);
-          console.log('newChecked : ', newChecked);
 
-          if (currentIndex === -1) {
-            var value1= { id_pagina:value, nombre:nombre};
-            newChecked.push(value1);
-          } else {
-            newChecked.splice(currentIndex, 1);
-          }
-         setChecked(newChecked);
-      console.log('onchange ini------------------------------: ');
-    };
-  
-    const handleAllRight = () => {
-      console.log(left)
-      setRight(right.concat(left));
-      setLeft([]);
-    };
-  
-    const handleCheckedRight = () => {
-     // setRight(right.concat(leftChecked));
-    //  setLeft(not(left, leftChecked));
-    //  setChecked(not(checked, leftChecked));
-    };
-  
-    const handleCheckedLeft = () => { 
-    //  setLeft(left.concat(rightChecked));
-    //  setRight(not(right, rightChecked));
-    //  setChecked(not(checked, rightChecked));
-    };
-  
-    const handleAllLeft = () => {
-      setLeft(left.concat(right));
-      setRight([]);
-    };
     useEffect(()=>{
-     // console.log('el checked', checked);
+    
    },[checked, ]);
 
-     const checkeselecionado = (valuesid) => {
-        
-          const tupla= checked.find(x => x.id_pagina === parseInt(valuesid));
-          
-          if(tupla !== undefined){
-            console.log('ingreso undefine :', tupla);
-            return true
-          }
-    };
+
     const incioHistori =[
          {
            idmodulo:0,
@@ -235,7 +174,7 @@ const  Roles =()=>  {
     const [moduloSelected, setModuloSelected]= useState({idModulo:0, nombre: ''})
     const [listHisotrico, setListHisotrico]= useState([])
     const [listPaginaAgregadas, setPListPaginaAgregadas]= useState([])
-    const [componente, setComponente] = useState(false);
+    
 
     const selecionoPagina = (pagina,idModulo, nombreModulo) => {
      // console.log("agregara en el modulo", nombreModulo)
@@ -524,7 +463,8 @@ const  Roles =()=>  {
 
            </Grid>
             <br /> 
-            <Grid item xs={12} className={style.contentTitle} >
+
+          {/* <Grid item xs={12} className={style.contentTitle} >
                          <TextField
                             id="txtBusqueda"
                             label="Buscar Modulo"
@@ -549,7 +489,7 @@ const  Roles =()=>  {
                         />      
 
 
-           </Grid>
+                          </Grid>*/}
             <br />
             <Grid item xs={12} >
 

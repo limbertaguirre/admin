@@ -107,5 +107,95 @@ namespace gestion_de_comisiones.Servicios
             var resul = Confi.ReturnResultdo(0, "OK", listaPermisos);
             return resul;
         }
+        public List<ModuloResulModel> FuncionObtenerMooduloPaginas()
+        {
+            ConfiguracionService Confi = new ConfiguracionService();
+            ModuloRepository MoRepo = new ModuloRepository();
+            PaginaRepository PaRepo = new PaginaRepository();
+            PermisoRepository PerRepo = new PermisoRepository();
+            List<ModuloResulModel> ListaModulos = new List<ModuloResulModel>();
+
+            var modulos = MoRepo.ObtenerModulos();
+
+            foreach (var modu in modulos)
+            {
+                //  List<PaginaModel> Lispaginas = new List<PaginaModel>();
+                var Lispaginas = PaRepo.ObtenerPaginas(modu.IdModulo);
+                if (Lispaginas.Count > 0)
+                {
+                    //add modulo
+                    ModuloResulModel newModulo = new ModuloResulModel();
+                    newModulo.idModulo = modu.IdModulo;
+                    newModulo.nombre = modu.Nombre;
+                    List<PaginaResulModel> ListNewPaginas = new List<PaginaResulModel>();
+                    foreach (var itempagina in Lispaginas)
+                    {
+                        PaginaResulModel newPagina = new PaginaResulModel();
+                        newPagina.idPagina = itempagina.IdPagina;
+                        newPagina.nombre = itempagina.Nombre;
+                        ListNewPaginas.Add(newPagina);
+                    }
+                    //aqui add lis paginas
+                    newModulo.listmodulos = ListNewPaginas;
+                    //add a la lista general
+                    ListaModulos.Add(newModulo);
+                }
+            }
+            return ListaModulos;
+
+        }
+        public object ObtenerListaRoles(int idROl)
+        {
+            ConfiguracionService Confi = new ConfiguracionService();
+            PermisoRepository PerRepo = new PermisoRepository();
+            List<ModuloResulModel> ListaModulosAll = new List<ModuloResulModel>();
+
+            ListaModulosAll = FuncionObtenerMooduloPaginas();
+
+            List<ModuloResulwithPermisoModel> NewListModulos = new List<ModuloResulwithPermisoModel>();
+            foreach(var itemModulo in ListaModulosAll)
+            {
+
+                ModuloResulwithPermisoModel objModulo = new ModuloResulwithPermisoModel();
+                objModulo.idModulo = itemModulo.idModulo;
+                objModulo.nombre = itemModulo.nombre;
+                List<PaginaResulModelWithPermisos> lisNewPaginas = new List<PaginaResulModelWithPermisos>();
+
+                foreach (var itemPagina in itemModulo.listmodulos)
+                {
+                    PaginaResulModelWithPermisos objNewPagina = new PaginaResulModelWithPermisos();
+                    objNewPagina.idPagina = itemPagina.idPagina;
+                    objNewPagina.nombre = itemPagina.nombre;
+                    List<RolPermiso> LisNewPermisos = new List<RolPermiso>();
+                    //-------for aqui add permisos true false
+                    List<PermisoResulModel> allPermiso = PerRepo.obtenerPermisos();
+                    //aqui retornar si no tiene if
+                    foreach(var itemPermiso in allPermiso)
+                    {
+                        RolPermiso objNewPermiso = new RolPermiso();
+                        objNewPermiso.idPermiso = itemPermiso.idPermiso;
+                        objNewPermiso.permiso1 = itemPermiso.permiso1;                        
+                        var objPermiso = PerRepo.ObtenerPermisoPorROl(itemPagina.idPagina, itemPermiso.idPermiso, idROl);
+                        if(objPermiso.idPermiso > 0)
+                        {
+                            objNewPermiso.estado = true;
+                        }
+                        else
+                        {
+                            objNewPermiso.estado = false;
+                        }
+                        LisNewPermisos.Add(objNewPermiso);
+                    }
+                    objNewPagina.permisos = LisNewPermisos;
+                    lisNewPaginas.Add(objNewPagina);
+
+                }
+                objModulo.listmodulos = lisNewPaginas;
+                NewListModulos.Add(objModulo);
+            }
+            
+            var resul = Confi.ReturnResultdo(0, "OK", NewListModulos);
+            return resul;
+        }
     }
 }

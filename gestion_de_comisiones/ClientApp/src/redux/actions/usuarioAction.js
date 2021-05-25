@@ -89,7 +89,19 @@ export const getPaginas= ()=>{
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   
-        })          
+        })      
+           //-------------------------------------------
+           //---aqui prueba consumir id Rol
+           const headers={idRol:14};
+           requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
+            if(res.code === 0){
+             console.log('rolesss : ', res)
+                
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        })    
+           //------------------------------------------- '; ¶´´
     }
   }
 

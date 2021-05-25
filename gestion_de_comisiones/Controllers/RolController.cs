@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
+
     public class RolController : Controller
     {
         RolService refeRol = new RolService();
@@ -68,6 +69,21 @@ namespace gestion_de_comisiones.Controllers
             catch (Exception ex)
             {
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde.." };
+                return Ok(Result);
+            }
+        }
+
+        // GET: RolController/ObtenerListaXRol
+        public ActionResult ObtenerListaXRol([FromHeader]int idRol)
+        {
+            try
+            {
+                var resultado = refeRol.ObtenerListaRoles(idRol);
+                return Ok(resultado);
+            } 
+            catch
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS PARA ESTE ROL" };
                 return Ok(Result);
             }
         }
