@@ -148,54 +148,72 @@ namespace gestion_de_comisiones.Servicios
         {
             ConfiguracionService Confi = new ConfiguracionService();
             PermisoRepository PerRepo = new PermisoRepository();
+            RolRepository rolRepo = new RolRepository();
             List<ModuloResulModel> ListaModulosAll = new List<ModuloResulModel>();
 
-            ListaModulosAll = FuncionObtenerMooduloPaginas();
-
-            List<ModuloResulwithPermisoModel> NewListModulos = new List<ModuloResulwithPermisoModel>();
-            foreach(var itemModulo in ListaModulosAll)
+           
+            //consultar
+            var objRol = rolRepo.obtenerRolXId(idROl);
+            if( objRol.IdRol > 0)
             {
+                RolResulModel objNewRoleModulo = new RolResulModel();
+                objNewRoleModulo.IdRol = objRol.IdRol;
+                objNewRoleModulo.Nombre = objRol.Nombre;
+                objNewRoleModulo.Descripcion = objRol.Descripcion;
 
-                ModuloResulwithPermisoModel objModulo = new ModuloResulwithPermisoModel();
-                objModulo.idModulo = itemModulo.idModulo;
-                objModulo.nombre = itemModulo.nombre;
-                List<PaginaResulModelWithPermisos> lisNewPaginas = new List<PaginaResulModelWithPermisos>();
 
-                foreach (var itemPagina in itemModulo.listmodulos)
+                ListaModulosAll = FuncionObtenerMooduloPaginas();
+                List<ModuloResulwithPermisoModel> NewListModulos = new List<ModuloResulwithPermisoModel>();
+                foreach(var itemModulo in ListaModulosAll)
                 {
-                    PaginaResulModelWithPermisos objNewPagina = new PaginaResulModelWithPermisos();
-                    objNewPagina.idPagina = itemPagina.idPagina;
-                    objNewPagina.nombre = itemPagina.nombre;
-                    List<RolPermiso> LisNewPermisos = new List<RolPermiso>();
-                    //-------for aqui add permisos true false
-                    List<PermisoResulModel> allPermiso = PerRepo.obtenerPermisos();
-                    //aqui retornar si no tiene if
-                    foreach(var itemPermiso in allPermiso)
-                    {
-                        RolPermiso objNewPermiso = new RolPermiso();
-                        objNewPermiso.idPermiso = itemPermiso.idPermiso;
-                        objNewPermiso.permiso1 = itemPermiso.permiso1;                        
-                        var objPermiso = PerRepo.ObtenerPermisoPorROl(itemPagina.idPagina, itemPermiso.idPermiso, idROl);
-                        if(objPermiso.idPermiso > 0)
-                        {
-                            objNewPermiso.estado = true;
-                        }
-                        else
-                        {
-                            objNewPermiso.estado = false;
-                        }
-                        LisNewPermisos.Add(objNewPermiso);
-                    }
-                    objNewPagina.permisos = LisNewPermisos;
-                    lisNewPaginas.Add(objNewPagina);
 
+                    ModuloResulwithPermisoModel objModulo = new ModuloResulwithPermisoModel();
+                    objModulo.idModulo = itemModulo.idModulo;
+                    objModulo.nombre = itemModulo.nombre;
+                    List<PaginaResulModelWithPermisos> lisNewPaginas = new List<PaginaResulModelWithPermisos>();
+
+                    foreach (var itemPagina in itemModulo.listmodulos)
+                    {
+                        PaginaResulModelWithPermisos objNewPagina = new PaginaResulModelWithPermisos();
+                        objNewPagina.idPagina = itemPagina.idPagina;
+                        objNewPagina.nombre = itemPagina.nombre;
+                        List<RolPermiso> LisNewPermisos = new List<RolPermiso>();
+                        //-------for aqui add permisos true false
+                        List<PermisoResulModel> allPermiso = PerRepo.obtenerPermisos();
+                        //aqui retornar si no tiene if
+                        foreach(var itemPermiso in allPermiso)
+                        {
+                            RolPermiso objNewPermiso = new RolPermiso();
+                            objNewPermiso.idPermiso = itemPermiso.idPermiso;
+                            objNewPermiso.permiso1 = itemPermiso.permiso1;                        
+                            var objPermiso = PerRepo.ObtenerPermisoPorROl(itemPagina.idPagina, itemPermiso.idPermiso, idROl);
+                            if(objPermiso.idPermiso > 0)
+                            {
+                                objNewPermiso.estado = true;
+                            }
+                            else
+                            {
+                                objNewPermiso.estado = false;
+                            }
+                            LisNewPermisos.Add(objNewPermiso);
+                        }
+                        objNewPagina.permisos = LisNewPermisos;
+                        lisNewPaginas.Add(objNewPagina);
+
+                    }
+                    objModulo.listmodulos = lisNewPaginas;
+                    NewListModulos.Add(objModulo);
                 }
-                objModulo.listmodulos = lisNewPaginas;
-                NewListModulos.Add(objModulo);
+                objNewRoleModulo.Modulos = NewListModulos;
+                var resul = Confi.ReturnResultdo(0, "OK", objNewRoleModulo);
+                return resul;
             }
-            
-            var resul = Confi.ReturnResultdo(0, "OK", NewListModulos);
-            return resul;
+            else
+            {
+                var resul = Confi.ReturnResultdo(1, "No exite rol", "");
+                return resul;
+            }
+
         }
 
         public List<ModuloResulwithPermisoModel> FuncionObtenerListaXRol(int idROl)

@@ -144,3 +144,20 @@ export const getPaginas= ()=>{
 
     }
   }
+  export const ObtenerRolModulos= (idRolSelecionado)=>{
+    return (dispatch)=>{        
+         const headers={idRol:idRolSelecionado};
+        requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
+            if(res.code === 0){
+            console.log('rolesss : ', res.data)
+               dispatch({
+                   type:Types.OBJETO_GLOBAL_ROLES_MODULOS,
+                   objetoRol:res.data
+                 }) 
+                
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+            })    
+    }
+  }

@@ -12,6 +12,7 @@ import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import CardRol from './component/CardRol';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
       backgroundColor: theme.palette.grey[100],
@@ -37,49 +38,32 @@ const useStyles = makeStyles((theme) => ({
         alignItems:"flex-end",
         justifyContent: 'flex-end',
     },
-    contentMenu: {
-        display: "flex",
-        width: "100%",
-        marginTop: 10,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        alignContent: "stretch",
-        alignItems: "center",
-      },
-
 }));
 
-const  GestionRol =()=>  {       
+const  EditRol =(props)=>  {       
     const style = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
     const {globalModules } = useSelector((stateSelector) =>{ return stateSelector.usuario});
-
+    const [idRol, setIdRol] = useState(0)
      useEffect(()=>{
-        // if(globalModules.length >=0){ //quitar esta consicion despues
-          //  dispatch(Action.ObtenerRolesModulos());
-        // }
-     
-     },[ ]);
+         setIdRol(props.location.state.idRol)
+         
+     },[]);
+     useEffect(()=>{
+       // if(idRol != 0){
+            console.log(' local d : ',idRol)
+            dispatch(Action.ObtenerRolModulos(props.location.state.idRol));
+       // } 
+    },[]);
 
-    const redirecionarEditRol=(idRol)=>{
-        console.log(idRol)
-        const location = {
-          pathname: '/gestion/edit/rol',
-          state: {idRol: idRol }
-        }
-        history.push(location);
-    }
-  
-  
     return (
          <>    
           <br/>
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                        <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />
-              
+                    <div onClick={()=> history.goBack()}> <StyledBreadcrumb key={1}  component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />  </div>                        
+                    <div><StyledBreadcrumb key={2} component="a" label="Editar Rol "icon={<EditOutlinedIcon fontSize="small" />}  /></div>
               </Breadcrumbs>
            </div>
            <br/>
@@ -87,35 +71,27 @@ const  GestionRol =()=>  {
                 <Grid container spacing={3}>
                     <Grid item xs={6}>
                         <Typography variant="h6" gutterBottom>
-                            Gestion de Roles
+                            Editar de Roles
                         </Typography>  
                         </Grid>
-                    <Grid item xs={6} className={style.gridNewRol} >
+                   {/*  <Grid item xs={6} className={style.gridNewRol} >
                         <Button variant="contained" 
                             color="primary" 
-                            onClick={()=> history.push("/gestion/nuevo/roles")} >
+                            onClick={()=>  history.goBack()} >
                             <AddCircleOutlineIcon />
-                            {' '}{' NUEVO ROL'}
+                            {' '}{' volver'}
                         </Button>
-                    </Grid>
+                    </Grid>  */}
+                <Grid item xs={12}>
+
+                    
+                </Grid>
                 </Grid>
             </div>        
-             
-            <br /> 
-            <Grid item xs={12} >
-            <div className={style.contentMenu}>
-
-                {globalModules.map((value,index)=>(
-                    <CardRol  modulo={value} redirecionarEditRol={redirecionarEditRol} />
-                ))}
-
-            </div>
-
-            </Grid>
           
 
          </>
     );
 }
-export default  GestionRol;
+export default  EditRol;
 

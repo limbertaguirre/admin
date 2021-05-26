@@ -25,6 +25,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -438,8 +439,8 @@ const  Roles =()=>  {
          <>   
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                          <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />} /> 
-                          <StyledBreadcrumb key={2} component="a" label="Nuevo Rol"  />
+                       <div onClick={()=> history.goBack()}>  <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />} /> </div>
+                      <div> <StyledBreadcrumb key={2} component="a" label="Nuevo Rol" icon={<AddCircleOutlineIcon fontSize="small" />} /> </div>   
               </Breadcrumbs>
            </div>     
            <br/>    

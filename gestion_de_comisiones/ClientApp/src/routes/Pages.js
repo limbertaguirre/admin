@@ -6,7 +6,8 @@ import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';
 import NotFoundLoad from '../components/notfound/NotFoundLoad';
 import Roles from '../pages/usuario/Roles';
-import GestionRol from '../pages/usuario/Roles/GestionRol'
+import GestionRol from '../pages/usuario/Roles/GestionRol';
+import EditRol from '../pages/usuario/Roles/EditRol';
 
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
@@ -25,4 +26,5 @@ export default {
     NotFoundLoad,
     Roles,
     GestionRol,
+    EditRol,
 };

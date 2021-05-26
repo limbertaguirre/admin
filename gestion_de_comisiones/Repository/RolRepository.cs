@@ -43,6 +43,19 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public RolResulModel obtenerRolXId(int idRol)
+        {
+            try
+            {
+                var ListRoles = contextMulti.Rols.Where(x => x.Habilitado == true && x.IdRol == idRol).Select(p => new RolResulModel(p.IdRol, p.Nombre, p.Descripcion, p.Habilitado)).First();
+                return ListRoles;
+            }
+            catch (Exception ex)
+            {
+                RolResulModel list = new RolResulModel();
+                return list;
+            }
+        }
 
     }
 }

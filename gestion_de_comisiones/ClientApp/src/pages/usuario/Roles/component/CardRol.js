@@ -19,6 +19,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AcordionListModulos from './AcordionListModulos';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import IconButton from '@material-ui/core/IconButton';
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   iconMenu:{
@@ -47,8 +49,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display:'flex',
     maxWidth: '33%',
-    margin:6,
+    margin:15,
     padding: 6,
+    boxShadow: '2px 4px 5px #999',
+    '&:hover': {
+        border: '1px solid #252a3b',
+        transform: 'scale(1.05, 1.09)',
+        '& .MuiCardHeader-root': {
+          backgroundColor: '#252a3b',
+          color: 'white'
+        },
+      }
   },
   title: {
     fontSize: 14,
@@ -74,11 +85,20 @@ const useStyles = makeStyles((theme) => ({
   }
 
 }));
-const CardRol = ({modulo})=>{
+const CardRol = ({modulo, redirecionarEditRol})=>{
   const classes = useStyles();
+  const history = useHistory();
+
   useEffect(()=>{
-   //  console.log('modulos', modulo.listModulos);
   },[])
+/*   const redirecionarEditRol=(idRol)=>{
+      console.log(idRol)
+      const location = {
+        pathname: '/gestion/edit/rol',
+        state: {idRol: idRol }
+      }
+      history.push(location);
+  } */
 
   return(
     <Card className={classes.root}>
@@ -96,7 +116,9 @@ const CardRol = ({modulo})=>{
                     </Typography>
                     </Grid>
                     <Grid item xs={2} className={classes.gridEditRol}>
-                      <EditOutlinedIcon />
+                        <IconButton color="primary" component="span" onClick={()=>redirecionarEditRol(modulo.idRol)}>
+                            <EditOutlinedIcon />
+                        </IconButton>                     
                      </Grid>
             </Grid>
               
