@@ -58,12 +58,13 @@ const  GestionRol =()=>  {
 
      useEffect(()=>{
         // if(globalModules.length >=0){ //quitar esta consicion despues
-          //  dispatch(Action.ObtenerRolesModulos());
+           dispatch(Action.ObtenerRolesModulos());
         // }
      
      },[ ]);
 
     const redirecionarEditRol=(idRol)=>{
+        dispatch(Action.ObtenerRolModulos(idRol));
         console.log(idRol)
         const location = {
           pathname: '/gestion/edit/rol',
