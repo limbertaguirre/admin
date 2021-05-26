@@ -13,7 +13,7 @@ namespace gestion_de_comisiones.Servicios
 {
     public class RolService
     {
-
+        ConfiguracionService Respuesta = new ConfiguracionService();
         public object RegistraRol(RolRegisterInputModel data)
         {
 
@@ -144,7 +144,7 @@ namespace gestion_de_comisiones.Servicios
             return ListaModulos;
 
         }
-        public object ObtenerListaRoles(int idROl)
+        public object ObtenerListaRol(int idROl)
         {
             ConfiguracionService Confi = new ConfiguracionService();
             PermisoRepository PerRepo = new PermisoRepository();
@@ -196,6 +196,77 @@ namespace gestion_de_comisiones.Servicios
             
             var resul = Confi.ReturnResultdo(0, "OK", NewListModulos);
             return resul;
+        }
+
+        public List<ModuloResulwithPermisoModel> FuncionObtenerListaXRol(int idROl)
+        {
+            PermisoRepository PerRepo = new PermisoRepository();
+            List<ModuloResulModel> ListaModulosAll = new List<ModuloResulModel>();
+            ListaModulosAll = FuncionObtenerMooduloPaginas();
+
+            List<ModuloResulwithPermisoModel> NewListModulos = new List<ModuloResulwithPermisoModel>();
+            foreach (var itemModulo in ListaModulosAll)
+            {
+                ModuloResulwithPermisoModel objModulo = new ModuloResulwithPermisoModel();
+                objModulo.idModulo = itemModulo.idModulo;
+                objModulo.nombre = itemModulo.nombre;
+                List<PaginaResulModelWithPermisos> lisNewPaginas = new List<PaginaResulModelWithPermisos>();
+                foreach (var itemPagina in itemModulo.listmodulos)
+                {
+                    PaginaResulModelWithPermisos objNewPagina = new PaginaResulModelWithPermisos();
+                    objNewPagina.idPagina = itemPagina.idPagina;
+                    objNewPagina.nombre = itemPagina.nombre;
+                    List<RolPermiso> LisNewPermisos = new List<RolPermiso>();
+                    List<PermisoResulModel> allPermiso = PerRepo.obtenerPermisos();
+                    foreach (var itemPermiso in allPermiso)
+                    {
+                        RolPermiso objNewPermiso = new RolPermiso();
+                        objNewPermiso.idPermiso = itemPermiso.idPermiso;
+                        objNewPermiso.permiso1 = itemPermiso.permiso1;
+                        var objPermiso = PerRepo.ObtenerPermisoPorROl(itemPagina.idPagina, itemPermiso.idPermiso, idROl);
+                        if (objPermiso.idPermiso > 0)
+                        {
+                            objNewPermiso.estado = true;
+                        }
+                        else
+                        {
+                            objNewPermiso.estado = false;
+                        }
+                        LisNewPermisos.Add(objNewPermiso);
+                    }
+                    objNewPagina.permisos = LisNewPermisos;
+                    lisNewPaginas.Add(objNewPagina);
+
+                }
+                objModulo.listmodulos = lisNewPaginas;
+                NewListModulos.Add(objModulo);
+            }
+            return NewListModulos;
+        }
+        public object ObtenerListaRolesWithModulos()
+        {
+            try {  
+                RolRepository rolRepo = new RolRepository();
+                var listRol = rolRepo.obtenerRolesAll();
+                List<RolResulModel> ListNewRoleModulo = new List<RolResulModel>();
+                foreach(var itemR in listRol)
+                {
+                    RolResulModel objNewRolModule = new RolResulModel();
+                    objNewRolModule.IdRol = itemR.IdRol;
+                    objNewRolModule.Nombre = itemR.Nombre;
+                    objNewRolModule.Descripcion = itemR.Descripcion;
+                    objNewRolModule.Habilitado = itemR.Habilitado;
+                    var LModulos = this.FuncionObtenerListaXRol(itemR.IdRol);
+                    objNewRolModule.Modulos = LModulos;
+                    ListNewRoleModulo.Add(objNewRolModule);
+                }
+                return  Respuesta.ReturnResultdo(0, "OK", ListNewRoleModulo);
+            }
+            catch (Exception ex)
+            {
+                List<RolResulModel> Líst = new List<RolResulModel>();
+                return Respuesta.ReturnResultdo(1, "OK", Líst);
+            }
         }
     }
 }

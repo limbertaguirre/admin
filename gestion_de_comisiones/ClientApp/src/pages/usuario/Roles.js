@@ -3,7 +3,11 @@
 import React,{useState, useEffect, useReducer }  from 'react';
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, emphasize, withStyles } from '@material-ui/core/styles';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import { useHistory, Link } from "react-router-dom";
+import Chip from '@material-ui/core/Chip';
+import HomeIcon from '@material-ui/icons/Home';
 import { verificaAlfanumerico } from "../../lib/expresiones";
 import { useSelector,useDispatch } from "react-redux";
 import * as Action from '../../redux/actions/usuarioAction';
@@ -13,18 +17,31 @@ import HistoryModel from './HistoryModel';
 //-----------------------transferencia
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
 import Paper from '@material-ui/core/Paper';
 //-----------------------------------------------
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
+
+const StyledBreadcrumb = withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100],
+    height: theme.spacing(3),
+    color: theme.palette.grey[800],
+    fontWeight: theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.grey[300],
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+    },
+  },
+}))(Chip); 
+
 const useStyles = makeStyles((theme) => ({
     icono: {
         width: '40px',
@@ -92,6 +109,7 @@ const useStyles = makeStyles((theme) => ({
 const  Roles =()=>  {       
     const style = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const [rolName, setRolName] = useState("");
     const [rolNameError, setRolNameError] = useState(false);
     const [rolDescripcion, setRolDescripcion] = useState("");
@@ -412,9 +430,19 @@ const  Roles =()=>  {
     const verificarRegistros= () =>{
        return isValidRolName(rolName) && isValidRolDescripcion(rolDescripcion) && validarBotonHistori()
     }
+    const redirecionarHomeRol=()=>{
+       history.push("/gestion/nuevo/roles")
+    }
 
     return (
-         <>            
+         <>   
+            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
+              <Breadcrumbs aria-label="breadcrumb">
+                          <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />} /> 
+                          <StyledBreadcrumb key={2} component="a" label="Nuevo Rol"  />
+              </Breadcrumbs>
+           </div>     
+           <br/>    
             <Typography variant="h6" gutterBottom>
                 NUEVO ROL
             </Typography>   

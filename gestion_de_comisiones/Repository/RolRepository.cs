@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.MultinivelModel;
+﻿using gestion_de_comisiones.Modelos.Rol;
+using gestion_de_comisiones.MultinivelModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,19 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 return -1;
+            }
+        }
+        public List<RolResulModel> obtenerRolesAll()
+        {
+            try
+            {
+                var ListRoles = contextMulti.Rols.Where(x => x.Habilitado == true).Select(p => new RolResulModel( p.IdRol, p.Nombre, p.Descripcion, p.Habilitado)).ToList();
+                return ListRoles;
+            }
+            catch (Exception ex)
+            {
+                List<RolResulModel> list = new List<RolResulModel>();
+                return list;
             }
         }
 

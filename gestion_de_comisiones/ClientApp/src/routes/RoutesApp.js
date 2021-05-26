@@ -21,7 +21,8 @@ import {useSelector,useDispatch} from "react-redux";
                 <Route path='/prorrateo' component={Pages.Prorrateo} />
                 <Route path='/facturacion' component={Pages.Facturacion} />     
                 <Route path='/forma/pago' component={Pages.FormaPago} />  
-                <Route path='/gestion/roles' component={Pages.Roles} />            
+                <Route path='/gestion/nuevo/roles' component={Pages.Roles} /> 
+                <Route path='/gestion/roles' component={Pages.GestionRol} />            
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>
          </Layout> :

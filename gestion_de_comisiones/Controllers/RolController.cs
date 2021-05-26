@@ -78,9 +78,23 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                var resultado = refeRol.ObtenerListaRoles(idRol);
+                var resultado = refeRol.ObtenerListaRol(idRol);
                 return Ok(resultado);
             } 
+            catch
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS PARA ESTE ROL" };
+                return Ok(Result);
+            }
+        }
+        // GET: RolController/ObtenerRolesAllModules
+        public ActionResult ObtenerRolesAllModules()
+        {
+            try
+            {
+                var resultado = refeRol.ObtenerListaRolesWithModulos();
+                return Ok(resultado);
+            }
             catch
             {
                 var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS PARA ESTE ROL" };

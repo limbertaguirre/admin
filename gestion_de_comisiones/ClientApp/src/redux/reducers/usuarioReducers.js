@@ -23,6 +23,7 @@ const defaultState = {
           ]
         }
     ],
+    globalModules:[],
     
 };
 
@@ -37,6 +38,11 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 listPermisos:action.permisos
+            }
+        case Type.LISTA_GLOBAL_ROLES_MODULOS:
+            return{
+                ...state,
+                globalModules:action.globalModules
             }
    
         default: {
