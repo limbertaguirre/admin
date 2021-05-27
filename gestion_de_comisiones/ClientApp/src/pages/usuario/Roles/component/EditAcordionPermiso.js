@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 
-const  EditAcordionPermiso =({permiso, idModulo, pagina, selecionoPermiso, desSelecionoPermiso })=>  {       
+const  EditAcordionPermiso =({permiso, idModulo,nombreModulo, pagina, selecionoPermiso, desSelecionoPermiso })=>  {       
     const style = useStyles();
     const dispatch = useDispatch();
     const [checked, setChecked] = React.useState(false);
@@ -38,13 +38,12 @@ const  EditAcordionPermiso =({permiso, idModulo, pagina, selecionoPermiso, desSe
         setChecked(permiso.estado)
     },[])
     const handleChange = (event) => {
-        //console.log('id modulo: ', idModulo, 'permiso :', permiso.permiso, 'estado :',event.target.checked)
-        //console.log("selecciono ", event.target.checked, " : ");
         if(event.target.checked){
-          selecionoPermiso(idModulo, pagina, permiso);
+            selecionoPermiso(idModulo,nombreModulo, pagina, permiso, event.target.checked);
         }else{
-         desSelecionoPermiso(idModulo, pagina, permiso);
+         desSelecionoPermiso(idModulo,nombreModulo, pagina, permiso, event.target.checked);
         }
+        
          setChecked(event.target.checked);
     };
 

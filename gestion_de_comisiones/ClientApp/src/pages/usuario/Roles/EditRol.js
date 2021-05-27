@@ -79,16 +79,15 @@ const  EditRol =(props)=>  {
     const [rolDescripcion, setRolDescripcion] = useState("");
     const [rolDescripcionError, setRolDescripcionError] = useState(false);
     const [hisotryModules, setHisotryModules]= useState([]);
+    const [allModules, setAllModules]= useState([]);
 
-     useEffect(()=>{
-            console.log(' local d : ',idRol)
-          //  dispatch(Action.ObtenerRolModulos(props.location.state.idRol));
-    },[]);
+ 
     useEffect(()=>{
         setIdRol(props.location.state.idRol)
         setRolName(objetoRol.nombre);
         setRolDescripcion(objetoRol.descripcion);
         setHisotryModules(objetoRol.listModulos);
+        setAllModules(objetoRol.listModulos);
      },[objetoRol]);
     const isValidRolName = (usuarioName) => {   
         return  usuarioName.length >= 5 && verificaAlfanumerico(usuarioName);
@@ -111,18 +110,89 @@ const  EditRol =(props)=>  {
 
 
     };
-    const selecionoPermiso = (idModulo, pagina, permiso) =>{
-      
-    console.log('click selecionar true idModulo :', idModulo);
+    useEffect(()=>{
+      console.log(' local allModules : ',allModules)
+   
+    },[allModules]);
+    const selecionoPermiso = (idModulo,nombreModulo, pagina, permiso, estado) =>{
+     agregarPerfil(idModulo,nombreModulo, pagina, permiso, estado);
+
+  /*   console.log('click selecionar true idModulo :', idModulo);
+    console.log('click selecionar true nombreModulo :', nombreModulo);
     console.log('click selecionar true pagina : ', pagina);
     console.log('click selecionar true permiso : ', permiso);
+    console.log('click selecionar true estado : ', estado); */
     }
-    const desSelecionoPermiso = (idModulo, pagina, permiso)=>{
-
-      console.log('click selecionar false idModulo :', idModulo);
+    const desSelecionoPermiso = (idModulo,nombreModulo, pagina, permiso, estado)=>{
+     /*  console.log('click selecionar false idModulo :', idModulo);
+      console.log('click selecionar false nombreModulo :', nombreModulo);
       console.log('click selecionar false pagina : ', pagina);
       console.log('click selecionar false permiso : ', permiso);
+      console.log('click selecionar false estado : ', estado); */
+    }
 
+    const agregarPerfil=(idModulo,nombreModulo, pagina, permiso, estado)=>{
+      let objmoduloBk = allModules.filter(x => x.idModulo != parseInt(idModulo));//--------------
+      let objmodulo = allModules.filter(x => x.idModulo == parseInt(idModulo));
+      const moBK = [...objmoduloBk];
+                  if(objmodulo.length == 0){
+                        const addNew= {
+                                  idModulo:idModulo,
+                                  nombre:nombreModulo,
+                                  listmodulos:[
+                                        { 
+                                          id_pagina:pagina.id_pagina,
+                                          nombre:pagina.nombre,
+                                          permisos:[
+                                                    { 
+                                                      id_permiso:permiso.id_permiso,
+                                                      permiso:permiso.permiso,
+                                                      estado:estado
+                                                    }
+                                          ]
+                                        }
+                                  ]
+                                };
+                      moBK.push(addNew);
+                      setAllModules(moBK);
+                      console.log('new modulo', moBK)
+                  }else{
+                        console.log('exite modulo');
+                        let objpaginaBK = objmodulo[0].listmodulos.filter(x => x.id_pagina != parseInt(pagina.id_pagina));//pagina backup----------------------
+                        let objpagina = objmodulo[0].listmodulos.filter(x => x.id_pagina == parseInt(pagina.id_pagina));
+                        const paBK= [...objpaginaBK];
+                        console.log('exite pagina bk :', objpaginaBK);
+                        console.log('exite pagina :',objpagina);
+                        if(objpagina.length > 0){ 
+                            //verificamos permiso
+                            let objPermisoBK= objpagina[0].permisos.filter(x => x.id_permiso != parseInt(permiso.id_permiso));//--------------------
+                            let objPermiso= objpagina[0].permisos.filter(x => x.id_permiso == parseInt(permiso.id_permiso));
+                            const peBK= [...objPermisoBK];
+                            console.log('exite permisos bk :',objPermisoBK);
+                            console.log('exite permiso :',objPermiso);
+                            console.log('exite permiso :',objPermiso.length);
+                            if(objPermiso.length >= 0){//add
+
+                              peBK.push({id_permiso: permiso.id_permiso,
+                                       permiso:permiso.permiso,
+                                       estado:estado });
+                                    const pageUpdate= { 
+                                        id_pagina:pagina.id_pagina,
+                                        nombre:pagina.nombre,
+                                        permisos:peBK
+                                        };
+                                    paBK.push(pageUpdate);
+                                    const moduloUpdate={
+                                          idModulo:idModulo,
+                                          nombre:nombreModulo,
+                                          listmodulos:paBK
+                                    }
+                                    moBK.push(moduloUpdate);
+                                    console.log('updale all : ',moBK);
+                                    setAllModules(moBK);
+                            }
+                        }
+                  }
     }
 
     return (
@@ -142,14 +212,15 @@ const  EditRol =(props)=>  {
                             Editar de Roles
                         </Typography>  
                         </Grid>
-                   {/*  <Grid item xs={6} className={style.gridNewRol} >
+                    <Grid item xs={6} className={style.gridNewRol} >
                         <Button variant="contained" 
-                            color="primary" 
-                            onClick={()=>  history.goBack()} >
-                            <AddCircleOutlineIcon />
-                            {' '}{' volver'}
+                            /* color="primary" */ 
+                            style={{background: "#1872b8", boxShadow: '2px 4px 5px #999'}}
+                            /* onClick={()=>  history.goBack()} */
+                             >                            
+                            {' '}{' Procesar Cambios'}
                         </Button>
-                    </Grid>  */}
+                    </Grid>  
                 <Grid item xs={12}>
 
                     

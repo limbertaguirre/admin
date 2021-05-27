@@ -72,7 +72,7 @@ const  EditAcordionModulo =({modulo, selecionoPermiso, desSelecionoPermiso})=>  
                 <div className={style.rootAcordion}>
                     {modulo.listmodulos.map((value, index)=>{                               
                         return( 
-                            <EditAcordionPagina pagina={value} idModulo={modulo.idModulo} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
+                            <EditAcordionPagina pagina={value} idModulo={modulo.idModulo} nombreModulo={modulo.nombre} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
                         )
                      })}                           
                 </div>  

@@ -33,12 +33,12 @@ const useStyles = makeStyles((theme) => ({
       }
 }));
 
-const  EditAcordionPagina =({pagina, idModulo, selecionoPermiso, desSelecionoPermiso})=>  {       
+const  EditAcordionPagina =({pagina, idModulo, nombreModulo, selecionoPermiso, desSelecionoPermiso})=>  {       
     const style = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
-    console.log("id pagina ",pagina.nombre, pagina.id_pagina);
-    console.log(" pagina id modulo ",idModulo);
+   // console.log("id pagina ",pagina.nombre, pagina.id_pagina);
+    //console.log(" pagina id modulo ",idModulo);
 
     const handleChange = (event) => {
         console.log("selecciono ", event.target.checked, " : ", pagina.id_pagina);
@@ -74,7 +74,7 @@ const  EditAcordionPagina =({pagina, idModulo, selecionoPermiso, desSelecionoPer
                     <Grid container spacing={3}>
                         {pagina.permisos.map((value, index)=>{                               
                             return( 
-                                <EditAcordionPermiso permiso={value} idModulo={idModulo} pagina={pagina} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
+                                <EditAcordionPermiso permiso={value} idModulo={idModulo} nombreModulo={nombreModulo} pagina={pagina} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
                             )
                         })}  
                     </Grid>                         
