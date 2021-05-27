@@ -22,7 +22,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import EditAcordionModulofrom from './component/EditAcordionModulo';
+import EditAcordionModulo from './component/EditAcordionModulo';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -111,6 +111,19 @@ const  EditRol =(props)=>  {
 
 
     };
+    const selecionoPermiso = (idModulo, pagina, permiso) =>{
+      
+    console.log('click selecionar true idModulo :', idModulo);
+    console.log('click selecionar true pagina : ', pagina);
+    console.log('click selecionar true permiso : ', permiso);
+    }
+    const desSelecionoPermiso = (idModulo, pagina, permiso)=>{
+
+      console.log('click selecionar false idModulo :', idModulo);
+      console.log('click selecionar false pagina : ', pagina);
+      console.log('click selecionar false permiso : ', permiso);
+
+    }
 
     return (
          <>    
@@ -183,7 +196,7 @@ const  EditRol =(props)=>  {
                 <div className={style.rootAcordion}>
                     {hisotryModules.map((value, index)=>{                               
                         return( 
-                                 <EditAcordionModulofrom modulo={value} />
+                                 <EditAcordionModulo modulo={value} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
                         )
                      })}                           
                 </div>                                 
