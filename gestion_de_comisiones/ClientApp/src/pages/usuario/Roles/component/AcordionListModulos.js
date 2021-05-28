@@ -1,6 +1,6 @@
 
 
-import React  from 'react';
+import React, { useState }  from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -13,12 +13,56 @@ const useStyles = makeStyles((theme) => ({
 
 
 const  AcordionListModulos =(props)=>  { 
-    const {listHisotrico  } = props     
+    const {listHisotrico  } = props   
+    const [listaFiltrada,setListaFiltrada] =useState([]); 
     const style = useStyles();
-     //console.log('lista : ', listHisotrico);
+    const recargarModulos =(todosModulo)=>{
+        let global=[];
+        console.log('todos',todosModulo);
+        let nroModules=todosModulo.length;
+        let newListModulos=[];
+        for(let i=0; i<nroModules; i++){
+               let objModulo=todosModulo[i];
+               let nroPagina=objModulo.listmodulos.length;               
+               let newLisPaginas=[];
+               for(let pa=0;  pa<nroPagina;  pa++){
+                       let objPagina= objModulo.listmodulos[pa];
+                       let nroPermiso= objPagina.permisos.length;
+                       let newListPermisos=[];
+                       for(let pe=0; pe<nroPermiso; pe++){
+                         let objPermiso= objPagina.permisos[pe];
+                         if(objPermiso.estado == true){                         
+                           newListPermisos.push(objPermiso);
+                         }
+                       }
+                       //crear pagina y add permisos
+                       if(newListPermisos.length != 0){//addPagina
+                         const newObjPagina={
+                           id_pagina: objPagina.id_pagina,
+                           nombre: objPagina.nombre,
+                           permisos: newListPermisos
+                         }
+                         newLisPaginas.push(newObjPagina)
+                        
+                       }
+                   
+               }
+               if(newLisPaginas.length != 0){//addModulo
+                 const newobjModelo={
+                   idModulo: objModulo.idModulo,
+                   nombre: objModulo.nombre,
+                   listmodulos:newLisPaginas,
+                 }
+                 newListModulos.push(newobjModelo)                 
+               }  
+        }
+        return newListModulos
+      
+     }
+     let listado=recargarModulos(listHisotrico);
     return (
          <>    
-            {listHisotrico.map((value,index) => {
+            {listado.map((value,index) => {
                 return (
                     <ul>
                         <li><b>Modulo :</b> {value.nombre}

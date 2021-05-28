@@ -230,7 +230,7 @@ const  EditRol =(props)=>  {
               }  
        }
        return newListModulos
-      // console.log('total modulos : ', newListModulos );
+     
     }
 
  //---------------------------------------------
@@ -253,8 +253,9 @@ const  EditRol =(props)=>  {
       setOpen(false);
     };
     const handConfirm=()=>{
-      console.log('confirmo el la edicion')
+     
       setOpen(false);
+      dispatch(Action.actualizarRol(idRol,rolName, rolDescripcion,listaSelecionada,history ))
     }
 
     const closeSnackbar= (event, reason) => {

@@ -20,6 +20,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import ListSelectModules from './ListSelectModules';
+import Divider from '@material-ui/core/Divider';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -70,10 +71,8 @@ const DialogTitle = withStyles(useStyles)((props) => {
     },
   }))(MuiDialogActions);
 
-const  EditModalConfirm =({open, handConfirm, handleCloseModal, listaSelecionada })=>  {       
-
+const  EditModalConfirm =({open, handConfirm, handleCloseModal, listaSelecionada })=>  { 
     const style = useStyles();
-    console.log('pintar', listaSelecionada);
     return (
          <>     
             <Dialog onClose={handleCloseModal} aria-labelledby="customized-dialog-title" open={open}>
@@ -81,23 +80,22 @@ const  EditModalConfirm =({open, handConfirm, handleCloseModal, listaSelecionada
                      <Grid container spacing={4}>
                         <Grid item xs={12}>
                             <Typography variant="h6" gutterBottom>
-                                Roles Seleccionados 
-                            </Typography>  
+                               Actualizar Roles Seleccionados 
+                            </Typography>    
+                            <Divider />                          
                         </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="h6" gutterBottom>
-                                detalles ...
-                            </Typography>  
+                        
+                        <Grid item xs={12}>                        
                             <ListSelectModules listaSelecionada={listaSelecionada} />
-
-                        </Grid>
-                       
+                        </Grid>                       
                     </Grid>  
-
                 </DialogContent>
                 <DialogActions>
+                    <Button variant="contained" className={style.botonAzul} onClick={handleCloseModal} >
+                        Cancelar
+                    </Button>
                     <Button variant="contained" className={style.botonAzul} onClick={handConfirm} >
-                        Confirmar Rol
+                        Confirmar
                     </Button>
                 </DialogActions>
             </Dialog>

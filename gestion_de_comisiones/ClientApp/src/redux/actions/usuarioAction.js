@@ -161,3 +161,27 @@ export const getPaginas= ()=>{
             })    
     }
   }
+  export const actualizarRol= (idRol, nombre, descripcion, listaModulos, history)=>{
+    let body={
+        idRol:idRol,
+        nombre :nombre,
+        descripcion:descripcion,
+        idUsuario:100,
+        modulos:listaModulos
+    };
+    return (dispatch)=>{   
+
+        dispatch(Action.showMessage({ message: "Se actualizo con exito su rol", variant: "success" }));
+        history.push('/gestion/roles');
+      /*   requestPost('Rol/Registrar',body,dispatch).then((res)=>{ 
+            if(res.code === 0){                
+                
+                dispatch(Action.showMessage({ message: res.message, variant: "success" }));
+                window.location.replace('/gestion/roles');
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        }) */
+
+    }
+  }
