@@ -2,7 +2,7 @@
 
 import React,{useState, useEffect }  from 'react';
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
-import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
+import {  Button, Grid } from "@material-ui/core"
 import { makeStyles, emphasize, withStyles  } from '@material-ui/core/styles';
 import { useSelector,useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -10,19 +10,13 @@ import * as Action from '../../../redux/actions/usuarioAction';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import CardRol from './component/CardRol';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import { verificaAlfanumerico } from "../../../lib/expresiones";
+import SnackbarSion from '../../../components/message/SnackbarSion';
 
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
+import * as ActionMensaje from '../../../redux/actions/messageAction';
 import EditAcordionModulo from './component/EditAcordionModulo';
+import EditModalConfirm from './component/EditModalConfirm';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -65,6 +59,11 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(1),
       width: '100%',
     },
+    botonAzul:{
+      background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white'
+  }
 
 }));
 
@@ -80,6 +79,7 @@ const  EditRol =(props)=>  {
     const [rolDescripcionError, setRolDescripcionError] = useState(false);
     const [hisotryModules, setHisotryModules]= useState([]);
     const [allModules, setAllModules]= useState([]);
+    const [listaSelecionada, setListaSelecionada]= useState([]);
 
  
     useEffect(()=>{
@@ -116,19 +116,9 @@ const  EditRol =(props)=>  {
     },[allModules]);
     const selecionoPermiso = (idModulo,nombreModulo, pagina, permiso, estado) =>{
      agregarPerfil(idModulo,nombreModulo, pagina, permiso, estado);
-
-  /*   console.log('click selecionar true idModulo :', idModulo);
-    console.log('click selecionar true nombreModulo :', nombreModulo);
-    console.log('click selecionar true pagina : ', pagina);
-    console.log('click selecionar true permiso : ', permiso);
-    console.log('click selecionar true estado : ', estado); */
     }
     const desSelecionoPermiso = (idModulo,nombreModulo, pagina, permiso, estado)=>{
-     /*  console.log('click selecionar false idModulo :', idModulo);
-      console.log('click selecionar false nombreModulo :', nombreModulo);
-      console.log('click selecionar false pagina : ', pagina);
-      console.log('click selecionar false permiso : ', permiso);
-      console.log('click selecionar false estado : ', estado); */
+      agregarPerfil(idModulo,nombreModulo, pagina, permiso, estado);
     }
 
     const agregarPerfil=(idModulo,nombreModulo, pagina, permiso, estado)=>{
@@ -194,6 +184,86 @@ const  EditRol =(props)=>  {
                         }
                   }
     }
+    const recargarModulos =(todosModulo)=>{
+       let global=[];
+       console.log('todos',todosModulo);
+       let nroModules=todosModulo.length;
+       let newListModulos=[];
+       for(let i=0; i<nroModules; i++){
+              let objModulo=todosModulo[i];
+              let nroPagina=objModulo.listmodulos.length;
+              //   console.log(' nroPagina :', nroPagina);
+              let newLisPaginas=[];
+              for(let pa=0;  pa<nroPagina;  pa++){
+                      let objPagina= objModulo.listmodulos[pa];
+                      let nroPermiso= objPagina.permisos.length;
+                    //  console.log(' objPagina :', objPagina);
+                    // console.log(' nroPermiso :', nroPermiso);
+                      let newListPermisos=[];
+                      for(let pe=0; pe<nroPermiso; pe++){
+                        let objPermiso= objPagina.permisos[pe];
+                        if(objPermiso.estado == true){
+                        //  console.log('estado permiso', objPermiso.estado);
+                          newListPermisos.push(objPermiso);
+                        }
+                      }
+                      //crear pagina y add permisos
+                      if(newListPermisos.length != 0){//addPagina
+                        const newObjPagina={
+                          id_pagina: objPagina.id_pagina,
+                          nombre: objPagina.nombre,
+                          permisos: newListPermisos
+                        }
+                        newLisPaginas.push(newObjPagina)
+                       // console.log('lis new add',newObjPagina);
+                      }
+                  
+              }
+              if(newLisPaginas.length != 0){//addModulo
+                const newobjModelo={
+                  idModulo: objModulo.idModulo,
+                  nombre: objModulo.nombre,
+                  listmodulos:newLisPaginas,
+                }
+                newListModulos.push(newobjModelo)
+                //console.log('mo ; ', newLisPaginas )
+              }  
+       }
+       return newListModulos
+      // console.log('total modulos : ', newListModulos );
+    }
+
+ //---------------------------------------------
+    const [open, setOpen] = React.useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const cargarModal = () => {
+     
+      const modulos= recargarModulos(allModules);
+      //console.log('all :', modulos)
+      if(modulos.length != 0){
+        setListaSelecionada(modulos);
+        setOpen(true);
+      }else{
+        setOpenSnackbar(true);
+        //dispatch(ActionMensaje.showMessage({ message: 'Debe selecionar un permiso', variant: "info" }));
+      }
+
+    };
+    const handleCloseModal = () => {
+      setOpen(false);
+    };
+    const handConfirm=()=>{
+      console.log('confirmo el la edicion')
+      setOpen(false);
+    }
+
+    const closeSnackbar= (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenSnackbar(false);
+    };
+
 
     return (
          <>    
@@ -215,8 +285,8 @@ const  EditRol =(props)=>  {
                     <Grid item xs={6} className={style.gridNewRol} >
                         <Button variant="contained" 
                             /* color="primary" */ 
-                            style={{background: "#1872b8", boxShadow: '2px 4px 5px #999'}}
-                            /* onClick={()=>  history.goBack()} */
+                            className={style.botonAzul}
+                            onClick={cargarModal} 
                              >                            
                             {' '}{' Procesar Cambios'}
                         </Button>
@@ -271,7 +341,10 @@ const  EditRol =(props)=>  {
                         )
                      })}                           
                 </div>                                 
-            </div>                  
+            </div>  
+            <EditModalConfirm open={open} handConfirm={handConfirm} handleCloseModal={handleCloseModal} listaSelecionada={listaSelecionada} />    
+
+            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={'warning'} duracion={2000} mensaje={'¡Debe Seleccionar un permiso!'} />    
          </>
     );
 }
