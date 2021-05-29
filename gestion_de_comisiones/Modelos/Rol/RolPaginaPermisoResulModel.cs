@@ -10,6 +10,7 @@ namespace gestion_de_comisiones.Modelos.Rol
         public int idPagina { get; set; }
         public int idRol { get; set; }
         public int idPermiso { get; set; }
+        public bool habilitado { get; set; }
 
     }
 }

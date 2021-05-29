@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '33%',
     margin:15,
     padding: 6,
+   // background: "linear-gradient(90deg, #7194A4, #1872b8)",
     boxShadow: '2px 4px 5px #999',
     '&:hover': {
         border: '1px solid #252a3b',
@@ -63,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: 14,
+    //color:"#FFFFFF",
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -132,7 +134,7 @@ const CardRol = ({modulo, redirecionarEditRol})=>{
                 aria-controls="additional-actions1-content"
                 id="additional-actions1-header"
                 >
-                    <Typography  className={classes.column}>Lista de permisos</Typography>            
+                    <Typography  className={classes.column}> <b>Lista de permisos </b></Typography>            
                 </AccordionSummary>
                 <AccordionDetails>                   
                     <List dense component="div" role="list">                

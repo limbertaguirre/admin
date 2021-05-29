@@ -39,8 +39,8 @@ namespace gestion_de_comisiones.Repository
                                                           idPagina= (int)RolPaginaI.IdPagina,
                                                           idRol= (int)RolPaginaI.IdRol,
                                                           idPermiso = (int)RolPaginaPermisoI.IdPermiso,
-                                                          
-                                                      }).Where(x => x.idPermiso == IdPermiso &&  x.idRol == IdRol && x.idPagina == IdPagina).First();
+                                                          habilitado= (bool)RolPaginaPermisoI.Habilitado,                                                          
+                                                      }).Where(x => x.idPermiso == IdPermiso &&  x.idRol == IdRol && x.idPagina == IdPagina && x.habilitado == true).First();
                 
                 return obj;
             }

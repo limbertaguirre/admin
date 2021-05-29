@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace gestion_de_comisiones.Repository
 {
@@ -56,6 +57,24 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public object actualizarRoles(int idRol, string nombreRol, string descripcionRol, List<PaginaResulModelWithPermisos> paginas)
+        {
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
 
+
+
+
+                    scope.Complete();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {                
+                return false;
+            }
+        }
     }
 }

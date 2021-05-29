@@ -14,6 +14,7 @@ namespace gestion_de_comisiones.Servicios
     public class RolService
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
+        RolRepository rolRepository = new RolRepository();
         public object RegistraRol(RolRegisterInputModel data)
         {
 
@@ -286,5 +287,60 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "OK", Líst);
             }
         }
+
+        public object ActualizarRol(RolActualizarInputModel objRol)
+        {
+            try
+            {
+                //var respuesta = rolRepository;
+                List<PaginaResulModelWithPermisos> paginas = funcionRecargarpaginas(objRol);
+                var update = rolRepository.actualizarRoles(objRol.idRol, objRol.nombre, objRol.descripcion, paginas);
+                return Respuesta.ReturnResultdo(0, "OK", "Se actualizo con exito su rold : " + objRol.nombre);
+            }
+            catch (Exception ex)
+            {
+                List<RolResulModel> Líst = new List<RolResulModel>();
+                return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public List<PaginaResulModelWithPermisos> funcionRecargarpaginas(RolActualizarInputModel objRol)
+        {
+            try
+            {
+                List<PaginaResulModelWithPermisos> newListPaginas = new List<PaginaResulModelWithPermisos>();
+                List<PaginaResulModelWithPermisos> newListpagina = new List<PaginaResulModelWithPermisos>();
+
+                //var respuesta = rolRepository;
+                foreach (var obj in objRol.modulos)
+                {
+                   
+                    foreach (var objPagina in obj.listmodulos)
+                    {
+                        PaginaResulModelWithPermisos newObjpag = new PaginaResulModelWithPermisos();
+                        newObjpag.idPagina = objPagina.idPagina;
+                        newObjpag.nombre = objPagina.nombre;
+                        List<RolPermiso> newListPermisos = new List<RolPermiso>();
+                        foreach (var objPer in objPagina.permisos)
+                        {
+                            RolPermiso objNewPermiso = new RolPermiso();
+                            objNewPermiso.idPermiso = objPer.idPermiso;
+                            objNewPermiso.permiso1 = objPer.permiso1;
+                            objNewPermiso.estado = objPer.estado;
+                            newListPermisos.Add(objNewPermiso);
+                        }
+                        newObjpag.permisos = newListPermisos;
+                        newListpagina.Add(newObjpag);
+                    }
+                }
+                return newListpagina;
+            }
+            catch (Exception ex)
+            {
+                List<PaginaResulModelWithPermisos> newListPaginas = new List<PaginaResulModelWithPermisos>();
+                return newListPaginas;
+            }
+
+        }
+
     }
 }

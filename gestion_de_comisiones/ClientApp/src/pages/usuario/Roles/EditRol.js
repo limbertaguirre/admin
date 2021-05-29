@@ -255,7 +255,7 @@ const  EditRol =(props)=>  {
     const handConfirm=()=>{
      
       setOpen(false);
-      dispatch(Action.actualizarRol(idRol,rolName, rolDescripcion,listaSelecionada,history ))
+      dispatch(Action.actualizarRol(idRol,rolName, rolDescripcion,allModules,history ));
     }
 
     const closeSnackbar= (event, reason) => {
