@@ -89,7 +89,20 @@ export const getPaginas= ()=>{
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   
-        })          
+        })      
+           //-------------------------------------------
+           //---aqui prueba consumir id Rol
+               // const headers={idRol:14};
+               // requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
+                 //   if(res.code === 0){
+                 //   console.log('rolesss : ', res)
+                        
+                  //  }else{
+                  //      dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                   // }   
+                  //  })    
+           //------------------------------------------- 
+
     }
   }
 
@@ -107,6 +120,62 @@ export const getPaginas= ()=>{
                 
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
                 window.location.replace('/gestion/roles');
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+        })
+
+    }
+  }
+  export const ObtenerRolesModulos= ()=>{
+    return (dispatch)=>{        
+      //---todos los roles mas modulos
+            requestGet('Rol/ObtenerRolesAllModules',{},dispatch).then((res)=>{ 
+                if(res.code === 0){
+                console.log('get all roles : ', res.data)
+                    dispatch({
+                        type: Types.LISTA_GLOBAL_ROLES_MODULOS,
+                        globalModules:res.data
+                    })                    
+                }else{
+                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                }   
+    })    
+
+    }
+  }
+  export const ObtenerRolModulos= (idRolSelecionado)=>{
+    return (dispatch)=>{        
+         const headers={idRol:idRolSelecionado};
+        requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
+            if(res.code === 0){
+            console.log('rolesss : ', res.data)
+               dispatch({
+                   type:Types.OBJETO_GLOBAL_ROLES_MODULOS,
+                   objetoRol:res.data
+                 }) 
+                
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }   
+            })    
+    }
+  }
+  export const actualizarRol= (idRol, nombre, descripcion, listaModulos, history)=>{
+    let body={
+        idRol:idRol,
+        nombre :nombre,
+        descripcion:descripcion,
+        idUsuario:100,
+        modulos:listaModulos
+    };
+    return (dispatch)=>{   
+        
+        requestPost('Rol/Actualizar',body,dispatch).then((res)=>{ 
+            if(res.code === 0){                
+               
+                dispatch(Action.showMessage({ message: res.message, variant: "success" }));
+                history.push('/gestion/roles');
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   

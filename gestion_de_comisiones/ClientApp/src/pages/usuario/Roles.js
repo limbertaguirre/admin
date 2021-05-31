@@ -3,7 +3,11 @@
 import React,{useState, useEffect, useReducer }  from 'react';
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
 import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, emphasize, withStyles } from '@material-ui/core/styles';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import { useHistory, Link } from "react-router-dom";
+import Chip from '@material-ui/core/Chip';
+import HomeIcon from '@material-ui/icons/Home';
 import { verificaAlfanumerico } from "../../lib/expresiones";
 import { useSelector,useDispatch } from "react-redux";
 import * as Action from '../../redux/actions/usuarioAction';
@@ -13,18 +17,32 @@ import HistoryModel from './HistoryModel';
 //-----------------------transferencia
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
 import Paper from '@material-ui/core/Paper';
 //-----------------------------------------------
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+
+const StyledBreadcrumb = withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100],
+    height: theme.spacing(3),
+    color: theme.palette.grey[800],
+    fontWeight: theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.grey[300],
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+    },
+  },
+}))(Chip); 
+
 const useStyles = makeStyles((theme) => ({
     icono: {
         width: '40px',
@@ -88,20 +106,11 @@ const useStyles = makeStyles((theme) => ({
       }
       
 }));
-//---------funciona para transferencia--------------
-    function not(a, b) {
-        return a.filter((value) => b.indexOf(value) === -1);
-    }
-    
-    function intersection(a, b) {
-       
-        return a.filter((value) => b.indexOf(value) !== -1);
-    }
-//--------------------------
 
 const  Roles =()=>  {       
     const style = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const [rolName, setRolName] = useState("");
     const [rolNameError, setRolNameError] = useState(false);
     const [rolDescripcion, setRolDescripcion] = useState("");
@@ -147,70 +156,19 @@ const  Roles =()=>  {
     },[]);
     useEffect(()=>{
       setLModulos(listModulos);
-     // console.log('permisos , ', lPermisos);
   },[lModulos, lPermisos ]);
 
-    //----------------------------------------------------------------------------------
+
     const [checked, setChecked] = React.useState([]);
 
-    const [left, setLeft] = React.useState([]);
-    const [right, setRight] = React.useState([]);
   
-    const leftChecked = intersection(checked, left);
-   const rightChecked = intersection(checked, right);
   
-    const handleToggle = (value, nombre) => () => {
-      console.log('onchange ini------------------------------: ');
-          const currentIndex = checked.indexOf(value);
-          const newChecked = [...checked];
-          console.log('currentIndex : ', currentIndex);
-          console.log('newChecked : ', newChecked);
 
-          if (currentIndex === -1) {
-            var value1= { id_pagina:value, nombre:nombre};
-            newChecked.push(value1);
-          } else {
-            newChecked.splice(currentIndex, 1);
-          }
-         setChecked(newChecked);
-      console.log('onchange ini------------------------------: ');
-    };
-  
-    const handleAllRight = () => {
-      console.log(left)
-      setRight(right.concat(left));
-      setLeft([]);
-    };
-  
-    const handleCheckedRight = () => {
-     // setRight(right.concat(leftChecked));
-    //  setLeft(not(left, leftChecked));
-    //  setChecked(not(checked, leftChecked));
-    };
-  
-    const handleCheckedLeft = () => { 
-    //  setLeft(left.concat(rightChecked));
-    //  setRight(not(right, rightChecked));
-    //  setChecked(not(checked, rightChecked));
-    };
-  
-    const handleAllLeft = () => {
-      setLeft(left.concat(right));
-      setRight([]);
-    };
     useEffect(()=>{
-     // console.log('el checked', checked);
+    
    },[checked, ]);
 
-     const checkeselecionado = (valuesid) => {
-        
-          const tupla= checked.find(x => x.id_pagina === parseInt(valuesid));
-          
-          if(tupla !== undefined){
-            console.log('ingreso undefine :', tupla);
-            return true
-          }
-    };
+
     const incioHistori =[
          {
            idmodulo:0,
@@ -235,7 +193,7 @@ const  Roles =()=>  {
     const [moduloSelected, setModuloSelected]= useState({idModulo:0, nombre: ''})
     const [listHisotrico, setListHisotrico]= useState([])
     const [listPaginaAgregadas, setPListPaginaAgregadas]= useState([])
-    const [componente, setComponente] = useState(false);
+    
 
     const selecionoPagina = (pagina,idModulo, nombreModulo) => {
      // console.log("agregara en el modulo", nombreModulo)
@@ -473,9 +431,19 @@ const  Roles =()=>  {
     const verificarRegistros= () =>{
        return isValidRolName(rolName) && isValidRolDescripcion(rolDescripcion) && validarBotonHistori()
     }
+    const redirecionarHomeRol=()=>{
+       history.push("/gestion/nuevo/roles")
+    }
 
     return (
-         <>            
+         <>   
+            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
+              <Breadcrumbs aria-label="breadcrumb">
+                       <div onClick={()=> history.goBack()}>  <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />} /> </div>
+                      <div> <StyledBreadcrumb key={2} component="a" label="Nuevo Rol" icon={<AddCircleOutlineIcon fontSize="small" />} /> </div>   
+              </Breadcrumbs>
+           </div>     
+           <br/>    
             <Typography variant="h6" gutterBottom>
                 NUEVO ROL
             </Typography>   
@@ -524,7 +492,8 @@ const  Roles =()=>  {
 
            </Grid>
             <br /> 
-            <Grid item xs={12} className={style.contentTitle} >
+
+          {/* <Grid item xs={12} className={style.contentTitle} >
                          <TextField
                             id="txtBusqueda"
                             label="Buscar Modulo"
@@ -549,7 +518,7 @@ const  Roles =()=>  {
                         />      
 
 
-           </Grid>
+                          </Grid>*/}
             <br />
             <Grid item xs={12} >
 

@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
+
     public class RolController : Controller
     {
-        RolService refeRol = new RolService();
+        RolService sevice = new RolService();
         // GET: RolController
         public ActionResult Index()
         {
@@ -26,7 +27,7 @@ namespace gestion_de_comisiones.Controllers
             
             try
             {
-                var resultado = refeRol.ObtenerMooduloPaginas();
+                var resultado = sevice.ObtenerMooduloPaginas();
                // var Result = new GenericDataJson<string> { Code = 0, Message = "SE LISTADO" };
                 return Ok(resultado);
             }
@@ -42,7 +43,7 @@ namespace gestion_de_comisiones.Controllers
 
             try
             {
-                var resultado = refeRol.ObtenerPermiso();
+                var resultado = sevice.ObtenerPermiso();
                 return Ok(resultado);
             }
             catch
@@ -71,5 +72,53 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+
+        // GET: RolController/ObtenerListaXRol
+        public ActionResult ObtenerListaXRol([FromHeader]int idRol)
+        {
+            try
+            {
+                var resultado = sevice.ObtenerListaRol(idRol);
+                return Ok(resultado);
+            } 
+            catch
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS PARA ESTE ROL" };
+                return Ok(Result);
+            }
+        }
+        // GET: RolController/ObtenerRolesAllModules
+        public ActionResult ObtenerRolesAllModules()
+        {
+            try
+            {
+                var resultado = sevice.ObtenerListaRolesWithModulos();
+                return Ok(resultado);
+            }
+            catch
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "NO EXITE PERMISOS PARA ESTE ROL" };
+                return Ok(Result);
+            }
+        }
+
+        // POST: RolController/Actualizar
+        [HttpPost]
+        public ActionResult Actualizar([FromBody] RolActualizarInputModel objetdatao)
+        {
+            
+
+            try
+            {
+                var result = sevice.ActualizarRol(objetdatao);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde.." };
+                return Ok(Result);
+            }
+        }
+
     }
 }
