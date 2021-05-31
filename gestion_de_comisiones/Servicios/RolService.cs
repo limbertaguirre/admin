@@ -294,8 +294,16 @@ namespace gestion_de_comisiones.Servicios
             {
                 //var respuesta = rolRepository;
                 List<PaginaResulModelWithPermisos> paginas = funcionRecargarpaginas(objRol);
-                var update = rolRepository.actualizarRoles(objRol.idRol, objRol.nombre, objRol.descripcion, paginas);
-                return Respuesta.ReturnResultdo(0, "OK", "Se actualizo con exito su rold : " + objRol.nombre);
+                var update = rolRepository.actualizarRoles(objRol.idRol, objRol.nombre, objRol.descripcion, paginas, objRol.idUsuario);
+                if (update == true)
+                {
+                    return Respuesta.ReturnResultdo(0, "OK", "Se actualizo con exito su rold : " + objRol.nombre);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "problemas en el servidor, intente mas tarde", "problemas en el servidor, intente mas tarde");
+                }
+              
             }
             catch (Exception ex)
             {
