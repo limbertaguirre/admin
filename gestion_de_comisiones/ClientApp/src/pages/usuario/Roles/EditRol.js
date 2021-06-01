@@ -111,8 +111,7 @@ const  EditRol =(props)=>  {
 
     };
     useEffect(()=>{
-      console.log(' local allModules : ',allModules)
-   
+
     },[allModules]);
     const selecionoPermiso = (idModulo,nombreModulo, pagina, permiso, estado) =>{
      agregarPerfil(idModulo,nombreModulo, pagina, permiso, estado);
@@ -145,22 +144,19 @@ const  EditRol =(props)=>  {
                                 };
                       moBK.push(addNew);
                       setAllModules(moBK);
-                      console.log('new modulo', moBK)
+                      
                   }else{
-                        console.log('exite modulo');
+                       
                         let objpaginaBK = objmodulo[0].listmodulos.filter(x => x.id_pagina != parseInt(pagina.id_pagina));//pagina backup----------------------
                         let objpagina = objmodulo[0].listmodulos.filter(x => x.id_pagina == parseInt(pagina.id_pagina));
                         const paBK= [...objpaginaBK];
-                        console.log('exite pagina bk :', objpaginaBK);
-                        console.log('exite pagina :',objpagina);
+                       
                         if(objpagina.length > 0){ 
                             //verificamos permiso
                             let objPermisoBK= objpagina[0].permisos.filter(x => x.id_permiso != parseInt(permiso.id_permiso));//--------------------
                             let objPermiso= objpagina[0].permisos.filter(x => x.id_permiso == parseInt(permiso.id_permiso));
                             const peBK= [...objPermisoBK];
-                            console.log('exite permisos bk :',objPermisoBK);
-                            console.log('exite permiso :',objPermiso);
-                            console.log('exite permiso :',objPermiso.length);
+        
                             if(objPermiso.length >= 0){//add
 
                               peBK.push({id_permiso: permiso.id_permiso,
@@ -178,7 +174,6 @@ const  EditRol =(props)=>  {
                                           listmodulos:paBK
                                     }
                                     moBK.push(moduloUpdate);
-                                    console.log('updale all : ',moBK);
                                     setAllModules(moBK);
                             }
                         }

@@ -93,14 +93,6 @@ const CardRol = ({modulo, redirecionarEditRol})=>{
 
   useEffect(()=>{
   },[])
-/*   const redirecionarEditRol=(idRol)=>{
-      console.log(idRol)
-      const location = {
-        pathname: '/gestion/edit/rol',
-        state: {idRol: idRol }
-      }
-      history.push(location);
-  } */
 
   return(
     <Card className={classes.root}>

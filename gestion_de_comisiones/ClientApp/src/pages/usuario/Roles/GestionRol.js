@@ -65,7 +65,6 @@ const  GestionRol =()=>  {
 
     const redirecionarEditRol=(idRol)=>{
         dispatch(Action.ObtenerRolModulos(idRol));
-        console.log(idRol)
         const location = {
           pathname: '/gestion/edit/rol',
           state: {idRol: idRol }

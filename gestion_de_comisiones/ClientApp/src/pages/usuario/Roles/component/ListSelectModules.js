@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
 
 const  ListSelectModules =({listaSelecionada})=>  {   
     const style = useStyles();
-     console.log('lista : ', listaSelecionada);
     return (
          <>    
             {listaSelecionada.map((value,index) => {
