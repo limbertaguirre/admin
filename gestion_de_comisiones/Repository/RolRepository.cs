@@ -77,7 +77,7 @@ namespace gestion_de_comisiones.Repository
             {
                 using(var dbcontextTransaction= context.Database.BeginTransaction())
                 {
-                //------
+            
                     try
                     {
                          var rolOld = obtenerRolXId(idRol);          
@@ -92,7 +92,7 @@ namespace gestion_de_comisiones.Repository
                             {
                                 var tieneActivo = validarPaginaTienePermisoActivos(itemPag.permisos);
                                 var rolPaginaOld = context.RolPaginaIs.Where(x => x.IdRol == idRol && x.IdPagina == itemPag.idPagina).FirstOrDefault();
-                                // var rolPaginaOld = context.RolPaginaIs.Where(x => x.IdRol == idRol && x.IdPagina == itemPag.idPagina).Select(p => new RolPaginaModel(p.IdRolPaginaI, p.Habilitado, p.IdRol, p.IdPagina, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+                                
                                 if (tieneActivo == false && rolPaginaOld == null)//aqui validamos e exita la pagina y tenga permisos seleccionados caso contrario no hace nada 
                                 { 
 
@@ -112,7 +112,7 @@ namespace gestion_de_comisiones.Repository
                                                 context.RolPaginaPermisoIs.Add(objRolPaginaPermiso);
                                                 context.SaveChanges();
                                             } else{//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
-                                               // if(itemPer.estado != false && permisoOld != null)
+                                              
                                                 if ( permisoOld != null)
                                                 {
                                                     if (itemPer.estado != permisoOld.Habilitado)
@@ -125,7 +125,7 @@ namespace gestion_de_comisiones.Repository
                                             }
                                         }
 
-                                    //validar   if(tieneActivo == false && rolPaginaOld != null)// encones inhabilitar el rolpagina
+                                    
 
                                     if (tieneActivo == false && rolPaginaOld != null)
                                     {
