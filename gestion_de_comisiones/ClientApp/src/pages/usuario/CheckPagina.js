@@ -80,7 +80,7 @@ const  CheckPagina =(props)=>  {
     
 
     const handleChange = (event) => {
-       // console.log("selecciono ", event.target.checked, " : ", modulo);
+      
         if(event.target.checked){
             selecionoPagina(pagina,modulo.idModulo,modulo.nombre)
         }else{

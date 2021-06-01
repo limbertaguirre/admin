@@ -18,7 +18,7 @@ const  AcordionListModulos =(props)=>  {
     const style = useStyles();
     const recargarModulos =(todosModulo)=>{
         let global=[];
-        console.log('todos',todosModulo);
+        
         let nroModules=todosModulo.length;
         let newListModulos=[];
         for(let i=0; i<nroModules; i++){

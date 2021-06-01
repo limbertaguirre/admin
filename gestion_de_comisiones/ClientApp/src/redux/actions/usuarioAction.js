@@ -90,18 +90,6 @@ export const getPaginas= ()=>{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   
         })      
-           //-------------------------------------------
-           //---aqui prueba consumir id Rol
-               // const headers={idRol:14};
-               // requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
-                 //   if(res.code === 0){
-                 //   console.log('rolesss : ', res)
-                        
-                  //  }else{
-                  //      dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-                   // }   
-                  //  })    
-           //------------------------------------------- 
 
     }
   }
@@ -113,11 +101,11 @@ export const getPaginas= ()=>{
         idUsuario:100,
         modulos:lista
     };
-    console.log('body :',body);
+    
     return (dispatch)=>{        
         requestPost('Rol/Registrar',body,dispatch).then((res)=>{ 
             if(res.code === 0){                
-                
+                dispatch({ type: Types.LISTA_GLOBAL_ROLES_MODULOS_VACIAR }) 
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
                 window.location.replace('/gestion/roles');
             }else{
@@ -129,10 +117,9 @@ export const getPaginas= ()=>{
   }
   export const ObtenerRolesModulos= ()=>{
     return (dispatch)=>{        
-      //---todos los roles mas modulos
+      
             requestGet('Rol/ObtenerRolesAllModules',{},dispatch).then((res)=>{ 
-                if(res.code === 0){
-                console.log('get all roles : ', res.data)
+                if(res.code === 0){                
                     dispatch({
                         type: Types.LISTA_GLOBAL_ROLES_MODULOS,
                         globalModules:res.data
@@ -144,12 +131,17 @@ export const getPaginas= ()=>{
 
     }
   }
+  export const vaciarRolesModulos= ()=>{
+        return (dispatch)=>{                    
+            dispatch({ type: Types.LISTA_GLOBAL_ROLES_MODULOS_VACIAR })    
+        }
+  }
   export const ObtenerRolModulos= (idRolSelecionado)=>{
     return (dispatch)=>{        
          const headers={idRol:idRolSelecionado};
         requestGet(`Rol/ObtenerListaXRol`,headers,dispatch).then((res)=>{ 
             if(res.code === 0){
-            console.log('rolesss : ', res.data)
+            
                dispatch({
                    type:Types.OBJETO_GLOBAL_ROLES_MODULOS,
                    objetoRol:res.data
@@ -173,7 +165,7 @@ export const getPaginas= ()=>{
         
         requestPost('Rol/Actualizar',body,dispatch).then((res)=>{ 
             if(res.code === 0){                
-               
+                dispatch({ type:Types.OBJETO_GLOBAL_ROLES_MODULOS_VACIO, })
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
                 history.push('/gestion/roles');
             }else{
@@ -181,5 +173,12 @@ export const getPaginas= ()=>{
             }   
         })
 
+    }
+  }
+  export const vaciarObjetoROlModulo=()=>{
+    return (dispatch)=>{           
+              dispatch({
+                  type:Types.OBJETO_GLOBAL_ROLES_MODULOS_VACIO,
+                })
     }
   }

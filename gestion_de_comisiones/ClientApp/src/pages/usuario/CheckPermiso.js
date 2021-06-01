@@ -33,7 +33,6 @@ const  CheckPermiso =(props)=>  {
     
 
     const handleChange = (event) => {
-        console.log("selecciono ", event.target.checked, " : ", permiso);
         if(event.target.checked){
           selecionoPermiso(permiso)
         }else{

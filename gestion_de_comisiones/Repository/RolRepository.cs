@@ -143,9 +143,14 @@ namespace gestion_de_comisiones.Repository
                             }
                          
                             dbcontextTransaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                        
-                        return true;
+                       
                 }
                 catch (Exception ex)
                 {
