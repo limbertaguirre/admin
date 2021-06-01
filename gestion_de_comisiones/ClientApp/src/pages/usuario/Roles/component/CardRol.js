@@ -111,7 +111,7 @@ const CardRol = ({modulo, redirecionarEditRol})=>{
              <Grid container item xs={12}  >
                  <Grid item xs={10}  >
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
-                        MODULO :
+                        ROL :
                     </Typography>
                     <Typography gutterBottom variant="h5" component="h2">
                         {modulo.nombre}
