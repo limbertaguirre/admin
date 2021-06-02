@@ -441,8 +441,7 @@ const  Roles =()=>  {
                 NUEVO ROL
             </Typography>   
             <Grid item xs={12} className={style.contentTitle} >
-                         <TextField
-                            id="rolName"
+                         <TextField                            
                             label="Nuevo Rol"
                             type={'text'}
                             variant="outlined"
@@ -464,8 +463,7 @@ const  Roles =()=>  {
 
            </Grid>
            <Grid item xs={12} className={style.contentTitle} >
-                         <TextField
-                            id="rolDescripcion"
+                         <TextField                            
                             label="Descripcion"
                             type={'text'}
                             variant="outlined"

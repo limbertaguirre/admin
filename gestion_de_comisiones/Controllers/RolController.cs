@@ -3,6 +3,7 @@ using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,11 @@ namespace gestion_de_comisiones.Controllers
     public class RolController : Controller
     {
         RolService sevice = new RolService();
+        private readonly ILogger<RolController> _logger;
+        public RolController(ILogger<RolController> logger)
+        {
+            _logger = logger;
+        }
         // GET: RolController
         public ActionResult Index()
         {
@@ -86,11 +92,14 @@ namespace gestion_de_comisiones.Controllers
             }
         }
         // GET: RolController/ObtenerRolesAllModules
-        public ActionResult ObtenerRolesAllModules()
+        public ActionResult ObtenerRolesAllModules([FromHeader] string userLogin)
         {
             try
             {
+                
+                _logger.LogInformation($" es el usuario : {userLogin} inicio el servicio ObtenerRolesAllModules ");
                 var resultado = sevice.ObtenerListaRolesWithModulos();
+                _logger.LogInformation($" es el usuario : {userLogin} Fin del servicio ObtenerRolesAllModules ");
                 return Ok(resultado);
             }
             catch

@@ -117,8 +117,8 @@ export const getPaginas= ()=>{
   }
   export const ObtenerRolesModulos= ()=>{
     return (dispatch)=>{        
-      
-            requestGet('Rol/ObtenerRolesAllModules',{},dispatch).then((res)=>{ 
+        const headers={userLogin:"USER_DEVELOP"};
+            requestGet('Rol/ObtenerRolesAllModules',headers,dispatch).then((res)=>{ 
                 if(res.code === 0){                
                     dispatch({
                         type: Types.LISTA_GLOBAL_ROLES_MODULOS,
