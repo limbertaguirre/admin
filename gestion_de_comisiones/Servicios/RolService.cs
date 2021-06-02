@@ -4,6 +4,7 @@ using gestion_de_comisiones.Modelos.Pagina;
 using gestion_de_comisiones.Modelos.Permiso;
 using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Repository;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,18 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Servicios
 {
-    public class RolService
+    public class RolService : IRolService
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         RolRepository rolRepository = new RolRepository();
+
+        private readonly ILogger<RolService> _logger;
+        public RolService(ILogger<RolService> logger)
+        {
+            _logger = logger;
+
+        }
+
         public object RegistraRol(RolRegisterInputModel data)
         {
 
@@ -264,6 +273,8 @@ namespace gestion_de_comisiones.Servicios
         }
         public object ObtenerListaRolesWithModulos()
         {
+            _logger.LogInformation($" es llego al obtener todos los aaaaaaaaaaaaaaaaaaaaaaaaaa ");
+
             try {  
                 RolRepository rolRepo = new RolRepository();
                 var listRol = rolRepo.obtenerRolesAll();

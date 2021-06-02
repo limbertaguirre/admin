@@ -1,4 +1,5 @@
 using gestion_de_comisiones.Models;
+using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +28,7 @@ namespace gestion_de_comisiones
 
             services.AddControllersWithViews();
 
+            services.AddSingleton<IRolService, RolService>();
             
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
