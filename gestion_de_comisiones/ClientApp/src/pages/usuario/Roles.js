@@ -196,8 +196,7 @@ const  Roles =()=>  {
     
 
     const selecionoPagina = (pagina,idModulo, nombreModulo) => {
-     // console.log("agregara en el modulo", nombreModulo)
-      console.log("se agrego en raiz", pagina)
+
       setModuloSelected({idModulo:idModulo, nombre: nombreModulo})
       setLPermisos([]);
       setTimeout(1000);
@@ -221,8 +220,6 @@ const  Roles =()=>  {
           eliminarPermisoCheck(permisoDelete, moduloSelected.idModulo, moduloSelected.nombre, pageSelected.id_pagina, pageSelected.nombre);
       };
       useEffect(()=>{
-  
-        console.log('lista add hisotrico', listHisotrico);
      },[listPaginaAgregadas, listHisotrico ]);
   
      useEffect(()=>{
@@ -389,13 +386,10 @@ const  Roles =()=>  {
                     nombreModulo:pnombreModulo,
                     paginas:objpaginaBK
                     }
-                    console.log('cero : ', modesinVacio);
                     moBK.push(modesinVacio); 
                     setListHisotrico(moBK);
-                    console.log('paginas total : ', objpaginaBK);
                     if(objpaginaBK.length <= 0){
                       //aqui solo se agregara los modulos consu paginas
-                      console.log('paginas total resul : ', objpaginaBK);
                      setListHisotrico(objmoduloBk);
                     }
             }
@@ -412,7 +406,6 @@ const  Roles =()=>  {
     const validarBotonHistori=()=> {
       if(listHisotrico.length > 0){
           const hist = listHisotrico.length;
-          console.log('cantidad de modulo :',hist);
           let datos=true;
           for(let i=0; i<hist; i++){
               if(listHisotrico[i].paginas.length > 0){
@@ -423,7 +416,7 @@ const  Roles =()=>  {
           }
          return datos;
        }else{
-        console.log('false 1');
+ 
         return false;
       }
     }

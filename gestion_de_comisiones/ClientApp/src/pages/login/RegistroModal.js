@@ -97,8 +97,6 @@ const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
         
     };
     const isValidArea = (area) => {  
-        console.log('el se seleciona ', area);  
-        console.log(area >= 1);
         return  area >= 1;
     };
     const isValidSucursal = (sucursal) => {    
@@ -108,10 +106,8 @@ const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
         let fechaValida= moment().subtract(17,'y').format("YYYY/MM/DD") 
         let fechanacimiento= moment(fechaNac).format("YYYY/MM/DD");
         if(fechanacimiento <= fechaValida){
-            console.log(' si cumple mayor a 17');
             return  true;
         }else{
-            console.log('no cumple');
             return  false;
         }
     };

@@ -50,10 +50,20 @@ export default function reducer (state = defaultState, action) {
                 ...state,
                 globalModules:action.globalModules
             }
+        case Type.LISTA_GLOBAL_ROLES_MODULOS_VACIAR:
+            return{
+                ...state,
+                globalModules:[]
+            }
         case Type.OBJETO_GLOBAL_ROLES_MODULOS:
             return{
                 ...state,
                 objetoRol:action.objetoRol
+            }
+        case Type.OBJETO_GLOBAL_ROLES_MODULOS_VACIO:
+            return{
+                ...state,
+                objetoRol:{  idRol:0, nombre:'', descripcion:'', listModulos:[] }
             }
    
         default: {

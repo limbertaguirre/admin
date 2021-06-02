@@ -28,7 +28,6 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 var resultado = sevice.ObtenerMooduloPaginas();
-               // var Result = new GenericDataJson<string> { Code = 0, Message = "SE LISTADO" };
                 return Ok(resultado);
             }
             catch
@@ -63,7 +62,6 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 var resulRol = refRol.RegistraRol(objetdatao);
-               // var Result = new GenericDataJson<string> { Code = 0, Message = "SE REGISTRO CORRECTAMENTE" };
                 return Ok(resulRol);
             }
             catch (Exception ex)
@@ -106,8 +104,6 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]
         public ActionResult Actualizar([FromBody] RolActualizarInputModel objetdatao)
         {
-            
-
             try
             {
                 var result = sevice.ActualizarRol(objetdatao);

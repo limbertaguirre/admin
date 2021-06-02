@@ -41,7 +41,7 @@ const  EditAcordionPagina =({pagina, idModulo, nombreModulo, selecionoPermiso, d
     //console.log(" pagina id modulo ",idModulo);
 
     const handleChange = (event) => {
-        console.log("selecciono ", event.target.checked, " : ", pagina.id_pagina);
+       
          if(event.target.checked){
             // selecionoPagina(pagina,modulo.idModulo,modulo.nombre)
          }else{
