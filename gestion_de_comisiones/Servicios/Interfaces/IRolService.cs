@@ -15,7 +15,7 @@ namespace gestion_de_comisiones.Servicios
         public List<ModuloResulModel> FuncionObtenerMooduloPaginas();
         public object ObtenerListaRol(int idROl);
         public List<ModuloResulwithPermisoModel> FuncionObtenerListaXRol(int idROl);
-        public object ObtenerListaRolesWithModulos();
+        public object ObtenerListaRolesWithModulos( string usuario);
         public object ActualizarRol(RolActualizarInputModel objRol);
         public List<PaginaResulModelWithPermisos> funcionRecargarpaginas(RolActualizarInputModel objRol);
 

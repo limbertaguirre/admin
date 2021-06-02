@@ -41,7 +41,6 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
-    <Folder Include="Repository\Interfaces\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

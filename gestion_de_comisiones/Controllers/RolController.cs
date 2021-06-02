@@ -102,7 +102,7 @@ namespace gestion_de_comisiones.Controllers
             {
 
                 Logger.LogInformation($" es el usuario : {userLogin} inicio el servicio ObtenerRolesAllModules ");
-                var resultado = Service.ObtenerListaRolesWithModulos();
+                var resultado = Service.ObtenerListaRolesWithModulos(userLogin);
                 Logger.LogInformation($" es el usuario : {userLogin} Fin del servicio ObtenerRolesAllModules ");
                 return Ok(resultado);
             }
