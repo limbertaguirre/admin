@@ -1,5 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,15 @@ using System.Transactions;
 
 namespace gestion_de_comisiones.Repository
 {
-    public class RolRepository
+    public class RolRepository : IRolRepository
     {
         BDMultinivelContext contextMulti = new BDMultinivelContext();
+        private readonly ILogger<RolRepository> Logger;
+        public RolRepository(ILogger<RolRepository> logger)
+        {
+            Logger = logger;
+        }
+
         public int RegistrarRol( string nombre, string descripcion, int usuarioId )
         {
             try
@@ -31,10 +39,12 @@ namespace gestion_de_comisiones.Repository
                 return -1;
             }
         }
-        public List<RolResulModel> obtenerRolesAll()
+        public List<RolResulModel> obtenerRolesAll(string usuario)
         {
             try
             {
+                Logger.LogInformation($" usuario: {usuario} inicio el obtenerRolesAll");
+
                 var ListRoles = contextMulti.Rols.Where(x => x.Habilitado == true).Select(p => new RolResulModel( p.IdRol, p.Nombre, p.Descripcion, p.Habilitado)).ToList();
                 return ListRoles;
             }

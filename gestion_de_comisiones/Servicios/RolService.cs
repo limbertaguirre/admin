@@ -4,6 +4,8 @@ using gestion_de_comisiones.Modelos.Pagina;
 using gestion_de_comisiones.Modelos.Permiso;
 using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Repository;
+using gestion_de_comisiones.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +13,23 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Servicios
 {
-    public class RolService
+    public class RolService : IRolService
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
-        RolRepository rolRepository = new RolRepository();
+       
+
+        private readonly ILogger<RolService> Logger;
+        public RolService(ILogger<RolService> logger, IRolRepository rolRepository)
+        {
+            Logger = logger;
+            RolRepository = rolRepository;
+        }
+        public IRolRepository RolRepository { get; }
+
         public object RegistraRol(RolRegisterInputModel data)
         {
 
-            RolRepository rolRepo = new RolRepository();
-               var objRolId = rolRepo.RegistrarRol(data.nombre, data.descripcion, data.idUsuario);
+               var objRolId = RolRepository.RegistrarRol(data.nombre, data.descripcion, data.idUsuario);
                 if(objRolId >= 1) {
                 foreach (var item in data.modulos) {
                     int idprueba = 0;
@@ -69,7 +79,7 @@ namespace gestion_de_comisiones.Servicios
             
             foreach(var modu in modulos)
             {
-              //  List<PaginaModel> Lispaginas = new List<PaginaModel>();
+   
                var Lispaginas = PaRepo.ObtenerPaginas(modu.IdModulo);               
                 if(Lispaginas.Count > 0)
                 {
@@ -149,12 +159,12 @@ namespace gestion_de_comisiones.Servicios
         {
             ConfiguracionService Confi = new ConfiguracionService();
             PermisoRepository PerRepo = new PermisoRepository();
-            RolRepository rolRepo = new RolRepository();
+           
             List<ModuloResulModel> ListaModulosAll = new List<ModuloResulModel>();
 
            
             //consultar
-            var objRol = rolRepo.obtenerRolXId(idROl);
+            var objRol = RolRepository.obtenerRolXId(idROl);
             if( objRol.IdRol > 0)
             {
                 RolResulModel objNewRoleModulo = new RolResulModel();
@@ -262,11 +272,13 @@ namespace gestion_de_comisiones.Servicios
             }
             return NewListModulos;
         }
-        public object ObtenerListaRolesWithModulos()
+        public object ObtenerListaRolesWithModulos(string usuario)
         {
+            Logger.LogInformation($" usuario: {usuario} inicio el funcion ObtenerListaRolesWithModulos()");
+
             try {  
-                RolRepository rolRepo = new RolRepository();
-                var listRol = rolRepo.obtenerRolesAll();
+                
+                var listRol = RolRepository.obtenerRolesAll(usuario);
                 List<RolResulModel> ListNewRoleModulo = new List<RolResulModel>();
                 foreach(var itemR in listRol)
                 {
@@ -279,6 +291,7 @@ namespace gestion_de_comisiones.Servicios
                     objNewRolModule.Modulos = LModulos;
                     ListNewRoleModulo.Add(objNewRolModule);
                 }
+                Logger.LogInformation($" usuario: {usuario} fin de busqueda  del funcion ObtenerListaRolesWithModulos()");
                 return  Respuesta.ReturnResultdo(0, "OK", ListNewRoleModulo);
             }
             catch (Exception ex)
@@ -292,9 +305,9 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                //var respuesta = rolRepository;
+               
                 List<PaginaResulModelWithPermisos> paginas = funcionRecargarpaginas(objRol);
-                var update = rolRepository.actualizarRoles(objRol.idRol, objRol.nombre, objRol.descripcion, paginas, objRol.idUsuario);
+                var update = RolRepository.actualizarRoles(objRol.idRol, objRol.nombre, objRol.descripcion, paginas, objRol.idUsuario);
                 if (update == true)
                 {
                     return Respuesta.ReturnResultdo(0, "OK", "Se actualizo con exito su rold : " + objRol.nombre);
@@ -318,7 +331,7 @@ namespace gestion_de_comisiones.Servicios
                 List<PaginaResulModelWithPermisos> newListPaginas = new List<PaginaResulModelWithPermisos>();
                 List<PaginaResulModelWithPermisos> newListpagina = new List<PaginaResulModelWithPermisos>();
 
-                //var respuesta = rolRepository;
+                
                 foreach (var obj in objRol.modulos)
                 {
                    

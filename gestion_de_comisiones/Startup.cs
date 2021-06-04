@@ -1,4 +1,7 @@
 using gestion_de_comisiones.Models;
+using gestion_de_comisiones.Repository;
+using gestion_de_comisiones.Repository.Interfaces;
+using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace gestion_de_comisiones
 {
@@ -25,7 +30,13 @@ namespace gestion_de_comisiones
 
             services.AddControllersWithViews();
 
-            
+            //interfaces de servicios
+            services.AddScoped<IRolService, RolService>();
+
+            //interfaces de repositorios
+            services.AddScoped<IRolRepository, RolRepository>();
+
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -39,8 +50,12 @@ namespace gestion_de_comisiones
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            //var path = Directory.GetCurrentDirectory();
+           // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
+            loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

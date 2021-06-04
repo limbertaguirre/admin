@@ -3,6 +3,7 @@ using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,16 @@ namespace gestion_de_comisiones.Controllers
 
     public class RolController : Controller
     {
-        RolService sevice = new RolService();
+      
+        private readonly ILogger<RolController> Logger;
+        public RolController(ILogger<RolController> logger, IRolService service)
+        {
+            Logger = logger;
+            Service = service;
+
+        }
+        public IRolService Service { get; }
+
         // GET: RolController
         public ActionResult Index()
         {
@@ -27,7 +37,7 @@ namespace gestion_de_comisiones.Controllers
             
             try
             {
-                var resultado = sevice.ObtenerMooduloPaginas();
+                var resultado = Service.ObtenerMooduloPaginas();
                 return Ok(resultado);
             }
             catch
@@ -42,7 +52,7 @@ namespace gestion_de_comisiones.Controllers
 
             try
             {
-                var resultado = sevice.ObtenerPermiso();
+                var resultado = Service.ObtenerPermiso();
                 return Ok(resultado);
             }
             catch
@@ -57,11 +67,11 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]
         public ActionResult Registrar([FromBody] RolRegisterInputModel objetdatao)
         {
-            RolService refRol = new RolService();
+          //  RolService refRol = new RolService();
 
             try
             {
-                var resulRol = refRol.RegistraRol(objetdatao);
+                var resulRol = Service.RegistraRol(objetdatao);
                 return Ok(resulRol);
             }
             catch (Exception ex)
@@ -76,7 +86,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                var resultado = sevice.ObtenerListaRol(idRol);
+                var resultado = Service.ObtenerListaRol(idRol);
                 return Ok(resultado);
             } 
             catch
@@ -86,11 +96,14 @@ namespace gestion_de_comisiones.Controllers
             }
         }
         // GET: RolController/ObtenerRolesAllModules
-        public ActionResult ObtenerRolesAllModules()
+        public ActionResult ObtenerRolesAllModules([FromHeader] string userLogin)
         {
             try
             {
-                var resultado = sevice.ObtenerListaRolesWithModulos();
+
+                Logger.LogInformation($" es el usuario : {userLogin} inicio el servicio ObtenerRolesAllModules ");
+                var resultado = Service.ObtenerListaRolesWithModulos(userLogin);
+                Logger.LogInformation($" es el usuario : {userLogin} Fin del servicio ObtenerRolesAllModules ");
                 return Ok(resultado);
             }
             catch
@@ -106,7 +119,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                var result = sevice.ActualizarRol(objetdatao);
+                var result = Service.ActualizarRol(objetdatao);
                 return Ok(result);
             }
             catch (Exception ex)
