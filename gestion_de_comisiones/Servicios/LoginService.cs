@@ -7,26 +7,35 @@ using System.Threading.Tasks;
 using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Usuario;
 using Newtonsoft.Json;
+using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace gestion_de_comisiones.Servicios
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
-        //BDMultinivelContext contextMulti = new BDMultinivelContext();
+        private readonly ILogger<LoginService> Logger;
+        public LoginService(ILogger<LoginService> logger )
+        {
+            Logger = logger;
+        }
 
         public object VerificarUsuario(string usuario)
         {
             try
             {
+                Logger.LogInformation($" usuario : {usuario} inicio la funcionalidad VerificarUsuario()");
                 UsuarioRepository UserRepos = new UsuarioRepository();
                 var objetoo = UserRepos.ObtenerUsuarioPorId(usuario);
                 if (objetoo != null)
                 {
-                    var Result = new GenericDataJson<object> { Code = 0, Message = "prueba", Data = objetoo };
+                    Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
+                    var Result = new GenericDataJson<object> { Code = 0, Message = "ok", Data = objetoo };
                     return Result;
                 }
                 else
                 {
+                    Logger.LogWarning($" usuario : {usuario} no se encontro el registro");
                     var Result = new GenericDataJson<string> { Code = 2, Message = "El usaurio no se encuentra registrado" };
                     return Result;
                 }
@@ -34,6 +43,7 @@ namespace gestion_de_comisiones.Servicios
             }
             catch (Exception ex)
             {
+                Logger.LogError($" usuario : {usuario} catch error f,fin {ex.Message}");
                 return ex;
             }
         }

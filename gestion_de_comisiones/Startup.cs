@@ -2,6 +2,7 @@ using gestion_de_comisiones.Models;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
+using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,7 @@ namespace gestion_de_comisiones
             services.AddControllersWithViews();
 
             //interfaces de servicios
+            services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IRolService, RolService>();
 
             //interfaces de repositorios
