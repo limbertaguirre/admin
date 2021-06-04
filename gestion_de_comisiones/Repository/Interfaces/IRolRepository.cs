@@ -13,6 +13,9 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public RolResulModel obtenerRolXId(int idRol);
         public bool actualizarRoles(int idRol, string nombreRol, string descripcionRol, List<PaginaResulModelWithPermisos> paginas, int idUsuario);
         public bool validarPaginaTienePermisoActivos(List<RolPermiso> permisos);
+        public RolUserResulModel obtenerRolxUsuario(int idUsuario);
+
+        public object obtnerModulosPadres(string usuario);
 
     }
 }

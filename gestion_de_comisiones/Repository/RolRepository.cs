@@ -2,6 +2,7 @@
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -188,5 +189,47 @@ namespace gestion_de_comisiones.Repository
             }
              return estado;
         }
+
+        public RolUserResulModel obtenerRolxUsuario(int idUsuario)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtenerRolxUsuario() la busqueda de rol por usuario");
+                var obj = contextMulti.Rols.Join(contextMulti.UsuriosRoles,
+                                                      Rol => Rol.IdRol,
+                                                     UsuriosRole => UsuriosRole.IdRol,
+                                                      (Rol, UsuriosRole) => new RolUserResulModel
+                                                      {
+                                                          idRol = Rol.IdRol,
+                                                          nombre = Rol.Nombre,
+                                                          estadoRol = (bool)Rol.Habilitado,
+                                                          estadoRolUsuario = (bool)UsuriosRole.Estado,
+                                                      }).Where(x => x.estadoRol == true && x.estadoRolUsuario == true).FirstOrDefault();
+                Logger.LogInformation($" fin busqueda,  se busco los roles de los usuarios iduser: {idUsuario} retorno {JsonConvert.SerializeObject(obj)}");
+                return obj;
+            }
+            catch (Exception ex)
+            {               
+                return null;
+            }
+        }
+        public object obtnerModulosPadres(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtnerModulosPadres()");
+                var obj = contextMulti.Moduloes.Where(x => x.IdModuloPadre == null).ToList();
+                    //ListRoles = contextMulti.Rols.Where(x => x.Habilitado == true).Select(p => new RolResulModel(p.IdRol, p.Nombre, p.Descripcion, p.Habilitado)).ToList();
+
+
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
     }
 }
