@@ -7,6 +7,10 @@ namespace gestion_de_comisiones.Modelos.Rol
 {
     public class RolPaginaModel
     {
+        public RolPaginaModel()
+        {
+        }
+
         public RolPaginaModel(int? idRolPaginaI, bool? habilitado, int? idRol, int? idPagina, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdRolPaginaI = idRolPaginaI;

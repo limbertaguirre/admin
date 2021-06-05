@@ -1,4 +1,6 @@
-﻿using gestion_de_comisiones.Modelos.Rol;
+﻿using gestion_de_comisiones.Modelos.Modulo;
+using gestion_de_comisiones.Modelos.Pagina;
+using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -213,20 +215,68 @@ namespace gestion_de_comisiones.Repository
                 return null;
             }
         }
-        public object obtnerModulosPadres(string usuario)
+        public List<ModuloModel> obtnerModulosPadres(string usuario)
         {
             try
             {
                 Logger.LogInformation($" inicio el  obtnerModulosPadres()");
-                var obj = contextMulti.Moduloes.Where(x => x.IdModuloPadre == null).ToList();
-                    //ListRoles = contextMulti.Rols.Where(x => x.Habilitado == true).Select(p => new RolResulModel(p.IdRol, p.Nombre, p.Descripcion, p.Habilitado)).ToList();
-
-
-                return obj;
+                List<ModuloModel> modulos = new List<ModuloModel>();
+                modulos = contextMulti.Moduloes.Where(x => x.IdModuloPadre == null && x.Habilitado == true).Select( m => new ModuloModel(m.IdModulo, m.Nombre, m.Icono, m.Orden, m.Habilitado, m.IdModuloPadre, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
+                Logger.LogInformation($"fin busqueda modulos padres  {usuario} retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
             }
             catch (Exception ex)
             {
-                return null;
+                List<ModuloModel> lisVacio = new List<ModuloModel>();
+                return lisVacio;
+            }
+        }
+        public List<ModuloModel> obtnerSubModulosXIdPadre(string usuario, int IdModulo)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtnerModulosPadres()");
+                List<ModuloModel> modulos = new List<ModuloModel>();
+                modulos = contextMulti.Moduloes.Where(x => x.IdModuloPadre == IdModulo && x.Habilitado == true).Select(m => new ModuloModel(m.IdModulo, m.Nombre, m.Icono, m.Orden, m.Habilitado, m.IdModuloPadre, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
+                Logger.LogInformation($"fin busqueda modulos padres  {usuario} retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                List<ModuloModel> lisVacio = new List<ModuloModel>();
+                return lisVacio;
+            }
+        }
+        public List<PaginaModel> obtenerPaginasXModulo(string usuario, int IdModulo)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerPaginasXModulo()");
+                List<PaginaModel> modulos = new List<PaginaModel>();
+                modulos = contextMulti.Paginas.Where(x => x.IdModulo == IdModulo && x.Habilitado == true).Select(m => new PaginaModel(m.IdPagina, m.Nombre, m.UrlPagina, m.Icono, m.Orden, m.Habilitado, m.IdModulo, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion )).ToList();
+                Logger.LogInformation($"usuario: {usuario} - fin busqueda modulos padres   retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                List<PaginaModel> lisVacio = new List<PaginaModel>();
+                return lisVacio;
+            }
+        }
+        public RolPaginaModel obtenerRolPaginaXPagina(string usuario, int IdPagina, int IdRol)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerRolPaginaXPagina()");
+                RolPaginaModel rolPagina = new RolPaginaModel();
+                rolPagina = contextMulti.RolPaginaIs.Where(x => x.IdPagina== IdPagina && x.IdRol== IdRol && x.Habilitado == true).Select(r => new RolPaginaModel(r.IdRolPaginaI, r.Habilitado, r.IdRol, r.IdPagina, r.IdUsuario, r.FechaCreacion, r.FechaActualizacion)).FirstOrDefault();
+                Logger.LogInformation($"usuario: {usuario} - fin busqueda de rol pagina {JsonConvert.SerializeObject(rolPagina)}");
+                return rolPagina;
+            }
+            catch (Exception ex)
+            {
+                RolPaginaModel lisVacio = new RolPaginaModel();
+                return lisVacio;
             }
         }
 
