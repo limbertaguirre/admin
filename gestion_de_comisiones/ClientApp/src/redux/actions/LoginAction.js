@@ -1,4 +1,5 @@
-import * as Types from '../types/loginTypes'
+import * as Types from '../types/loginTypes';
+import * as TypesHome from '../types/homeTypes';
 import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
@@ -12,8 +13,14 @@ export const iniciarSesion= (userName,password)=>{
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{          
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{  
+            console.log("perfiles : ", res);        
             if(res.code === 0){
+                dispatch({
+                    type: TypesHome.MENU_PAGE,
+                     menu:res.data.menus,
+                })
+
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,

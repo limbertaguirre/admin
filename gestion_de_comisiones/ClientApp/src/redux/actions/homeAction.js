@@ -62,10 +62,10 @@ export const loadHome= ()=>{
 export const cargarMenu= ()=>{
   return (dispatch)=>{   
       
-       dispatch({
+     /*   dispatch({
         type: Types.MENU_PAGE,
          menu:menuWeb,
-       })
+       }) */
     
   }
 }

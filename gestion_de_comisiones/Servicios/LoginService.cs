@@ -18,6 +18,7 @@ namespace gestion_de_comisiones.Servicios
 {
     public class LoginService : ILoginService
     {
+        ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<LoginService> Logger;
         public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository)
         {
@@ -43,13 +44,20 @@ namespace gestion_de_comisiones.Servicios
                         var listModulePadre = RolRepository.obtnerModulosPadres(usuario);
                         var perfil = this.cargarPerfilesModulos(rol.idRol, usuario, listModulePadre);
 
+                        var Result = Respuesta.ReturnResultdo(0, "roles obtenidos", perfil);
+                        return Result;
+
                     }
+                    else
+                    {
+                        //-------------------------------------------------------------------------------------------------------
+                       // var resulte = Respuesta.ReturnResultdo(1, "No exite rol", "");
 
-
-                    //-------------------------------------------------------------------------------------------------------
-                    Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
-                    var Result = new GenericDataJson<object> { Code = 0, Message = "ok", Data = objetoo };
-                    return Result;
+                        Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
+                        var Result = Respuesta.ReturnResultdo(1, "Aun no tiene rol asignado.", "");
+                        return Result;
+                    }
+                   
                 }
                 else
                 {
@@ -69,6 +77,7 @@ namespace gestion_de_comisiones.Servicios
         public object cargarPerfilesModulos(int idRol, string usuario, List<ModuloModel> moduloPadres)
         {
             try {
+                    PerfilModel objPerfil = new PerfilModel();
                     List<MenuModel> ListMenu = new List<MenuModel>();
                     foreach(var item in moduloPadres)
                     {
@@ -117,14 +126,15 @@ namespace gestion_de_comisiones.Servicios
                     }
 
                     }
-
-
-                return 55;
+                    objPerfil.menus = ListMenu;
+                    //objPerfil.PermisoPaginas= listanoexite
+                    return objPerfil;
             }
             catch (Exception ex)
             {
                 Logger.LogError($" usuario : {usuario} catch error f,fin {ex.Message}");
-                return ex;
+                PerfilModel objPerfil = new PerfilModel();
+                return objPerfil;
             }
 
          }
