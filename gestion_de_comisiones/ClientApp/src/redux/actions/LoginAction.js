@@ -18,7 +18,8 @@ export const iniciarSesion= (userName,password)=>{
             if(res.code === 0){
                 dispatch({
                     type: TypesHome.MENU_PAGE,
-                     menu:res.data.menus,
+                     menu:res.data.menus == null? [] : res.data.menus,
+                     perfiles:[],
                 })
 
                 dispatch({
@@ -41,6 +42,9 @@ export const iniciarSesion= (userName,password)=>{
             dispatch({
               type: Types.CLOSE_SESION
             });
+            dispatch({
+                type: TypesHome.MENU_PAGE_CLEAR
+            })
             history.push("/"); 
             window.localStorage.clear();                          
     }

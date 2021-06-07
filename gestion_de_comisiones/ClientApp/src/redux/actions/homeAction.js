@@ -54,9 +54,9 @@ const menuWeb=[
 
 export const loadHome= ()=>{
   return (dispatch)=>{   
-       requestGet('weatherforecast',{},dispatch).then((res)=>{
+     /*   requestGet('weatherforecast',{},dispatch).then((res)=>{
       
-       })    
+       })    */ 
   }
 }
 export const cargarMenu= ()=>{

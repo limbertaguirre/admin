@@ -109,12 +109,58 @@ namespace gestion_de_comisiones.Repository
                                 if (tieneActivo == false && rolPaginaOld == null)//aqui validamos e exita la pagina y tenga permisos seleccionados caso contrario no hace nada 
                                 { 
 
+
                                 }else {
-                                    
-                                        foreach(var itemPer in itemPag.permisos)
+
+                                    if (rolPaginaOld == null && tieneActivo == true)//---agregar nuevo rolpagina
+                                    {
+                                        RolPaginaI objRolPa = new RolPaginaI();
+                                        objRolPa.Habilitado = true;
+                                        objRolPa.IdRol = idRol;
+                                        objRolPa.IdPagina = itemPag.idPagina;
+                                        objRolPa.IdUsuario = idUsuario;
+                                        context.RolPaginaIs.Add(objRolPa);
+                                        context.SaveChanges();
+                                        int idRolPaginaPK = objRolPa.IdRolPaginaI;
+                                        foreach (var itemPer in itemPag.permisos)
+                                        {
+                                            var permisoOld = context.RolPaginaPermisoIs.Where(x => x.IdRolPagina == idRolPaginaPK && x.IdPermiso == itemPer.idPermiso).FirstOrDefault();
+                                            if (itemPer.estado == true && permisoOld == null)
+                                            {
+                                                //add permiso nuevo
+                                                RolPaginaPermisoI objRolPaginaPermiso = new RolPaginaPermisoI();
+                                                objRolPaginaPermiso.Habilitado = true;
+                                                objRolPaginaPermiso.IdRolPagina = idRolPaginaPK;
+                                                objRolPaginaPermiso.IdPermiso = itemPer.idPermiso;
+                                                objRolPaginaPermiso.IdUsuario = idUsuario;
+                                                context.RolPaginaPermisoIs.Add(objRolPaginaPermiso);
+                                                context.SaveChanges();
+                                            }
+                                            else
+                                            {//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
+
+                                                if (permisoOld != null)
+                                                {
+                                                    if (itemPer.estado != permisoOld.Habilitado)
+                                                    {
+                                                        permisoOld.Habilitado = itemPer.estado;
+                                                        context.SaveChanges();
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+                                      //-nuevo rola pagina finish---------------------------------------
+                                    }
+                                    else
+                                    {
+                                        //---------------------------------------
+                                        foreach (var itemPer in itemPag.permisos)
                                         {
                                             var permisoOld = context.RolPaginaPermisoIs.Where(x => x.IdRolPagina == rolPaginaOld.IdRolPaginaI && x.IdPermiso == itemPer.idPermiso).FirstOrDefault();
-                                            if(itemPer.estado == true && permisoOld == null)
+                                            if (itemPer.estado == true && permisoOld == null)
                                             {
                                                 //add permiso nuevo
                                                 RolPaginaPermisoI objRolPaginaPermiso = new RolPaginaPermisoI();
@@ -124,9 +170,11 @@ namespace gestion_de_comisiones.Repository
                                                 objRolPaginaPermiso.IdUsuario = idUsuario;
                                                 context.RolPaginaPermisoIs.Add(objRolPaginaPermiso);
                                                 context.SaveChanges();
-                                            } else{//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
-                                              
-                                                if ( permisoOld != null)
+                                            }
+                                            else
+                                            {//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
+
+                                                if (permisoOld != null)
                                                 {
                                                     if (itemPer.estado != permisoOld.Habilitado)
                                                     {
@@ -134,10 +182,10 @@ namespace gestion_de_comisiones.Repository
                                                         context.SaveChanges();
                                                     }
 
-                                                }                                       
+                                                }
                                             }
                                         }
-
+                                    }
                                     
 
                                     if (tieneActivo == false && rolPaginaOld != null)
@@ -203,10 +251,11 @@ namespace gestion_de_comisiones.Repository
                                                       (Rol, UsuriosRole) => new RolUserResulModel
                                                       {
                                                           idRol = Rol.IdRol,
+                                                          idUsuario=UsuriosRole.IdUsuario,
                                                           nombre = Rol.Nombre,
                                                           estadoRol = (bool)Rol.Habilitado,
                                                           estadoRolUsuario = (bool)UsuriosRole.Estado,
-                                                      }).Where(x => x.estadoRol == true && x.estadoRolUsuario == true).FirstOrDefault();
+                                                      }).Where(x => x.estadoRol == true && x.estadoRolUsuario == true && x.idUsuario == idUsuario).FirstOrDefault();
                 Logger.LogInformation($" fin busqueda,  se busco los roles de los usuarios iduser: {idUsuario} retorno {JsonConvert.SerializeObject(obj)}");
                 return obj;
             }

@@ -51,10 +51,10 @@ namespace gestion_de_comisiones.Servicios
                     else
                     {
                         //-------------------------------------------------------------------------------------------------------
-                       // var resulte = Respuesta.ReturnResultdo(1, "No exite rol", "");
-
+                        // var resulte = Respuesta.ReturnResultdo(1, "No exite rol", "");
+                        PerfilModel objPerfil = new PerfilModel();
                         Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
-                        var Result = Respuesta.ReturnResultdo(1, "Aun no tiene rol asignado.", "");
+                        var Result = Respuesta.ReturnResultdo(0, "Aun no tiene rol asignado.", objPerfil);
                         return Result;
                     }
                    

@@ -5,6 +5,7 @@ const defaultState = {
     principal: [],    
     loadMore:false,
     menu:[],
+    perfiles:[],
 };
 
 export default function reducer (state = defaultState, action) {  
@@ -18,7 +19,14 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 menu:action.menu,
-            }     
+                perfiles:action.perfiles,
+            }    
+        case Type.MENU_PAGE_CLEAR:
+            return{
+                ...state,
+                menu:[],
+                perfiles:[]
+            }  
         default: {
             return state;
         }
