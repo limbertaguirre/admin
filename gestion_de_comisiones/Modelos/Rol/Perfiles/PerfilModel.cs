@@ -9,6 +9,8 @@ namespace gestion_de_comisiones.Modelos.Rol.Perfiles
     {
         public List<MenuModel> menus { get; set; }
         public List<PerfilHash> listaHash { get; set; }
+        public string usuario { get; set; }
+        public int idUsuario { get; set; }
 
     }
 }

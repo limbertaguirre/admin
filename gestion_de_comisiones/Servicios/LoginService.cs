@@ -42,7 +42,7 @@ namespace gestion_de_comisiones.Servicios
                     {
                         var nn = rol.nombre;
                         var listModulePadre = RolRepository.obtnerModulosPadres(usuario);
-                        var perfil = this.cargarPerfilesModulos(rol.idRol, usuario, listModulePadre);
+                        var perfil = this.cargarPerfilesModulos(rol.idRol, usuario, objetoo.IdUsuario, listModulePadre);
 
                         var Result = Respuesta.ReturnResultdo(0, "roles obtenidos", perfil);
                         return Result;
@@ -74,7 +74,7 @@ namespace gestion_de_comisiones.Servicios
                 return Result;
             }
         }
-        public object cargarPerfilesModulos(int idRol, string usuario, List<ModuloModel> moduloPadres)
+        public object cargarPerfilesModulos(int idRol, string usuario, int idUsurio, List<ModuloModel> moduloPadres)
         {
             try {
                     PerfilModel objPerfil = new PerfilModel();
@@ -133,6 +133,8 @@ namespace gestion_de_comisiones.Servicios
                     }
                     objPerfil.menus = ListMenu;
                     objPerfil.listaHash = listaHash;
+                    objPerfil.usuario = usuario;
+                    objPerfil.idUsuario = idUsurio;
                     
                     return objPerfil;
             }

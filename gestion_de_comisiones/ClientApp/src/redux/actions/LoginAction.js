@@ -14,17 +14,18 @@ export const iniciarSesion= (userName,password)=>{
             password:password
         }
         requestPost('Login/Sesion',body,dispatch).then((res)=>{  
-            console.log("perfiles : ", res);        
+            //console.log("perfiles : ", res);        
             if(res.code === 0){
                 dispatch({
                     type: TypesHome.MENU_PAGE,
                      menu:res.data.menus == null? [] : res.data.menus,
-                     perfiles:[],
+                     perfiles:res.data.listaHash ==null? [] : res.data.listaHash,
                 })
 
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,
+                    idUsuario:res.data.idUsuario,
                 })   
             }else if(res.code === 1){ 
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
