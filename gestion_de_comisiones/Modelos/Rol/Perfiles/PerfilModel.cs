@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.Modelos.Rol.Perfiles
     public class PerfilModel
     {
         public List<MenuModel> menus { get; set; }
-        // aqui add los pemiso listado en proceso
+        public List<PerfilHash> listaHash { get; set; }
+
     }
 }

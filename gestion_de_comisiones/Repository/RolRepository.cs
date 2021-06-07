@@ -1,6 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos.Modulo;
 using gestion_de_comisiones.Modelos.Pagina;
 using gestion_de_comisiones.Modelos.Rol;
+using gestion_de_comisiones.Modelos.Rol.Perfiles;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -328,7 +329,48 @@ namespace gestion_de_comisiones.Repository
                 return lisVacio;
             }
         }
+        public List<PerfilHash> obtenerPermisoXPagina(string usuario, int idRolPagina, string nombrePagina, string pathPagina)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerPermisoXPagina()");
+                List<RolPermisoHashModel> modulos = new List<RolPermisoHashModel>();
+                List<RolPaginaPermisoModel> rolpagina = new List<RolPaginaPermisoModel>();
+                List<PerfilHash> listaPerfiles = new List<PerfilHash>();
+                rolpagina = contextMulti.RolPaginaPermisoIs.Where(x => x.IdRolPagina == idRolPagina && x.Habilitado == true).Select(m => new RolPaginaPermisoModel(m.IdRolPaginaPermisoI, m.Habilitado, m.IdRolPagina, m.IdPermiso, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
 
+                foreach(var item in rolpagina)
+                {
+                    RolPermisoHashModel permiso = contextMulti.RolPaginaPermisoIs.Join(contextMulti.Permisoes,
+                            RolPaginaPermisoI => RolPaginaPermisoI.IdPermiso,
+                            Permiso => Permiso.IdPermiso,
+                            (RolPaginaPermisoI, Permiso) => new RolPermisoHashModel
+                            {
+                                idRolPaginaPermiso = RolPaginaPermisoI.IdRolPaginaPermisoI,
+                                permiso = Permiso.Permiso1,
+                                estadoRolPaginaPermiso= (bool)RolPaginaPermisoI.Habilitado,
+                            }).Where(x => x.estadoRolPaginaPermiso == true && x.idRolPaginaPermiso == item.IdRolPaginaPermisoI).FirstOrDefault();                 
+                    if(permiso != null)
+                    {
+                        PerfilHash hash = new PerfilHash();
+                        hash.IdhashPagina = item.IdRolPaginaPermisoI;
+                        hash.permiso = permiso.permiso;
+                        hash.Hash = pathPagina + permiso.permiso;
+                        hash.pagina = nombrePagina;
+                        listaPerfiles.Add(hash);
+                    }
+                }
+                Logger.LogInformation($"usuario: {usuario} - finde las busqueda de rol pagina + hash :  {JsonConvert.SerializeObject(listaPerfiles)}");
+                return listaPerfiles;
+            }
+            catch (Exception ex)
+            {
+                List<PerfilHash> lisVacio = new List<PerfilHash>();
+                return lisVacio;
+            }
+        }
 
     }
 }
+
+

@@ -22,8 +22,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
   }))(Chip); 
 
 
- const Facturacion =()=> {    
-
+ const Facturacion =(props)=> {    
+     console.log("props :", props);
     function handleClick(event) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');

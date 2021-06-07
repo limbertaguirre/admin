@@ -78,6 +78,7 @@ namespace gestion_de_comisiones.Servicios
         {
             try {
                     PerfilModel objPerfil = new PerfilModel();
+                    List<PerfilHash> listaHash = new List<PerfilHash>();
                     List<MenuModel> ListMenu = new List<MenuModel>();
                     foreach(var item in moduloPadres)
                     {
@@ -91,7 +92,7 @@ namespace gestion_de_comisiones.Servicios
                         {
                             var tienePagina = RolRepository.obtenerRolPaginaXPagina(usuario, itempag.IdPagina, idRol);
                             if(tienePagina != null)
-                            {   //add paginas q tiene
+                            {   //add paginas q tiene                                
                                 PaginaOutputModel page = new PaginaOutputModel();
                                 page.idPage = itempag.IdPagina;
                                 page.title = itempag.Nombre;
@@ -100,6 +101,10 @@ namespace gestion_de_comisiones.Servicios
                                 page.path = itempag.UrlPagina;
                                 page.icon = itempag.Icono;
                                 ListPages.Add(page);
+
+                                List<PerfilHash> permisosHash = RolRepository.obtenerPermisoXPagina(usuario, (int)tienePagina.IdRolPaginaI, itempag.Nombre, itempag.UrlPagina);
+                                listaHash.AddRange(permisosHash);
+
                             }
                         }
                         if(ListPages.Count > 0)
@@ -127,7 +132,8 @@ namespace gestion_de_comisiones.Servicios
 
                     }
                     objPerfil.menus = ListMenu;
-                    //objPerfil.PermisoPaginas= listanoexite
+                    objPerfil.listaHash = listaHash;
+                    
                     return objPerfil;
             }
             catch (Exception ex)
