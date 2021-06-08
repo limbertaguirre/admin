@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useEffect, useState}  from 'react';
 import { emphasize, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
+
+import * as permiso from '../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
+import {useSelector,useDispatch} from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 
 const StyledBreadcrumb = withStyles((theme) => ({
@@ -22,8 +27,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
   }))(Chip); 
 
 
- const FormaPago =()=> {
-    
+ const FormaPago =(props)=> {
+    let history = useHistory();
+    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+    useEffect(()=>{  try{  
+       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
+    },[])
 
      
     return (

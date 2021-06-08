@@ -1,7 +1,12 @@
-import React from "react";
+import React, {useEffect, useState}  from 'react';
 
 import { Breadcrumbs, Chip, emphasize, withStyles } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
+
+import * as permiso from '../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
+import {useSelector,useDispatch} from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -19,7 +24,15 @@ const StyledBreadcrumb = withStyles((theme) => ({
   },
 }))(Chip);
 
-const CargarComisiones = () => {
+const CargarComisiones = (props) => {
+  
+    let history = useHistory();
+    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+    useEffect(()=>{      
+      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+    },[])
+
+
   return (
     <>
       <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
