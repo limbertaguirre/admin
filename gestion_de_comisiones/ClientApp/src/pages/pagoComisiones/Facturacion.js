@@ -1,9 +1,14 @@
-import React  from 'react';
+import React, {useEffect, useState}  from 'react';
 import BorderWrapper from 'react-border-wrapper'
 import { emphasize, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
+
+import * as permiso from '../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
+import {useSelector,useDispatch} from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -23,7 +28,16 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 
  const Facturacion =(props)=> {    
-     console.log("props :", props);
+     
+      let history = useHistory();
+      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+      useEffect(()=>{      
+        verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+      },[])
+     
+
+  
+
     function handleClick(event) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');

@@ -355,7 +355,7 @@ namespace gestion_de_comisiones.Repository
                         PerfilHash hash = new PerfilHash();
                         hash.IdhashPagina = item.IdRolPaginaPermisoI;
                         hash.permiso = permiso.permiso;
-                        hash.Hash = pathPagina + permiso.permiso;
+                        hash.Hash = (nombrePagina + permiso.permiso).Replace(" ", String.Empty); 
                         hash.pagina = nombrePagina;
                         listaPerfiles.Add(hash);
                     }

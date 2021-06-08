@@ -28,7 +28,7 @@ const LinkMenuSub =({subMenu})=> {
                     <List component="div" disablePadding>
                         {subMenu.listaSubMenu.map((value, index) => (            
                             <div key={index}>
-                                <ListItem sx={{ pl: 6 }} button onClick={()=> history.push(value.path)} >
+                                <ListItem sx={{ pl: 6 }} button onClick={()=> history.push({ pathname: value.path, state: {namePagina: value.namePage } })} >
                                     <ListItemIcon style={{marginLeft:10}}>                                       
                                     </ListItemIcon>
                                     <ListItemText primary={value.title} />
@@ -41,3 +41,4 @@ const LinkMenuSub =({subMenu})=> {
     );  
 }
 export default LinkMenuSub;
+

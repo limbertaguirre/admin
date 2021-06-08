@@ -97,7 +97,7 @@ namespace gestion_de_comisiones.Servicios
                                 page.idPage = itempag.IdPagina;
                                 page.title = itempag.Nombre;
                                 page.descripion= itempag.Nombre;
-                                page.namePage = itempag.Nombre;
+                                page.namePage = itempag.Nombre.Replace(" ", String.Empty); 
                                 page.path = itempag.UrlPagina;
                                 page.icon = itempag.Icono;
                                 ListPages.Add(page);
