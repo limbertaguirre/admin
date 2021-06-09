@@ -1,0 +1,43 @@
+﻿using gestion_de_comisiones.Repository.Interfaces;
+using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace gestion_de_comisiones.Servicios
+{
+    public class ClienteService : IClienteService
+    {
+        ConfiguracionService Respuesta = new ConfiguracionService();
+        private readonly ILogger<ClienteService> Logger;
+
+        public ClienteService(ILogger<ClienteService> logger , IClienteRepository repository)
+        {
+            Logger = logger;
+            Repository = repository;
+        }
+        public IClienteRepository Repository { get; set; }
+
+
+        public object ObtenerClientes(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" es el usuario : {usuario} inicio el servicio ObtenerClientes() ");
+                var listaCliente = Repository.obtenerAllClientes(usuario);
+                return Respuesta.ReturnResultdo(0, "ok", "");
+                
+
+            }
+            catch (Exception ex)
+            {
+              
+                return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+
+    }
+}
