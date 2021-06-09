@@ -7,6 +7,10 @@ namespace gestion_de_comisiones.Modelos.Modulo
 {
     public class ModuloModel
     {
+        public ModuloModel()
+        {
+        }
+
         public ModuloModel(int idModulo, string nombre, string icono, int? orden, bool? habilitado, int? idModuloPadre, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdModulo = idModulo;

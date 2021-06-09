@@ -10,16 +10,17 @@ namespace gestion_de_comisiones.Repository
     public class UsuarioRepository
     {
         BDMultinivelContext contextMulti = new BDMultinivelContext();
-        public object ObtenerUsuarioPorId(string usuario)
+        public UsuarioModel ObtenerUsuarioPorId(string usuario)
         {
             try
             {
-                var objUsuario = contextMulti.Usuarios.Where(x => x.Usuario1 == usuario).SingleOrDefault();
+                var objUsuario = contextMulti.Usuarios.Where(x => x.Usuario1 == usuario).Select(p => new UsuarioModel(p.IdUsuario, p.Usuario1, p.Nombres, p.Apellidos, p.Telefono, p.Corporativo, p.FechaNacimiento, p.IdRol, p.IdSucursal, p.IdArea, p.UsuarioId, p.FechaCreacion, p.FechaActualizacion)).SingleOrDefault();
                 return objUsuario;
             }
             catch (Exception ex)
             {
-                return ex;
+
+                return null;
             }
         }
         public bool RegistrarUsuario(UsuarioRegisterInputModel param)

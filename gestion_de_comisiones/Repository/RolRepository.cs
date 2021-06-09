@@ -1,7 +1,11 @@
-﻿using gestion_de_comisiones.Modelos.Rol;
+﻿using gestion_de_comisiones.Modelos.Modulo;
+using gestion_de_comisiones.Modelos.Pagina;
+using gestion_de_comisiones.Modelos.Rol;
+using gestion_de_comisiones.Modelos.Rol.Perfiles;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,12 +110,58 @@ namespace gestion_de_comisiones.Repository
                                 if (tieneActivo == false && rolPaginaOld == null)//aqui validamos e exita la pagina y tenga permisos seleccionados caso contrario no hace nada 
                                 { 
 
+
                                 }else {
-                                    
-                                        foreach(var itemPer in itemPag.permisos)
+
+                                    if (rolPaginaOld == null && tieneActivo == true)//---agregar nuevo rolpagina
+                                    {
+                                        RolPaginaI objRolPa = new RolPaginaI();
+                                        objRolPa.Habilitado = true;
+                                        objRolPa.IdRol = idRol;
+                                        objRolPa.IdPagina = itemPag.idPagina;
+                                        objRolPa.IdUsuario = idUsuario;
+                                        context.RolPaginaIs.Add(objRolPa);
+                                        context.SaveChanges();
+                                        int idRolPaginaPK = objRolPa.IdRolPaginaI;
+                                        foreach (var itemPer in itemPag.permisos)
+                                        {
+                                            var permisoOld = context.RolPaginaPermisoIs.Where(x => x.IdRolPagina == idRolPaginaPK && x.IdPermiso == itemPer.idPermiso).FirstOrDefault();
+                                            if (itemPer.estado == true && permisoOld == null)
+                                            {
+                                                //add permiso nuevo
+                                                RolPaginaPermisoI objRolPaginaPermiso = new RolPaginaPermisoI();
+                                                objRolPaginaPermiso.Habilitado = true;
+                                                objRolPaginaPermiso.IdRolPagina = idRolPaginaPK;
+                                                objRolPaginaPermiso.IdPermiso = itemPer.idPermiso;
+                                                objRolPaginaPermiso.IdUsuario = idUsuario;
+                                                context.RolPaginaPermisoIs.Add(objRolPaginaPermiso);
+                                                context.SaveChanges();
+                                            }
+                                            else
+                                            {//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
+
+                                                if (permisoOld != null)
+                                                {
+                                                    if (itemPer.estado != permisoOld.Habilitado)
+                                                    {
+                                                        permisoOld.Habilitado = itemPer.estado;
+                                                        context.SaveChanges();
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+                                      //-nuevo rola pagina finish---------------------------------------
+                                    }
+                                    else
+                                    {
+                                        //---------------------------------------
+                                        foreach (var itemPer in itemPag.permisos)
                                         {
                                             var permisoOld = context.RolPaginaPermisoIs.Where(x => x.IdRolPagina == rolPaginaOld.IdRolPaginaI && x.IdPermiso == itemPer.idPermiso).FirstOrDefault();
-                                            if(itemPer.estado == true && permisoOld == null)
+                                            if (itemPer.estado == true && permisoOld == null)
                                             {
                                                 //add permiso nuevo
                                                 RolPaginaPermisoI objRolPaginaPermiso = new RolPaginaPermisoI();
@@ -121,9 +171,11 @@ namespace gestion_de_comisiones.Repository
                                                 objRolPaginaPermiso.IdUsuario = idUsuario;
                                                 context.RolPaginaPermisoIs.Add(objRolPaginaPermiso);
                                                 context.SaveChanges();
-                                            } else{//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
-                                              
-                                                if ( permisoOld != null)
+                                            }
+                                            else
+                                            {//aqui si existe permiso y si son diferentes de recien se le actualiza el estado
+
+                                                if (permisoOld != null)
                                                 {
                                                     if (itemPer.estado != permisoOld.Habilitado)
                                                     {
@@ -131,10 +183,10 @@ namespace gestion_de_comisiones.Repository
                                                         context.SaveChanges();
                                                     }
 
-                                                }                                       
+                                                }
                                             }
                                         }
-
+                                    }
                                     
 
                                     if (tieneActivo == false && rolPaginaOld != null)
@@ -188,5 +240,137 @@ namespace gestion_de_comisiones.Repository
             }
              return estado;
         }
+
+        public RolUserResulModel obtenerRolxUsuario(int idUsuario)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtenerRolxUsuario() la busqueda de rol por usuario");
+                var obj = contextMulti.Rols.Join(contextMulti.UsuriosRoles,
+                                                      Rol => Rol.IdRol,
+                                                     UsuriosRole => UsuriosRole.IdRol,
+                                                      (Rol, UsuriosRole) => new RolUserResulModel
+                                                      {
+                                                          idRol = Rol.IdRol,
+                                                          idUsuario=UsuriosRole.IdUsuario,
+                                                          nombre = Rol.Nombre,
+                                                          estadoRol = (bool)Rol.Habilitado,
+                                                          estadoRolUsuario = (bool)UsuriosRole.Estado,
+                                                      }).Where(x => x.estadoRol == true && x.estadoRolUsuario == true && x.idUsuario == idUsuario).FirstOrDefault();
+                Logger.LogInformation($" fin busqueda,  se busco los roles de los usuarios iduser: {idUsuario} retorno {JsonConvert.SerializeObject(obj)}");
+                return obj;
+            }
+            catch (Exception ex)
+            {               
+                return null;
+            }
+        }
+        public List<ModuloModel> obtnerModulosPadres(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtnerModulosPadres()");
+                List<ModuloModel> modulos = new List<ModuloModel>();
+                modulos = contextMulti.Moduloes.Where(x => x.IdModuloPadre == null && x.Habilitado == true).Select( m => new ModuloModel(m.IdModulo, m.Nombre, m.Icono, m.Orden, m.Habilitado, m.IdModuloPadre, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
+                Logger.LogInformation($"fin busqueda modulos padres  {usuario} retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                List<ModuloModel> lisVacio = new List<ModuloModel>();
+                return lisVacio;
+            }
+        }
+        public List<ModuloModel> obtnerSubModulosXIdPadre(string usuario, int IdModulo)
+        {
+            try
+            {
+                Logger.LogInformation($" inicio el  obtnerModulosPadres()");
+                List<ModuloModel> modulos = new List<ModuloModel>();
+                modulos = contextMulti.Moduloes.Where(x => x.IdModuloPadre == IdModulo && x.Habilitado == true).Select(m => new ModuloModel(m.IdModulo, m.Nombre, m.Icono, m.Orden, m.Habilitado, m.IdModuloPadre, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
+                Logger.LogInformation($"fin busqueda modulos padres  {usuario} retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                List<ModuloModel> lisVacio = new List<ModuloModel>();
+                return lisVacio;
+            }
+        }
+        public List<PaginaModel> obtenerPaginasXModulo(string usuario, int IdModulo)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerPaginasXModulo()");
+                List<PaginaModel> modulos = new List<PaginaModel>();
+                modulos = contextMulti.Paginas.Where(x => x.IdModulo == IdModulo && x.Habilitado == true).Select(m => new PaginaModel(m.IdPagina, m.Nombre, m.UrlPagina, m.Icono, m.Orden, m.Habilitado, m.IdModulo, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion )).ToList();
+                Logger.LogInformation($"usuario: {usuario} - fin busqueda modulos padres   retorno modulos padres {JsonConvert.SerializeObject(modulos)}");
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                List<PaginaModel> lisVacio = new List<PaginaModel>();
+                return lisVacio;
+            }
+        }
+        public RolPaginaModel obtenerRolPaginaXPagina(string usuario, int IdPagina, int IdRol)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerRolPaginaXPagina()");
+                RolPaginaModel rolPagina = new RolPaginaModel();
+                rolPagina = contextMulti.RolPaginaIs.Where(x => x.IdPagina== IdPagina && x.IdRol== IdRol && x.Habilitado == true).Select(r => new RolPaginaModel(r.IdRolPaginaI, r.Habilitado, r.IdRol, r.IdPagina, r.IdUsuario, r.FechaCreacion, r.FechaActualizacion)).FirstOrDefault();
+                Logger.LogInformation($"usuario: {usuario} - fin busqueda de rol pagina {JsonConvert.SerializeObject(rolPagina)}");
+                return rolPagina;
+            }
+            catch (Exception ex)
+            {
+                RolPaginaModel lisVacio = new RolPaginaModel();
+                return lisVacio;
+            }
+        }
+        public List<PerfilHash> obtenerPermisoXPagina(string usuario, int idRolPagina, string nombrePagina, string pathPagina)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario : {usuario} - inicio  el  obtenerPermisoXPagina()");
+                List<RolPermisoHashModel> modulos = new List<RolPermisoHashModel>();
+                List<RolPaginaPermisoModel> rolpagina = new List<RolPaginaPermisoModel>();
+                List<PerfilHash> listaPerfiles = new List<PerfilHash>();
+                rolpagina = contextMulti.RolPaginaPermisoIs.Where(x => x.IdRolPagina == idRolPagina && x.Habilitado == true).Select(m => new RolPaginaPermisoModel(m.IdRolPaginaPermisoI, m.Habilitado, m.IdRolPagina, m.IdPermiso, m.IdUsuario, m.FechaCreacion, m.FechaActualizacion)).ToList();
+
+                foreach(var item in rolpagina)
+                {
+                    RolPermisoHashModel permiso = contextMulti.RolPaginaPermisoIs.Join(contextMulti.Permisoes,
+                            RolPaginaPermisoI => RolPaginaPermisoI.IdPermiso,
+                            Permiso => Permiso.IdPermiso,
+                            (RolPaginaPermisoI, Permiso) => new RolPermisoHashModel
+                            {
+                                idRolPaginaPermiso = RolPaginaPermisoI.IdRolPaginaPermisoI,
+                                permiso = Permiso.Permiso1,
+                                estadoRolPaginaPermiso= (bool)RolPaginaPermisoI.Habilitado,
+                            }).Where(x => x.estadoRolPaginaPermiso == true && x.idRolPaginaPermiso == item.IdRolPaginaPermisoI).FirstOrDefault();                 
+                    if(permiso != null)
+                    {
+                        PerfilHash hash = new PerfilHash();
+                        hash.IdhashPagina = item.IdRolPaginaPermisoI;
+                        hash.permiso = permiso.permiso;
+                        hash.Hash = (nombrePagina + permiso.permiso).Replace(" ", String.Empty); 
+                        hash.pagina = nombrePagina;
+                        listaPerfiles.Add(hash);
+                    }
+                }
+                Logger.LogInformation($"usuario: {usuario} - finde las busqueda de rol pagina + hash :  {JsonConvert.SerializeObject(listaPerfiles)}");
+                return listaPerfiles;
+            }
+            catch (Exception ex)
+            {
+                List<PerfilHash> lisVacio = new List<PerfilHash>();
+                return lisVacio;
+            }
+        }
+
     }
 }
+
+

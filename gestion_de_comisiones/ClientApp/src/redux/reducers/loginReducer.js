@@ -7,6 +7,7 @@ const defaultState={
     modalUserNew:false,
     listAreas: [],  
     listSucursales:[],
+    idUsuario:0,
 };
 
 export default function reducer(state = defaultState, action){
@@ -15,7 +16,8 @@ export default function reducer(state = defaultState, action){
             return {
               ...state,
               load:true,              
-              userName:action.userName
+              userName:action.userName,
+              idUsuario:action.idUsuario,
             };
         case Type.LOAD_LOGIN_ERROR:
             return {
@@ -23,14 +25,16 @@ export default function reducer(state = defaultState, action){
                 ...state,
                 load:false,
                 userName:'',
-                loadFail:true
+                loadFail:true,
+                idUsuario:0,
             };
         case Type.CLOSE_SESION:
             return {
                 ...state,
                 load:false,
                 userName:'',
-                loadFail:false
+                loadFail:false,
+                idUsuario:0,
             };
         case Type.OPEN_MODAL_USER:
             return {

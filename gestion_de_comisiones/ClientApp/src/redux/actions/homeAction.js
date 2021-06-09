@@ -3,14 +3,16 @@ import {requestGet} from '../../service/request';
 
 const menuWeb=[
    {
-    titleMenu:'Gestion de pagos',
-    iconMenu:'gestionPago',
+     idMenu:1,
+     titleMenu:'Gestion de pagos',
+     iconMenu:'gestionPago',
      listaMenu:[ {
+                    idSubMenu: 1,
                     titleSubMenu:'Pagos de comsiones',
                     iconsSubMenu:'pago',
                     listaSubMenu:[
                         {
-                          idpage:1,
+                          idPage:1,
                           title:'facturacion',
                           descripion:'aqui se mostrara el proceso de facturacion',
                           namePage:'Facturacion',
@@ -18,7 +20,7 @@ const menuWeb=[
                           icon:'factura'            
                         },
                         {
-                          idpage:2,
+                          idPage:2,
                           title:'Cargar comisiones',
                           descripion:'',
                           namePage:'cargaComisiones',
@@ -26,7 +28,7 @@ const menuWeb=[
                           icon:'factura'            
                         },
                         {
-                          idpage:3,
+                          idPage:3,
                           title:'Prorrateo',
                           descripion:'aqui se mostrara el proceso de facturacion',
                           namePage:'prorrateo',
@@ -34,7 +36,7 @@ const menuWeb=[
                           icon:'prorrateo'            
                         },
                         {
-                          idpage:4,
+                          idPage:4,
                           title:'Forma de pago',
                           descripion:'aqui se mostrara el proceso de facturacion',
                           namePage:'formaPago',
@@ -52,18 +54,18 @@ const menuWeb=[
 
 export const loadHome= ()=>{
   return (dispatch)=>{   
-       requestGet('weatherforecast',{},dispatch).then((res)=>{
+     /*   requestGet('weatherforecast',{},dispatch).then((res)=>{
       
-       })    
+       })    */ 
   }
 }
 export const cargarMenu= ()=>{
   return (dispatch)=>{   
       
-       dispatch({
+     /*   dispatch({
         type: Types.MENU_PAGE,
          menu:menuWeb,
-       })
+       }) */
     
   }
 }

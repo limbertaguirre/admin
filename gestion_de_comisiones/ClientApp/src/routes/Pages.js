@@ -5,6 +5,7 @@ import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';
 import NotFoundLoad from '../components/notfound/NotFoundLoad';
+import SinAcceso from '../components/notfound/SinAcceso';
 import Roles from '../pages/usuario/Roles';
 import GestionRol from '../pages/usuario/Roles/GestionRol';
 import EditRol from '../pages/usuario/Roles/EditRol';
@@ -24,6 +25,7 @@ export default {
     CargarComisiones,
     FormaPago,
     NotFoundLoad,
+    SinAcceso,
     Roles,
     GestionRol,
     EditRol,
