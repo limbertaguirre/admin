@@ -29,11 +29,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
  const Facturacion =(props)=> {    
      
-      let history = useHistory();
-      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-      useEffect(()=>{      
-        verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
-      },[])
+  let history = useHistory();
+  const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+  useEffect(()=>{  try{  
+     verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+     }catch (err) {  verificarAcceso(perfiles, 'none', history); }
+  },[])
      
 
   

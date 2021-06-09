@@ -25,11 +25,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
 }))(Chip);
 
 const CargarComisiones = (props) => {
-  
+
     let history = useHistory();
     const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-    useEffect(()=>{      
-      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+    useEffect(()=>{  try{  
+       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
     },[])
 
 
