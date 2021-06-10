@@ -43,6 +43,23 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // GET: ClienteController/BuscarCliente
+        public ActionResult BuscarCliente([FromHeader] string usuarioLogin, string criterio)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller BuscarCliente() criterio : {criterio} ");
+                var resulcliente = Service.buscarClientesNombre(usuarioLogin,criterio);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller BuscarCliente()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  BuscarCliente() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al buscar clientes" };
+                return Ok(Result);
+            }
+        }
 
 
 

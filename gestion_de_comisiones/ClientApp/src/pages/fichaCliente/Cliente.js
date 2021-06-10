@@ -38,6 +38,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     useEffect(()=>{ 
 
        dispatch(ActionCliente.obtenerClientes());
+       dispatch(ActionCliente.buscarClientesXnombre("ma"));
      },[])
 
      

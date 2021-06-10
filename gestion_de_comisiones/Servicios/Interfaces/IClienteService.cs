@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     public interface IClienteService
     {
         public object ObtenerClientes(string usuario);
+        public object buscarClientesNombre(string usuario, string criterio);
 
     }
 }

@@ -9,6 +9,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
     public interface IClienteRepository
     {
         public List<ClienteOutputModel> obtenerAllClientes(string usuario);
+        public List<ClienteOutputModel> buscarCliente(string usuario, string criterio);
 
     }
 }

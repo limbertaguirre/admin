@@ -32,8 +32,21 @@ namespace gestion_de_comisiones.Servicios
 
             }
             catch (Exception ex)
+            {              
+                return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object buscarClientesNombre(string usuario, string criterio)
+        {
+            try
             {
-              
+                Logger.LogInformation($" es el usuario : {usuario} inicio el servicio buscarClientes() criterio de busqueda: {criterio} ");
+                var listaCliente = Repository.buscarCliente(usuario, criterio);
+                return Respuesta.ReturnResultdo(0, "ok", listaCliente);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch buscarClientes() criterio de busqueda: {criterio} error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
             }
         }
