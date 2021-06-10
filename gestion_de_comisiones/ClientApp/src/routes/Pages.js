@@ -10,7 +10,7 @@ import Roles from '../pages/usuario/Roles';
 import GestionRol from '../pages/usuario/Roles/GestionRol';
 import EditRol from '../pages/usuario/Roles/EditRol';
 import Cliente from '../pages/fichaCliente/Cliente';
-
+import Ficha from '../pages/fichaCliente/Ficha';
 
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
@@ -32,4 +32,5 @@ export default {
     GestionRol,
     EditRol,
     Cliente,
+    Ficha,
 };

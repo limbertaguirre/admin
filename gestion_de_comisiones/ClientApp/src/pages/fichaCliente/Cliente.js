@@ -22,7 +22,6 @@ import Paper from '@material-ui/core/Paper';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { green, red } from '@material-ui/core/colors';
-import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
 import { TextField, Typography, InputAdornment, Grid, Button } from "@material-ui/core";
 
@@ -89,12 +88,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [txtBusqueda, setTxtBusqueda] = useState("");
     const [txtBusquedaError, setTxtBusquedaError] = useState(false);
 
-
-  // console.log('lista :', listClientes);
     useEffect(()=>{ 
        dispatch(ActionCliente.obtenerClientes());
-      
      },[])
+
      const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };    
@@ -103,8 +100,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setPage(0);
     };
     const selecionarCliente=(idcliente)=>{
-     console.log('click', idcliente);
-    }
+       console.log('click', idcliente);
+       
+       /*  const location = {
+          pathname: '/cliente/ver/ficha',
+          state: {
+              namePagina: props.location.state.namePagina,
+              idCliente: idcliente
+            }
+        } */
+        history.push("/cliente/ficha");
+    };
+
     const _onChangeregistro= (e) => {
         const texfiel = e.target.name;
         const value = e.target.value;
@@ -133,7 +140,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <br/>
            <br/>
                 <Grid container xs={12}> 
-                <Grid item xs={10} className={styles.contentTitle} >
+                <Grid item xs={12} md={10}  className={styles.contentTitle} >
                     <TextField
                     label="Buscar Clientes"
                     type={'text'}
@@ -155,7 +162,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     }}                    
                   />      
                 </Grid>
-                <Grid item xs={2} className={styles.containerBusqueda}  >
+                <Grid item  xs={12} md={2} className={styles.containerBusqueda}  >
                         <Button
                         type="submit"
                         fullWidth

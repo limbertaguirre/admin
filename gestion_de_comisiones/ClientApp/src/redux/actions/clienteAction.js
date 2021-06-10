@@ -26,8 +26,8 @@ import * as Action from './messageAction';
   export const buscarClientesXnombre= (criterio)=>{
     return (dispatch, getState )=>{        
         console.log('buscarcliente  clien'); 
-          const headers={usuarioLogin:getState().load.userName, criterio: criterio };
-          requestGet('Cliente/BuscarCliente',headers,dispatch).then((res)=>{ 
+          const data={usuarioLogin:getState().load.userName, criterio: criterio };
+          requestPost('Cliente/BuscarCliente',data,dispatch).then((res)=>{ 
             console.log('buscarcliente', res);
                 if(res.code === 0){  
                     dispatch({

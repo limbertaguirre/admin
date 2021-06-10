@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.Cliente;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,19 +44,20 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-        // GET: ClienteController/BuscarCliente
-        public ActionResult BuscarCliente([FromHeader] string usuarioLogin, string criterio)
+        // POST: ClienteController/BuscarCliente
+        [HttpPost]
+        public ActionResult BuscarCliente([FromBody] ClientInput  param)
         {
             try
             {
-                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller BuscarCliente() criterio : {criterio} ");
-                var resulcliente = Service.buscarClientesNombre(usuarioLogin,criterio);
-                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller BuscarCliente()  ");
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarCliente() criterio : {param.criterio} ");
+                var resulcliente = Service.buscarClientesNombre(param.usuarioLogin, param.criterio);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarCliente()  ");
                 return Ok(resulcliente);
             }
             catch
             {
-                Logger.LogError($"usuario : {usuarioLogin} error catch  BuscarCliente() controller ");
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarCliente() controller ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al buscar clientes" };
                 return Ok(Result);
             }
