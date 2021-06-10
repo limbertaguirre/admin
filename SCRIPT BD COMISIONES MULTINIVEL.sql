@@ -443,14 +443,16 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el código único que el ba
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'fecha_actualizacion'
-
+go
+    --insert into BDMultinivel.dbo.BANCO (nombre,descripcion, codigo, id_usuario) values('BCP','es banco central de peru','12',1);  
+go
 create table FICHA
 (
     id_ficha int not null primary key IDENTITY,
-    codigo varchar(255),
-    nombres varchar(255),
-    apellidos varchar(255),
-    ci varchar(255),
+    codigo varchar(255)not null,
+    nombres varchar(255)not null,
+    apellidos varchar(255)not null,
+    ci varchar(255) not null,
     correo_electronico varchar(255),
     fecha_registro date,
     tel_oficina varchar(255),
@@ -461,13 +463,14 @@ create table FICHA
     contrasena varchar(255),
     comentario varchar(max),
     avatar varchar(max),
-    tiene_cuenta_bancaria bit,
-    id_banco int,
+    tiene_cuenta_bancaria bit not null,
+    id_banco int not null,
     cuenta_bancaria varchar(255),
-    factura_habilitado bit,
+    factura_habilitado bit not null,
     razon_social varchar(255),
     nit varchar(255),
-    id_usuario int,
+	estado int not null,
+    id_usuario int not null,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
 );
@@ -493,6 +496,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Cuenta bancaria del asesor, si
 EXECUTE sp_addextendedproperty 'MS_Description', 'Valor de bit, si es 1 el asesor factura, de lo contrario si es 0 el asesor no factura.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'factura_habilitado'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Razón social del Asesor, si no tiene el valor es null.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'razon_social'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Nit del Asesor, si no tiene el valor es null.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'nit'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla 1 es activo , 0 es inactivo.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'estado'
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_actualizacion'

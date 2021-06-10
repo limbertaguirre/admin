@@ -31,15 +31,10 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-
                 Logger.LogInformation($" es el usuario : {usuarioLogin} inicio el controller ObtenerClientes()  ");
-                /// aqui llamar al servicio
-                /// 
                 var resulcliente = Service.ObtenerClientes(usuarioLogin);
-
-                var Result = new GenericDataJson<string> { Code = 2, Message = "prueba" };
                 Logger.LogInformation($" es el usuario : {usuarioLogin} Fin del controller ObtenerClientes()  ");
-                return Ok(Result);
+                return Ok(resulcliente);
             }
             catch
             {

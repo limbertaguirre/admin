@@ -27,7 +27,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($" es el usuario : {usuario} inicio el servicio ObtenerClientes() ");
                 var listaCliente = Repository.obtenerAllClientes(usuario);
-                return Respuesta.ReturnResultdo(0, "ok", "");
+                return Respuesta.ReturnResultdo(0, "ok", listaCliente);
                 
 
             }

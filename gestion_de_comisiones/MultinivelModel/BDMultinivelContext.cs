@@ -547,6 +547,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("direccion")
                     .HasComment("La dirección del asesor.");
 
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))")
+                    .HasComment("Es el estado de la tabla 1 es activo , 0 es inactivo.");
+
                 entity.Property(e => e.FacturaHabilitado)
                     .HasColumnName("factura_habilitado")
                     .HasComment("Valor de bit, si es 1 el asesor factura, de lo contrario si es 0 el asesor no factura.");
