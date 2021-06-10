@@ -1,4 +1,4 @@
-import * as Types from '../types/usuarioType'
+import * as Types from '../types/clienteTypes'
 import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
@@ -7,15 +7,19 @@ import * as Action from './messageAction';
     return (dispatch, getState )=>{        
         
           
-          const headers={usuarioLogin:getState().load.userName};
-          requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
-            console.log('obtener clientes', res);
-                if(res.code === 0){                
-                               
-                }else{
-                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-                }    
-              })   
+    const headers={usuarioLogin:getState().load.userName};
+    requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
+    console.log('obtener clientes', res);
+        if(res.code === 0){  
+            dispatch({
+                type:Types.LISTA_CLIENTES,
+                listClientes:res.data,
+            })              
+                        
+        }else{
+            dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+        }    
+        })   
 
     }
   }
@@ -25,14 +29,15 @@ import * as Action from './messageAction';
           const headers={usuarioLogin:getState().load.userName, criterio: criterio };
           requestGet('Cliente/BuscarCliente',headers,dispatch).then((res)=>{ 
             console.log('buscarcliente', res);
-                if(res.code === 0){                
+                if(res.code === 0){  
+                    dispatch({
+                        type:Types.BUSQUEDA_NOMBRE_CLIENTE,
+                        listClientes:res.data,
+                    })                    
                                
                 }else{
                     dispatch(Action.showMessage({ message: res.message, variant: "error" }));
                 }    
               })   
-
     }
   }
-
-

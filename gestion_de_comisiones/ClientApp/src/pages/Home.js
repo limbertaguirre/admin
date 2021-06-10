@@ -26,7 +26,7 @@ export const Home =()=> {
 
     const dispatch = useDispatch();
 
-     dispatch(Action.loadHome());
+  
      
     return (
       <>
