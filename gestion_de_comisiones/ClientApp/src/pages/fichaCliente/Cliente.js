@@ -111,6 +111,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
               idCliente: idcliente
             }
         } 
+       
         history.push(location);
     };
 

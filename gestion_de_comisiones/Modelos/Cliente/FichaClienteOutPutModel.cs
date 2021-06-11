@@ -39,10 +39,15 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string Direccion { get; set; }        
 
           
-        //public string Comentario { get; set; }        
-        //public bool? FacturaHabilitado { get; set; }
-        //public string RazonSocial { get; set; }        
-        //public string Nit { get; set; }        
+        public string Comentario { get; set; }
+        public bool? FacturaHabilitado { get; set; }
+        public string RazonSocial { get; set; }
+        public string Nit { get; set; }
+
+        public DateTime FechaBaja { get; set; }
+        public int idTipoBaja { get; set; }
+        public int idFichaTipoBajaDetalle { get; set; }
+        public string motivoBaja { get; set; }
 
 
     }

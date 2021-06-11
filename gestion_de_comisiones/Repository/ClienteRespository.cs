@@ -153,6 +153,12 @@ namespace gestion_de_comisiones.Repository
                     objCliente.TelMovil = objCli.TelMovil;
                     objCliente.Direccion = objCli.Direccion;
 
+                    objCliente.Comentario = objCli.Comentario;
+                    objCliente.RazonSocial = objCli.RazonSocial;
+                    objCliente.Nit = objCli.Nit;
+                    objCliente.FacturaHabilitado = objCli.FacturaHabilitado;
+
+
                     
 
                     //---------------------------------------------
@@ -183,8 +189,22 @@ namespace gestion_de_comisiones.Repository
                         objCliente.codigoPatrocinador = "";
                         objCliente.nombrePatrocinador = "";
                     }
-
                     //----------------------------------------------------------------------------------
+                    var objBaja = contextMulti.FichaTipoBajaIs.Where(x => x.IdFicha == objCli.IdFicha).Select(p => new { p.IdFichaTipoBajaI, p.IdFicha, p.IdTipoBaja, p.Motivo, p.FechaBaja }).FirstOrDefault(); 
+                    if(objBaja != null)
+                    {
+                        objCliente.idFichaTipoBajaDetalle = objBaja.IdFichaTipoBajaI;
+                        objCliente.idTipoBaja = (int)objBaja.IdTipoBaja;
+                        objCliente.FechaBaja = (DateTime)objBaja.FechaBaja;
+                        objCliente.motivoBaja = objBaja.Motivo;
+                    } else
+                    {
+                        objCliente.idFichaTipoBajaDetalle = 0;
+                        objCliente.idTipoBaja = 0;
+                        objCliente.FechaBaja = DateTime.Now;
+                        objCliente.motivoBaja = "";
+                    }
+                    //-------------------------------------------------------------------------------------
 
                     if (objCli.IdBanco > 0 && objCli.IdBanco != null)
                     {

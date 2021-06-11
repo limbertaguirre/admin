@@ -62,9 +62,9 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-        // POST: ClienteController/ObtenerCliente
+        // POST: ClienteController/IdObtenerCliente
         [HttpPost]
-        public ActionResult ObtenerCliente([FromBody] ClienteInputObtenerModel param)
+        public ActionResult IdObtenerCliente([FromBody] ClienteInputObtenerModel param)
         {
             try
             {

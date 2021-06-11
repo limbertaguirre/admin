@@ -42,7 +42,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
   //setParaIdCliente(props.location.state.idCliente);
 
   useEffect(()=>{ 
-    dispatch(ActionCliente.obtenerClienteXId(2));
+    console.log('paramet : ', props.location.state.idCliente);
+    dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
   },[])
 
     const regresarPage=()=>{        
