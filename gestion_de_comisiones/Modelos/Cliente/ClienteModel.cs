@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
 {
     public class ClienteModel
     {
-        public ClienteModel(int idFicha, string codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
+        public ClienteModel(int idFicha, string codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado,int idCiudad, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdFicha = idFicha;
             Codigo = codigo;
@@ -32,6 +32,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
             RazonSocial = razonSocial;
             Nit = nit;
             Estado = estado;
+            IdCiudad = idCiudad;
             IdUsuario = idUsuario;
             FechaCreacion = fechaCreacion;
             FechaActualizacion = fechaActualizacion;
@@ -81,7 +82,9 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string Nit { get; set; }
         [JsonPropertyName("estado")]
         public int? Estado { get; set; }
-        [JsonPropertyName("idUsuario")]
+        [JsonPropertyName("idCiudad")]
+        public int IdCiudad { get; set; }
+        [JsonPropertyName("idUsuario")]        
         public int? IdUsuario { get; set; }
         [JsonPropertyName("fechaCreacion")]
         public DateTime? FechaCreacion { get; set; }

@@ -60,6 +60,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'PAIS', N'COLUMN', N'fecha_actualizacion'
 go
  --insert into PAIS (nombre, id_usuario) values('BOLIVIA',100)
+ --insert into PAIS (nombre, id_usuario) values('BRASIL',100)
 go
 create table CIUDAD
 (
@@ -78,6 +79,20 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
   --insert into CIUDAD (nombre, id_pais, id_usuario) values('SANTA CRUZ',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('LA PAZ',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('COCHABANBA',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('TARIJA',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('BENI',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('PANDO',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('ORURO',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('POTOSI',1,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SUCRE',1,100)
+
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('sao paulo',2,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('rio de janeiro',2,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('pananbi',2,100)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('mato groso do sul',2,100)
+  
 go
 create table SUCURSAL
 (
@@ -469,6 +484,7 @@ create table FICHA
     factura_habilitado bit not null,
     razon_social varchar(255),
     nit varchar(255),
+	id_ciudad int not null,
 	estado int not null,
     id_usuario int not null,
     fecha_creacion datetime default GETDATE(),

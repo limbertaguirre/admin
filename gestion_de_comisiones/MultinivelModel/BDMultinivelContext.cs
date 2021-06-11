@@ -578,6 +578,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_banco")
                     .HasComment("El id_banco es un identificador que hace referencia al campo id_banco de la tabla BANCO.");
 
+                entity.Property(e => e.IdCiudad).HasColumnName("id_ciudad");
+
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
                     .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
