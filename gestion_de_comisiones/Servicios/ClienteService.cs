@@ -50,7 +50,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
             }
         }
-
+        public object obtenerClientePorID(string usuario, int idCliente)
+        {
+            try
+            {
+                Logger.LogInformation($" es el usuario : {usuario} inicio el servicio obtenerClientePorID() idCliente : {idCliente} ");
+                var cliente = Repository.obtenerClienteXID(usuario, idCliente);
+                return Respuesta.ReturnResultdo(0, "ok", cliente);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch obtenerClientePorID() idcliente : {idCliente} error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
     }
 }

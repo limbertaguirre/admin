@@ -9,6 +9,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     {
         public object ObtenerClientes(string usuario);
         public object buscarClientesNombre(string usuario, string criterio);
-
+        public object obtenerClientePorID(string usuario, int idCliente);
     }
 }

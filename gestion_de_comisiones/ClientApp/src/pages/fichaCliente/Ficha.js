@@ -9,6 +9,7 @@ import * as permiso from '../../routes/permiso';
 import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import * as ActionCliente from '../../redux/actions/clienteAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -35,7 +36,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[]) */
-     
+  const dispatch = useDispatch();
+  
+  //const[paraIdCliente, setParaIdCliente]= useState(0);
+  //setParaIdCliente(props.location.state.idCliente);
+
+  useEffect(()=>{ 
+    dispatch(ActionCliente.obtenerClienteXId(2));
+  },[])
 
     const regresarPage=()=>{        
         history.goBack();        

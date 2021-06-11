@@ -134,17 +134,58 @@ namespace gestion_de_comisiones.Repository
                 if (objCli != null)
                 {                    
                     objCliente.idFicha = objCli.IdFicha;
-                    objCliente.nombreCompleto = objCli.Nombres + ' ' + objCli.Apellidos;
+                    objCliente.nombre= objCli.Nombres;
+                    objCliente.apellido = objCli.Apellidos;
                     objCliente.avatar = objCli.Avatar;
-                    //string direccion = objCli.Direccion;
-                    //int idciudad = objCli.ci
+                    objCliente.Contrasena = objCli.Contrasena;
                     objCliente.estado = objCli.Estado;
                     objCliente.tieneCuentaBancaria = objCli.TieneCuentaBancaria;
                     objCliente.cuentaBancaria = objCli.CuentaBancaria;
-
                     
                     objCliente.ci = objCli.Ci;
                     objCliente.codigo = objCli.Codigo;
+                    objCliente.CorreoElectronico = objCli.CorreoElectronico;
+                    objCliente.FechaNacimiento = objCli.FechaNacimiento;
+                    objCliente.FechaRegistro = objCli.FechaRegistro;
+
+                    objCliente.TelOficina = objCli.TelOficina;
+                    objCliente.TelFijo = objCli.TelFijo;
+                    objCliente.TelMovil = objCli.TelMovil;
+                    objCliente.Direccion = objCli.Direccion;
+
+                    
+
+                    //---------------------------------------------
+                    var objCiudad = contextMulti.Ciudads.Where(x => x.IdCiudad == objCli.IdCiudad).Select(p => new { p.IdCiudad, p.Nombre, p.IdPais }).FirstOrDefault();
+                    if(objCiudad != null)
+                    {
+                        objCliente.idCiudad = objCiudad.IdCiudad;
+                        objCliente.idPais = (int)objCiudad.IdPais;
+                    }
+                    //--------------------------------------------------
+                   
+                    var patrocinad = contextMulti.GpClienteVendedorIs.Join(contextMulti.Fichas,
+                                                   GpClienteVendedorI => GpClienteVendedorI.IdVendedor,
+                                                  Ficha => Ficha.IdFicha,
+                                                   (GpClienteVendedorI, Ficha) => new 
+                                                   {
+                                                       idVendedor = Ficha.IdFicha,
+                                                       idcliente= GpClienteVendedorI.IdCliente,
+                                                       nombreVendedor = Ficha.Nombres + Ficha.Apellidos,
+                                                       codigoVendedor= Ficha.Codigo,
+                                                   }).Where(x =>  x.idcliente == objCli.IdFicha).FirstOrDefault();
+                    if(patrocinad != null)
+                    {
+                        objCliente.codigoPatrocinador = patrocinad.codigoVendedor;
+                        objCliente.nombrePatrocinador = patrocinad.nombreVendedor;
+                    }else
+                    {
+                        objCliente.codigoPatrocinador = "";
+                        objCliente.nombrePatrocinador = "";
+                    }
+
+                    //----------------------------------------------------------------------------------
+
                     if (objCli.IdBanco > 0 && objCli.IdBanco != null)
                     {
                         var objBanco = contextMulti.Bancoes.Where(x => x.IdBanco == objCli.IdBanco).Select(p => new { p.IdBanco, p.Nombre, p.Descripcion, p.Codigo }).FirstOrDefault();

@@ -141,7 +141,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
            </div>           
            <br/>
            <br/>
-                <Grid container xs={12}> 
+                <Grid container> 
                 <Grid item xs={12} md={10}  className={styles.contentTitle} >
                     <TextField
                     label="Buscar Clientes"

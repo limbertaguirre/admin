@@ -41,3 +41,21 @@ import * as Action from './messageAction';
               })   
     }
   }
+  export const obtenerClienteXId= (idCliente)=>{
+    return (dispatch, getState )=>{        
+        console.log('ObtenerCliente  clien'); 
+          const data={usuarioLogin:getState().load.userName, idCliente: idCliente };
+          requestPost('Cliente/ObtenerCliente',data,dispatch).then((res)=>{ 
+            console.log('ObtenerCliente : ', res);
+                if(res.code === 0){  
+                    dispatch({
+                        type:Types.BUSQUEDA_NOMBRE_CLIENTE,
+                        listClientes:res.data,
+                    })                    
+                               
+                }else{
+                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                }    
+              })   
+    }
+  }

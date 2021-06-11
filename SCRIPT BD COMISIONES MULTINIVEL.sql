@@ -338,7 +338,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Campos almacena los campos(col
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'BITACORA_DETALLE', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'BITACORA_DETALLE', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BITACORA_DETALLE', N'COLUMN', N'fecha_actualizacion'
-
+go
 create table GP_TIPO_COMISION
 (
     id_tipo_comision int not null,
@@ -348,6 +348,7 @@ create table GP_TIPO_COMISION
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
 );
+go
 
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla GP_TIPO_COMISION.', 'SCHEMA', 'dbo', 'TABLE', 'GP_TIPO_COMISION', N'COLUMN', N'id_tipo_comision'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Nombre del tipo de comisión. Ej.: Pago Comisiones, Rezagados.', 'SCHEMA', 'dbo', 'TABLE', 'GP_TIPO_COMISION', N'COLUMN', N'nombre'

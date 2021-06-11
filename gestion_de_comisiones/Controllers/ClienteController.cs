@@ -62,6 +62,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: ClienteController/ObtenerCliente
+        [HttpPost]
+        public ActionResult ObtenerCliente([FromBody] ClienteInputObtenerModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ObtenerCliente() criterio : {param.idCliente} ");
+                var resulcliente = Service.obtenerClientePorID(param.usuarioLogin, param.idCliente);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ObtenerCliente()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ObtenerCliente() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al buscar clientes" };
+                return Ok(Result);
+            }
+        }
 
 
 

@@ -9,7 +9,8 @@ namespace gestion_de_comisiones.Modelos.Cliente
     {
         public int idFicha { get; set; }
         public string codigo { get; set; }
-        public string nombreCompleto { get; set; }
+        public string nombre { get; set; }
+        public string apellido { get; set; }
         public string ci { get; set; }
         public bool? tieneCuentaBancaria { get; set; }
         public int? idBanco { get; set; }
@@ -18,15 +19,26 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string cuentaBancaria { get; set; }
         public int? estado { get; set; }
         public string avatar { get; set; }
+        public string Contrasena { get; set; }
 
-        //public string CorreoElectronico { get; set; }        
-        //public DateTime? FechaRegistro { get; set; }        
-        //public string TelOficina { get; set; }        
-        //public string TelMovil { get; set; }        
-        //public string TelFijo { get; set; }        
-        //public string Direccion { get; set; }        
-        //public DateTime? FechaNacimiento { get; set; }        
-        //public string Contrasena { get; set; }        
+        public int idCiudad { get; set; }
+        public int idPais { get; set; }
+
+
+        public string CorreoElectronico { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public DateTime? FechaRegistro { get; set; }    
+        
+        public string codigoPatrocinador { get; set; }
+        public string nombrePatrocinador { get; set; }
+
+
+        public string TelOficina { get; set; }        
+        public string TelMovil { get; set; }        
+        public string TelFijo { get; set; }        
+        public string Direccion { get; set; }        
+
+          
         //public string Comentario { get; set; }        
         //public bool? FacturaHabilitado { get; set; }
         //public string RazonSocial { get; set; }        
