@@ -123,6 +123,59 @@ namespace gestion_de_comisiones.Repository
                 return listCliente;
             }
         }
+        public List<ClienteOutputModel> obtenerClienteXID(string usuario, int idCliente)
+        {
+            try
+            {
+                List<ClienteOutputModel> listCliente = new List<ClienteOutputModel>();
+                Logger.LogInformation($" usuario: {usuario} inicio el obtenerClienteXID() idcliente : {idCliente}");
+                var objCli = contextMulti.Fichas.Where(x => x.IdFicha == idCliente).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+
+                if (objCli != null)
+                {
+                    ClienteOutputModel objCliente = new ClienteOutputModel();
+                    objCliente.idFicha = objCli.IdFicha;
+                    objCliente.nombreCompleto = objCli.Nombres + ' ' + objCli.Apellidos;
+                    objCliente.estado = objCli.Estado;
+                    objCliente.tieneCuentaBancaria = objCli.TieneCuentaBancaria;
+                    objCliente.cuentaBancaria = objCli.CuentaBancaria;
+                    objCliente.avatar = objCli.Avatar;
+                    objCliente.ci = objCli.Ci;
+                    objCliente.codigo = objCli.Codigo;
+                    if (objCli.IdBanco > 0 && objCli.IdBanco != null)
+                    {
+                        var objBanco = contextMulti.Bancoes.Where(x => x.IdBanco == objCli.IdBanco).Select(p => new { p.IdBanco, p.Nombre, p.Descripcion, p.Codigo }).FirstOrDefault();
+                        if (objBanco != null)
+                        {
+                            objCliente.nombreBanco = objBanco.Nombre;
+                            objCliente.idBanco = objBanco.IdBanco;
+                            objCliente.codigoBanco = objBanco.Codigo;
+                        }
+                        else
+                        {
+                            objCliente.nombreBanco = "-------";
+                            objCliente.idBanco = 0;
+                            objCliente.codigoBanco = "";
+                        }
+                    }
+                    else
+                    {
+                        objCliente.nombreBanco = "-------";
+                        objCliente.idBanco = 0;
+                        objCliente.codigoBanco = "";
+                    }
+                    listCliente.Add(objCliente);
+                }
+                return listCliente;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($" usuario: {usuario} error catch repositorio  buscarCliente : { ex.Message }");
+                List<ClienteOutputModel> listCliente = new List<ClienteOutputModel>();
+                return listCliente;
+            }
+        }
+
 
     }
 }

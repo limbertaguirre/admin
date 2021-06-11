@@ -75,8 +75,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
  const Cliente =(props)=> {
     let history = useHistory();
-    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});  
+    const [namePage, setNamePage] = useState(""); 
     useEffect(()=>{  try{  
+       setNamePage(props.location.state.namePagina + permiso.VISUALIZAR);
        verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
        }catch (err) {  verificarAcceso(perfiles, 'none', history); }
     },[])
@@ -102,14 +104,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const selecionarCliente=(idcliente)=>{
        console.log('click', idcliente);
        
-       /*  const location = {
-          pathname: '/cliente/ver/ficha',
+        const location = {
+          pathname: '/cliente/ficha',
           state: {
-              namePagina: props.location.state.namePagina,
+              namePagina: namePage,
               idCliente: idcliente
             }
-        } */
-        history.push("/cliente/ficha");
+        } 
+        history.push(location);
     };
 
     const _onChangeregistro= (e) => {

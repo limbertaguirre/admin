@@ -22,15 +22,15 @@ namespace gestion_de_comisiones.MultinivelModel
         public string Contrasena { get; set; }
         public string Comentario { get; set; }
         public string Avatar { get; set; }
-        public bool? TieneCuentaBancaria { get; set; }
-        public int? IdBanco { get; set; }
+        public bool TieneCuentaBancaria { get; set; }
+        public int IdBanco { get; set; }
         public string CuentaBancaria { get; set; }
-        public bool? FacturaHabilitado { get; set; }
+        public bool FacturaHabilitado { get; set; }
         public string RazonSocial { get; set; }
         public string Nit { get; set; }
-        public int? IdUsuario { get; set; }
+        public int Estado { get; set; }
+        public int IdUsuario { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
-        public int? Estado { get; set; }
     }
 }

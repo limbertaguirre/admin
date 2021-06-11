@@ -427,7 +427,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizaci
 
 create table BANCO
 (
-    id_banco int not null primary key IDENTITY,
+    id_banco int not null primary key,
     nombre varchar(255),
     descripcion varchar(255),
     codigo varchar(255),
@@ -500,7 +500,24 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla 1 es 
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_actualizacion'
+go
+/*
+    id_cliente hace referencia al id ficha del cliente
+    id_vendedor hace referencia al id ficha del vendedor
+*/
+create table GP_CLIENTE_VENDEDOR_I(
+    id int not null IDENTITY(1,1),
+    id_cliente int not null,
+    id_vendedor int not null,
+    fecha_activacion datetime,
+    fecha_desactivacion datetime,
+    activo bit,
+    id_usuario int not null,
+    fecha_creacion datetime,
+    fecha_actualizacion datetime
+)
 
+go
 create table TIPO_BAJA
 (
     id_tipo_baja int not null,
