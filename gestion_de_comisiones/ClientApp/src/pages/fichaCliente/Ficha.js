@@ -68,7 +68,21 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [fechaNacimiento, setFechaNacimiento] = useState(moment().format("YYYY/MM/DD"))
     const [codigoPatrocinador, setCodigoPatrocinador] = useState("");
     const [nombrePatrocinador, setNombrePatrocinador]= useState("");
+    const [nivel, setNivel]= useState("");
+    const [comentario, setComentario]=useState("");
+
+    const [idBanco, setIdBanco]=useState(0);
+    const [cuentaBancaria, setCuentaBancaria]= useState("");
+    const [codigoBanco, setCodigoBanco]= useState(0);
+
+    const [razonSocial, setRazonSocial]= useState("");
+    const [nit, setNit]= useState("");
+
+    const [fechaBaja, setFechaBaja]= useState(moment().format("YYYY/MM/DD"));
+    const [idTipoBaja, setIdBaja]= useState(0);
+    const [motivoBaja, setMotivoBaja]= useState("");
     
+
 
   
 
