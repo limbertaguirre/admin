@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Cliente;
+using gestion_de_comisiones.Modelos.Pais;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +81,41 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-
+        // GET: ClienteController/ListaPaises
+        public ActionResult ListaPaises([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller ListaPaises()  ");
+                var resulcliente = Service.ListarPaises(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ListaPaises()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  ListaPaises() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener los clientes" };
+                return Ok(Result);
+            }
+        }
+        // POST: ClienteController/ListarCiudadesPais
+        [HttpPost]
+        public ActionResult ListarCiudadesPais([FromBody] CiudadInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ListarCiudadesPais()  ");
+                var resulcliente = Service.listaCiudadesXPais(param.usuarioLogin, param.idPais);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ListarCiudadesPais()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ListarCiudadesPais() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener los clientes" };
+                return Ok(Result);
+            }
+        }
 
 
     }

@@ -39,6 +39,7 @@ namespace gestion_de_comisiones
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IClienteRepository, ClienteRespository>();
+            services.AddScoped<IPaisRepository, PaisRepository>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

@@ -13,12 +13,14 @@ namespace gestion_de_comisiones.Servicios
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<ClienteService> Logger;
 
-        public ClienteService(ILogger<ClienteService> logger , IClienteRepository repository)
+        public ClienteService(ILogger<ClienteService> logger , IClienteRepository repository, IPaisRepository repositoryPais)
         {
             Logger = logger;
             Repository = repository;
+            RepositoryPais = repositoryPais;
         }
         public IClienteRepository Repository { get; set; }
+        public IPaisRepository RepositoryPais { get; set; }
 
 
         public object ObtenerClientes(string usuario)
@@ -64,6 +66,35 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "OK", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object ListarPaises(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" es el usuario : {usuario} inicio el servicio ListarPaises en service cliente() ");
+                var cliente = RepositoryPais.ListaPaises(usuario);
+                return Respuesta.ReturnResultdo(0, "ok", cliente);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ListarPaises() error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener los paises", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object listaCiudadesXPais(string usuario, int idPais)
+        {
+            try
+            {
+                Logger.LogInformation($" es el usuario : {usuario} inicio el servicio listaCiudadesXPais() ");
+                var ciudades = RepositoryPais.obtenerCiudadXpais(usuario, idPais);
+                return Respuesta.ReturnResultdo(0, "ok", ciudades);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch listaCiudadesXPais() error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener los paises", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
 
     }
 }

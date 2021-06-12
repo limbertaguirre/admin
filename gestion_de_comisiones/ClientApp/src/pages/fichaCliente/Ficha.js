@@ -43,6 +43,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
   useEffect(()=>{ 
     console.log('paramet : ', props.location.state.idCliente);
+    dispatch(ActionCliente.listaPaises());
+    dispatch(ActionCliente.obtenerCiudadesPorPais(2));
     dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
   },[])
 
