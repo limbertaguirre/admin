@@ -49,6 +49,9 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public int idFichaTipoBajaDetalle { get; set; }
         public string motivoBaja { get; set; }
 
+        public int  idNivelDetalle { get; set; }
+        public string nivel { get; set; }
+
 
     }
 }

@@ -10,6 +10,8 @@ import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as ActionCliente from '../../redux/actions/clienteAction';
+import * as moment from "moment";
+import "moment/locale/es";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -51,6 +53,36 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const regresarPage=()=>{        
         history.goBack();        
     }
+    const [codigo, setCodigo]= useState("");
+    const [fechaRegistro, setFechaRegistro]= useState(moment().format("YYYY/MM/DD"));
+    const [nombre, setNombre]= useState("");
+    const [apellido, setApellido]= useState("");
+    const [ci, setCi]= useState("");
+    const [telOficina, setTelOficina]=useState(0);
+    const [telMovil, setTelMovil] = useState(0);
+    const [telFijo, setTelFijo] = useState(0);
+    const [direccion, setDireccion]= useState("");
+    const [idCiudad,setIdCiudad]= useState(0);
+    const [idPais, setIdPais]= useState(0);
+    const [correoElectronico, setCorreoElectronico]= useState("");
+    const [fechaNacimiento, setFechaNacimiento] = useState(moment().format("YYYY/MM/DD"))
+    const [codigoPatrocinador, setCodigoPatrocinador] = useState("");
+    const [nombrePatrocinador, setNombrePatrocinador]= useState("");
+    
+
+  
+
+
+    const _onChangeregistro= (e) => {
+      const texfiel = e.target.name;
+      const value = e.target.value;
+      if (texfiel === "codigo") {
+           setCodigo(value);
+      }
+
+
+      
+   };
      
     return (
       <>

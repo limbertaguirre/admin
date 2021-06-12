@@ -168,8 +168,30 @@ namespace gestion_de_comisiones.Repository
                         objCliente.idCiudad = objCiudad.IdCiudad;
                         objCliente.idPais = (int)objCiudad.IdPais;
                     }
+                    //-------------------------------------------------------------
+                    var objNivel = contextMulti.FichaNivelIs.Join(contextMulti.Nivels,
+                                                  FichaNivelI => FichaNivelI.IdNivel,
+                                                  Nivel => Nivel.IdNivel,
+                                                  (FichaNivelI, Nivel) => new
+                                                  {
+                                                      idNivelDetalle=FichaNivelI.IdFichaNivelI,
+                                                      idNivel = Nivel.IdNivel,
+                                                      nombre = Nivel.Nombre,
+                                                      idFicha= FichaNivelI.IdFicha,
+                                                      fechaCreacion= FichaNivelI.FechaCreacion,
+                                                      habilitado=FichaNivelI.Habilitado,
+                                                  }).Where(x => x.idFicha == objCli.IdFicha && x.habilitado == true ).OrderByDescending( x=> x.fechaCreacion).FirstOrDefault();
+                    if (objNivel != null)
+                    {
+                        objCliente.idNivelDetalle = objNivel.idNivelDetalle;
+                        objCliente.nivel = objNivel.nombre;
+                    }
+                    else
+                    {
+                        objCliente.idNivelDetalle = 0;
+                        objCliente.nivel = "";
+                    }
                     //--------------------------------------------------
-                   
                     var patrocinad = contextMulti.GpClienteVendedorIs.Join(contextMulti.Fichas,
                                                    GpClienteVendedorI => GpClienteVendedorI.IdVendedor,
                                                   Ficha => Ficha.IdFicha,

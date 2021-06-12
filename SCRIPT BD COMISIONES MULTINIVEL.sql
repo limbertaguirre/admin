@@ -593,7 +593,11 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Muestra una descripción breve
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_actualizacion'
-
+go
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(1,'plata 1', 'es el prueba primer rango', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(2,'oro 2', 'es el prueba segundo rango', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(3,'platinun 3', 'es el prueba tercer rango', 1);
+go
 create table FICHA_NIVEL_I
 (
     id_ficha_nivel_i int not null primary key IDENTITY,
