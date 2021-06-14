@@ -12,5 +12,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public List<ClienteOutputModel> buscarCliente(string usuario, string criterio);
         public FichaClienteOutPutModel obtenerClienteXID(string usuario, int idCliente);
         public object tiposdeBajasClientes(string usuario);
+        public object listabancosParaClientes(string usuario);
     }
 }

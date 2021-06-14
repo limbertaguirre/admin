@@ -114,3 +114,22 @@ import * as Action from './messageAction';
 
     }
   }
+  export const obtenerBancos= ()=>{
+    return (dispatch, getState )=>{        
+        
+    const headers={usuarioLogin:getState().load.userName};
+    requestGet('Cliente/obtenerBancosClientes',headers,dispatch).then((res)=>{ 
+    console.log('obtener bancos', res);
+        if(res.code === 0){  
+          dispatch({
+            type:Types.LISTA_BANCOS,
+            listBancos:res.data,
+          })      
+                        
+        }else{
+            dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+        }    
+        })   
+
+    }
+  }

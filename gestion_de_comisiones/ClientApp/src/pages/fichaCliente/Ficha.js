@@ -56,13 +56,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
   },[]) */
   const dispatch = useDispatch();
   const style = useStyles();
-  const {objCliente, listPaises, listCiudades, listBajas} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
+  const {objCliente, listPaises, listCiudades, listBajas, listBancos} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
   
   
   useEffect(()=>{ 
     console.log('paramet : ', props.location.state.idCliente);
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
+    dispatch(ActionCliente.obtenerBancos());
     dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
@@ -97,7 +98,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [nit, setNit]= useState("");
 
     const [fechaBaja, setFechaBaja]= useState(moment().format("YYYY/MM/DD"));
-    const [idTipoBaja, setIdBaja]= useState(0);
+    const [idTipoBaja, setIdTipoBaja]= useState(0);
     const [motivoBaja, setMotivoBaja]= useState("");
     
     const[checkTieneCuenta, setCheckTieneCuenta]= useState(false);
@@ -123,8 +124,21 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setNombrePatrocinador(objCliente.nombrePatrocinador);
       setNivel(objCliente.nivel);
 
-      setComentario(objCliente.comentario)
+      setComentario(objCliente.comentario);
+      
+      setCheckTieneBaja(objCliente.idFichaTipoBajaDetalle>0);
+      setFechaBaja(objCliente.fechaBaja);
+      setIdTipoBaja(objCliente.idTipoBaja);
+      setMotivoBaja(objCliente.motivoBaja);
 
+      setRazonSocial(objCliente.razonSocial);
+      setNit(objCliente.nit);
+      setCheckTieneFactura(objCliente.nit != null);
+      
+      setIdBanco(objCliente.idBanco);
+      setCuentaBancaria(objCliente.cuentaBancaria);
+      setCodigoBanco(objCliente.codigoBanco);
+      setCheckTieneCuenta(objCliente.tieneCuentaBancaria);
     },[])
 
     const _onChangeregistro= (e) => {
@@ -180,6 +194,30 @@ const StyledBreadcrumb = withStyles((theme) => ({
       if (texfiel === "comentario") {
         setComentario(value);
       }
+      if (texfiel === "idTipoBaja") {
+        setIdTipoBaja(value);
+      }
+      if (texfiel === "motivoBaja") {
+        setMotivoBaja(value);
+      }
+
+      if (texfiel === "razonSocial") {
+        setRazonSocial(value);
+      }
+      if (texfiel === "nit") {
+        setNit(value);
+      }
+      
+      if (texfiel === "idBanco") {
+        setIdBanco(value);
+      }
+      if (texfiel === "cuentaBancaria") {
+        setCuentaBancaria(value);
+      }
+      if (texfiel === "codigoBanco") {
+        setCodigoBanco(value);
+      }
+      
 
       
     };
@@ -189,6 +227,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
     const _onChangeFechaNacimiento= (date) => {
       setFechaNacimiento(moment(date).format("YYYY/MM/DD"));        
+    }
+    const _onChangeFechaBaja= (date) => {
+      setFechaBaja(moment(date).format("YYYY/MM/DD"));        
     }
     const handleChangeCheck = (event) => {
         let checkFiel= event.target.name;
@@ -489,7 +530,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                         />
                </Grid>   
             </Grid>   
-            <Grid container xs={6}  >
+            <Grid  xs={6}  >
                <Grid  xs={12}>
                         foto
                </Grid> 
@@ -527,7 +568,173 @@ const StyledBreadcrumb = withStyles((theme) => ({
                       />                                         
                   </FormGroup>   
               </Grid> 
-                
+              <Grid container xs={12}  >
+                  <Grid item xs={12}  >
+                      <Grid item xs={6}  >
+                        <FormControl  variant="outlined"  
+                                fullWidth  
+                                //error={CiudadError} 
+                                className={style.TextFiel}
+                                >
+                                  <InputLabel id="demo-simple-select-outlined-labelbanco">Banco</InputLabel>
+                                  <Select
+                                      labelId="demo-simple-select-outlined-labelbanco"
+                                      id="demo-simple-select-outlined"
+                                      value={idBanco}
+                                      name="idBanco"
+                                      onChange={_onChangeregistro}
+                                      label="Banco"
+                                      >
+                                      <MenuItem value={0}>
+                                          <em>Seleccione el Banco</em>
+                                      </MenuItem>
+                                      {listBancos.map((value,index)=> ( <MenuItem key={index} value={value.idBanco}>{value.nombre}</MenuItem> ))}  
+                                  </Select>
+                                {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                              </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={6} >
+                       <TextField                            
+                            label="Cuenta Bancaria"
+                            type={'text'}
+                            variant="outlined"
+                            name="cuentaBancaria"
+                            value={cuentaBancaria}
+                            className={style.TextFiel}
+                            onChange={_onChangeregistro}
+                           // error={corporativoError}
+                           /*  helperText={ corporativoError &&
+                            "campo requerido"
+                            }   */                          
+                            fullWidth                             
+                        />
+                    </Grid>
+                    <Grid item xs={6} >
+                         <TextField                            
+                            label="Cuenta Banco"
+                            type={'text'}
+                            variant="outlined"
+                            name="codigoBanco"
+                            value={codigoBanco}
+                            className={style.TextFiel}
+                            onChange={_onChangeregistro}
+                           // error={corporativoError}
+                           /*  helperText={ corporativoError &&
+                            "campo requerido"
+                            }   */                          
+                            fullWidth                             
+                        />
+                      
+                    </Grid>
+
+               </Grid>
+
+
+              {checkTieneFactura&& 
+              <Grid container xs={12}  >
+                  <Grid item xs={6}  >
+                        <TextField                            
+                            label="Razón  Social"
+                            type={'text'}
+                            variant="outlined"
+                            name="razonSocial"
+                            value={razonSocial}
+                            placeholder="Codigo de cliente"
+                            className={style.TextFiel}
+                            onChange={_onChangeregistro}
+                           // error={corporativoError}
+                           /*  helperText={ corporativoError &&
+                            "campo requerido"
+                            }   */                          
+                            fullWidth                             
+                        />
+                  </Grid>
+                  <Grid item xs={6}  >
+                        <TextField                            
+                            label="NIT"
+                            type={'text'}
+                            variant="outlined"
+                            name="nit"
+                            value={nit}
+                            className={style.TextFiel}
+                            onChange={_onChangeregistro}
+                           // error={corporativoError}
+                           /*  helperText={ corporativoError &&
+                            "campo requerido"
+                            }   */                          
+                            fullWidth                             
+                        />
+                  </Grid>
+              </Grid>
+              }
+
+              {checkTieneBaja&&
+                <Grid container xs={12}  >
+                    <Grid item xs={6}  >
+                          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
+                              <KeyboardDatePicker
+                                      fullWidth
+                                      autoOk
+                                      variant="inline"
+                                      inputVariant="outlined"
+                                      className={style.TextFiel}
+                                      label="Fecha de baja"
+                                      format="yyyy/MM/dd"
+                                      value={fechaBaja}
+                                    // error={fechaNacimientoError}
+                                      //helperText={fechaNacimientoError &&'Ingrese un año de nacimiento valido'}
+                                      InputAdornmentProps={{ position: "start" }}
+                                      invalidDateMessage={'Formato de fecha no válido'}
+                                      onChange={_onChangeFechaBaja}
+                              />
+                          </MuiPickersUtilsProvider>
+                    </Grid>
+                    <Grid item xs={6}  >
+                    <FormControl  variant="outlined"  
+                            fullWidth  
+                            //error={CiudadError} 
+                            className={style.TextFiel}
+                            >
+                              <InputLabel id="demo-simple-select-outlined-labelbaja">Tipo de baja</InputLabel>
+                              <Select
+                                  labelId="demo-simple-select-outlined-labelbaja"
+                                  id="demo-simple-select-outlined"
+                                  value={idTipoBaja}
+                                  name="idTipoBaja"
+                                  onChange={_onChangeregistro}
+                                  label="Tipo de baja"
+                                  >
+                                  <MenuItem value={0}>
+                                      <em>Seleccione una baja</em>
+                                  </MenuItem>
+                                  {listBajas.map((value,index)=> ( <MenuItem key={index} value={value.idTipoBaja}>{value.nombre}</MenuItem> ))}  
+                              </Select>
+                            {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                          </FormControl>
+
+                    </Grid>
+                    <Grid item xs={12}  >
+                           <TextField                            
+                              label="Motivo de baja"
+                              type={'text'}
+                              variant="outlined"
+                              name="motivoBaja"
+                              value={motivoBaja}
+                              multiline
+                              rows={3}
+                              className={style.TextFiel}
+                              onChange={_onChangeregistro}
+                            // error={corporativoError}
+                            /*  helperText={ corporativoError &&
+                              "campo requerido"
+                              }   */                          
+                              fullWidth                             
+                          />
+                    </Grid>
+                  </Grid>
+               }
+
             </Grid> 
           </Grid>
   

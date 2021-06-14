@@ -133,6 +133,23 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // GET: ClienteController/obtenerBancosClientes
+        public ActionResult obtenerBancosClientes([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerBancosClientes()  ");
+                var resulcliente = Service.obtenerBancoParaclientes(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerBancosClientes()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  obtenerBancosClientes() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener las bajas" };
+                return Ok(Result);
+            }
+        }
 
     }
 }
