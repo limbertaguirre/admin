@@ -30,6 +30,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<FichaIncentivo> FichaIncentivoes { get; set; }
         public virtual DbSet<FichaNivelI> FichaNivelIs { get; set; }
         public virtual DbSet<FichaTipoBajaI> FichaTipoBajaIs { get; set; }
+        public virtual DbSet<GpClienteVendedorI> GpClienteVendedorIs { get; set; }
         public virtual DbSet<GpComision> GpComisions { get; set; }
         public virtual DbSet<GpComisionDetalle> GpComisionDetalles { get; set; }
         public virtual DbSet<GpComisionDetalleEstadoI> GpComisionDetalleEstadoIs { get; set; }
@@ -184,47 +185,40 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Banco>(entity =>
             {
                 entity.HasKey(e => e.IdBanco)
-                    .HasName("PK__BANCO__70BD16420E4CEB48");
+                    .HasName("PK__BANCO__70BD16425A561EEB");
 
                 entity.ToTable("BANCO");
 
                 entity.Property(e => e.IdBanco)
-                    .HasColumnName("id_banco")
-                    .HasComment("Llave primaria incremental de la tabla BANCO.");
+                    .ValueGeneratedNever()
+                    .HasColumnName("id_banco");
 
                 entity.Property(e => e.Codigo)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("codigo")
-                    .HasComment("Es el código único que el banco proporciona.");
+                    .HasColumnName("codigo");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("descripcion")
-                    .HasComment("Muestra una descripción breve del Banco.");
+                    .HasColumnName("descripcion");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualización del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creación del registro");
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("nombre")
-                    .HasComment("Nombre del Banco. Ej.: BANCO NACIONAL DE BOLIVIA, BANCO MERCANTIL SANTA CRUZ, etc.");
+                    .HasColumnName("nombre");
             });
 
             modelBuilder.Entity<Bitacora>(entity =>
@@ -487,7 +481,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ficha>(entity =>
             {
                 entity.HasKey(e => e.IdFicha)
-                    .HasName("PK__FICHA__427B0F8AC55DBF3F");
+                    .HasName("PK__FICHA__427B0F8AE90548B5");
 
                 entity.ToTable("FICHA");
 
@@ -496,6 +490,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Llave primaria incremental de la tabla FICHA.");
 
                 entity.Property(e => e.Apellidos)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("apellidos")
@@ -507,12 +502,14 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El avatar es el path de ubicación de la foto del asesor.");
 
                 entity.Property(e => e.Ci)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("ci")
                     .HasComment("El carnet de identidad del asesor");
 
                 entity.Property(e => e.Codigo)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("codigo")
@@ -547,6 +544,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("direccion")
                     .HasComment("La dirección del asesor.");
 
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasComment("Es el estado de la tabla 1 es activo , 0 es inactivo.");
+
                 entity.Property(e => e.FacturaHabilitado)
                     .HasColumnName("factura_habilitado")
                     .HasComment("Valor de bit, si es 1 el asesor factura, de lo contrario si es 0 el asesor no factura.");
@@ -577,6 +578,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_banco")
                     .HasComment("El id_banco es un identificador que hace referencia al campo id_banco de la tabla BANCO.");
 
+                entity.Property(e => e.IdCiudad).HasColumnName("id_ciudad");
+
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
                     .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
@@ -588,6 +591,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Nit del Asesor, si no tiene el valor es null.");
 
                 entity.Property(e => e.Nombres)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("nombres")
@@ -747,6 +751,41 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("motivo")
                     .HasComment("Descripción del motivo de baja que pueda llegar a tener un Asesor.");
+            });
+
+            modelBuilder.Entity<GpClienteVendedorI>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("GP_CLIENTE_VENDEDOR_I");
+
+                entity.Property(e => e.Activo).HasColumnName("activo");
+
+                entity.Property(e => e.FechaActivacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_activacion");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion");
+
+                entity.Property(e => e.FechaDesactivacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_desactivacion");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdVendedor).HasColumnName("id_vendedor");
             });
 
             modelBuilder.Entity<GpComision>(entity =>

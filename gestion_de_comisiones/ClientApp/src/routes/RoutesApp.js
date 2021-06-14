@@ -17,14 +17,16 @@ import {useSelector,useDispatch} from "react-redux";
          <Layout title={'GESTOR DE COMISONES'}>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
-                <Route path='/comisiones' component={Pages.CargarComisiones} />
-                <Route path='/prorrateo' component={Pages.Prorrateo} />
-                <Route path='/facturacion' component={Pages.Facturacion} />     
-                <Route path='/forma/pago' component={Pages.FormaPago} />                  
-                <Route path='/gestion/roles' component={Pages.GestionRol} />     
-                <Route path='/gestion/nuevo/roles' component={Pages.Roles} /> 
-                <Route path='/gestion/edit/rol' component={Pages.EditRol} />        
-                <Route path='/page/sin-acceso' component={Pages.SinAcceso} />    
+                <Route path='/cargar/comisiones' component={Pages.CargarComisiones} />
+                <Route path='/prorrateo' component={Pages.Prorrateo} exact />
+                <Route path='/facturacion' component={Pages.Facturacion} exact />     
+                <Route path='/forma/pago' component={Pages.FormaPago} exact />                  
+                <Route path='/gestion/roles' component={Pages.GestionRol} exact />     
+                <Route path='/gestion/nuevo/roles' component={Pages.Roles} exact /> 
+                <Route path='/gestion/edit/rol' component={Pages.EditRol} exact />        
+                <Route path='/page/sin-acceso' component={Pages.SinAcceso} exact />  
+                <Route path='/cliente' component={Pages.Cliente} exact />  
+                <Route  path='/cliente/ficha' component={Pages.Ficha} exact />  
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>
          </Layout> :
