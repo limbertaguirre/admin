@@ -3,7 +3,44 @@ import * as Type from '../types/clienteTypes';
 
 const defaultState = {
     listClientes: [],
-    objCliente:{}
+    listPaises:[],
+    listCiudades:[],
+    objCliente:{
+        apellido: "",
+        avatar: "",
+        ci: "34343434",
+        codigo: "",
+        codigoBanco: "",
+        codigoPatrocinador: "",
+        comentario: '',
+        contrasena: '',
+        correoElectronico: '',
+        cuentaBancaria: '',
+        direccion: '',
+        estado: 0,
+        facturaHabilitado: false,
+        fechaBaja: "2021-01-01T00:00:00",
+        fechaNacimiento: "1900-10-10T00:00:00",
+        fechaRegistro: "2021-01-01T00:00:00",
+        idBanco: 0,
+        idCiudad: 0,
+        idFicha: 0,
+        idFichaTipoBajaDetalle: 0,
+        idNivelDetalle: 0,
+        idPais: 0,
+        idTipoBaja: 0,
+        motivoBaja: "",
+        nit: "",
+        nivel: "",
+        nombre: "",
+        nombreBanco: "",
+        nombrePatrocinador: "",
+        razonSocial: null,
+        telFijo: "",
+        telMovil: "",
+        telOficina: "",
+        tieneCuentaBancaria: false
+    }
 };
 
 export default function reducer (state = defaultState, action) {  
@@ -32,6 +69,16 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 objCliente:{}, //aqui incializar campos
+            } 
+        case Type.LISTA_PAISES:
+            return{
+                ...state,
+                listPaises:action.listPaises
+            } 
+        case Type.LISTA_CIUDADES:
+            return{
+                ...state,
+                listCiudades:action.listCiudades
             } 
         default: {
             return state;

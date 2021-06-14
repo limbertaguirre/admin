@@ -48,7 +48,10 @@ import * as Action from './messageAction';
           requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
             console.log('ObtenerCliente : ', res);
                 if(res.code === 0){  
-                        
+                  dispatch({
+                    type:Types.OBJETO_CLIENTE,
+                    objCliente:res.data
+                  })         
                                
                 }else{
                     dispatch(Action.showMessage({ message: res.message, variant: "error" }));
@@ -62,14 +65,15 @@ import * as Action from './messageAction';
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ListaPaises',headers,dispatch).then((res)=>{ 
     console.log('paises : ', res);
-        if(res.code === 0){  
-                     
-                        
-        }else{
-            dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-        }    
+            if(res.code === 0){  
+                dispatch({
+                  type:Types.LISTA_PAISES,
+                  listPaises:res.data
+                })                        
+            }else{
+                dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }    
         })   
-
     }
   }
   export const obtenerCiudadesPorPais= (idPais)=>{
@@ -79,6 +83,10 @@ import * as Action from './messageAction';
           requestPost('Cliente/ListarCiudadesPais',data,dispatch).then((res)=>{ 
             console.log('ciudades : ', res);
                 if(res.code === 0){  
+                  dispatch({
+                    type:Types.LISTA_CIUDADES,
+                    listCiudades:res.data
+                  })     
                                                        
                 }else{
                     dispatch(Action.showMessage({ message: res.message, variant: "error" }));
