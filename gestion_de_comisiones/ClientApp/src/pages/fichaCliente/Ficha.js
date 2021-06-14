@@ -56,13 +56,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
   },[]) */
   const dispatch = useDispatch();
   const style = useStyles();
-  const {objCliente, listPaises, listCiudades} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
+  const {objCliente, listPaises, listCiudades, listBajas} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
   
   
   useEffect(()=>{ 
     console.log('paramet : ', props.location.state.idCliente);
     dispatch(ActionCliente.listaPaises());
-    
+    dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
@@ -108,6 +108,23 @@ const StyledBreadcrumb = withStyles((theme) => ({
     useEffect(()=>{ 
       setIdPais(objCliente.idPais);
       setIdCiudad(objCliente.idCiudad);
+      setCodigo(objCliente.codigo);
+      setFechaRegistro(objCliente.fechaRegistro);
+      setNombre(objCliente.nombre);
+      setCi(objCliente.ci);
+      setTelOficina(objCliente.telOficina);
+      setTelMovil(objCliente.telMovil);
+      setTelFijo(objCliente.telFijo);
+      setDireccion(objCliente.direccion);
+      setCorreoElectronico(objCliente.correoElectronico);
+      setFechaNacimiento(objCliente.fechaNacimiento);
+      
+      setCodigoPatrocinador(objCliente.codigoPatrocinador);
+      setNombrePatrocinador(objCliente.nombrePatrocinador);
+      setNivel(objCliente.nivel);
+
+      setComentario(objCliente.comentario)
+
     },[])
 
     const _onChangeregistro= (e) => {
@@ -473,7 +490,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                </Grid>   
             </Grid>   
             <Grid container xs={6}  >
-               <Grid item xs={12}>
+               <Grid  xs={12}>
                         foto
                </Grid> 
                <Grid item xs={12}>
@@ -494,7 +511,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             fullWidth                             
                         />
                </Grid> 
-               <Grid item xs={12} >
+               <Grid item xs={12}  >
                  <FormGroup row  >
                       <FormControlLabel
                         control={<Checkbox checked={checkTieneCuenta} onChange={handleChangeCheck} name="checkTieneCuenta" color="primary" />}

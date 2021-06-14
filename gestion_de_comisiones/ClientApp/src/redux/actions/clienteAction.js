@@ -94,3 +94,23 @@ import * as Action from './messageAction';
               })   
     }
   }
+
+  export const obtenerBajas= ()=>{
+    return (dispatch, getState )=>{        
+        
+    const headers={usuarioLogin:getState().load.userName};
+    requestGet('Cliente/ObtenerBajasClientes',headers,dispatch).then((res)=>{ 
+    console.log('obtener bajas', res);
+        if(res.code === 0){  
+            dispatch({
+              type:Types.LISTA_BAJAS,
+              listBajas:res.data,
+            })      
+                        
+        }else{
+            dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+        }    
+        })   
+
+    }
+  }

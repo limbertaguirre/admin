@@ -5,6 +5,7 @@ const defaultState = {
     listClientes: [],
     listPaises:[],
     listCiudades:[],
+    listBajas:[],
     objCliente:{
         apellido: "",
         avatar: "",
@@ -79,6 +80,11 @@ export default function reducer (state = defaultState, action) {
             return{
                 ...state,
                 listCiudades:action.listCiudades
+            } 
+        case Type.LISTA_BAJAS:
+            return{
+                ...state,
+                listBajas:action.listBajas
             } 
         default: {
             return state;
