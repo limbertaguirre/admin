@@ -10,7 +10,7 @@ const defaultState = {
     objCliente:{
         apellido: "",
         avatar: "",
-        ci: "34343434",
+        ci: "",
         codigo: "",
         codigoBanco: "",
         codigoPatrocinador: "",
@@ -37,7 +37,7 @@ const defaultState = {
         nombre: "",
         nombreBanco: "",
         nombrePatrocinador: "",
-        razonSocial: null,
+        razonSocial: "",
         telFijo: "",
         telMovil: "",
         telOficina: "",
@@ -70,7 +70,42 @@ export default function reducer (state = defaultState, action) {
         case Type.CLEAR_OBJETO_CLIENTE:
             return{
                 ...state,
-                objCliente:{}, //aqui incializar campos
+                objCliente:{
+                    apellido: "",
+                    avatar: "",
+                    ci: "",
+                    codigo: "",
+                    codigoBanco: "",
+                    codigoPatrocinador: "",
+                    comentario: '',
+                    contrasena: '',
+                    correoElectronico: '',
+                    cuentaBancaria: '',
+                    direccion: '',
+                    estado: 0,
+                    facturaHabilitado: false,
+                    fechaBaja: "2021-01-01T00:00:00",
+                    fechaNacimiento: "1900-10-10T00:00:00",
+                    fechaRegistro: "2021-01-01T00:00:00",
+                    idBanco: 0,
+                    idCiudad: 0,
+                    idFicha: 0,
+                    idFichaTipoBajaDetalle: 0,
+                    idNivelDetalle: 0,
+                    idPais: 0,
+                    idTipoBaja: 0,
+                    motivoBaja: "",
+                    nit: "",
+                    nivel: "",
+                    nombre: "",
+                    nombreBanco: "",
+                    nombrePatrocinador: "",
+                    razonSocial: "",
+                    telFijo: "",
+                    telMovil: "",
+                    telOficina: "",
+                    tieneCuentaBancaria: false
+                }
             } 
         case Type.LISTA_PAISES:
             return{

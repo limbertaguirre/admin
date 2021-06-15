@@ -16,6 +16,9 @@ import { Dialog, DialogContent, Button, Grid, TextField, Typography, FormGroup, 
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
+import Avatar from '@material-ui/core/Avatar';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import { requestPost } from "../../service/request";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -42,6 +45,25 @@ const StyledBreadcrumb = withStyles((theme) => ({
         paddingLeft:theme.spacing(1),
         //width:'98%'
     },
+    fotoSise: {
+      width: theme.spacing(15),
+      height: theme.spacing(15),
+    },
+    divCenter: {     
+     /*  '& > *': {
+        margin: theme.spacing(1),
+      }, */
+      display:'flex',
+      flexDirection:'column',
+      alignContent:'center',
+      alignItems:'center',
+      justifyContent:'center',
+    },
+    submitCamara: {                 
+      background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',      
+    },
 
 }));
 
@@ -57,18 +79,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const dispatch = useDispatch();
   const style = useStyles();
   const {objCliente, listPaises, listCiudades, listBajas, listBancos} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
-  
+  const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   
   useEffect(()=>{ 
     console.log('paramet : ', props.location.state.idCliente);
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
-    dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
+   // dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
+    obtenerCliente(parseInt(props.location.state.idCliente));
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
 
-    const regresarPage=()=>{        
+    const regresarPage=()=>{  
+        dispatch(ActionCliente.InicializarCliente());      
         history.goBack();        
     }
     const[idFicha, setIdFicha]= useState(0);
@@ -105,41 +129,57 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const[checkTieneFactura, setCheckTieneFactura]= useState(false);
     const[checkTieneBaja, setCheckTieneBaja]= useState(false);
 
-  
+    const obtenerCliente=(idCliente)=>{
+      const data={usuarioLogin:userName, idCliente: idCliente };
+      requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
+        console.log('nuevo obtener : ', res);
+            if(res.code === 0){  
+               let data= res.data;
+               setIdPais(data.idPais);
+               setIdCiudad(data.idCiudad);
+               setCodigo(data.codigo);
+               setFechaRegistro(data.fechaRegistro);
+               setNombre(data.nombre);
+               setApellido(data.apellido);
+               setCi(data.ci);
+               setTelOficina(data.telOficina);
+               setTelMovil(data.telMovil);
+               setTelFijo(data.telFijo === null? 0 : data.telFijo );
+               setDireccion(data.direccion);
+               setCorreoElectronico(data.correoElectronico);
+               setFechaNacimiento(data.fechaNacimiento);
+               
+               setCodigoPatrocinador(data.codigoPatrocinador);
+               setNombrePatrocinador(data.nombrePatrocinador);
+               setNivel(data.nivel);
+         
+               setComentario(data.comentario === null? "": data.comentario );
+               
+               setCheckTieneBaja(data.idFichaTipoBajaDetalle>0);
+               setFechaBaja(data.fechaBaja);
+               setIdTipoBaja(data.idTipoBaja);
+               setMotivoBaja(data.motivoBaja);
+         
+               setRazonSocial(data.razonSocial === null? "": data.razonSocial);
+               setNit(data.nit === null? "" : data.nit);
+               setCheckTieneFactura(data.nit != null);
+               
+               setIdBanco(data.idBanco);
+               setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );
+               setCodigoBanco(data.codigoBanco);
+               setCheckTieneCuenta(data.tieneCuentaBancaria);
+                           
+            }else{
+               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }    
+          })   
+    };
     useEffect(()=>{ 
-      setIdPais(objCliente.idPais);
-      setIdCiudad(objCliente.idCiudad);
-      setCodigo(objCliente.codigo);
-      setFechaRegistro(objCliente.fechaRegistro);
-      setNombre(objCliente.nombre);
-      setCi(objCliente.ci);
-      setTelOficina(objCliente.telOficina);
-      setTelMovil(objCliente.telMovil);
-      setTelFijo(objCliente.telFijo);
-      setDireccion(objCliente.direccion);
-      setCorreoElectronico(objCliente.correoElectronico);
-      setFechaNacimiento(objCliente.fechaNacimiento);
-      
-      setCodigoPatrocinador(objCliente.codigoPatrocinador);
-      setNombrePatrocinador(objCliente.nombrePatrocinador);
-      setNivel(objCliente.nivel);
 
-      setComentario(objCliente.comentario);
-      
-      setCheckTieneBaja(objCliente.idFichaTipoBajaDetalle>0);
-      setFechaBaja(objCliente.fechaBaja);
-      setIdTipoBaja(objCliente.idTipoBaja);
-      setMotivoBaja(objCliente.motivoBaja);
+      dispatch(ActionCliente.obtenerCiudadesPorPais(idPais));
+    },[idPais])
 
-      setRazonSocial(objCliente.razonSocial);
-      setNit(objCliente.nit);
-      setCheckTieneFactura(objCliente.nit != null);
-      
-      setIdBanco(objCliente.idBanco);
-      setCuentaBancaria(objCliente.cuentaBancaria);
-      setCodigoBanco(objCliente.codigoBanco);
-      setCheckTieneCuenta(objCliente.tieneCuentaBancaria);
-    },[])
+
 
     const _onChangeregistro= (e) => {
       const texfiel = e.target.name;
@@ -234,6 +274,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const handleChangeCheck = (event) => {
         let checkFiel= event.target.name;
         let value= event.target.checked;
+        console.log(checkFiel);
+        console.log(value);
         if(checkFiel === 'checkTieneCuenta'){
           setCheckTieneCuenta(value);
         }
@@ -244,7 +286,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
           setCheckTieneBaja(value);
         }
     };
-
+    
+    const editarPerfil=()=>{
+       console.log('en proceso cambiar perfil');
+    };
      
     return (
       <>
@@ -266,6 +311,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label=" codigo"
                             type={'text'}
                             variant="outlined"
+                            disabled
                             name="codigo"
                             value={codigo}
                             placeholder="Codigo de cliente"
@@ -283,6 +329,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             <KeyboardDatePicker
                                     fullWidth
                                     autoOk
+                                    disabled
                                     variant="inline"
                                     inputVariant="outlined"
                                     className={style.TextFiel}
@@ -297,7 +344,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             />
                         </MuiPickersUtilsProvider>
                </Grid> 
-               <Grid item xs={12  } >
+               <Grid item xs={6} >
                         <TextField                            
                             label="Nombre"
                             type={'text'}
@@ -305,6 +352,23 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             name="nombre"
                             value={nombre}
                             placeholder="Nombre Cliente"
+                            className={style.TextFiel}
+                            onChange={_onChangeregistro}
+                           // error={corporativoError}
+                           /*  helperText={ corporativoError &&
+                            "campo requerido"
+                            }   */                          
+                            fullWidth                             
+                        />
+               </Grid> 
+               <Grid item xs={6} >
+                        <TextField                            
+                            label="Apellido"
+                            type={'text'}
+                            variant="outlined"
+                            name="apellido"
+                            value={apellido}
+                            placeholder="Apellido"
                             className={style.TextFiel}
                             onChange={_onChangeregistro}
                            // error={corporativoError}
@@ -478,12 +542,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             />
                         </MuiPickersUtilsProvider>
                 </Grid>
-                <Grid container xs={12}>
+                <Grid container >
                     <Grid item xs={4} >
                           <TextField                            
                                 label="Cod patrocinador"
                                 type={'text'}
                                 variant="outlined"
+                                disabled
                                 name="codigoPatrocinador"
                                 value={codigoPatrocinador}                           
                                 className={style.TextFiel}
@@ -500,6 +565,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                 label="Nombre patrocinador"
                                 type={'text'}
                                 variant="outlined"
+                                disabled
                                 name="nombrePatrocinador"
                                 value={nombrePatrocinador}                            
                                 className={style.TextFiel}
@@ -516,6 +582,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                        <TextField                            
                             label="Nivel"
                             type={'text'}
+                            disabled
                             variant="outlined"
                             name="nivel"
                             value={nivel}
@@ -530,11 +597,24 @@ const StyledBreadcrumb = withStyles((theme) => ({
                         />
                </Grid>   
             </Grid>   
-            <Grid  xs={6}  >
-               <Grid  xs={12}>
-                        foto
+            <Grid item xs={6}  >
+                <Grid container className={style.divCenter}>
+                       <Grid item xs={6} >
+                       <Avatar alt="perfil" src={"https://pbs.twimg.com/media/Dfk08xnUEAUxTLR?format=jpg&name=360x360"} className={style.fotoSise} />
+                       </Grid>
+                       <Grid item xs={6} >
+                       <Button
+                          type="submit"                          
+                          variant="contained"
+                          color="primary"
+                          className={style.submitCamara}
+                          onClick = {()=> editarPerfil()}                                         
+                          >
+                          <CameraAltIcon />
+                        </Button>  
+                        </Grid>
                </Grid> 
-               <Grid item xs={12}>
+               <Grid item xs={12}   >
                         <TextField                            
                             label="Comentario"
                             type={'text'}
@@ -552,7 +632,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             fullWidth                             
                         />
                </Grid> 
-               <Grid item xs={12}  >
+               <Grid item xs={12}  className={style.divCenter}  >
                  <FormGroup row  >
                       <FormControlLabel
                         control={<Checkbox checked={checkTieneCuenta} onChange={handleChangeCheck} name="checkTieneCuenta" color="primary" />}
@@ -568,7 +648,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
                       />                                         
                   </FormGroup>   
               </Grid> 
-              <Grid container xs={12}  >
+              {checkTieneCuenta&&
+              <Grid container >
                   <Grid item xs={12}  >
                       <Grid item xs={6}  >
                         <FormControl  variant="outlined"  
@@ -629,10 +710,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     </Grid>
 
                </Grid>
-
+               }
 
               {checkTieneFactura&& 
-              <Grid container xs={12}  >
+              <Grid container >
                   <Grid item xs={6}  >
                         <TextField                            
                             label="Razón  Social"
@@ -670,7 +751,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
               }
 
               {checkTieneBaja&&
-                <Grid container xs={12}  >
+                <Grid container   >
                     <Grid item xs={6}  >
                           <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
                               <KeyboardDatePicker

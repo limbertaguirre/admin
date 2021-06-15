@@ -133,3 +133,11 @@ import * as Action from './messageAction';
 
     }
   }
+
+  export const InicializarCliente= ()=>{
+    return (dispatch, getState )=>{        
+        dispatch({
+          type:Types.CLEAR_OBJETO_CLIENTE
+        })  
+    }
+  }
