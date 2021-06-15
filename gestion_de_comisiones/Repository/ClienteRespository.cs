@@ -261,6 +261,36 @@ namespace gestion_de_comisiones.Repository
                 return objCliente;
             }
         }
+        public object tiposdeBajasClientes(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario} inicio el tiposdeBajasClientes");
+                var tipoBajas = contextMulti.TipoBajas.Select(p => new {p.IdTipoBaja, p.Nombre, p.Descripcion }).ToList();
+                return tipoBajas;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch tiposdeBajasClientes() mensaje : {ex}");
+                List<TipoBaja> lis = new List<TipoBaja>();
+                return lis;
+            }
+        }
+        public object listabancosParaClientes(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario} inicio el listabancosParaClientes");
+                var tipoBajas = contextMulti.Bancoes.Select(p => new { p.IdBanco, p.Nombre, p.Codigo }).ToList();
+                return tipoBajas;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch listabancosParaClientes() mensaje : {ex}");
+                List<Banco> lis = new List<Banco>();
+                return lis;
+            }
+        }
 
 
     }

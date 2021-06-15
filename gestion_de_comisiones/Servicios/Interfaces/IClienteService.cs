@@ -12,6 +12,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object obtenerClientePorID(string usuario, int idCliente);
         public object ListarPaises(string usuario);
         public object listaCiudadesXPais(string usuario, int idPais);
-
+        public object obtenerListadeBajas(string usuario);
+        public object obtenerBancoParaclientes(string usuario);
     }
 }
