@@ -3,8 +3,30 @@ import {
     Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Paper, Typography,Grid
 } from "@material-ui/core";
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
 
-let MessageConfirm = ({ open, titulo, mensaje, handleCloseConfirm, handleCloseCancel }) => {
+const useStyles = makeStyles((theme) => ({
+    root: {
+      width: '100%',
+      '& > * + *': {
+        //marginTop: theme.spacing(2),
+      },
+    },
+    botones:{
+        background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',  
+        marginBottom:theme.spacing(1),
+        marginTop:theme.spacing(1),
+        marginRight:theme.spacing(1),
+        marginLeft:theme.spacing(1),
+    }
+  }));
+
+let MessageConfirm = ({ open, titulo,subTituloModal, tipoModal, mensaje, handleCloseConfirm, handleCloseCancel }) => {
+     //tipoModal : info, error, warning, success
+     const classes = useStyles();
 
     let cerrarModal = () => {
         handleCloseConfirm();
@@ -17,45 +39,29 @@ let MessageConfirm = ({ open, titulo, mensaje, handleCloseConfirm, handleCloseCa
                 open={open}
                 aria-labelledby="customized-dialog-title"
             >
-                <DialogTitle >{titulo}</DialogTitle>
+               
                 <DialogContent>
-                    <DialogContentText>
-                         {/*         <Paper
-                                elevation={0}
-                                style={{
-                                    background: "#ffecb3",
-                                    marginTop: 16,
-                                    marginBottom: 16,
-                                    paddingLeft: 8,
-                                }}
-                                >
-                                <Grid container justify="flex-start" alignItems="center">
-                                    <Grid item xs={1}>
-                                    <EmojiObjectsIcon />
-                                    </Grid>
-                                    <Grid item xs={10}>
-                                    <Typography
-                                        variant="subtitle2"
-                                        gutterBottom
-                                        style={{ marginTop: 15, marginBottom: 5 }}
-                                        display="block"
-                                    >
-                                        {mensaje}
-                                    </Typography>
-                                    </Grid>
-                                </Grid>
-                                </Paper>   */}
-                                {mensaje}              
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseCancel} color="primary">
-                        Cancelar
-                    </Button>
-                    <Button onClick={cerrarModal} color="primary">
-                        Aceptar
-                    </Button>
-                </DialogActions>
+                         <div className={classes.root}>
+                            <Alert severity={tipoModal}>
+                                <AlertTitle>{titulo}</AlertTitle>
+                                <strong>{subTituloModal}</strong>
+                                <br />                             
+                                <Typography variant="caption" display="block" gutterBottom>
+                                    <strong>NOTA :</strong> {mensaje} 
+                                </Typography>
+                                <br />                            
+                            </Alert>
+                       
+                        </div>                   
+                        <Grid  container item xs={12}  justify="flex-end"  >
+                            <Button onClick={handleCloseCancel} variant="contained" color="primary" className={classes.botones} >
+                                Cancelar
+                            </Button>
+                            <Button onClick={cerrarModal} variant="contained" color="primary" className={classes.botones}>
+                                Aceptar
+                            </Button>
+                      </Grid>
+                </DialogContent>             
             </Dialog>
         </Fragment>
     );

@@ -718,6 +718,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_ficha_tipo_baja_i")
                     .HasComment("Llave primaria incremental de la tabla FICHA_TIPO_BAJA_I.");
 
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")

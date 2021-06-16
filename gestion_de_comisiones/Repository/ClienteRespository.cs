@@ -214,7 +214,7 @@ namespace gestion_de_comisiones.Repository
                         objCliente.nombrePatrocinador = "";
                     }
                     //----------------------------------------------------------------------------------
-                    var objBaja = contextMulti.FichaTipoBajaIs.Where(x => x.IdFicha == objCli.IdFicha).Select(p => new { p.IdFichaTipoBajaI, p.IdFicha, p.IdTipoBaja, p.Motivo, p.FechaBaja }).FirstOrDefault(); 
+                    var objBaja = contextMulti.FichaTipoBajaIs.Where(x => x.IdFicha == objCli.IdFicha && x.Estado == true).Select(p => new { p.IdFichaTipoBajaI, p.IdFicha, p.IdTipoBaja, p.Motivo, p.FechaBaja }).FirstOrDefault(); 
                     if(objBaja != null)
                     {
                         objCliente.idFichaTipoBajaDetalle = objBaja.IdFichaTipoBajaI;

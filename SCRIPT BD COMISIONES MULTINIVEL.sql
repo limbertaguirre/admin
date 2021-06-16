@@ -563,6 +563,7 @@ create table FICHA_TIPO_BAJA_I
     fecha_baja datetime,
     id_ficha int,
     id_tipo_baja int,
+	estado bit default 1,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),

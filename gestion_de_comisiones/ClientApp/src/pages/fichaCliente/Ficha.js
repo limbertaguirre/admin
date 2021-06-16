@@ -192,6 +192,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
      const[openModalConfirm, setOpenModalConfirm]= useState(false);
      const[mensajeModal, setMensajeModal ]= useState("");
      const[tituloModal, setTituloModal ]= useState("");
+     const[subTituloModal, setSubTituloModal ]= useState("");
+     const[tipoModal, setTipoModal ]= useState("info");
+
      const[selectCheckName, setSelectCheckName]= useState("");
      
      
@@ -364,8 +367,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
               if(checkFiel === 'checkTieneCuenta'){
                   if(value === false){
                     setSelectCheckName(checkFiel)
-                    setMensajeModal('Con deshabilitar la cuenta del cliente');
-                    setTituloModal('Esta seguro?');
+                    setMensajeModal('PARA VOLVER HABILITAR LA CUENTA BANCARIA DEL CLIENTE, DEBE COMUNICARSE CON SU INMEDIATO SUPERIOR .');
+                    setTituloModal('¡ADVERTENCIA!');
+                    setSubTituloModal('UD. ESTÁ APUNTO DE DESHABILITAR LA CUENTA BANCARIA DE ESTE CLIENTE. ');
+                    setTipoModal('error');
                     setOpenModalConfirm(true);
                   }else{
                     setCheckTieneCuenta(value);
@@ -374,8 +379,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
               if(checkFiel === 'checkTieneFactura'){
                   if(value === false){
                     setSelectCheckName(checkFiel)
-                    setMensajeModal('Con quitar la factura del cliente');
-                    setTituloModal('Esta seguro?');
+                    setMensajeModal('TENGA EN CUENTA QUE SI EL CLIENTE YA REGISTRO UN Nro. NIT, LOS DATOS NO SE BORRARÁN DEL SISTEMA Y PODRÁ RECUPERAR LOS DATOS LA PRÓXIMA VEZ QUE SELECCIONE ESTA OPCIÓN. PARA VOLVER HABILITAR ESTA ACCIÓN, DEBE COMUNICARSE CON SU INMEDIATO SUPERIOR .');
+                    setTituloModal('COMUNICADO');
+                    setSubTituloModal('ESTÁ SEGURO EN DESHABILITAR ESTA OPCIÓN?.');
+                    setTipoModal('warning');
                     setOpenModalConfirm(true);
                   }else{
                     setCheckTieneFactura(value);
@@ -384,8 +391,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
               if(checkFiel === 'checkTieneBaja'){
                   if(value === false){
                     setSelectCheckName(checkFiel)
-                    setMensajeModal('Con dar de alta al cliente');
-                    setTituloModal('esta seguro?');
+                    setMensajeModal('OPCIÓN CONTROLADA.');
+                    setTituloModal('¡INFO!');
+                    setSubTituloModal('ESTÁ SEGURO EN HABILITAR AL CLIENTE DADO DE BAJA.');
+                    setTipoModal('success');
                     setOpenModalConfirm(true);
                   }else{
                     setCheckTieneBaja(value);
@@ -1006,7 +1015,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                </Grid> 
           </Grid>
        
-       <MessageConfirm open={openModalConfirm} titulo={tituloModal} mensaje={mensajeModal} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel}  />
+       <MessageConfirm open={openModalConfirm} titulo={tituloModal} subTituloModal={subTituloModal} tipoModal={tipoModal} mensaje={mensajeModal} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel}  />
       </>
     );
 
