@@ -18,8 +18,11 @@ import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
 import Avatar from '@material-ui/core/Avatar';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import { requestPost } from "../../service/request";
 import MessageConfirm from '../../components/mesageModal/MessageConfirm';
+import { blue  } from '@material-ui/core/colors';
+
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -49,6 +52,25 @@ const StyledBreadcrumb = withStyles((theme) => ({
     fotoSise: {
       width: theme.spacing(15),
       height: theme.spacing(15),
+    },    
+    photoIcons: {
+      width: theme.spacing(4),
+      height: theme.spacing(4), 
+      //color:theme.palette.getContrastText(blue[500]),
+    },
+    divPhoto: {
+      width: theme.spacing(6),
+      height: theme.spacing(6),
+      border:'1px',
+      backgroundColor:'#01579b',
+      borderRadius:'12px',
+
+      display:'flex',
+      flexDirection:'column',
+      alignContent:'center',
+      alignItems:'center',
+      justifyContent:'center',
+
     },
     divCenter: {     
      /*  '& > *': {
@@ -60,6 +82,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
      alignItems:'center',
      justifyContent:'center',
     },
+    divButton: {     
+     
+       // display:'flex',
+       flexDirection:'column',
+       alignContent:'right',
+        alignItems:'right',
+      //justifyContent:'right',
+     },
     submitCamara: {                 
       background: "#1872b8", 
       boxShadow: '2px 4px 5px #1872b8',
@@ -74,6 +104,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
       marginBottom: theme.spacing(1),
       marginTop: theme.spacing(1),
     },
+    avatarNombre: {
+      color: theme.palette.getContrastText(blue[500]),
+      backgroundColor: '#1872b8',
+     // boxShadow: '2px 4px 5px #1872b8',
+      width: theme.spacing(15),
+      height: theme.spacing(15),
+    },
+    etiqueta: {
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      marginRight:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingLeft:theme.spacing(1),
+  },
 
 }));
 
@@ -105,6 +149,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
         dispatch(ActionCliente.InicializarCliente());      
         history.goBack();        
     }
+    const [avatar, setAvatar]= useState("");
+    const[nuevoAvatar, setNuevoAvatar]= useState(false);
+
     const[idFicha, setIdFicha]= useState(0);
     const [codigo, setCodigo]= useState("");
     const [fechaRegistro, setFechaRegistro]= useState(moment().format("YYYY/MM/DD"));
@@ -146,13 +193,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
      const[mensajeModal, setMensajeModal ]= useState("");
      const[tituloModal, setTituloModal ]= useState("");
      const[selectCheckName, setSelectCheckName]= useState("");
+     
+     
 
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        //console.log('nuevo obtener : ', res);
+        console.log('nuevo obtener : ', res);
             if(res.code === 0){  
                let data= res.data;
+               setAvatar(data.avatar ===null? "": data.avatar);
+
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
                setCodigo(data.codigo);
@@ -366,6 +417,19 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const ActualizarDatos=()=>{
 
     }
+
+    const onChangeFile= (e)=> {
+        var file = e.target.files[0];
+        const reader = new FileReader();
+        var url = reader.readAsDataURL(file);
+        console.log(URL.createObjectURL(file));
+        reader.onloadend = function (e) {
+          setAvatar(reader.result);
+          setNuevoAvatar(true);
+        }.bind(this);
+
+    }
+
      
     return (
       <>
@@ -378,8 +442,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
            </div>
            <br/>
          
-         
-          <h3> ficha Cliente </h3>
+           <Typography variant="h4" gutterBottom className={style.etiqueta} >
+             {'Ficha Cliente'}
+           </Typography>
+          
           <Grid container item xs={12}  >
             <Grid container item xs={12} md={6} >
                <Grid item xs={6} >
@@ -693,20 +759,21 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <Grid  item xs={12} md={6}  >
                 <Grid  container item xs={12} className={style.divCenter}>
                        <Grid item xs={3} >
-                           <Avatar alt="perfil" src={"https://pbs.twimg.com/media/Dfk08xnUEAUxTLR?format=jpg&name=360x360"} className={style.fotoSise} />
+                          {avatar != ""?
+                           <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
+                            : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> { nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
                        </Grid>
                        <Grid item xs={2} >
-                          <Button
-                            type="submit"                          
-                            variant="contained"
-                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
-                            color="primary"
-                            //className={style.submitCamara}
-                            onClick = {()=> editarPerfil()}                                         
-                            >
-                            <CameraAltIcon />
-                           </Button>  
+                         
+                           {/* <div className={style.divPhoto}> */} 
+                              <label >
+                                <input style={{display: 'none'}} type="file" accept="image/*" onChange={onChangeFile} />                           
+                                <AddPhotoAlternateIcon className={style.photoIcons} /> 
+                              </label>
+                           {/* </div> */}
+                         
                         </Grid>
+                        
                </Grid> 
                <Grid item xs={12}   >
                         <TextField                            
@@ -921,7 +988,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                }
 
             </Grid> 
-            <Grid  container item xs={12} className={style.divCenter} >
+            <Grid  container item xs={12}  justify="flex-end" >
                        {validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR) &&                   
                           <Button
                             type="submit"                          

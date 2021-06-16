@@ -182,7 +182,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <div>
                
                 <TableContainer component={Paper}>
-                    <Table className={styles.table} size="small" aria-label="a dense table">
+                    <Table className={styles.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
                             <TableCell align="center">ID</TableCell>
