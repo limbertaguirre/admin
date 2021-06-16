@@ -51,6 +51,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
 
         public int  idNivelDetalle { get; set; }
         public string nivel { get; set; }
+        public int idNivel { get; set; }
 
 
     }

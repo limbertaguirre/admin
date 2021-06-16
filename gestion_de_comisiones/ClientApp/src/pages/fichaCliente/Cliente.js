@@ -78,7 +78,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});  
     const [namePage, setNamePage] = useState(""); 
     useEffect(()=>{  try{  
-       setNamePage(props.location.state.namePagina + permiso.VISUALIZAR);
+       setNamePage(props.location.state.namePagina);
        verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
        }catch (err) {  verificarAcceso(perfiles, 'none', history); }
     },[])

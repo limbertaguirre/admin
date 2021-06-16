@@ -185,11 +185,13 @@ namespace gestion_de_comisiones.Repository
                     {
                         objCliente.idNivelDetalle = objNivel.idNivelDetalle;
                         objCliente.nivel = objNivel.nombre;
+                        objCliente.idNivel = objNivel.idNivel;
                     }
                     else
                     {
                         objCliente.idNivelDetalle = 0;
                         objCliente.nivel = "";
+                        objCliente.idNivel = 0;
                     }
                     //--------------------------------------------------
                     var patrocinad = contextMulti.GpClienteVendedorIs.Join(contextMulti.Fichas,
@@ -288,6 +290,21 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuario} error catch listabancosParaClientes() mensaje : {ex}");
                 List<Banco> lis = new List<Banco>();
+                return lis;
+            }
+        }
+        public object listarNivelesClientes(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario} inicio el listarNivelesClientes() repository");
+                var niveles = contextMulti.Nivels.Select(p => new { p.IdNivel, p.Nombre }).ToList();
+                return niveles;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch listarNivelesClientes() mensaje : {ex}");
+                List<Nivel> lis = new List<Nivel>();
                 return lis;
             }
         }

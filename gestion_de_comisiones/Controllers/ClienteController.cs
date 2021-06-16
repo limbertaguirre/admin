@@ -151,5 +151,23 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        // GET: ClienteController/obtenerNivelesClientes
+        public ActionResult obtenerNivelesClientes([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerNivelesClientes()  ");
+                var resulcliente = Service.obtenerNivelesCliente(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerNivelesClientes()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  obtenerNivelesClientes() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener las bajas" };
+                return Ok(Result);
+            }
+        }
+
     }
 }

@@ -19,6 +19,7 @@ import esLocale from "date-fns/locale/es";
 import Avatar from '@material-ui/core/Avatar';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import { requestPost } from "../../service/request";
+import MessageConfirm from '../../components/mesageModal/MessageConfirm';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -54,15 +55,24 @@ const StyledBreadcrumb = withStyles((theme) => ({
         margin: theme.spacing(1),
       }, */
       display:'flex',
-      flexDirection:'column',
+     // flexDirection:'column',
       alignContent:'center',
-      alignItems:'center',
-      justifyContent:'center',
+     alignItems:'center',
+     justifyContent:'center',
     },
     submitCamara: {                 
       background: "#1872b8", 
       boxShadow: '2px 4px 5px #1872b8',
       color:'white',      
+    },
+    submit: {                 
+      background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',     
+      marginRight: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1),
     },
 
 }));
@@ -72,22 +82,22 @@ const StyledBreadcrumb = withStyles((theme) => ({
      
   let history = useHistory();
   const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-/*   useEffect(()=>{  try{  
+  useEffect(()=>{  try{  
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
-  },[]) */
+  },[])  
   const dispatch = useDispatch();
   const style = useStyles();
   const {objCliente, listPaises, listCiudades, listBajas, listBancos} = useSelector((stateSelector) =>{ return stateSelector.cliente});  
   const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   
   useEffect(()=>{ 
-    console.log('paramet : ', props.location.state.idCliente);
+    console.log('paramet : ', props.location.state.namePagina + permiso.VISUALIZAR);
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
-   // dispatch(ActionCliente.obtenerClienteXId(parseInt(props.location.state.idCliente)));
     obtenerCliente(parseInt(props.location.state.idCliente));
+    obtenerNiveles();
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
 
@@ -112,6 +122,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [codigoPatrocinador, setCodigoPatrocinador] = useState("");
     const [nombrePatrocinador, setNombrePatrocinador]= useState("");
     const [nivel, setNivel]= useState("");
+    const [idNivel, setIdNivel]= useState(0);
     const [comentario, setComentario]=useState("");
 
     const [idBanco, setIdBanco]=useState(0);
@@ -129,10 +140,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const[checkTieneFactura, setCheckTieneFactura]= useState(false);
     const[checkTieneBaja, setCheckTieneBaja]= useState(false);
 
+    const[listNiveles, setListNiveles]=useState([]);
+
+     const[openModalConfirm, setOpenModalConfirm]= useState(false);
+     const[mensajeModal, setMensajeModal ]= useState("");
+     const[tituloModal, setTituloModal ]= useState("");
+     const[selectCheckName, setSelectCheckName]= useState("");
+
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        console.log('nuevo obtener : ', res);
+        //console.log('nuevo obtener : ', res);
             if(res.code === 0){  
                let data= res.data;
                setIdPais(data.idPais);
@@ -152,6 +170,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setCodigoPatrocinador(data.codigoPatrocinador);
                setNombrePatrocinador(data.nombrePatrocinador);
                setNivel(data.nivel);
+               setIdNivel(data.idNivel);
          
                setComentario(data.comentario === null? "": data.comentario );
                
@@ -169,6 +188,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setCodigoBanco(data.codigoBanco);
                setCheckTieneCuenta(data.tieneCuentaBancaria);
                            
+            }else{
+               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }    
+          })   
+    };
+    const obtenerNiveles=()=>{
+      const data={usuarioLogin:userName };
+      requestPost('Cliente/obtenerNivelesClientes',data,dispatch).then((res)=>{ 
+        //console.log('Niveles : ', res);
+            if(res.code === 0){                 
+               setListNiveles(res.data);        
             }else{
                // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }    
@@ -257,6 +287,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
       if (texfiel === "codigoBanco") {
         setCodigoBanco(value);
       }
+      if (texfiel === "idNivel") {
+         setIdNivel(value);
+      }
       
 
       
@@ -274,22 +307,65 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const handleChangeCheck = (event) => {
         let checkFiel= event.target.name;
         let value= event.target.checked;
-        console.log(checkFiel);
-        console.log(value);
-        if(checkFiel === 'checkTieneCuenta'){
-          setCheckTieneCuenta(value);
-        }
-        if(checkFiel === 'checkTieneFactura'){
-          setCheckTieneFactura(value);
-        }
-        if(checkFiel === 'checkTieneBaja'){
-          setCheckTieneBaja(value);
-        }
+        //console.log(checkFiel);
+        //console.log(value);
+                      
+              if(checkFiel === 'checkTieneCuenta'){
+                  if(value === false){
+                    setSelectCheckName(checkFiel)
+                    setMensajeModal('Con deshabilitar la cuenta del cliente');
+                    setTituloModal('Esta seguro?');
+                    setOpenModalConfirm(true);
+                  }else{
+                    setCheckTieneCuenta(value);
+                  }                
+              }
+              if(checkFiel === 'checkTieneFactura'){
+                  if(value === false){
+                    setSelectCheckName(checkFiel)
+                    setMensajeModal('Con quitar la factura del cliente');
+                    setTituloModal('Esta seguro?');
+                    setOpenModalConfirm(true);
+                  }else{
+                    setCheckTieneFactura(value);
+                  }
+              }
+              if(checkFiel === 'checkTieneBaja'){
+                  if(value === false){
+                    setSelectCheckName(checkFiel)
+                    setMensajeModal('Con dar de alta al cliente');
+                    setTituloModal('esta seguro?');
+                    setOpenModalConfirm(true);
+                  }else{
+                    setCheckTieneBaja(value);
+                  }
+              }
     };
     
     const editarPerfil=()=>{
        console.log('en proceso cambiar perfil');
     };
+
+    const handleCloseConfirm=()=>{
+        setOpenModalConfirm(false);
+        if(selectCheckName === 'checkTieneCuenta'){
+          setCheckTieneCuenta(false);
+        }
+        if(selectCheckName === 'checkTieneFactura'){
+          setCheckTieneFactura(false);
+        }
+        if(selectCheckName === 'checkTieneBaja'){
+          setCheckTieneBaja(false);
+        }
+
+    };
+
+    const handleCloseCancel= ()=>{
+      setOpenModalConfirm(false);
+    }
+    const ActualizarDatos=()=>{
+
+    }
      
     return (
       <>
@@ -305,7 +381,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          
           <h3> ficha Cliente </h3>
           <Grid container item xs={12}  >
-            <Grid container item xs={6} >
+            <Grid container item xs={12} md={6} >
                <Grid item xs={6} >
                        <TextField                            
                             label=" codigo"
@@ -350,6 +426,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             type={'text'}
                             variant="outlined"
                             name="nombre"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             value={nombre}
                             placeholder="Nombre Cliente"
                             className={style.TextFiel}
@@ -366,6 +443,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Apellido"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="apellido"
                             value={apellido}
                             placeholder="Apellido"
@@ -385,6 +463,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             variant="outlined"
                             name="ci"
                             value={ci}
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             placeholder="Carnet de Identidad"
                             className={style.TextFiel}
                             onChange={_onChangeregistro}
@@ -401,6 +480,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             type={'number'}
                             variant="outlined"
                             name="telOficina"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             value={telOficina}                            
                             className={style.TextFiel}
                             onChange={_onChangeregistro}
@@ -416,6 +496,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="telMovil"
                             type={'number'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="telMovil"
                             value={telMovil}                           
                             className={style.TextFiel}
@@ -448,6 +529,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Dirección"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="direccion"
                             value={direccion}
                             placeholder="Dirección"
@@ -470,6 +552,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             <Select
                                 labelId="demo-simple-select-outlined-labelciudad"
                                 id="demo-simple-select-outlined"
+                                disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                 value={idCiudad}
                                 name="idCiudad"
                                 onChange={_onChangeregistro}
@@ -494,6 +577,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                 labelId="demo-simple-select-outlined-labelpais"
                                 id="demo-simple-select-outlined"
                                 value={idPais}
+                                disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                 name="idPais"
                                 onChange={_onChangeregistro}
                                 label="Pais"
@@ -511,6 +595,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Correo electronico"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="correoElectronico"
                             value={correoElectronico}
                             placeholder="Correo electronico"
@@ -530,6 +615,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                     autoOk
                                     variant="inline"
                                     inputVariant="outlined"
+                                    disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                     className={style.TextFiel}
                                     label="Fecha de nacimiento"
                                     format="yyyy/MM/dd"
@@ -548,7 +634,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                 label="Cod patrocinador"
                                 type={'text'}
                                 variant="outlined"
-                                disabled
+                                disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                 name="codigoPatrocinador"
                                 value={codigoPatrocinador}                           
                                 className={style.TextFiel}
@@ -565,7 +651,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                 label="Nombre patrocinador"
                                 type={'text'}
                                 variant="outlined"
-                                disabled
+                                disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                 name="nombrePatrocinador"
                                 value={nombrePatrocinador}                            
                                 className={style.TextFiel}
@@ -579,39 +665,47 @@ const StyledBreadcrumb = withStyles((theme) => ({
                   </Grid>      
                 </Grid>
                 <Grid item xs={12} >
-                       <TextField                            
-                            label="Nivel"
-                            type={'text'}
-                            disabled
-                            variant="outlined"
-                            name="nivel"
-                            value={nivel}
-                            placeholder="Nivel"
-                            className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
-                            fullWidth                             
-                        />
-               </Grid>   
+                        <FormControl  variant="outlined"  
+                           fullWidth  
+                           //error={CiudadError} 
+                           className={style.TextFiel}
+                           >
+                            <InputLabel id="demo-simple-select-outlined-labelciudad">Rango</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-outlined-labelcNivel"
+                                id="demo-simple-select-outlinedNivel"
+                                disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                                value={idNivel}
+                                name="idNivel"
+                                onChange={_onChangeregistro}
+                                label="Nivel"
+                                >
+                                <MenuItem value={0}>
+                                    <em>Seleccione un Nivel</em>
+                                </MenuItem>
+                                {listNiveles.map((value,index)=> ( <MenuItem key={index} value={value.idNivel}>{value.nombre}</MenuItem> ))}  
+                            </Select>
+                           {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                        </FormControl>
+                  </Grid> 
+              
             </Grid>   
-            <Grid item xs={6}  >
-                <Grid container className={style.divCenter}>
-                       <Grid item xs={6} >
-                       <Avatar alt="perfil" src={"https://pbs.twimg.com/media/Dfk08xnUEAUxTLR?format=jpg&name=360x360"} className={style.fotoSise} />
+            <Grid  item xs={12} md={6}  >
+                <Grid  container item xs={12} className={style.divCenter}>
+                       <Grid item xs={3} >
+                           <Avatar alt="perfil" src={"https://pbs.twimg.com/media/Dfk08xnUEAUxTLR?format=jpg&name=360x360"} className={style.fotoSise} />
                        </Grid>
-                       <Grid item xs={6} >
-                       <Button
-                          type="submit"                          
-                          variant="contained"
-                          color="primary"
-                          className={style.submitCamara}
-                          onClick = {()=> editarPerfil()}                                         
-                          >
-                          <CameraAltIcon />
-                        </Button>  
+                       <Grid item xs={2} >
+                          <Button
+                            type="submit"                          
+                            variant="contained"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                            color="primary"
+                            //className={style.submitCamara}
+                            onClick = {()=> editarPerfil()}                                         
+                            >
+                            <CameraAltIcon />
+                           </Button>  
                         </Grid>
                </Grid> 
                <Grid item xs={12}   >
@@ -619,6 +713,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Comentario"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="comentario"
                             value={comentario}
                             multiline
@@ -637,14 +732,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
                       <FormControlLabel
                         control={<Checkbox checked={checkTieneCuenta} onChange={handleChangeCheck} name="checkTieneCuenta" color="primary" />}
                         label="Tiene Cuenta"
+                        disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                       />
                       <FormControlLabel
                         control={ <Checkbox checked={checkTieneFactura} onChange={handleChangeCheck} name="checkTieneFactura" color="primary" /> }
                         label="Tiene Factura?"
+                        disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                       />
                        <FormControlLabel
                         control={ <Checkbox checked={checkTieneBaja} onChange={handleChangeCheck} name="checkTieneBaja" color="primary" /> }
                         label="Dado de baja?"
+                        disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                       />                                         
                   </FormGroup>   
               </Grid> 
@@ -696,6 +794,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Cuenta Banco"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="codigoBanco"
                             value={codigoBanco}
                             className={style.TextFiel}
@@ -719,6 +818,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="Razón  Social"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="razonSocial"
                             value={razonSocial}
                             placeholder="Codigo de cliente"
@@ -736,6 +836,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             label="NIT"
                             type={'text'}
                             variant="outlined"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             name="nit"
                             value={nit}
                             className={style.TextFiel}
@@ -759,6 +860,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                       autoOk
                                       variant="inline"
                                       inputVariant="outlined"
+                                      disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                       className={style.TextFiel}
                                       label="Fecha de baja"
                                       format="yyyy/MM/dd"
@@ -780,6 +882,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                               <InputLabel id="demo-simple-select-outlined-labelbaja">Tipo de baja</InputLabel>
                               <Select
                                   labelId="demo-simple-select-outlined-labelbaja"
+                                  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                                   id="demo-simple-select-outlined"
                                   value={idTipoBaja}
                                   name="idTipoBaja"
@@ -800,6 +903,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                               label="Motivo de baja"
                               type={'text'}
                               variant="outlined"
+                              disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                               name="motivoBaja"
                               value={motivoBaja}
                               multiline
@@ -817,8 +921,25 @@ const StyledBreadcrumb = withStyles((theme) => ({
                }
 
             </Grid> 
+            <Grid  container item xs={12} className={style.divCenter} >
+                       {validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR) &&                   
+                          <Button
+                            type="submit"                          
+                            variant="contained"
+                            color="primary"
+                            disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                            style={{width:'30%'}}
+                            className={style.submit}
+                            onClick = {()=> ActualizarDatos()}                                         
+                            >
+                            Actualizar
+                           </Button>                          
+                        }
+
+               </Grid> 
           </Grid>
-  
+       
+       <MessageConfirm open={openModalConfirm} titulo={tituloModal} mensaje={mensajeModal} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel}  />
       </>
     );
 

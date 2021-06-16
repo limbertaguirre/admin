@@ -43,10 +43,10 @@ import * as Action from './messageAction';
   }
   export const obtenerClienteXId= (idCliente)=>{
     return (dispatch, getState )=>{        
-        console.log('ObtenerCliente  Idclien:', idCliente); 
+        //console.log('ObtenerCliente  Idclien:', idCliente); 
           const data={usuarioLogin:getState().load.userName, idCliente: idCliente };
           requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-            console.log('ObtenerCliente : ', res);
+           // console.log('ObtenerCliente : ', res);
                 if(res.code === 0){  
                   dispatch({
                     type:Types.OBJETO_CLIENTE,
@@ -64,7 +64,7 @@ import * as Action from './messageAction';
     return (dispatch, getState )=>{              
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ListaPaises',headers,dispatch).then((res)=>{ 
-    console.log('paises : ', res);
+   // console.log('paises : ', res);
             if(res.code === 0){  
                 dispatch({
                   type:Types.LISTA_PAISES,
@@ -78,10 +78,10 @@ import * as Action from './messageAction';
   }
   export const obtenerCiudadesPorPais= (idPais)=>{
     return (dispatch, getState )=>{        
-        console.log(' id pais ciudad :', idPais); 
+        //console.log(' id pais ciudad :', idPais); 
           const data={usuarioLogin:getState().load.userName, idPais: idPais };
           requestPost('Cliente/ListarCiudadesPais',data,dispatch).then((res)=>{ 
-            console.log('ciudades : ', res);
+            //console.log('ciudades : ', res);
                 if(res.code === 0){  
                   dispatch({
                     type:Types.LISTA_CIUDADES,
@@ -100,7 +100,7 @@ import * as Action from './messageAction';
         
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerBajasClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener bajas', res);
+    //console.log('obtener bajas', res);
         if(res.code === 0){  
             dispatch({
               type:Types.LISTA_BAJAS,
@@ -119,7 +119,7 @@ import * as Action from './messageAction';
         
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/obtenerBancosClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener bancos', res);
+    //console.log('obtener bancos', res);
         if(res.code === 0){  
           dispatch({
             type:Types.LISTA_BANCOS,

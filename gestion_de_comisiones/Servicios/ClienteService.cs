@@ -122,8 +122,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de bancos para el cliente", "problemas en el servidor, intente mas tarde");
             }
         }
-
-
+        public object obtenerNivelesCliente(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerNivelesCliente() ");
+                var niveles = Repository.listarNivelesClientes(usuario);
+                return Respuesta.ReturnResultdo(0, "ok", niveles);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch obtenerNivelesCliente() al obtener lista de niveles,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de niveles para el cliente", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
     }
 }
