@@ -136,7 +136,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   
   useEffect(()=>{ 
-    console.log('paramet : ', props.location.state.namePagina + permiso.VISUALIZAR);
+    //console.log('paramet : ', props.location.state.namePagina + permiso.VISUALIZAR);
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
@@ -179,6 +179,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [razonSocial, setRazonSocial]= useState("");
     const [nit, setNit]= useState("");
 
+    const [idFichaTipoBaja, setIdFichaTipoBaja]= useState(0);
     const [fechaBaja, setFechaBaja]= useState(moment().format("YYYY/MM/DD"));
     const [idTipoBaja, setIdTipoBaja]= useState(0);
     const [motivoBaja, setMotivoBaja]= useState("");
@@ -229,6 +230,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setComentario(data.comentario === null? "": data.comentario );
                
                setCheckTieneBaja(data.idFichaTipoBajaDetalle>0);
+               setIdFichaTipoBaja(data.idFichaTipoBajaDetalle);
                setFechaBaja(data.fechaBaja);
                setIdTipoBaja(data.idTipoBaja);
                setMotivoBaja(data.motivoBaja);
@@ -425,7 +427,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
     const ActualizarDatos=()=>{
         
-     dispatch(ActionCliente.ActualizarCliente(2))
+     dispatch(ActionCliente.ActualizarCliente( nuevoAvatar, avatar, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
        
     }
 

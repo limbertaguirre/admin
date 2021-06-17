@@ -13,7 +13,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public bool nuevoAvatar { get; set; }
         public string avatar { get; set; }
 
-        public int codigo { get; set; }
+        public string codigo { get; set; }
         public string nombre { get; set; }
         public string apellido { get; set; }
         public string ci { get; set; }

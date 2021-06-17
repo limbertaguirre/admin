@@ -142,49 +142,50 @@ import * as Action from './messageAction';
     }
   }
 
-  export const ActualizarCliente= (idCliente)=>{
+  export const ActualizarCliente= (nuevoAvatar, avatar, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
     return (dispatch, getState )=>{                
           const data={
              usuarioNameLogueado:getState().load.userName,
              usuarioIDLogueado: getState().load.idUsuario,
-             
-             nuevoAvatar :false,
-             avatar:'',
-     
-             codigo:2,
-             nombre:"maria",
-             apellido: "pedraza",
-             ci:"5353535",
-             telOficina:2222222,
-             telMovil : 2,
-             telFijo : 2,
-             direccion :"moscu",
-             
-             idCiudad : 2,
-             idPais :2,
-             correoElectronico :"mm@maria",
-             fechaNacimiento :'2021/05/02',
-             codigoPatrocinador : "222",
-             nombrePatrocinador :"patrocinador bb",
-             idNivel :2,
-             comentario :"no hay comentario",
-     
-             tieneCuenta: true,
-             idBanco : 2,
-             cuentaBancaria : "2352dd2335",
-     
-             tieneFactura : true,
-             razonSocial : "gruposion",
-             nit : "235345nit",
-     
-             tieneBaja : true,
-             idFichaTipoBaja : 2,
-             idTipoBaja : 2,
-             fechaBaja : "2021/06/10",
-             motivoBaja : "se le dio de baja",
+             //------------------
+             nuevoAvatar :nuevoAvatar,
+             avatar:avatar,
+            //-----------
+             codigo:codigo,
+             nombre:nombre,
+             apellido: apellido,
+             ci:ci,
+             telOficina:parseInt(telOficina),
+             telMovil : parseInt(telMovil),
+             telFijo : parseInt(telFijo),
+             direccion : parseInt(direccion),
+             //-------------
+             idCiudad : idCiudad,
+             idPais :idPais,
+             correoElectronico :correoElectronico,
+             fechaNacimiento :fechaNacimiento,
+             codigoPatrocinador : codigoPatrocinador,
+             nombrePatrocinador :nombrePatrocinador,
+             idNivel :idNivel,
+             comentario :comentario,
+             //------------
+             tieneCuenta: tieneCuenta,
+             idBanco : idBanco,
+             cuentaBancaria :cuentaBancaria,
+            //-------------
+             tieneFactura : tieneFactura,
+             razonSocial :razonSocial,
+             nit : nit,
+            //---------------
+             tieneBaja : tieneBaja,
+             idFichaTipoBaja : idFichaTipoBaja,
+             idTipoBaja : idTipoBaja,
+             fechaBaja : fechaBaja,
+             motivoBaja : motivoBaja,
            };
+           console.log('data :', data)
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
-           // console.log('ObtenerCliente : ', res);
+             console.log('actualizar cliente res:  : ', res);
                 if(res.code === 0){  
                       
                                
