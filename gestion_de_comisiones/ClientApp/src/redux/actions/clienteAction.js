@@ -142,7 +142,7 @@ import * as Action from './messageAction';
     }
   }
 
-  export const ActualizarCliente= (nuevoAvatar, avatar, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
+  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
     return (dispatch, getState )=>{                
           const data={
              usuarioNameLogueado:getState().load.userName,
@@ -151,6 +151,7 @@ import * as Action from './messageAction';
              nuevoAvatar :nuevoAvatar,
              avatar:avatar,
             //-----------
+             idFicha:idFicha,
              codigo:codigo,
              nombre:nombre,
              apellido: apellido,
@@ -186,9 +187,9 @@ import * as Action from './messageAction';
            console.log('data :', data)
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
              console.log('actualizar cliente res:  : ', res);
-                if(res.code === 0){  
-                      
-                               
+                if(res.code === 0){                        
+                  dispatch(Action.showMessage({ message: res.message, variant: "success" }));     
+                  history.goBack();     
                 }else{
                     dispatch(Action.showMessage({ message: res.message, variant: "error" }));
                 }    

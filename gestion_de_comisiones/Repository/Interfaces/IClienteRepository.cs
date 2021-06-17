@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Modelos.Cliente;
+﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.Cliente;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object tiposdeBajasClientes(string usuario);
         public object listabancosParaClientes(string usuario);
         public object listarNivelesClientes(string usuario);
+        public Result<string> ValidarRegistros(ClienteUpdateInputModel ficha);
+        public bool ActualizarFichaCliente(ClienteUpdateInputModel ficha);
     }
 }

@@ -1,6 +1,8 @@
-﻿using gestion_de_comisiones.Modelos.Cliente;
+﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.Cliente;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
+using gestion_de_comisiones.Servicios;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace gestion_de_comisiones.Repository
 {
     public class ClienteRespository : IClienteRepository
     {
+        ConfiguracionService Respuesta = new ConfiguracionService();
         BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<ClienteRespository> Logger;
 
@@ -309,7 +312,70 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public Result<string> ValidarRegistros(ClienteUpdateInputModel ficha)
+        {
+           
 
+            try
+            {
+                var oldPatrocinador = contextMulti.GpClienteVendedorIs.Join(contextMulti.Fichas,
+                                            GpClienteVendedorI => GpClienteVendedorI.IdVendedor,Ficha => Ficha.IdFicha,
+                                            (GpClienteVendedorI, Ficha) => new
+                                            {
+                                                idVendedor = Ficha.IdFicha,
+                                                idcliente = GpClienteVendedorI.IdCliente,
+                                                nombreVendedor = Ficha.Nombres + Ficha.Apellidos,
+                                                codigoVendedor = Ficha.Codigo,
+                                            }).Where(x => x.idcliente == ficha.idFicha).FirstOrDefault();
+
+                if(oldPatrocinador != null)
+                {
+                    if(oldPatrocinador.codigoVendedor != ficha.codigoPatrocinador)
+                    {
+                        var vendedorExite = contextMulti.Fichas.Where(x => x.Codigo == ficha.codigoPatrocinador).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+
+                        if(vendedorExite == null)
+                        {                          
+                            return Respuesta.ReturnResultdo(1, "No existe el codigo del patrocinador que quiere registrar", "");
+                        }
+                    }
+
+                }
+
+
+                return Respuesta.ReturnResultdo(0, "Valido para pagar", "");
+
+
+            }
+            catch (Exception ex)
+            {
+                    return Respuesta.ReturnResultdo(1, "error al intente mas tarde", "");
+            }
+              
+        }
+   
+        public bool ActualizarFichaCliente(ClienteUpdateInputModel ficha)
+        {
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+
+
+                        dbcontextTransaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
     }
 }
 

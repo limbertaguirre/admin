@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Repository.Interfaces;
+﻿using gestion_de_comisiones.Modelos.Cliente;
+using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -137,5 +138,34 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object ActualizarFichaCliente(ClienteUpdateInputModel fichaClient)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} inicio el servicio ActualizarFichaCliente() ");
+                var verificarData = Repository.ValidarRegistros(fichaClient);
+                if (verificarData.Code == 1)
+                {
+                    Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} - respuesta al verificar : {verificarData.Message}");
+                    return verificarData;
+                } else{
+                    Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} - valido para actualiar data ");
+                    var updateFicha = Repository.ActualizarFichaCliente(fichaClient);
+                    if (updateFicha)
+                    {
+                        return Respuesta.ReturnResultdo(0, "Se Actualizo correctamente", "");
+                    }
+                    else
+                    {
+                        return Respuesta.ReturnResultdo(1, "Intente mas tarde- update", "");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {fichaClient.usuarioNameLogueado} error catch ActualizarFichaCliente(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener actualizar la ficha del cliente", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

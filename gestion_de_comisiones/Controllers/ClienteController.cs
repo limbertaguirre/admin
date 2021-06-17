@@ -176,9 +176,9 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioNameLogueado} inicio el controller ActualizarCliente()  {param}  ");
-                //  var resulcliente = Service.listaCiudadesXPais(param.usuarioLogin, param.idPais);
+                var resulcliente = Service.ActualizarFichaCliente(param);
                 Logger.LogInformation($"usuario : {param.usuarioNameLogueado} Fin del controller ActualizarCliente()  ");
-                return Ok("");
+                return Ok(resulcliente);
             }
             catch
             {

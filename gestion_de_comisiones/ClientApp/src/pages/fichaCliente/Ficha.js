@@ -210,6 +210,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
+               setIdFicha(data.idFicha);
                setCodigo(data.codigo);
                setFechaRegistro(data.fechaRegistro);
                setNombre(data.nombre);
@@ -427,7 +428,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
     const ActualizarDatos=()=>{
         
-     dispatch(ActionCliente.ActualizarCliente( nuevoAvatar, avatar, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
+     dispatch(ActionCliente.ActualizarCliente(history, nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
        
     }
 
