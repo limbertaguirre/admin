@@ -9,7 +9,7 @@ import * as Action from './messageAction';
           
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener clientes', res);
+    //console.log('obtener clientes', res);
         if(res.code === 0){  
             dispatch({
                 type:Types.LISTA_CLIENTES,
@@ -139,5 +139,58 @@ import * as Action from './messageAction';
         dispatch({
           type:Types.CLEAR_OBJETO_CLIENTE
         })  
+    }
+  }
+
+  export const ActualizarCliente= (idCliente)=>{
+    return (dispatch, getState )=>{                
+          const data={
+             usuarioNameLogueado:getState().load.userName,
+             usuarioIDLogueado: getState().load.idUsuario,
+             
+             nuevoAvatar :false,
+             avatar:'',
+     
+             codigo:2,
+             nombre:"maria",
+             apellido: "pedraza",
+             ci:"5353535",
+             telOficina:2222222,
+             telMovil : 2,
+             telFijo : 2,
+             direccion :"moscu",
+             
+             idCiudad : 2,
+             idPais :2,
+             correoElectronico :"mm@maria",
+             fechaNacimiento :'2021/05/02',
+             codigoPatrocinador : "222",
+             nombrePatrocinador :"patrocinador bb",
+             idNivel :2,
+             comentario :"no hay comentario",
+     
+             tieneCuenta: true,
+             idBanco : 2,
+             cuentaBancaria : "2352dd2335",
+     
+             tieneFactura : true,
+             razonSocial : "gruposion",
+             nit : "235345nit",
+     
+             tieneBaja : true,
+             idFichaTipoBaja : 2,
+             idTipoBaja : 2,
+             fechaBaja : "2021/06/10",
+             motivoBaja : "se le dio de baja",
+           };
+          requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
+           // console.log('ObtenerCliente : ', res);
+                if(res.code === 0){  
+                      
+                               
+                }else{
+                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                }    
+              })   
     }
   }

@@ -102,7 +102,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setPage(0);
     };
     const selecionarCliente=(idcliente)=>{
-       console.log('click', idcliente);
+       //console.log('click', idcliente);
        
         const location = {
           pathname: '/cliente/ficha',

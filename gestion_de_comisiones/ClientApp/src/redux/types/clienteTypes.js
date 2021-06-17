@@ -8,3 +8,5 @@ export const LISTA_PAISES= 'LISTA_PAISES';
 export const LISTA_CIUDADES= 'LISTA_CIUDADES';
 export const LISTA_BAJAS= 'LISTA_BAJAS';
 export const LISTA_BANCOS= 'LISTA_BANCOS';
+
+export const UPDATE_CLIENTE= 'UPDATE_CLIENTE';

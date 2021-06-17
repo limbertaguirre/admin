@@ -202,7 +202,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        console.log('nuevo obtener : ', res);
+        //console.log('nuevo obtener : ', res);
             if(res.code === 0){  
                let data= res.data;
                setAvatar(data.avatar ===null? "": data.avatar);
@@ -424,7 +424,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setOpenModalConfirm(false);
     }
     const ActualizarDatos=()=>{
-
+        
+     dispatch(ActionCliente.ActualizarCliente(2))
+       
     }
 
     const onChangeFile= (e)=> {
@@ -867,7 +869,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     </Grid>
                     <Grid item xs={6} >
                          <TextField                            
-                            label="Cuenta Banco"
+                            label="Codigo Banco"
                             type={'text'}
                             variant="outlined"
                             disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
@@ -1006,7 +1008,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
                             style={{width:'30%'}}
                             className={style.submit}
-                            onClick = {()=> ActualizarDatos()}                                         
+                            onClick = {ActualizarDatos}                                         
                             >
                             Actualizar
                            </Button>                          

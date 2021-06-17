@@ -169,5 +169,25 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        //POST Cliente/ActualizarCliente
+        [HttpPost]
+        public ActionResult ActualizarCliente([FromBody] ClienteUpdateInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} inicio el controller ActualizarCliente()  {param}  ");
+                //  var resulcliente = Service.listaCiudadesXPais(param.usuarioLogin, param.idPais);
+                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} Fin del controller ActualizarCliente()  ");
+                return Ok("");
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioNameLogueado} error catch  ActualizarCliente() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar al cliente" };
+                return Ok(Result);
+            }
+        }
+
+
     }
 }
