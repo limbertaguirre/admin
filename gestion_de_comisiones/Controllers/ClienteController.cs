@@ -5,6 +5,7 @@ using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,7 +176,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} inicio el controller ActualizarCliente()  {param}  ");
+                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} inicio el controller ActualizarCliente() parametros body:  {JsonConvert.SerializeObject(param)}  ");
                 var resulcliente = Service.ActualizarFichaCliente(param);
                 Logger.LogInformation($"usuario : {param.usuarioNameLogueado} Fin del controller ActualizarCliente()  ");
                 return Ok(resulcliente);

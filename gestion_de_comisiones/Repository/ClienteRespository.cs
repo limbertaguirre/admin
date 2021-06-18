@@ -341,6 +341,26 @@ namespace gestion_de_comisiones.Repository
                     }
 
                 }
+                if (ficha.tieneCuenta == true && ficha.idBanco== 0)
+                {
+                    return Respuesta.ReturnResultdo(1, "Debe seleccionar un Banco para habilitar la cuenta", "");
+                }
+                if(ficha.tieneBaja == true && ficha.idTipoBaja == 0)
+                {
+                    return Respuesta.ReturnResultdo(1, "Debe seleccionar un tipo de baja, para poder dar de baja", "");
+                }
+                if(ficha.tieneFactura == true )
+                {
+                    if (ficha.razonSocial == "")
+                    {
+                        return Respuesta.ReturnResultdo(1, "Razon social requerido ", "");
+                    }
+                    if (ficha.nit == "")
+                    {
+                        return Respuesta.ReturnResultdo(1, "Nit requerido ", "");
+                    }
+
+                }
 
 
                 return Respuesta.ReturnResultdo(0, "Valido para pagar", "");
@@ -356,17 +376,137 @@ namespace gestion_de_comisiones.Repository
    
         public bool ActualizarFichaCliente(ClienteUpdateInputModel ficha)
         {
+            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  inicio el ActualizarFichaCliente() en repos");
             using (BDMultinivelContext context = new BDMultinivelContext())
             {
                 using (var dbcontextTransaction = context.Database.BeginTransaction())
                 {
                     try
                     {
+                        var objCli = context.Fichas.Where(x => x.IdFicha == ficha.idFicha).FirstOrDefault();
 
+                        if (objCli != null)
+                        {
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - VERIFICAMOS BAJA!!");
+                            if (ficha.tieneBaja == true)// se bloqueara o se verifica si sigue bloqueado
+                            {
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se dara baja a usuario a usuario idficha:{ficha.idFicha} - nombre:{ficha.nombre}");
+                                if (ficha.idFichaTipoBaja != 0)//se verifica si ya estuvo bloqueado o es nuevo
+                                {
+                                    var oldBaja = context.FichaTipoBajaIs.Where(x => x.IdFichaTipoBajaI == ficha.idFichaTipoBaja).FirstOrDefault();
+                                    if(oldBaja != null)
+                                    {
+                                        Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  ya tenia una baja el cliente :{ficha.idFicha + " nombre "+ ficha.nombre }, baja:{oldBaja.IdTipoBaja +", motivo : "+oldBaja.Motivo}");
+                                        Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  baja q esta agregando a ificha{ficha.idFicha}, tipobaja:{ficha.idTipoBaja}, motivo:{ficha.motivoBaja}");
+                                        oldBaja.IdTipoBaja = ficha.idTipoBaja;
+                                        oldBaja.Motivo = ficha.motivoBaja;
+                                        oldBaja.Estado = true;
+                                        oldBaja.FechaBaja = Convert.ToDateTime(ficha.fechaBaja);
+                                        context.SaveChanges();
+                                        objCli.Estado = 0; //es igual a false 
+                                    }
+                                }
+                                else // se registra un nuevo bloqueo
+                                {
+                                    Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - se le agregara una nueva baja ala idficha: {ficha.idFicha+" - "+ficha.nombre}, tipo baja: {ficha.idTipoBaja}, motivo: {ficha.motivoBaja}");
+                                    FichaTipoBajaI newBaja = new FichaTipoBajaI();
+                                    newBaja.IdTipoBaja = ficha.idTipoBaja;
+                                    newBaja.FechaBaja= Convert.ToDateTime(ficha.fechaBaja);
+                                    newBaja.Motivo = ficha.motivoBaja;
+                                    newBaja.Estado = true;
+                                    newBaja.FechaActualizacion = DateTime.Now;
+                                    newBaja.IdFicha = ficha.idFicha;
+                                    newBaja.IdUsuario = ficha.usuarioIDLogueado;
+                                    context.FichaTipoBajaIs.Add(newBaja);
+                                    context.SaveChanges();
+                                    objCli.Estado = 0;
+                                }
+                            }
+                            else
+                            {//posiblemente se le alta  o nunca estuvo bloqueado
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se verifica para dar de alta a la ficha: {ficha.idFicha+"- "+ ficha.nombre+" "+ficha.apellido}");
+                                if (ficha.idFichaTipoBaja != 0)
+                                {
+                                    var oldBaj = context.FichaTipoBajaIs.Where(x => x.IdFichaTipoBajaI == ficha.idFichaTipoBaja).FirstOrDefault();
+                                    if (oldBaj != null)
+                                    {
+                                        Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - la ficha tenia baja se le dara de alta");
+                                        oldBaj.Estado = false;
+                                        oldBaj.FechaActualizacion = DateTime.Now;
+                                        oldBaj.IdUsuario = ficha.usuarioIDLogueado;
+                                        context.SaveChanges();
+                                        objCli.Estado = 1;
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  no tenia baja, se lo mantiene como activo ");
+                                    objCli.Estado = 1;//se activa al cliente
+                                }
+                            }
+                            //fin de proceso baja---------------------
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - VERFICAMOS LA CUENTA!!");
+                            if (ficha.tieneCuenta)
+                            {
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  DATOS: antes de actualizar de idficha: {ficha.idFicha}, idBanco:{objCli.IdBanco}, nro cuenta:{objCli.CuentaBancaria}");
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -CUENTA?  tiene la cuenta checkeado, banco que selecciono idbanco:{ficha.idBanco}, nro cuenta: {ficha.cuentaBancaria}");                                
+                                objCli.IdBanco = ficha.idBanco;
+                                objCli.CuentaBancaria = ficha.cuentaBancaria;
+                                objCli.TieneCuentaBancaria = ficha.tieneCuenta;
+                            }
+                            else
+                            {  //al no tener cuenta se lo reinicia en 0
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se desahbilitara la  cuenta, antes de actualizar de idficha: {ficha.idFicha}, idBanco:{objCli.IdBanco}, nro cuenta:{objCli.CuentaBancaria}");
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se quitara el banco y el numero de cuenta del la idficha:{ficha.idFicha + ", " + ficha.nombre + " " + ficha.apellido}");
+                                objCli.IdBanco = 0;
+                                objCli.CuentaBancaria = "";
+                                objCli.TieneCuentaBancaria = ficha.tieneCuenta;
+                            }
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  VERIFICAMOS FACTURA!!....");
+                            if (ficha.tieneFactura)
+                            {
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se habilitara la factura,  idficha: {ficha.idFicha + "  " + ficha.nombre + " " + ficha.apellido}");
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  DATOS: antes de actualizar la factura, razon social:{objCli.RazonSocial}, nit: {objCli.Nit}, estado de factura:{objCli.FacturaHabilitado}");
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se habilitar factura nuevos parametros razon social :{ficha.razonSocial}, nit: {ficha.nit}");
+                                objCli.FacturaHabilitado = ficha.tieneFactura;
+                                objCli.RazonSocial = ficha.razonSocial;
+                                objCli.Nit = ficha.nit;
+                            }
+                            else
+                            {
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se deshabilitado la factura  la idficha: {ficha.idFicha + "  " + ficha.nombre + " " + ficha.apellido}");
+                                Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  DATOS:  antes de dar de baja la facturacion del cliente:{ficha.nombre}, razonsocial:{objCli.RazonSocial}, nit:{objCli.Nit}");
+                                objCli.FacturaHabilitado = ficha.tieneFactura;
+                                objCli.RazonSocial = "";
+                                objCli.Nit = "";
+                            }
+                            objCli.Nombres = ficha.nombre;
+                            objCli.Apellidos = ficha.apellido;
+                            objCli.Ci = ficha.ci;
+                            objCli.TelOficina = ficha.telOficina.ToString();
+                            objCli.TelMovil = ficha.telMovil.ToString();
+                            objCli.TelFijo = ficha.telFijo.ToString();
+                            objCli.Direccion = ficha.direccion;
 
+                            objCli.IdCiudad = ficha.idCiudad;
+                            objCli.CorreoElectronico = ficha.correoElectronico;
+                            objCli.FechaNacimiento = Convert.ToDateTime(ficha.fechaNacimiento);
+                            objCli.Comentario = ficha.comentario;
 
-                        dbcontextTransaction.Commit();
-                        return true;
+                            //verificar y actualizar nivel
+                            //validad vendedor y agregaren la tabla vendedor o actualizar
+
+                            context.SaveChanges();
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  SE ACTUALIZO EXITOSAMENTE los parametros de la ficha del cliente :{ficha.nombre+" "+ ficha.apellido}");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {ficha.usuarioNameLogueado} - RETURN!! no se encontro la ficha  idficha {ficha.idFicha}");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
                     }
                     catch (Exception ex)
                     {

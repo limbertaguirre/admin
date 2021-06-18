@@ -146,7 +146,7 @@ namespace gestion_de_comisiones.Servicios
                 var verificarData = Repository.ValidarRegistros(fichaClient);
                 if (verificarData.Code == 1)
                 {
-                    Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} - respuesta al verificar : {verificarData.Message}");
+                    Logger.LogWarning($"usuario : {fichaClient.usuarioNameLogueado} - fail parametro : {verificarData.Message}");
                     return verificarData;
                 } else{
                     Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} - valido para actualiar data ");

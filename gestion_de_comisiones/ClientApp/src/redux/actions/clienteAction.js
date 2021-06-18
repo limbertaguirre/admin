@@ -159,7 +159,7 @@ import * as Action from './messageAction';
              telOficina:parseInt(telOficina),
              telMovil : parseInt(telMovil),
              telFijo : parseInt(telFijo),
-             direccion : parseInt(direccion),
+             direccion : (direccion),
              //-------------
              idCiudad : idCiudad,
              idPais :idPais,
