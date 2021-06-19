@@ -142,7 +142,7 @@ import * as Action from './messageAction';
     }
   }
 
-  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
+  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
     return (dispatch, getState )=>{                
           const data={
              usuarioNameLogueado:getState().load.userName,
@@ -168,6 +168,7 @@ import * as Action from './messageAction';
              codigoPatrocinador : codigoPatrocinador,
              nombrePatrocinador :nombrePatrocinador,
              idNivel :idNivel,
+             idNivelDetalle:idNivelDetalle,
              comentario :comentario,
              //------------
              tieneCuenta: tieneCuenta,

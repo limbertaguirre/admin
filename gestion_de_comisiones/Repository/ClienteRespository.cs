@@ -204,7 +204,7 @@ namespace gestion_de_comisiones.Repository
                                                    {
                                                        idVendedor = Ficha.IdFicha,
                                                        idcliente= GpClienteVendedorI.IdCliente,
-                                                       nombreVendedor = Ficha.Nombres + Ficha.Apellidos,
+                                                       nombreVendedor = Ficha.Nombres+ " " + Ficha.Apellidos,
                                                        codigoVendedor= Ficha.Codigo,
                                                    }).Where(x =>  x.idcliente == objCli.IdFicha).FirstOrDefault();
                     if(patrocinad != null)
@@ -361,6 +361,10 @@ namespace gestion_de_comisiones.Repository
                     }
 
                 }
+                if(ficha.idCiudad == 0)
+                {
+                    return Respuesta.ReturnResultdo(1, "La ciudad es requerida ", "");
+                }
 
 
                 return Respuesta.ReturnResultdo(0, "Valido para pagar", "");
@@ -444,7 +448,7 @@ namespace gestion_de_comisiones.Repository
                                     objCli.Estado = 1;//se activa al cliente
                                 }
                             }
-                            //fin de proceso baja---------------------
+                            
                             Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - VERFICAMOS LA CUENTA!!");
                             if (ficha.tieneCuenta)
                             {
@@ -480,6 +484,100 @@ namespace gestion_de_comisiones.Repository
                                 objCli.RazonSocial = "";
                                 objCli.Nit = "";
                             }
+
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  VERIFICAMOS PAtROCINADOR!!....");
+                            var patrocinador = context.GpClienteVendedorIs.Join(context.Fichas,
+                                                   GpClienteVendedorI => GpClienteVendedorI.IdVendedor,
+                                                  Ficha => Ficha.IdFicha,
+                                                   (GpClienteVendedorI, Ficha) => new
+                                                   {
+                                                       idVendedor = Ficha.IdFicha,
+                                                       idcliente = GpClienteVendedorI.IdCliente,
+                                                       nombreVendedor = Ficha.Nombres + Ficha.Apellidos,
+                                                       codigoVendedor = Ficha.Codigo,
+                                                   }).Where(x => x.idcliente == ficha.idFicha).FirstOrDefault();
+                            if (patrocinador != null && ficha.codigoPatrocinador != "")
+                            {
+                                if (patrocinador.codigoVendedor != ficha.codigoPatrocinador)
+                                {
+                                    Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se agregara un nuevo patrocinador a {ficha.nombre} ");
+                                    var newVendedorPatrocinador = context.Fichas.Where(x => x.Codigo == ficha.codigoPatrocinador).FirstOrDefault();
+                                    if (newVendedorPatrocinador != null)
+                                    {
+                                        var detalleVendedor = context.GpClienteVendedorIs.Where(x => x.IdCliente == ficha.idFicha && x.IdVendedor == patrocinador.idVendedor && x.Activo == true).FirstOrDefault();
+                                        if (detalleVendedor != null)
+                                        {
+                                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - Actualizando un nuevo patrocinador codigo: {ficha.codigoPatrocinador}");
+                                            var vende = context.GpClienteVendedorIs.Where(x => x.Id == detalleVendedor.Id).FirstOrDefault();
+                                            vende.IdVendedor = newVendedorPatrocinador.IdFicha;
+                                            vende.FechaActualizacion = DateTime.Now;
+                                            context.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (patrocinador == null && ficha.codigoPatrocinador != "")
+                                {
+                                    var newPatrocinador = contextMulti.Fichas.Where(x => x.Codigo == ficha.codigoPatrocinador).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+                                    if (newPatrocinador != null)
+                                    {
+                                        Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} - agregando un nuevo patrocinador id:{newPatrocinador.IdFicha}, codigo: {ficha.codigoPatrocinador}, {newPatrocinador.Nombres +" " +newPatrocinador.Apellidos } ");
+                                        GpClienteVendedorI ven = new GpClienteVendedorI();
+                                        ven.IdCliente = ficha.idFicha;
+                                        ven.IdVendedor = newPatrocinador.IdFicha;
+                                        ven.FechaActivacion = DateTime.Now;
+                                        ven.Activo = true;
+                                        ven.IdUsuario = ficha.usuarioIDLogueado;
+                                        ven.FechaCreacion = DateTime.Now;
+                                        ven.FechaActualizacion = DateTime.Now;
+                                        context.GpClienteVendedorIs.Add(ven);
+                                        context.SaveChanges();
+
+                                    }
+
+                                }
+
+                            }
+
+                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  VERIFICAMOS EL RANGO  NIVEL DE LA FICHA!!....");
+                            if (ficha.idNivelDetalle > 0)
+                            {
+                                var objNivel = context.FichaNivelIs.Where(x => x.IdFichaNivelI == ficha.idNivelDetalle).FirstOrDefault();
+                                if(objNivel != null)
+                                {
+                                    if(objNivel.IdNivel != ficha.idNivel)
+                                    {                                        
+                                        if(ficha.idNivel == 0)
+                                        {
+                                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se dio de baja el  rango de nivel que tenia, idNivelDetalle :{objNivel.IdFichaNivelI}");
+                                            objNivel.Habilitado = false;
+                                        }else{
+                                            Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se actualizo el rango nivel del cliente a idNivel:{ficha.idNivel} ");
+                                            objNivel.IdNivel = ficha.idNivel;
+                                            objNivel.Habilitado = true;
+                                        }                                       
+                                        objNivel.FechaActualizacion = DateTime.Now;
+                                        context.SaveChanges();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(ficha.idNivel != 0)
+                                {
+                                    Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  se le dio un nuevo rango al cliente,  idnivel :{ficha.idNivel}");
+                                    FichaNivelI newNivel = new FichaNivelI();
+                                    newNivel.IdFicha = ficha.idFicha;
+                                    newNivel.IdNivel = ficha.idNivel;
+                                    newNivel.Habilitado = true;
+                                    newNivel.IdUsuario = ficha.usuarioIDLogueado;
+                                    context.FichaNivelIs.Add(newNivel);
+                                    context.SaveChanges();
+                                }
+                            }
+                            
                             objCli.Nombres = ficha.nombre;
                             objCli.Apellidos = ficha.apellido;
                             objCli.Ci = ficha.ci;
@@ -492,10 +590,7 @@ namespace gestion_de_comisiones.Repository
                             objCli.CorreoElectronico = ficha.correoElectronico;
                             objCli.FechaNacimiento = Convert.ToDateTime(ficha.fechaNacimiento);
                             objCli.Comentario = ficha.comentario;
-
-                            //verificar y actualizar nivel
-                            //validad vendedor y agregaren la tabla vendedor o actualizar
-
+                                                    
                             context.SaveChanges();
                             dbcontextTransaction.Commit();
                             Logger.LogInformation($" usuario: {ficha.usuarioNameLogueado} -  SE ACTUALIZO EXITOSAMENTE los parametros de la ficha del cliente :{ficha.nombre+" "+ ficha.apellido}");

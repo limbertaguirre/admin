@@ -170,6 +170,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [nombrePatrocinador, setNombrePatrocinador]= useState("");
     const [nivel, setNivel]= useState("");
     const [idNivel, setIdNivel]= useState(0);
+    const [idNivelDetalle, setIdNivelDetalle]= useState(0);
     const [comentario, setComentario]=useState("");
 
     const [idBanco, setIdBanco]=useState(0);
@@ -227,6 +228,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setNombrePatrocinador(data.nombrePatrocinador);
                setNivel(data.nivel);
                setIdNivel(data.idNivel);
+               setIdNivelDetalle(data.idNivelDetalle);
          
                setComentario(data.comentario === null? "": data.comentario );
                
@@ -428,7 +430,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
     const ActualizarDatos=()=>{
         
-     dispatch(ActionCliente.ActualizarCliente(history, nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
+     dispatch(ActionCliente.ActualizarCliente(history, nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
        
     }
 

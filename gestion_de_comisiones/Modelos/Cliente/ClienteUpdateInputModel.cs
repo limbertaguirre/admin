@@ -30,6 +30,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string codigoPatrocinador { get; set; }
         public string nombrePatrocinador { get; set; }
         public int idNivel { get; set; }
+        public int idNivelDetalle { get; set; }
         public string comentario { get; set; }
 
         public bool tieneCuenta { get; set; }

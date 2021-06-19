@@ -523,7 +523,7 @@ go
     id_vendedor hace referencia al id ficha del vendedor
 */
 create table GP_CLIENTE_VENDEDOR_I(
-    id int not null IDENTITY(1,1),
+    id int not null primary key IDENTITY(1,1),
     id_cliente int not null,
     id_vendedor int not null,
     fecha_activacion datetime,
