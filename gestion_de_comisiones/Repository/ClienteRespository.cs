@@ -592,7 +592,7 @@ namespace gestion_de_comisiones.Repository
                                 string basess = ficha.avatar.Substring(23);
                                 string nombreImage = ficha.nombre + DateTime.Now.Year.ToString() + DateTime.Now.Month + DateTime.Now.Day + DateTime.Now.Minute + DateTime.Now.Second + ".jpg";
                                 System.IO.File.WriteAllBytes(Path.Combine(contentRootPath, nombreImage), Convert.FromBase64String(ficha.avatar.Substring(23)));
-                                objCli.Avatar = contentRootPath + "\\" + nombreImage;
+                                objCli.Avatar =  nombreImage;
                             }
 
                             //---------------------------------------------------------
