@@ -1,11 +1,14 @@
-﻿using gestion_de_comisiones.Modelos;
+﻿
+using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Cliente;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +19,11 @@ namespace gestion_de_comisiones.Repository
         ConfiguracionService Respuesta = new ConfiguracionService();
         BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<ClienteRespository> Logger;
-
-        public ClienteRespository(ILogger<ClienteRespository> logger)
+        private readonly IHostingEnvironment EEnv;
+        public ClienteRespository(ILogger<ClienteRespository> logger, IHostingEnvironment env)
         {
             Logger = logger;
+            EEnv = env;
         }
 
         public List<ClienteOutputModel> obtenerAllClientes(string usuario)
@@ -577,7 +581,29 @@ namespace gestion_de_comisiones.Repository
                                     context.SaveChanges();
                                 }
                             }
-                            
+                            //------------------------------------------
+                            if (ficha.nuevoAvatar)
+                            {
+                                string contentRootPath = EEnv.ContentRootPath + "\\Avatars";
+                                if (!System.IO.Directory.Exists(contentRootPath))
+                                {
+                                    System.IO.Directory.CreateDirectory(contentRootPath);
+                                }
+                               // string imageName = "sion" + ".jpg";
+                               // var file = Request.Files[0];
+                               // //set the image path
+                               // string imgPath = Path.Combine(contentRootPath, imageName);
+
+                               //// extension = Path.GetExtension(file.FileName);
+                               // string archivo = String.Format("{0}\\{1}", contentRootPath, imageName);
+
+                               // file.SaveAs(archivo);
+                               // //byte[] imageBytes = Convert.FromBase64String(ficha.avatar);
+
+                               // //File.WriteAllBytes(imgPath, imageBytes);
+                            }
+
+                            //---------------------------------------------------------
                             objCli.Nombres = ficha.nombre;
                             objCli.Apellidos = ficha.apellido;
                             objCli.Ci = ficha.ci;
@@ -611,6 +637,7 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
+  
     }
 }
 
