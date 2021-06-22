@@ -9,6 +9,7 @@ import * as permiso from '../../routes/permiso';
 import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { requestPost, requestGet } from "../../service/request";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -35,8 +36,25 @@ const StyledBreadcrumb = withStyles((theme) => ({
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[])
-     
+  const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+  const dispatch = useDispatch();
+  const[ciclos, setCiclos]= useState();
+ 
+  useEffect(()=>{  
+    obtenerCiclos();
+  },[]);
 
+  const obtenerCiclos=()=>{
+    const data={usuarioLogin:userName };
+     requestGet('Factura/ObtenerCiclos',data,dispatch).then((res)=>{ 
+      console.log('ciclos : ', res);
+          if(res.code === 0){                 
+               
+          }else{
+             // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+          }    
+        })    
+   };
   
 
     function handleClick(event) {
