@@ -78,7 +78,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});  
     const [namePage, setNamePage] = useState(""); 
     useEffect(()=>{  try{  
-       setNamePage(props.location.state.namePagina + permiso.VISUALIZAR);
+       setNamePage(props.location.state.namePagina);
        verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
        }catch (err) {  verificarAcceso(perfiles, 'none', history); }
     },[])
@@ -102,7 +102,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setPage(0);
     };
     const selecionarCliente=(idcliente)=>{
-       console.log('click', idcliente);
+       //console.log('click', idcliente);
        
         const location = {
           pathname: '/cliente/ficha',
@@ -182,7 +182,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <div>
                
                 <TableContainer component={Paper}>
-                    <Table className={styles.table} size="small" aria-label="a dense table">
+                    <Table className={styles.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
                             <TableCell align="center">ID</TableCell>

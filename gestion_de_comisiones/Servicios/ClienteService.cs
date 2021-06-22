@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Repository.Interfaces;
+﻿using gestion_de_comisiones.Modelos.Cliente;
+using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -122,8 +123,49 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de bancos para el cliente", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object obtenerNivelesCliente(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerNivelesCliente() ");
+                var niveles = Repository.listarNivelesClientes(usuario);
+                return Respuesta.ReturnResultdo(0, "ok", niveles);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch obtenerNivelesCliente() al obtener lista de niveles,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de niveles para el cliente", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
-
-
+        public object ActualizarFichaCliente(ClienteUpdateInputModel fichaClient)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} inicio el servicio ActualizarFichaCliente() ");
+                var verificarData = Repository.ValidarRegistros(fichaClient);
+                if (verificarData.Code == 1)
+                {
+                    Logger.LogWarning($"usuario : {fichaClient.usuarioNameLogueado} - fail parametro : {verificarData.Message}");
+                    return verificarData;
+                } else{
+                    Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} - valido para actualiar data ");
+                    var updateFicha = Repository.ActualizarFichaCliente(fichaClient);
+                    if (updateFicha)
+                    {
+                        return Respuesta.ReturnResultdo(0, "Se Actualizo correctamente", "");
+                    }
+                    else
+                    {
+                        return Respuesta.ReturnResultdo(1, "Intente mas tarde- update", "");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {fichaClient.usuarioNameLogueado} error catch ActualizarFichaCliente(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener actualizar la ficha del cliente", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

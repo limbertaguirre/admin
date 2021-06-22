@@ -5,6 +5,7 @@ using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,6 +151,44 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+
+        // GET: ClienteController/obtenerNivelesClientes
+        public ActionResult obtenerNivelesClientes([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerNivelesClientes()  ");
+                var resulcliente = Service.obtenerNivelesCliente(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerNivelesClientes()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  obtenerNivelesClientes() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener las bajas" };
+                return Ok(Result);
+            }
+        }
+
+        //POST Cliente/ActualizarCliente
+        [HttpPost]
+        public ActionResult ActualizarCliente([FromBody] ClienteUpdateInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} inicio el controller ActualizarCliente() parametros body:  {JsonConvert.SerializeObject(param)}  ");
+                var resulcliente = Service.ActualizarFichaCliente(param);
+                Logger.LogInformation($"usuario : {param.usuarioNameLogueado} Fin del controller ActualizarCliente()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioNameLogueado} error catch  ActualizarCliente() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar al cliente" };
+                return Ok(Result);
+            }
+        }
+
 
     }
 }

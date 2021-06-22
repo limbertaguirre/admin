@@ -718,6 +718,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_ficha_tipo_baja_i")
                     .HasComment("Llave primaria incremental de la tabla FICHA_TIPO_BAJA_I.");
 
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
@@ -755,9 +759,9 @@ namespace gestion_de_comisiones.MultinivelModel
 
             modelBuilder.Entity<GpClienteVendedorI>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("GP_CLIENTE_VENDEDOR_I");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Activo).HasColumnName("activo");
 
@@ -776,10 +780,6 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.FechaDesactivacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_desactivacion");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("id");
 
                 entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
 

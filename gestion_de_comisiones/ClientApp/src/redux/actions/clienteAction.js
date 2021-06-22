@@ -9,7 +9,7 @@ import * as Action from './messageAction';
           
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener clientes', res);
+    //console.log('obtener clientes', res);
         if(res.code === 0){  
             dispatch({
                 type:Types.LISTA_CLIENTES,
@@ -43,10 +43,10 @@ import * as Action from './messageAction';
   }
   export const obtenerClienteXId= (idCliente)=>{
     return (dispatch, getState )=>{        
-        console.log('ObtenerCliente  Idclien:', idCliente); 
+        //console.log('ObtenerCliente  Idclien:', idCliente); 
           const data={usuarioLogin:getState().load.userName, idCliente: idCliente };
           requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-            console.log('ObtenerCliente : ', res);
+           // console.log('ObtenerCliente : ', res);
                 if(res.code === 0){  
                   dispatch({
                     type:Types.OBJETO_CLIENTE,
@@ -64,7 +64,7 @@ import * as Action from './messageAction';
     return (dispatch, getState )=>{              
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ListaPaises',headers,dispatch).then((res)=>{ 
-    console.log('paises : ', res);
+   // console.log('paises : ', res);
             if(res.code === 0){  
                 dispatch({
                   type:Types.LISTA_PAISES,
@@ -78,10 +78,10 @@ import * as Action from './messageAction';
   }
   export const obtenerCiudadesPorPais= (idPais)=>{
     return (dispatch, getState )=>{        
-        console.log(' id pais ciudad :', idPais); 
+        //console.log(' id pais ciudad :', idPais); 
           const data={usuarioLogin:getState().load.userName, idPais: idPais };
           requestPost('Cliente/ListarCiudadesPais',data,dispatch).then((res)=>{ 
-            console.log('ciudades : ', res);
+            //console.log('ciudades : ', res);
                 if(res.code === 0){  
                   dispatch({
                     type:Types.LISTA_CIUDADES,
@@ -100,7 +100,7 @@ import * as Action from './messageAction';
         
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerBajasClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener bajas', res);
+    //console.log('obtener bajas', res);
         if(res.code === 0){  
             dispatch({
               type:Types.LISTA_BAJAS,
@@ -119,7 +119,7 @@ import * as Action from './messageAction';
         
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/obtenerBancosClientes',headers,dispatch).then((res)=>{ 
-    console.log('obtener bancos', res);
+    //console.log('obtener bancos', res);
         if(res.code === 0){  
           dispatch({
             type:Types.LISTA_BANCOS,
@@ -131,5 +131,69 @@ import * as Action from './messageAction';
         }    
         })   
 
+    }
+  }
+
+  export const InicializarCliente= ()=>{
+    return (dispatch, getState )=>{        
+        dispatch({
+          type:Types.CLEAR_OBJETO_CLIENTE
+        })  
+    }
+  }
+
+  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
+    return (dispatch, getState )=>{                
+          const data={
+             usuarioNameLogueado:getState().load.userName,
+             usuarioIDLogueado: getState().load.idUsuario,
+             //------------------
+             nuevoAvatar :nuevoAvatar,
+             avatar:avatar,
+            //-----------
+             idFicha:idFicha,
+             codigo:codigo,
+             nombre:nombre,
+             apellido: apellido,
+             ci:ci,
+             telOficina:parseInt(telOficina),
+             telMovil : parseInt(telMovil),
+             telFijo : parseInt(telFijo),
+             direccion : (direccion),
+             //-------------
+             idCiudad : idCiudad,
+             idPais :idPais,
+             correoElectronico :correoElectronico,
+             fechaNacimiento :fechaNacimiento,
+             codigoPatrocinador : codigoPatrocinador,
+             nombrePatrocinador :nombrePatrocinador,
+             idNivel :idNivel,
+             idNivelDetalle:idNivelDetalle,
+             comentario :comentario,
+             //------------
+             tieneCuenta: tieneCuenta,
+             idBanco : idBanco,
+             cuentaBancaria :cuentaBancaria,
+            //-------------
+             tieneFactura : tieneFactura,
+             razonSocial :razonSocial,
+             nit : nit,
+            //---------------
+             tieneBaja : tieneBaja,
+             idFichaTipoBaja : idFichaTipoBaja,
+             idTipoBaja : idTipoBaja,
+             fechaBaja : fechaBaja,
+             motivoBaja : motivoBaja,
+           };
+           console.log('data :', data)
+          requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
+             console.log('actualizar cliente res:  : ', res);
+                if(res.code === 0){                        
+                  dispatch(Action.showMessage({ message: res.message, variant: "success" }));     
+                  history.goBack();     
+                }else{
+                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+                }    
+              })   
     }
   }
