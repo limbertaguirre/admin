@@ -204,11 +204,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        console.log('nuevo obtener : ', res.data);
+       // console.log('nuevo obtener : ', res.data);
             if(res.code === 0){  
                let data= res.data;
-               setAvatar(data.avatar ===null? "": data.avatar);
-
+               setAvatar(data.avatar ===null || data.avatar == ""? "": data.avatar);               
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
                setIdFicha(data.idFicha);
@@ -775,9 +774,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <Grid  item xs={12} md={6}  >
                 <Grid  container item xs={12} className={style.divCenter}>
                        <Grid item xs={3} >
-                          {avatar != ""?
+                            {avatar != ""? 
                            <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
-                            : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> { nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
+                             : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> { nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
                        </Grid>
                        <Grid item xs={2} >
                          

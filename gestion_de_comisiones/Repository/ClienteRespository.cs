@@ -589,18 +589,10 @@ namespace gestion_de_comisiones.Repository
                                 {
                                     System.IO.Directory.CreateDirectory(contentRootPath);
                                 }
-                               // string imageName = "sion" + ".jpg";
-                               // var file = Request.Files[0];
-                               // //set the image path
-                               // string imgPath = Path.Combine(contentRootPath, imageName);
-
-                               //// extension = Path.GetExtension(file.FileName);
-                               // string archivo = String.Format("{0}\\{1}", contentRootPath, imageName);
-
-                               // file.SaveAs(archivo);
-                               // //byte[] imageBytes = Convert.FromBase64String(ficha.avatar);
-
-                               // //File.WriteAllBytes(imgPath, imageBytes);
+                                string basess = ficha.avatar.Substring(23);
+                                string nombreImage = ficha.nombre + DateTime.Now.Year.ToString() + DateTime.Now.Month + DateTime.Now.Day + DateTime.Now.Minute + DateTime.Now.Second + ".jpg";
+                                System.IO.File.WriteAllBytes(Path.Combine(contentRootPath, nombreImage), Convert.FromBase64String(ficha.avatar.Substring(23)));
+                                objCli.Avatar = contentRootPath + "\\" + nombreImage;
                             }
 
                             //---------------------------------------------------------
