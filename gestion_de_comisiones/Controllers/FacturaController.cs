@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,24 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogError($"usuario : {usuarioLogin} error catch  obtenerCiclos() controller ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener las bajas" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/ListarComisionesPendientes
+        [HttpPost]
+        public ActionResult ListarComisionesPendientes([FromBody] ComisionesInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ListarComisionesPendientes() parametro: idciclo:{param.idCiclo}");
+                var resulcliente = Service.obtenerlistComisionesPendiente(param.usuarioLogin, param.idCiclo);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ListarComisionesPendientes()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ListarComisionesPendientes() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
                 return Ok(Result);
             }
         }

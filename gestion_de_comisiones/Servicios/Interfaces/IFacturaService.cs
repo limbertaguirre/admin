@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     public interface IFacturaService
     {
         public object obtenerlistCiclos(string usuario);
-
+        public object obtenerlistComisionesPendiente(string usuario, int idCiclo);
     }
 }

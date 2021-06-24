@@ -2302,9 +2302,13 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdBanco).HasColumnName("id_banco");
 
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
                 entity.Property(e => e.IdComision).HasColumnName("idComision");
 
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("idComisionDetalle");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
 
                 entity.Property(e => e.IdFicha).HasColumnName("idFicha");
 

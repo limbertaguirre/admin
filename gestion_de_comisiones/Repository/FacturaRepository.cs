@@ -57,6 +57,23 @@ namespace gestion_de_comisiones.Repository
                 return lis;
             }
         }
+        public object obtenerComisiones(string usuario, int idCiclo, int idEstadoComision)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch obtenerComisionesPendientes() mensaje : {ex}");
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
 
     }
 }

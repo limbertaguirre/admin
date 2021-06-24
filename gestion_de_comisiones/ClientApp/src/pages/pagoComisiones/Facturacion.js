@@ -4,7 +4,7 @@ import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import { Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SnackbarSion from "../../components/message/SnackbarSion";
 
@@ -13,7 +13,8 @@ import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { requestPost, requestGet } from "../../service/request";
-
+import SearchIcon from '@material-ui/icons/Search';
+import SaveIcon from '@material-ui/icons/Save';
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
       backgroundColor: theme.palette.grey[100],
@@ -43,6 +44,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
       boxShadow: '2px 4px 5px #1872b8',
       color:'white',
      },
+     submitSAVE: {                 
+      background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',
+     // marginRight:theme.spacing(1),
+      marginLeft:theme.spacing(1),
+      //fontSize:'11px'
+     },
      gridContainer:{
       paddingLeft:theme.spacing(1),
       paddingRight:theme.spacing(1),
@@ -54,6 +63,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
       paddingRight:theme.spacing(1),
       paddingTop:theme.spacing(1),
       paddingBottom:theme.spacing(1),
+    },
+    containerSave:{
+      paddingLeft:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(1),
+      paddingBottom:theme.spacing(1),
+
+      display:'flex',
+     // flexDirection:'column',
+     // alignContent:'center',
+      alignItems:'center',
+      justifyContent:'center', 
     },
     containerCargar:{
       paddingLeft:theme.spacing(1),
@@ -88,7 +109,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
-  const[listaComisionesP, setListaComisionesP]= useState()
+  const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
+  const [txtBusqueda, setTxtBusqueda] = useState("");
 
   useEffect(()=>{  
     obtenerCiclos();
@@ -105,18 +127,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
         })    
    };
    const onChange= (e) => {
-    const texfiel = e.target.name;
-    const value = e.target.value;
-    if (texfiel === "idCiclo") {
-        setIdCiclo(value);
-        console.log(value);
-    }
-
+        const texfiel = e.target.name;
+        const value = e.target.value;
+        if (texfiel === "idCiclo") {
+            setIdCiclo(value);
+            console.log(value);
+        }
+        if (texfiel === "txtBusqueda") {
+             setTxtBusqueda(value);
+        }
   };
 
     const cargarComisiones=()=>{
       if(idCiclo != 0){
-
+         obtenerComisiones(userName, idCiclo);
       }else{
         setOpenSnackbar(true);
         setMensajeSnackbar('¡Debe Seleccionar un permiso!');
@@ -136,7 +160,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
       }
       setOpenSnackbar(false);
     };
-
+    const obtenerComisiones=(user,IDciclo)=>{
+      const data={
+        usuarioLogin:user,
+        idCiclo: IDciclo
+       };
+       requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
+        console.log('comisones : ', res);
+            if(res.code === 0){                 
+              setListaComisionesPendientes(res.data);
+            }
+          })    
+     };
      
     return (
       <>
@@ -154,9 +189,51 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
            <Card> 
                 <Grid container className={style.gridContainer}> 
-                  <Grid item xs={12} md={7} >
-
+                  <Grid item xs={12} md={4} className={style.containerSave} >
+                           <Button
+                            type="submit"
+                            //fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={style.submitSAVE}
+                            onClick = {()=> cargarComisiones()}                                         
+                            >
+                            <SaveIcon />  {' '} GUARDAR 
+                            </Button> 
+                  {/* </Grid>
+                  <Grid item xs={12} md={2} className={style.containerSave} > */}
+                           <Button
+                            type="submit"
+                           // fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={style.submitSAVE}
+                            onClick = {()=> cargarComisiones()}                                         
+                            >
+                             <SaveIcon />{' '} CERRAR FACTURA
+                            </Button> 
                   </Grid>
+                  <Grid item xs={12} md={3} className={style.containerSave}>
+                      <TextField
+                        label="Buscar Clientes"
+                        type={'text'}
+                        variant="outlined"
+                        name="txtBusqueda"                    
+                        value={txtBusqueda}
+                        onChange={onChange}
+                      // className={styles.TextFielBusqueda}
+                      //  error={txtBusquedaError}
+                      // helperText={ txtBusquedaError && "El campo es requerido" }
+                        InputProps={{
+                            startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                            ),
+                        }}                    
+                      />      
+
+                    </Grid>
                     <Grid item xs={12} md={3} className={style.containerCiclo}>
                                <FormControl  variant="outlined"  
                                 fullWidth  

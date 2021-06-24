@@ -33,5 +33,21 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de una factura", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object obtenerlistComisionesPendiente(string usuario, int idCiclo)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerlistComisionesPendiente() ");
+                int idEstado= int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                var comsiones = Repository.obtenerComisiones(usuario, idCiclo, idEstado);
+                return Respuesta.ReturnResultdo(0, "ok", comsiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch obtenerlistComisionesPendiente() al obtener lista de comisiones pendientes para facturar,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista comisiones para facturar", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }
