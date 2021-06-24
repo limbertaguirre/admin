@@ -1,6 +1,7 @@
 import  {Home}  from '../pages/Home';
 import Login from '../pages/login/Login'
 import Facturacion from '../pages/pagoComisiones/Facturacion/Facturacion'
+import DetalleAdjunto from '../pages/pagoComisiones/Facturacion/DetalleAdjunto'
 import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';
@@ -23,6 +24,7 @@ export default {
     Login,
     Home,
     Facturacion,
+    DetalleAdjunto,
     Prorrateo,
     CargarComisiones,
     FormaPago,

@@ -97,7 +97,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
   let history = useHistory();
   let style= useStyles();
   const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+  const [namePage, setNamePage] = useState(""); 
   useEffect(()=>{  try{  
+     setNamePage(props.location.state.namePagina);
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[])
@@ -180,10 +182,24 @@ const StyledBreadcrumb = withStyles((theme) => ({
        
     }
 
+    const buscarClientepornombre=(ev)=>{
+      console.log('enter');
+ 
+    }
+
   //detalle
 
   const selecionarDetalleFrelances=(idDetalleComision)=>{
       console.log('selecionado iddetalle: ', idDetalleComision);
+      const location = {
+        pathname: '/facturacion/detalle/adjunto',
+        state: {
+            namePagina: namePage,
+            idDetalleComision: idDetalleComision
+          }
+      } 
+     
+      history.push(location);
   }
     return (
       <>      
@@ -235,6 +251,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           name="txtBusqueda"                    
                           value={txtBusqueda}
                           onChange={onChange}
+                          onKeyPress={(ev) => {
+                            if (ev.key === 'Enter') {
+                              buscarClientepornombre();
+                            }
+                          }}
                         // className={styles.TextFielBusqueda}
                         //  error={txtBusquedaError}
                         // helperText={ txtBusquedaError && "El campo es requerido" }
@@ -292,18 +313,3 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 }
 export default Facturacion;
-
-/*     ci: "343434341"
-    cuentaBancaria: "sss"
-    factura: "True"
-    facturaDescuento: "False"
-    idBanco: 1
-    idCiclo: 4
-    idComision: 1
-    idComisionDetalle: 1
-    idEstadoComision: 1
-    idFicha: 2
-    montoBruto: 200
-    montoNeto: 200
-    nombre: "mary1 garcia1"
-    nombreBanco: "BCP" */

@@ -86,10 +86,10 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right">{row.ci}</TableCell>
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
-                            <TableCell align="right">{row.montoBruto}</TableCell>   
+                            <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}</TableCell>   
                             <TableCell align="center"> {row.facturaDescuento == "True"?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
-                            <TableCell align="right">{row.montoNeto}</TableCell>    
+                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
                                          <Button
                                             type="submit"
