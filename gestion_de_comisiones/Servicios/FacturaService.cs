@@ -24,7 +24,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerlistCiclos() ");
-                var ciclos = Repository.listCiclos(usuario);
+                var ciclos = Repository.listCiclosPendientes(usuario);
                 return Respuesta.ReturnResultdo(0, "ok", ciclos);
             }
             catch (Exception ex)

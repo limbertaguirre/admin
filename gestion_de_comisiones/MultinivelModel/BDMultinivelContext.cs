@@ -62,6 +62,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
+        public virtual DbSet<VvObtenercomision> VvObtenercomisions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -2268,6 +2269,63 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentaConexionId)
                     .HasColumnName("venta_conexion_id")
                     .HasComment("Este es el codigo de la venta en conexion.");
+            });
+
+            modelBuilder.Entity<VvObtenercomision>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vvOBTENERCOMISION");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.CuentaBancaria)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaBancaria");
+
+                entity.Property(e => e.Factura)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("factura");
+
+                entity.Property(e => e.FacturaDescuento)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("facturaDescuento");
+
+                entity.Property(e => e.IdBanco).HasColumnName("id_banco");
+
+                entity.Property(e => e.IdComision).HasColumnName("idComision");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("idComisionDetalle");
+
+                entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.MontoBruto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoBruto");
+
+                entity.Property(e => e.MontoNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoNeto");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreBanco");
             });
 
             OnModelCreatingPartial(modelBuilder);

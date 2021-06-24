@@ -1,9 +1,12 @@
 import React, {useEffect, useState}  from 'react';
 import BorderWrapper from 'react-border-wrapper'
-import { emphasize, withStyles } from '@material-ui/core/styles';
+import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
+import { Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import SnackbarSion from "../../components/message/SnackbarSion";
 
 import * as permiso from '../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
@@ -27,10 +30,51 @@ const StyledBreadcrumb = withStyles((theme) => ({
     },
   }))(Chip); 
 
+  const useStyles = makeStyles((theme) => ({
+    etiqueta: {
+      marginBottom: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      marginRight:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingLeft:theme.spacing(1),
+     },
+     submitCargar: {                 
+      background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',
+     },
+     gridContainer:{
+      paddingLeft:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(1),
+      paddingBottom:theme.spacing(1),
+    },
+     containerCiclo:{
+      paddingLeft:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(1),
+      paddingBottom:theme.spacing(1),
+    },
+    containerCargar:{
+      paddingLeft:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(1),
+      paddingBottom:theme.spacing(1),
+
+      display:'flex',
+      flexDirection:'column',
+      alignContent:'center',
+      alignItems:'center',
+      justifyContent:'center',
+    }
+
+  }));
+
 
  const Facturacion =(props)=> {    
      
   let history = useHistory();
+  let style= useStyles();
   const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
   useEffect(()=>{  try{  
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
@@ -38,8 +82,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
   },[])
   const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   const dispatch = useDispatch();
-  const[ciclos, setCiclos]= useState();
- 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [mensajeSnackbar, setMensajeSnackbar] = useState("");
+  const [tipoSnackbar, settipTSnackbar] = useState(false);
+
+  const[ciclos, setCiclos]= useState([]);
+  const[idCiclo, setIdCiclo]= useState(0);
+  const[listaComisionesP, setListaComisionesP]= useState()
+
   useEffect(()=>{  
     obtenerCiclos();
   },[]);
@@ -49,18 +99,44 @@ const StyledBreadcrumb = withStyles((theme) => ({
      requestGet('Factura/ObtenerCiclos',data,dispatch).then((res)=>{ 
       console.log('ciclos : ', res);
           if(res.code === 0){                 
-               
-          }else{
-             // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-          }    
+            setCiclos(res.data);
+          }
+
         })    
    };
-  
+   const onChange= (e) => {
+    const texfiel = e.target.name;
+    const value = e.target.value;
+    if (texfiel === "idCiclo") {
+        setIdCiclo(value);
+        console.log(value);
+    }
+
+  };
+
+    const cargarComisiones=()=>{
+      if(idCiclo != 0){
+
+      }else{
+        setOpenSnackbar(true);
+        setMensajeSnackbar('¡Debe Seleccionar un permiso!');
+        settipTSnackbar('warning');
+      }
+      
+    }
 
     function handleClick(event) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
+
+    const closeSnackbar= (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenSnackbar(false);
+    };
+
      
     return (
       <>
@@ -72,31 +148,56 @@ const StyledBreadcrumb = withStyles((theme) => ({
               </Breadcrumbs>
            </div>
            <br/>
-           <br/>
-           <BorderWrapper
-                borderColour="#00bcf1"
-                borderWidth="4px"
-                borderRadius="29px"
-                borderType="solid"
-                innerPadding="30px"
-                topElement={ <h2>Facturacion</h2>}
-                topPosition={0.05}
-                topOffset="22px"
-                topGap="4px"                
-                rightPosition={0.1}
-                rightOffset="22px"
-                rightGap="4px"
-                >
-                
-                <div style={{width:'100%'}}>
+           <Typography variant="h4" gutterBottom className={style.etiqueta} >
+             {'Facturacion'}
+           </Typography>
 
-              
-               
-                   <h1> en contruccion </h1>
-                        <p>aqui se cargara las comisiones</p>
-                                      
-                </div>
-            </BorderWrapper>
+           <Card> 
+                <Grid container className={style.gridContainer}> 
+                  <Grid item xs={12} md={7} >
+
+                  </Grid>
+                    <Grid item xs={12} md={3} className={style.containerCiclo}>
+                               <FormControl  variant="outlined"  
+                                fullWidth  
+                                //error={cicloError} 
+                                className={style.TextFiel}
+                                >
+                                  <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
+                                  <Select
+                                      labelId="demo-simple-select-outlined-labelciclo"
+                                      id="demo-simple-select-outlined"
+                                      value={idCiclo}
+                                      name="idCiclo"
+                                      onChange={onChange}
+                                      label="CICLO # "
+                                      >
+                                      <MenuItem value={0}>
+                                          <em>Seleccione un ciclo</em>
+                                      </MenuItem>
+                                      {ciclos.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
+                                  </Select>
+                                {/*  <FormHelperText>{cicloError&&'Seleccione un ciclo'}</FormHelperText> */}
+                              </FormControl>
+                    </Grid>
+                    <Grid item  xs={12} md={2} className={style.containerCargar}  >
+                            <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={style.submitCargar}
+                            onClick = {()=> cargarComisiones()}                                         
+                            >
+                             CARGAR {' '} <CloudUploadIcon />
+                            </Button>   
+                    </Grid>
+            </Grid>
+          </Card>
+
+
+          <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} />   
+
       </>
     );
 

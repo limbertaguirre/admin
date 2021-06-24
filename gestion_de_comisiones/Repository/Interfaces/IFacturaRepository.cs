@@ -7,6 +7,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
 {
     public interface IFacturaRepository
     {
-        public object listCiclos(string usuario);
+        public object listCiclosPendientes(string usuario);
     }
 }

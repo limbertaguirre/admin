@@ -17,13 +17,14 @@ namespace gestion_de_comisiones.Repository
         {
             Logger = logger;
         }
-        public object listCiclos(string usuario)
+        public object listCiclosPendientes(string usuario )
         {
             try
             {
                 Logger.LogInformation($" usuario: {usuario} inicio el listCiclos() repository");
-                int pendiente = 1;
-                int idtipoComision = 1;
+                int pendiente = int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                int idtipoComision = int.Parse(Environment.GetEnvironmentVariable("TIPO_PAGO_COMISIONES_ID"));
+
                 var listiclos = contextMulti.GpComisions.Join(contextMulti.GpComisionEstadoComisionIs,
                                                   GpComision => GpComision.IdComision,
                                                   GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
