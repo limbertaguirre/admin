@@ -62,7 +62,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
-        public virtual DbSet<VvObtenercomision> VvObtenercomisions { get; set; }
+        public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -2271,11 +2271,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Este es el codigo de la venta en conexion.");
             });
 
-            modelBuilder.Entity<VvObtenercomision>(entity =>
+            modelBuilder.Entity<VwObtenercomisione>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("vvOBTENERCOMISION");
+                entity.ToView("vwObtenercomisiones");
 
                 entity.Property(e => e.Ci)
                     .IsRequired()
