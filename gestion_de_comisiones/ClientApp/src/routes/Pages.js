@@ -1,6 +1,6 @@
 import  {Home}  from '../pages/Home';
 import Login from '../pages/login/Login'
-import Facturacion from '../pages/pagoComisiones/Facturacion'
+import Facturacion from '../pages/pagoComisiones/Facturacion/Facturacion'
 import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';

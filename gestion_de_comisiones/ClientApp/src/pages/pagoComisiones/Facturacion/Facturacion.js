@@ -4,17 +4,20 @@ import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import {InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import SnackbarSion from "../../components/message/SnackbarSion";
+import SnackbarSion from "../../../components/message/SnackbarSion";
 
-import * as permiso from '../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
+import * as permiso from '../../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { requestPost, requestGet } from "../../service/request";
+import { requestPost, requestGet } from "../../../service/request";
 import SearchIcon from '@material-ui/icons/Search';
 import SaveIcon from '@material-ui/icons/Save';
+
+import GridComisiones from './Component/GridComisiones';
+
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
       backgroundColor: theme.palette.grey[100],
@@ -48,9 +51,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       background: "#1872b8", 
       boxShadow: '2px 4px 5px #1872b8',
       color:'white',
-     // marginRight:theme.spacing(1),
       marginLeft:theme.spacing(1),
-      //fontSize:'11px'
      },
      gridContainer:{
       paddingLeft:theme.spacing(1),
@@ -71,8 +72,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
       paddingBottom:theme.spacing(1),
 
       display:'flex',
-     // flexDirection:'column',
-     // alignContent:'center',
       alignItems:'center',
       justifyContent:'center', 
     },
@@ -87,7 +86,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
       alignContent:'center',
       alignItems:'center',
       justifyContent:'center',
-    }
+    },
+
 
   }));
 
@@ -119,7 +119,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const obtenerCiclos=()=>{
     const data={usuarioLogin:userName };
      requestGet('Factura/ObtenerCiclos',data,dispatch).then((res)=>{ 
-      console.log('ciclos : ', res);
+     // console.log('ciclos : ', res);
           if(res.code === 0){                 
             setCiclos(res.data);
           }
@@ -173,8 +173,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
           })    
      };
      
+     const guardarFactura=()=>{
+
+     }
+     const CerrarFactura=()=>{
+       
+    }
+
+  //detalle
+
+  const selecionarDetalleFrelances=(idDetalleComision)=>{
+      console.log('selecionado iddetalle: ', idDetalleComision);
+  }
     return (
-      <>
+      <>      
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
@@ -190,54 +202,55 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Card> 
                 <Grid container className={style.gridContainer}> 
                   <Grid item xs={12} md={4} className={style.containerSave} >
+                     {listaComisionesPendientes.length>0&&
+                      <>
                            <Button
                             type="submit"
-                            //fullWidth
                             variant="contained"
                             color="primary"
                             className={style.submitSAVE}
-                            onClick = {()=> cargarComisiones()}                                         
+                            onClick = {()=> CerrarFactura()}                                         
                             >
                             <SaveIcon />  {' '} GUARDAR 
                             </Button> 
-                  {/* </Grid>
-                  <Grid item xs={12} md={2} className={style.containerSave} > */}
                            <Button
                             type="submit"
-                           // fullWidth
                             variant="contained"
                             color="primary"
                             className={style.submitSAVE}
-                            onClick = {()=> cargarComisiones()}                                         
+                            onClick = {()=> guardarFactura()}                                         
                             >
                              <SaveIcon />{' '} CERRAR FACTURA
                             </Button> 
+                        </>
+                       }     
                   </Grid>
                   <Grid item xs={12} md={3} className={style.containerSave}>
-                      <TextField
-                        label="Buscar Clientes"
-                        type={'text'}
-                        variant="outlined"
-                        name="txtBusqueda"                    
-                        value={txtBusqueda}
-                        onChange={onChange}
-                      // className={styles.TextFielBusqueda}
-                      //  error={txtBusquedaError}
-                      // helperText={ txtBusquedaError && "El campo es requerido" }
-                        InputProps={{
-                            startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                            ),
-                        }}                    
-                      />      
-
+                  {listaComisionesPendientes.length>0&&
+                        <TextField
+                          label="BUSCAR CLIENTE"
+                          type={'text'}
+                          variant="outlined"
+                          placeholder={'Buscar cliente...'}
+                          name="txtBusqueda"                    
+                          value={txtBusqueda}
+                          onChange={onChange}
+                        // className={styles.TextFielBusqueda}
+                        //  error={txtBusquedaError}
+                        // helperText={ txtBusquedaError && "El campo es requerido" }
+                          InputProps={{
+                              startAdornment: (
+                              <InputAdornment position="start">
+                                  <SearchIcon />
+                              </InputAdornment>
+                              ),
+                          }}                    
+                        />      
+                      }
                     </Grid>
                     <Grid item xs={12} md={3} className={style.containerCiclo}>
                                <FormControl  variant="outlined"  
-                                fullWidth  
-                                //error={cicloError} 
+                                fullWidth                       
                                 className={style.TextFiel}
                                 >
                                   <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
@@ -253,8 +266,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                           <em>Seleccione un ciclo</em>
                                       </MenuItem>
                                       {ciclos.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
-                                  </Select>
-                                {/*  <FormHelperText>{cicloError&&'Seleccione un ciclo'}</FormHelperText> */}
+                                  </Select>                               
                               </FormControl>
                     </Grid>
                     <Grid item  xs={12} md={2} className={style.containerCargar}  >
@@ -269,10 +281,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
                              CARGAR {' '} <CloudUploadIcon />
                             </Button>   
                     </Grid>
-            </Grid>
-          </Card>
-
-
+                  </Grid>
+                </Card>
+            <br />           
+            <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
           <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} />   
 
       </>
@@ -280,3 +292,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 }
 export default Facturacion;
+
+/*     ci: "343434341"
+    cuentaBancaria: "sss"
+    factura: "True"
+    facturaDescuento: "False"
+    idBanco: 1
+    idCiclo: 4
+    idComision: 1
+    idComisionDetalle: 1
+    idEstadoComision: 1
+    idFicha: 2
+    montoBruto: 200
+    montoNeto: 200
+    nombre: "mary1 garcia1"
+    nombreBanco: "BCP" */
