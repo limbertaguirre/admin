@@ -2283,6 +2283,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ci");
 
+                entity.Property(e => e.Ciclo)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ciclo");
+
                 entity.Property(e => e.CuentaBancaria)
                     .HasMaxLength(255)
                     .IsUnicode(false)

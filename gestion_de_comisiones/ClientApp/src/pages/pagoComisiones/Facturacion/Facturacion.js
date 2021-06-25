@@ -114,7 +114,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[idCiclo, setIdCiclo]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
-
+  const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
   const [open, setOpen] =useState(false);
   useEffect(()=>{  
     obtenerCiclos();
@@ -218,6 +218,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       } 
      
       history.push(location); */
+      setIdDetalleComisionSelect(idDetalleComision);
       setOpen(true);
 
     }
