@@ -90,6 +90,23 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public object obtenerDetalleEmpresa(string usuario, int idComisionDetalle )
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerDetalleEmpresa()  idComisionDetalle: {idComisionDetalle} ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idComisionDetalle:{idComisionDetalle} ");
+                var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch obtenerDetalleEmpresa() mensaje : {ex}");
+                List<VwObtenerComisionesDetalleEmpresa> list = new List<VwObtenerComisionesDetalleEmpresa>();
+                return list;
+            }
+        }
+
 
     }
 }

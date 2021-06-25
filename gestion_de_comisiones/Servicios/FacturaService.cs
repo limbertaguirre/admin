@@ -64,5 +64,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al buscar comiision por nombre", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object obtenerListaComisionesDetalleEmpresa(string usuario, int idDetalleEmpresa)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerListaComisionesDetalleEmpresa() ");
+                var comsiones = Repository.obtenerDetalleEmpresa(usuario, idDetalleEmpresa);
+                return Respuesta.ReturnResultdo(0, "ok", comsiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch obtenerListaComisionesDetalleEmpresa() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener datos de detalle empresa","");
+            }
+        }
+
     }
 }

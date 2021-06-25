@@ -24,6 +24,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<BitacoraDetalle> BitacoraDetalles { get; set; }
         public virtual DbSet<Ciclo> Cicloes { get; set; }
         public virtual DbSet<Ciudad> Ciudads { get; set; }
+        public virtual DbSet<ComisionDetalleEmpresa> ComisionDetalleEmpresas { get; set; }
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<EstadoDetalleListadoFormaPago> EstadoDetalleListadoFormaPagoes { get; set; }
         public virtual DbSet<Ficha> Fichas { get; set; }
@@ -62,6 +63,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
+        public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -398,6 +400,68 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<ComisionDetalleEmpresa>(entity =>
+            {
+                entity.HasKey(e => e.IdComisionDetalleEmpresa)
+                    .HasName("PK__COMISION__A81C75CC642A1E1B");
+
+                entity.ToTable("COMISION_DETALLE_EMPRESA");
+
+                entity.Property(e => e.IdComisionDetalleEmpresa)
+                    .HasColumnName("id_comision_detalle_empresa")
+                    .HasComment("Es la llave primaria de la tabla");
+
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasComment("Es el estado de la tabla activo (1) e inactico (0)");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualización del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creación del registro");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto")
+                    .HasComment("es el monto comision por empresa");
+
+                entity.Property(e => e.MontoAFacturar)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_a_facturar")
+                    .HasComment("El monto a facturar por empresa");
+
+                entity.Property(e => e.MontoTotalFacturar)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_total_facturar")
+                    .HasComment("El monto total a facturar por empresa");
+
+                entity.Property(e => e.NroAutorizacion)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("nro_autorizacion")
+                    .HasComment("Es el nro de autorizacion de la factura");
+
+                entity.Property(e => e.RespaldoPath)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("respaldo_path");
             });
 
             modelBuilder.Entity<Empresa>(entity =>
@@ -2269,6 +2333,49 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentaConexionId)
                     .HasColumnName("venta_conexion_id")
                     .HasComment("Este es el codigo de la venta en conexion.");
+            });
+
+            modelBuilder.Entity<VwObtenerComisionesDetalleEmpresa>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerComisionesDetalleEmpresa");
+
+                entity.Property(e => e.Empresa)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("empresa");
+
+                entity.Property(e => e.EstadoDetalleEmpresa).HasColumnName("estadoDetalleEmpresa");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
+
+                entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto");
+
+                entity.Property(e => e.MontoAFacturar)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_a_facturar");
+
+                entity.Property(e => e.MontoTotalFacturar)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_total_facturar");
+
+                entity.Property(e => e.NroAutorizacion)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("nro_autorizacion");
+
+                entity.Property(e => e.RespaldoPath)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("respaldo_path");
             });
 
             modelBuilder.Entity<VwObtenercomisione>(entity =>
