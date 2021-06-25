@@ -74,6 +74,22 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public object buscarcomisionXnombre(string usuario, int idCiclo, int idEstadoComision, string nombreCriterio)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuario} inicio el repository buscarcomisionXnombre() criterio nombre: {nombreCriterio} ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.Nombre.Contains(nombreCriterio)).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch buscarcomisionXnombre() mensaje : {ex}");
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
 
     }
 }

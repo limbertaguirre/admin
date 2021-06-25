@@ -61,7 +61,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-
+        // POST: FacturaController/BuscarComisionNombre
+        [HttpPost]
+        public ActionResult BuscarComisionNombre([FromBody] BuscarInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+                var resulcliente = Service.buscarComisionesPorNombre(param.usuarioLogin, param.idCiclo,param.nombreCriterio);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarComisionNombre()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(Result);
+            }
+        }
 
     }
 }

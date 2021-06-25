@@ -17,6 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import SaveIcon from '@material-ui/icons/Save';
 
 import GridComisiones from './Component/GridComisiones';
+import DetalleAdjuntoModal from './Component/DetalleAdjuntoModal';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -107,13 +108,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const dispatch = useDispatch();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
-  const [tipoSnackbar, settipTSnackbar] = useState(false);
+  const [tipoSnackbar, settipTSnackbar] = useState(true);
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
 
+  const [open, setOpen] =useState(false);
   useEffect(()=>{  
     obtenerCiclos();
   },[]);
@@ -174,24 +176,40 @@ const StyledBreadcrumb = withStyles((theme) => ({
             }
           })    
      };
+     const ApiBuscarPorNombre=(user,IDciclo,nombreCriterio )=>{
+      const data={
+        usuarioLogin:user,
+        idCiclo: IDciclo,
+        nombreCriterio:nombreCriterio
+       };
+       requestPost('Factura/BuscarComisionNombre',data,dispatch).then((res)=>{ 
+      //  console.log('search  : ', res);
+            if(res.code === 0){                 
+              setListaComisionesPendientes(res.data);
+            }
+          })    
+     };
      
      const guardarFactura=()=>{
 
      }
      const CerrarFactura=()=>{
        
-    }
+     }
 
     const buscarClientepornombre=(ev)=>{
       console.log('enter');
- 
+     // if(txtBusqueda === ""){
+        ApiBuscarPorNombre(userName, idCiclo,txtBusqueda)
+     // }
+      
     }
 
   //detalle
 
   const selecionarDetalleFrelances=(idDetalleComision)=>{
       console.log('selecionado iddetalle: ', idDetalleComision);
-      const location = {
+     /*  const location = {
         pathname: '/facturacion/detalle/adjunto',
         state: {
             namePagina: namePage,
@@ -199,8 +217,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
           }
       } 
      
-      history.push(location);
-  }
+      history.push(location); */
+      setOpen(true);
+
+    }
+   const handleCloseConfirm=()=>{
+     setOpen(false);
+   }
+   const handleCloseCancel=()=>{
+      setOpen(false);
+   }
+
     return (
       <>      
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
@@ -306,8 +333,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
                 </Card>
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-          <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} />   
-
+            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} />
       </>
     );
 

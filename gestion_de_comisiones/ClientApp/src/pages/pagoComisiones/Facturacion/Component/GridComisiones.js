@@ -42,9 +42,8 @@ import Paper from '@material-ui/core/Paper';
 
  const GridComisiones =(props)=> {
     let style= useStyles();
-    const {listaComisionesPendientes, selecionarDetalleFrelances} = props;
-     //console.log('componen : ', listaComisionesPendientes);
-
+    const {listaComisionesPendientes, selecionarDetalleFrelances, txtBusqueda} = props;
+ 
         //tabla
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);

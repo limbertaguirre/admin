@@ -49,5 +49,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista comisiones para facturar", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object buscarComisionesPorNombre(string usuario, int idCiclo, string nombreCriterio)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio buscarComisionesPorNombre() ");
+                int idEstado = int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                var comsiones = Repository.buscarcomisionXnombre(usuario, idCiclo, idEstado, nombreCriterio);
+                return Respuesta.ReturnResultdo(0, "ok", comsiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch buscarComisionesPorNombre() al obtener lista de comisiones pendientes para facturar,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al buscar comiision por nombre", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }
