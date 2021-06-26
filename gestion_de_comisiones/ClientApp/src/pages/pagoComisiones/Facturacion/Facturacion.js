@@ -115,6 +115,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
+   const[Ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
+   const[listaDetalleEmpresa, setListaDetalleEmpresa]= useState([]);
+
   const [open, setOpen] =useState(false);
   useEffect(()=>{  
     obtenerCiclos();
@@ -189,7 +192,22 @@ const StyledBreadcrumb = withStyles((theme) => ({
             }
           })    
      };
-     
+     const ApiCargarComisionesDetalleEmpresa=(user,idcomisionDetalle )=>{
+      const data={
+        usuarioLogin:user,
+        idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
+       };
+       console.log('parame detalle  : ', data);
+       requestPost('Factura/ComisionesDetalleEmpresa',data,dispatch).then((res)=>{ 
+       console.log('detalle  : ', res);
+            if(res.code === 0){         
+              setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
+              setListaDetalleEmpresa(res.data.listDetalle);
+              setIdDetalleComisionSelect(idcomisionDetalle);
+              setOpen(true);
+            }
+          })    
+     };
      const guardarFactura=()=>{
 
      }
@@ -205,8 +223,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
       
     }
 
-  //detalle
-
   const selecionarDetalleFrelances=(idDetalleComision)=>{
       console.log('selecionado iddetalle: ', idDetalleComision);
      /*  const location = {
@@ -216,18 +232,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
             idDetalleComision: idDetalleComision
           }
       } 
-     
       history.push(location); */
-      setIdDetalleComisionSelect(idDetalleComision);
-      setOpen(true);
-
-    }
+      ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
+  }
    const handleCloseConfirm=()=>{
      setOpen(false);
    }
    const handleCloseCancel=()=>{
       setOpen(false);
    }
+
+   useEffect(()=>{
+     console.log('ficha', Ficha);
+     console.log('lisdetalle :', listaDetalleEmpresa);
+   },[Ficha, listaDetalleEmpresa]);
 
     return (
       <>      
@@ -327,7 +345,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             className={style.submitCargar}
                             onClick = {()=> cargarComisiones()}                                         
                             >
-                             CARGAR {' '} <CloudUploadIcon />
+                             {'CARGAR '} {' '} <CloudUploadIcon />
                             </Button>   
                     </Grid>
                   </Grid>
@@ -335,7 +353,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} />
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} />
       </>
     );
 

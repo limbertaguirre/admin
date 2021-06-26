@@ -69,7 +69,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerListaComisionesDetalleEmpresa() ");
-                var comsiones = Repository.obtenerDetalleEmpresa(usuario, idDetalleEmpresa);
+                var comsiones = Repository.obtenerComisionDetalle(usuario, idDetalleEmpresa);
                 return Respuesta.ReturnResultdo(0, "ok", comsiones);
             }
             catch (Exception ex)

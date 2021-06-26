@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Modelos.Factura;
+﻿using gestion_de_comisiones.Modelos.Cliente;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -90,20 +91,70 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-        public object obtenerDetalleEmpresa(string usuario, int idComisionDetalle )
+        public List<VwObtenerComisionesDetalleEmpresaModel> obtenerDetalleEmpresa(string usuario, int idComisionDetalle )
         {
             try
             {
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerDetalleEmpresa()  idComisionDetalle: {idComisionDetalle} ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idComisionDetalle:{idComisionDetalle} ");
-                var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).ToList();
+               var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).Select(p => new VwObtenerComisionesDetalleEmpresaModel(p.IdComisionDetalleEmpresa, p.IdComisionDetalle, p.Empresa, p.Monto, p.MontoAFacturar, p.MontoTotalFacturar, p.RespaldoPath, p.NroAutorizacion, p.IdEmpresa, p.EstadoDetalleEmpresa) ).ToList();
+               
                 return ListComisiones;
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {usuario} error catch obtenerDetalleEmpresa() mensaje : {ex}");
-                List<VwObtenerComisionesDetalleEmpresa> list = new List<VwObtenerComisionesDetalleEmpresa>();
+                List<VwObtenerComisionesDetalleEmpresaModel> list = new List<VwObtenerComisionesDetalleEmpresaModel>();
                 return list;
+            }
+        }
+
+        public object obtenerComisionDetalle(string usuario, int idComisionDetalle)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionDetalle()  ");
+                Logger.LogWarning($" usuario: {usuario} parametros:  idComisionDetalle:{idComisionDetalle}");
+                DetalleEmpresaModel newObj = new DetalleEmpresaModel();
+                var objComision = contextMulti.VwObtenercomisiones.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
+                if(objComision != null)
+                {
+                   
+                    newObj.idFicla = (int)objComision.IdFicha;
+                    newObj.nombreFicha = objComision.Nombre;
+                    newObj.ciclo = objComision.Ciclo;
+                    newObj.idCiclo = (int)objComision.IdCiclo;
+                    var objCli = contextMulti.Fichas.Where(x => x.IdFicha == objComision.IdFicha).Select(p => new { p.IdFicha, p.Avatar }).FirstOrDefault();
+                    if(objCli != null){
+                        newObj.avatar = objCli.Avatar;
+                    }else{
+                        newObj.avatar = ""; 
+                    }
+                    var objNivel = contextMulti.FichaNivelIs.Join(contextMulti.Nivels,
+                                                FichaNivelI => FichaNivelI.IdNivel,
+                                                Nivel => Nivel.IdNivel,
+                                                (FichaNivelI, Nivel) => new
+                                                {   nombre = Nivel.Nombre,
+                                                    idFicha = FichaNivelI.IdFicha,
+                                                    fechaCreacion = FichaNivelI.FechaCreacion,
+                                                    habilitado = FichaNivelI.Habilitado,
+                                                }).Where(x => x.idFicha == objComision.IdFicha && x.habilitado == true).OrderByDescending(x => x.fechaCreacion).FirstOrDefault();
+                    if (objNivel != null){
+                        newObj.rango = objNivel.nombre;
+                    }else {
+                        newObj.rango = "";
+                    }
+                    var listDEmpresa = obtenerDetalleEmpresa(usuario, idComisionDetalle);
+                    newObj.listDetalle = listDEmpresa;
+
+                }
+                return newObj;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch obtenerComisionDetalle() mensaje : {ex}");
+                DetalleEmpresaModel obj = new DetalleEmpresaModel();
+                return obj;
             }
         }
 
