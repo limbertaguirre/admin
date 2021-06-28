@@ -345,7 +345,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             className={style.submitCargar}
                             onClick = {()=> cargarComisiones()}                                         
                             >
-                             {'CARGAR '} {' '} <CloudUploadIcon />
+                             {'CARGAR '} <CloudUploadIcon style={{marginLeft:'5px'}} />
                             </Button>   
                     </Grid>
                   </Grid>

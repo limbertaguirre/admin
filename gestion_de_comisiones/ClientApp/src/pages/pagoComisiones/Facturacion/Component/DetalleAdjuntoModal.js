@@ -33,6 +33,7 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -128,7 +129,8 @@ const DetalleAdjuntoModal = (props) => {
       const onChangeEmpresa = (idDetalleEmpresa)=>{
 
       }
-      const onChangeFilePDF= (e)=> {
+      const onChangeFilePDF= (e, idDetalleEmpresa)=> {
+        console.log('iddetalleEMpresa :', idDetalleEmpresa);
         var file = e.target.files[0];
         const reader = new FileReader();
         var url = reader.readAsDataURL(file);
@@ -197,7 +199,7 @@ const DetalleAdjuntoModal = (props) => {
                                           
                                             <TableCell align="center"><b>EMPRESAS</b></TableCell>
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>ARCHIVO</b></TableCell>                                            
+                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                            
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
                                         </TableHead>
@@ -208,17 +210,17 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                                             <TableCell align="center"> {row.respaldoPath != ""?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
                                             <TableCell align="center">
-                                            {/* <label >
-                                              <input style={{display: 'none'}} type="file" accept="image/*" onChange= {()=> onChangeFilePDF()} />                           
-                                               {'CARGAR '} {' '}<CloudUploadIcon /> 
-                                            </label> */}
-                                                        <Button
+                                            <label >
+                                              <input style={{display: 'none'}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />                           
+                                                {'CARGAR '} {' '}<CloudUploadIcon style={{marginLeft:'5px'}} />                                                    
+                                            </label>
+                                                       {/*  <Button
                                                             type="submit"                                                            
                                                             variant="contained"                                                         
-                                                            onClick = {()=> onChangeEmpresa(`${row.IdComisionDetalleEmpresa}`)}                                         
+                                                            onClick = {()=> onChangeEmpresa(`${row.idComisionDetalleEmpresa}`)}                                         
                                                         >
-                                                            {'CARGAR '} {' '}<CloudUploadIcon />
-                                                        </Button>   
+                                                            {'CARGAR '}<CloudUploadIcon style={{marginLeft:'5px'}} />
+                                                        </Button>   */} 
                                             </TableCell>   
                                             </TableRow>
                                         ))}
