@@ -1,0 +1,249 @@
+import React, { Fragment, useState } from "react";
+import {
+    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container
+} from "@material-ui/core";
+import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
+
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+
+
+import Avatar from '@material-ui/core/Avatar';
+import { blue  } from '@material-ui/core/colors';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import Paper from '@material-ui/core/Paper';
+
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import ErrorIcon from '@material-ui/icons/Error';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      width: '100%',
+      '& > * + *': {
+        //marginTop: theme.spacing(2),
+      },
+    },
+    containerPrincipal:{
+      paddingLeft:theme.spacing(1),
+      paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(4),
+      paddingBottom:theme.spacing(2),
+    },
+    botones:{
+        background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',  
+        marginBottom:theme.spacing(1),
+        marginTop:theme.spacing(1),
+        marginRight:theme.spacing(1),
+        marginLeft:theme.spacing(1),
+    },
+    appBar: {
+        position: 'relative',
+        backgroundColor: '#1872b8',
+      },
+      title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
+      },
+      avatarNombre: {
+        color: theme.palette.getContrastText(blue[500]),
+        backgroundColor: '#1872b8',
+       // boxShadow: '2px 4px 5px #1872b8',
+        width: theme.spacing(15),
+        height: theme.spacing(15),
+      },
+      gridContainer:{
+        paddingLeft:theme.spacing(1),
+        paddingRight:theme.spacing(1),
+        paddingTop:theme.spacing(1),
+        paddingBottom:theme.spacing(1),
+      },
+      submitCargar: {                 
+        background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',
+       },
+       containerPhoto:{
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center', 
+      },
+      table: {
+        minWidth: 650,
+      },
+      submitDetalle: {
+        height:'25px',
+        background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white'
+    },
+  }));
+    const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+    });
+
+
+const DetalleAdjuntoModal = (props) => {
+     //tipoModal : info, error, warning, success
+     const classes = useStyles();
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa } = props;
+
+    let cerrarModal = () => {
+        handleCloseConfirm();
+    };
+    const verFicha = () => {
+      
+    };
+
+      //tabla
+      const [rowsPerPage, setRowsPerPage] = useState(10);
+      const [page, setPage] = useState(0);
+
+      const handleChangePage = (event, newPage) => {
+          setPage(newPage);
+      };    
+      const handleChangeRowsPerPage = (event) => {
+          setRowsPerPage(parseInt(event.target.value, 10));
+          setPage(0);
+      };
+      const onChangeEmpresa = (idDetalleEmpresa)=>{
+
+      }
+      const onChangeFilePDF= (e, idDetalleEmpresa)=> {
+        console.log('iddetalleEMpresa :', idDetalleEmpresa);
+        var file = e.target.files[0];
+        const reader = new FileReader();
+        var url = reader.readAsDataURL(file);
+        console.log(URL.createObjectURL(file));
+        reader.onloadend = function (e) {
+          console.log('selecciondo file:', reader.result);
+         // setAvatar(reader.result);
+        //  setNuevoAvatar(true);
+        }.bind(this);
+
+    }
+
+    return (
+        <Fragment>
+            <Dialog   fullScreen open={open}   >
+            <AppBar className={classes.appBar}>
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" onClick={handleCloseCancel} aria-label="close">
+                    <CloseIcon />
+                    </IconButton>
+                    <Typography variant="h6" className={classes.title}>
+                      DETALLE DE ADJUNTOS
+                    </Typography>
+                    <Button autoFocus color="inherit" onClick={handleCloseConfirm}>
+                      GUARDAR
+                    </Button>
+                </Toolbar>
+            </AppBar>     
+               <Container maxWidth="md" className={classes.containerPrincipal} >                          
+                    <Grid  container item xs={12}  className={classes.gridContainer} >
+                        <Grid item xs={12} md={3} className={classes.containerPhoto}  >
+                           <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
+                        </Grid>
+                        <Grid container item xs={12} md={6}  >
+                             <Grid  item xs={12}   >
+                                    <Typography variant="h6" gutterBottom>
+                                        {Ficha.nombreFicha}
+                                    </Typography>
+                                    <Typography variant="subtitle1" gutterBottom>
+                                    <b>RANGO:</b> {Ficha.rango}
+                                    </Typography>
+                                    <Typography variant="subtitle1" gutterBottom>
+                                    <b>CICLO:</b>  {Ficha.ciclo}
+                                    </Typography>
+                            </Grid>
+                            <Grid  item xs={12}  >
+                            <Button
+                                type="submit"                            
+                                variant="contained"
+                                color="primary"
+                                className={classes.submitCargar}
+                                onClick = {()=> verFicha()}                                         
+                                >
+                                VER
+                                </Button>   
+                            </Grid>
+                        </Grid>
+                        <br />
+                         
+                        <Grid  container item xs={12}  >
+
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="medium" aria-label="a dense table">
+                                        <TableHead>
+                                        <TableRow>
+                                          
+                                            <TableCell align="center"><b>EMPRESAS</b></TableCell>
+                                            <TableCell align="right"><b>MONTO (USD)</b></TableCell>
+                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                            
+                                            <TableCell align="right">   </TableCell>
+                                        </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                        {listaDetalleEmpresa.map((row, index) => (
+                                            <TableRow key={index }>
+                                            <TableCell align="center"scope="row"> {row.empresa} </TableCell>                                                                                      
+                                            <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                                            <TableCell align="center"> {row.respaldoPath != ""?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
+                                            <TableCell align="center">
+                                            <label >
+                                              <input style={{display: 'none'}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />                           
+                                                {'CARGAR '} {' '}<CloudUploadIcon style={{marginLeft:'5px'}} />                                                    
+                                            </label>
+                                                       {/*  <Button
+                                                            type="submit"                                                            
+                                                            variant="contained"                                                         
+                                                            onClick = {()=> onChangeEmpresa(`${row.idComisionDetalleEmpresa}`)}                                         
+                                                        >
+                                                            {'CARGAR '}<CloudUploadIcon style={{marginLeft:'5px'}} />
+                                                        </Button>   */} 
+                                            </TableCell>   
+                                            </TableRow>
+                                        ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <TablePagination
+                                    rowsPerPageOptions={[10,25,35]}
+                                    component="div"
+                                    count={listaDetalleEmpresa.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onChangePage={handleChangePage}
+                                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    />
+                        </Grid>
+
+                    </Grid>
+                </Container>   
+            </Dialog> 
+        </Fragment>
+    );
+
+};
+
+export default DetalleAdjuntoModal;

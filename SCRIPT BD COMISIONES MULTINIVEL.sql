@@ -357,6 +357,12 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_TIPO_COMISION', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_TIPO_COMISION', N'COLUMN', N'fecha_actualizacion'
 
+go
+
+--insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(1,'PAGO COMISIONES', '',1)
+--insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(2,'PAGO REZAGADOS', '',1)
+
+go
 create table CICLO
 (
     id_ciclo int not null primary key IDENTITY,
@@ -421,7 +427,22 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Muestra una descripción breve
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION', N'COLUMN', N'fecha_actualizacion'
+go
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(1, 'PENDIENTE FACTURACION', 'PENDIENTE A FACTURAR',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(2, 'CERRADO FACTURACION', 'CERRADO FACTURACION',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(3, 'ANULADO FACTURACION', 'ANULADO FACTURACION',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(4, 'PENDIENTE APLICACION', 'PENDIENTE APLICACION',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(5, 'PROCESO APLICACION', 'PROCESO APLICACION',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(6, 'CARGADO COMISIONES FINALIZADO', 'CARGADO COMISIONES FINALIZADO',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(7, 'PENDIENTE PORRATERO', 'PENDIENTE PORRATERO',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(8, 'CERRADO PORRATEO', 'CERRADO PORRATEO',1)
 
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(9, 'PENDIENTE FORMA DE PAGO', 'PENDIENTE FORMA DE PAGO',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(10, 'CERRADO FORMA DE PAGO', 'CERRADO FORMA DE PAGO',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
+--insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
+
+go
 create table GP_COMISION_ESTADO_COMISION_I
 (
     id_comision_estado_comision_i int not null primary key IDENTITY,
@@ -680,7 +701,33 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Si el registro actual está ha
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_COMISION_DETALLE_ESTADO_I', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_COMISION_DETALLE_ESTADO_I', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_COMISION_DETALLE_ESTADO_I', N'COLUMN', N'fecha_actualizacion'
+go
 
+create table COMISION_DETALLE_EMPRESA
+(
+    id_comision_detalle_empresa int not null primary key IDENTITY,
+    monto decimal(18,2) not null,
+	estado bit not null,
+	respaldo_path varchar(500),
+	nro_autorizacion varchar,
+	monto_a_facturar decimal(18,2),
+	monto_total_facturar decimal(18,2),
+	id_comision_detalle int not null,
+	id_empresa int not null,
+    id_usuario int,
+    fecha_creacion datetime default GETDATE(),
+    fecha_actualizacion datetime default GETDATE(),
+);
+go
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comision_detalle_empresa'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es el monto comision por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla activo (1) e inactico (0)', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'estado'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de autorizacion de la factura', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'nro_autorizacion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_a_facturar'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto total a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_total_facturar'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'fecha_creacion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'fecha_actualizacion'
 
 go
 --individuales
@@ -795,6 +842,13 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'EMPRESA', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'EMPRESA', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'EMPRESA', N'COLUMN', N'fecha_actualizacion'
+
+go
+
+--insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(10,'ZURIEL',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(11,'AVDEL',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(12,'CCNORTE',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(13,'JAYIL',1, 1);
 
 go
 --------------------------------
@@ -1015,6 +1069,13 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'PROYECTO', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'PROYECTO', N'COLUMN', N'fecha_actualizacion'
 go
+
+--insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('KALOMAI', 2,100,1);
+--insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('LA FLORESTA DEL NORTE', 3,100,1);
+--insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('COMPLEJO CAMPESTRE URUBO', 3,100,1);
+--insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('LA ARBOLEA DEL ESTE', 3,100,1);
+
+go
 CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   id_aplicacion_detalle_producto int NOT NULL PRIMARY KEY identity,
   cantidad int not null,
@@ -1073,3 +1134,49 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
+
+go
+CREATE VIEW [dbo].[vwObtenercomisiones]
+AS
+     select 
+	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
+	        GPCOMI.id_comision AS 'idComision', 
+			GPDETA.id_ficha AS 'idFicha',
+			FIC.nombres +' '+ FIC.apellidos as 'nombre',
+			FIC.ci,
+			FIC.cuenta_bancaria AS 'cuentaBancaria',
+			FIC.id_banco,
+			BA.nombre AS 'nombreBanco',
+			GPDETA.monto_bruto AS 'montoBruto' ,
+		    case FIC.tiene_cuenta_bancaria when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+			GPDETA.monto_neto AS 'montoNeto',
+			'False' As 'facturaDescuento',
+			GPCOMI.id_ciclo,
+			CI.nombre AS 'ciclo',
+			GPESTA.id_estado_comision
+	        from BDMultinivel.dbo.GP_COMISION GPCOMI
+	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
+			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
+			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
+GO
+
+CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
+AS
+	 select 
+	     ComiEmp.id_comision_detalle_empresa,
+		 ComiEmp.id_comision_detalle,
+	     Emp.nombre AS 'empresa',
+		 ComiEmp.monto,
+		 ComiEmp.monto_a_facturar,
+		 ComiEmp.monto_total_facturar,
+		 ComiEmp.respaldo_path,
+		 ComiEmp.nro_autorizacion,
+		  Emp.id_empresa AS 'idEmpresa',
+		 ComiEmp.estado As 'estadoDetalleEmpresa'
+     from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
+			inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA ComiEmp on ComiEmp.id_comision_detalle=GPDE.id_comision_detalle
+			inner join BDMultinivel.dbo.empresa Emp on Emp.id_empresa=ComiEmp.id_empresa
+			
+GO
