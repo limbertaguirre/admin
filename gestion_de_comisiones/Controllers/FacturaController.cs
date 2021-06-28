@@ -97,6 +97,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/obtenerCDetalleEmpresa
+        [HttpPost]
+        public ActionResult obtenerCDetalleEmpresa([FromBody] DetalleEmpresaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller obtenerCDetalleEmpresa() parametro: ");
+                var resulcliente = Service.obtenerDetalleMasEmpresas(param.usuarioLogin, param.idComisionDetalleEmpresa);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller obtenerCDetalleEmpresa()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  obtenerCDetalleEmpresa() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones detalle empresa" };
+                return Ok(Result);
+            }
+        }
 
     }
 }

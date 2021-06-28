@@ -13,6 +13,8 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object buscarcomisionXnombre(string usuario, int idCiclo, int idEstadoComision, string nombreCriterio);
         public List<VwObtenerComisionesDetalleEmpresaModel> obtenerDetalleEmpresa(string usuario, int idComisionDetalle);
         public object obtenerComisionDetalle(string usuario, int idComisionDetalle);
+        public List<EmpresaOutput> obtenerEmpresas(string usuario);
+        public DetalleOutputModel obtenerComisionDetalleEmpresa(string usuario, int idComisionDetalle);
 
     }
 }
