@@ -187,6 +187,7 @@ const DetalleAdjuntoModal = (props) => {
      const [idDetalleEmpresaSelected,setIdDetalleEmpresaSelected ]= useState(0);
      const [idEmpresaSelected, setIdEmpresaSelected ]= useState(0);
      const [montoSelected, setMontoSelected ]= useState(0);
+     const [nroAutorizacionSelected, setNroAutorizacionSelected ]= useState("");
      const [montoFacturarSelected, setMontoFacturarSelected ]= useState(0);
      const [montoTotalFacturarSelected, setMontoTotalFacturarSelected ]= useState(0);
 
@@ -202,6 +203,9 @@ const DetalleAdjuntoModal = (props) => {
         }
         if (texfiel === "montoSelected") {
           setMontoSelected(value);
+        }
+        if (texfiel === "nroAutorizacionSelected") {
+          setNroAutorizacionSelected(value);
         }
 
      };
@@ -231,6 +235,7 @@ const DetalleAdjuntoModal = (props) => {
               setMontoSelected(res.data.monto);
               setMontoFacturarSelected(res.data.montoAFacturar);
               setMontoTotalFacturarSelected(res.data.montoTotalFActurar);
+              setNroAutorizacionSelected(res.data.nroAutorizacion);
             }
           })    
      };
@@ -346,6 +351,7 @@ const DetalleAdjuntoModal = (props) => {
               idEmpresaSelected={idEmpresaSelected}
               montoSelected={montoSelected}
               onChangeregistroEdit={onChangeregistroEdit}
+              nroAutorizacionSelected={nroAutorizacionSelected}
               
               />
         </Fragment>

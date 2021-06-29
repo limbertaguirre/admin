@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme) => ({
         background: "#1872b8", 
         boxShadow: '2px 4px 5px #1872b8',
         color:'white',  
-        marginBottom:theme.spacing(1),
-        marginTop:theme.spacing(1),
+        marginBottom:theme.spacing(2),
+        marginTop:theme.spacing(2),
         marginRight:theme.spacing(1),
         marginLeft:theme.spacing(1),
     },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const EditModal = (props) => {
-   const { open , handleCloseConfirmEdit, handleCloseCancelEdit, listEmpresas, idDetalleEmpresaSelected, idEmpresaSelected, montoSelected, onChangeregistroEdit }= props;
+   const { open , handleCloseConfirmEdit, handleCloseCancelEdit, listEmpresas, idDetalleEmpresaSelected, idEmpresaSelected, montoSelected, onChangeregistroEdit, nroAutorizacionSelected }= props;
    const classes = useStyles();
 
   /*   let history = useHistory();
@@ -60,9 +60,10 @@ const EditModal = (props) => {
             
             <DialogContent>
                         <div className={classes.root}>                        
-                            <Typography variant="caption" display="block" gutterBottom>
-                                <strong>modall  : edit </strong>
-                            </Typography>
+                            <Typography variant="subtitle1" className={classes.TextFiel} gutterBottom>
+                                <b>DETALLE DE LA COMISION </b>
+                            </Typography>                            
+                           
                             <br />                                                                    
                         </div>   
                         <Grid  container  >
@@ -111,6 +112,29 @@ const EditModal = (props) => {
 
 
                             </Grid>
+                            <Grid item xs={12}> 
+                                <Typography variant="subtitle1" className={classes.TextFiel} gutterBottom>
+                                   <b>  {'DETALLE DE LA FACTURA'} </b>
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                        <TextField                            
+                                        label="Nro Autorizacion"
+                                        type={'text'}
+                                        variant="outlined"
+                                      //  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                                        name="nroAutorizacionSelected"
+                                        value={nroAutorizacionSelected}                                        
+                                        className={classes.TextFiel}
+                                        onChange={onChangeregistroEdit}
+                                    // error={corporativoError}
+                                    /*  helperText={ corporativoError &&
+                                        "campo requerido"
+                                        }   */                          
+                                        fullWidth                             
+                                    />
+                            </Grid>
+
                         </Grid>                
                     <Grid  container item xs={12}  justify="flex-end"  >
                         <Button onClick={handleCloseCancelEdit} variant="contained" color="primary" className={classes.botones} >

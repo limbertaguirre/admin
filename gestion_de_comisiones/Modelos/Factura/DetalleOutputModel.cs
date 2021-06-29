@@ -9,6 +9,7 @@ namespace gestion_de_comisiones.Modelos.Factura
     {
         public int idComisionDetalleEmpresa { get; set; }
         public decimal monto { get; set; }
+        public string NroAutorizacion { get; set; }
         public int idEmpresa { get; set; }
         public decimal montoAFacturar { get; set; }
         public decimal montoTotalFActurar { get; set; }

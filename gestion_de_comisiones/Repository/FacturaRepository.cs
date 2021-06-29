@@ -183,7 +183,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerEmpresas() ");
                 DetalleOutputModel obj = new DetalleOutputModel();
                 int activo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
-                var detalle = contextMulti.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalle).Select(p => new ComisionDetalleEmpresaOutput(p.IdComisionDetalleEmpresa, p.Monto,p.IdEmpresa, p.MontoAFacturar, p.MontoTotalFacturar)).FirstOrDefault();
+                var detalle = contextMulti.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalle).Select(p => new ComisionDetalleEmpresaOutput(p.IdComisionDetalleEmpresa, p.Monto, p.NroAutorizacion ,p.IdEmpresa, p.MontoAFacturar, p.MontoTotalFacturar)).FirstOrDefault();
                 if(detalle != null)
                 {
                     obj.idComisionDetalleEmpresa = detalle.idComisionDetalleEmpresa;
@@ -191,6 +191,7 @@ namespace gestion_de_comisiones.Repository
                     obj.idEmpresa = detalle.idEmpresa;
                     obj.montoAFacturar = (decimal)detalle.montoAFacturar;
                     obj.montoTotalFActurar = (decimal)detalle.montoTotalFacturar;
+                    obj.NroAutorizacion = detalle.nroAutorizacion;
                     var empresas = obtenerEmpresas(usuario);
                     obj.listEmpresa = empresas;
                 }
