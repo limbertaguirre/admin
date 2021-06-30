@@ -20,6 +20,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ESTADO_PENDIENTE_COMISION": "1",
+        "ESTADO_EMPRESA_INACTIVO": "0",
+        "ESTADO_EMPRESA_ACTIVO": "1",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "TIPO_PAGO_COMISIONES_ID": "1"
       },

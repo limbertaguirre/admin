@@ -2,6 +2,9 @@ import React, { Fragment, useState } from "react";
 import {
     Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container
 } from "@material-ui/core";
+import {useSelector,useDispatch} from 'react-redux';
+import { requestPost } from "../../../../service/request";
+
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
@@ -34,6 +37,14 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { green } from '@material-ui/core/colors';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+import EditModal from "./EditModal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -94,9 +105,35 @@ const useStyles = makeStyles((theme) => ({
       submitDetalle: {
         height:'25px',
         background: "#1872b8", 
-        boxShadow: '2px 4px 5px #1872b8',
+        boxShadow: '2px 2px 5px #1872b8',
         color:'white'
-    },
+      },
+
+      margin: {
+        margin: '1px',
+        paddingLeft:theme.spacing(1),
+        paddingRight:theme.spacing(1),
+        paddingTop:theme.spacing(1),
+        paddingBottom:theme.spacing(1),
+      },
+      divCargar: {
+        border:'2px', 
+       // backgroundColor:'#CAD8DF', 
+        borderRadius:'9px',     
+        paddingLeft:theme.spacing(1),
+        paddingRight:theme.spacing(1),
+        paddingTop:theme.spacing(1),
+        paddingBottom:theme.spacing(1),  
+        fontWeight: theme.typography.fontWeightRegular,
+        '&:hover, &:focus': {
+          backgroundColor:'#EEEFF0',
+        },
+        '&:active': {
+          boxShadow: theme.shadows[1],
+        },
+      },
+
+
   }));
     const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -106,7 +143,9 @@ const useStyles = makeStyles((theme) => ({
 const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
+     const dispatch = useDispatch();
       const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa } = props;
+      const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
         handleCloseConfirm();
@@ -140,12 +179,70 @@ const DetalleAdjuntoModal = (props) => {
          // setAvatar(reader.result);
         //  setNuevoAvatar(true);
         }.bind(this);
+      }
 
-    }
+      //-------------------------------------------------------------------------------------------------------------------
+     const [openModalEdit, setOpenModalEdit]= useState(false);
+     const [listEmpresas, setListEmpresas]= useState([]);
+     const [idDetalleEmpresaSelected,setIdDetalleEmpresaSelected ]= useState(0);
+     const [idEmpresaSelected, setIdEmpresaSelected ]= useState(0);
+     const [montoSelected, setMontoSelected ]= useState(0);
+     const [nroAutorizacionSelected, setNroAutorizacionSelected ]= useState("");
+     const [montoFacturarSelected, setMontoFacturarSelected ]= useState(0);
+     const [montoTotalFacturarSelected, setMontoTotalFacturarSelected ]= useState(0);
+
+     const abrirModalEdit=(idDetalleEmpresa)=>{
+       ApiObtenerDetalleEmpresa(userName,idDetalleEmpresa );       
+       setOpenModalEdit(true);
+     };
+     const onChangeregistroEdit= (e)=> {
+        const texfiel = e.target.name;
+        const value = e.target.value;
+        if (texfiel === "idEmpresaSelected") {
+          setIdEmpresaSelected(value);
+        }
+        if (texfiel === "montoSelected") {
+          setMontoSelected(value);
+        }
+        if (texfiel === "nroAutorizacionSelected") {
+          setNroAutorizacionSelected(value);
+        }
+
+     };
+
+     const handleCloseConfirmEdit =()=>{
+      setOpenModalEdit(false);
+     };
+     const handleCloseCancelEdit =()=>{
+      setOpenModalEdit(false);
+     };
+
+     const openDeleteModal=()=>{
+      
+     }
+     const ApiObtenerDetalleEmpresa=(user,idcomisionDetalle )=>{
+      const data={
+        usuarioLogin:user,
+        idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
+       };
+      
+       requestPost('Factura/obtenerCDetalleEmpresa',data,dispatch).then((res)=>{ 
+       console.log('detalle Edit  : ', res);
+            if(res.code === 0){         
+              setListEmpresas(res.data.listEmpresa);
+              setIdDetalleEmpresaSelected(res.data.idComisionDetalleEmpresa);
+              setIdEmpresaSelected(res.data.idEmpresa);
+              setMontoSelected(res.data.monto);
+              setMontoFacturarSelected(res.data.montoAFacturar);
+              setMontoTotalFacturarSelected(res.data.montoTotalFActurar);
+              setNroAutorizacionSelected(res.data.nroAutorizacion);
+            }
+          })    
+     };
 
     return (
         <Fragment>
-            <Dialog   fullScreen open={open}   >
+            <Dialog   fullScreen open={open}   TransitionComponent={Transition}  >
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={handleCloseCancel} aria-label="close">
@@ -193,7 +290,7 @@ const DetalleAdjuntoModal = (props) => {
                         <Grid  container item xs={12}  >
 
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="medium" aria-label="a dense table">
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
                                         <TableHead>
                                         <TableRow>
                                           
@@ -208,19 +305,22 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableRow key={index }>
                                             <TableCell align="center"scope="row"> {row.empresa} </TableCell>                                                                                      
                                             <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            <TableCell align="center"> {row.respaldoPath != ""?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
+                                            <TableCell align="center"> {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } </TableCell>  
                                             <TableCell align="center">
                                             <label >
-                                              <input style={{display: 'none'}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />                           
-                                                {'CARGAR '} {' '}<CloudUploadIcon style={{marginLeft:'5px'}} />                                                    
-                                            </label>
-                                                       {/*  <Button
-                                                            type="submit"                                                            
-                                                            variant="contained"                                                         
-                                                            onClick = {()=> onChangeEmpresa(`${row.idComisionDetalleEmpresa}`)}                                         
-                                                        >
-                                                            {'CARGAR '}<CloudUploadIcon style={{marginLeft:'5px'}} />
-                                                        </Button>   */} 
+                                              <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
+                                                <div className={classes.divCargar}>
+                                                {'CARGAR '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
+                                                </div>                                                                                                                  
+                                            </label>                                                      
+                                                <IconButton aria-label="delete" className={classes.margin} onClick={()=> abrirModalEdit(`${row.idComisionDetalleEmpresa}`)} >
+                                                  <EditIcon fontSize="inherit" />
+                                                </IconButton>
+
+                                                <IconButton aria-label="delete" className={classes.margin} onClick={()=> openDeleteModal(`${row.idComisionDetalleEmpresa}`)} >
+                                                  <DeleteIcon fontSize="inherit" />
+                                                </IconButton>
+
                                             </TableCell>   
                                             </TableRow>
                                         ))}
@@ -238,9 +338,22 @@ const DetalleAdjuntoModal = (props) => {
                                     />
                         </Grid>
 
+                        
                     </Grid>
                 </Container>   
             </Dialog> 
+             <EditModal 
+              open={openModalEdit} 
+              handleCloseConfirmEdit={handleCloseConfirmEdit}
+              handleCloseCancelEdit={handleCloseCancelEdit}
+              listEmpresas={listEmpresas}
+              idDetalleEmpresaSelected={idDetalleEmpresaSelected}
+              idEmpresaSelected={idEmpresaSelected}
+              montoSelected={montoSelected}
+              onChangeregistroEdit={onChangeregistroEdit}
+              nroAutorizacionSelected={nroAutorizacionSelected}
+              
+              />
         </Fragment>
     );
 

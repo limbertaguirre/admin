@@ -158,6 +158,51 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-
+        public List<EmpresaOutput> obtenerEmpresas(string usuario)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerEmpresas() ");
+                int activo= int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
+                var ListComisiones = contextMulti.Empresas.Where(x => x.Estado == activo).Select( p => new EmpresaOutput(p.IdEmpresa, p.Nombre)).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch obtenerEmpresas() mensaje : {ex}");
+                List<EmpresaOutput> list = new List<EmpresaOutput>();
+                return list;
+            }
+        }
+        public DetalleOutputModel obtenerComisionDetalleEmpresa(string usuario,int  idComisionDetalle)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerEmpresas() ");
+                DetalleOutputModel obj = new DetalleOutputModel();
+                int activo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
+                var detalle = contextMulti.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalle).Select(p => new ComisionDetalleEmpresaOutput(p.IdComisionDetalleEmpresa, p.Monto, p.NroAutorizacion ,p.IdEmpresa, p.MontoAFacturar, p.MontoTotalFacturar)).FirstOrDefault();
+                if(detalle != null)
+                {
+                    obj.idComisionDetalleEmpresa = detalle.idComisionDetalleEmpresa;
+                    obj.monto = detalle.monto;
+                    obj.idEmpresa = detalle.idEmpresa;
+                    obj.montoAFacturar = (decimal)detalle.montoAFacturar;
+                    obj.montoTotalFActurar = (decimal)detalle.montoTotalFacturar;
+                    obj.NroAutorizacion = detalle.nroAutorizacion;
+                    var empresas = obtenerEmpresas(usuario);
+                    obj.listEmpresa = empresas;
+                }
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch obtenerEmpresas() mensaje : {ex}");
+                DetalleOutputModel obj = new DetalleOutputModel();
+                return obj;
+            }
+        }
     }
 }
