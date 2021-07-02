@@ -12,6 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "Key": "Value",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -23,7 +24,10 @@
         "ESTADO_EMPRESA_INACTIVO": "0",
         "ESTADO_EMPRESA_ACTIVO": "1",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "TIPO_PAGO_COMISIONES_ID": "1"
+        "TIPO_PAGO_COMISIONES_ID": "1",
+        "ESTADO_COMISION_DETALLE_SIN_DEFINIR_CERO": "0",
+        "ESTADO_COMISION_DETALLE_NO_FACTURA": "1",
+        "ESTADO_COMISION_DETALLE_SI_FACTURO": "2"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }

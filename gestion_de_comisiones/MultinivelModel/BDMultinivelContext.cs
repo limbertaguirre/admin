@@ -447,6 +447,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("monto_a_facturar")
                     .HasComment("El monto a facturar por empresa");
 
+                entity.Property(e => e.MontoNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_neto");
+
                 entity.Property(e => e.MontoTotalFacturar)
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("monto_total_facturar")
@@ -458,10 +462,28 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("nro_autorizacion")
                     .HasComment("Es el nro de autorizacion de la factura");
 
+                entity.Property(e => e.Residual)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("residual");
+
                 entity.Property(e => e.RespaldoPath)
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("respaldo_path");
+
+                entity.Property(e => e.Retencion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("retencion");
+
+                entity.Property(e => e.SiFacturo).HasColumnName("si_facturo");
+
+                entity.Property(e => e.VentasGrupales)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("ventas_grupales");
+
+                entity.Property(e => e.VentasPersonales)
+                    .HasColumnType("decimal(18, 0)")
+                    .HasColumnName("ventas_personales");
             });
 
             modelBuilder.Entity<Empresa>(entity =>
@@ -2363,6 +2385,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("monto_a_facturar");
 
+                entity.Property(e => e.MontoNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_neto");
+
                 entity.Property(e => e.MontoTotalFacturar)
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("monto_total_facturar");
@@ -2372,10 +2398,28 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nro_autorizacion");
 
+                entity.Property(e => e.Residual)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("residual");
+
                 entity.Property(e => e.RespaldoPath)
                     .HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("respaldo_path");
+
+                entity.Property(e => e.Retencion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("retencion");
+
+                entity.Property(e => e.SiFacturo).HasColumnName("si_facturo");
+
+                entity.Property(e => e.VentasGrupales)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("ventas_grupales");
+
+                entity.Property(e => e.VentasPersonales)
+                    .HasColumnType("decimal(18, 0)")
+                    .HasColumnName("ventas_personales");
             });
 
             modelBuilder.Entity<VwObtenercomisione>(entity =>
@@ -2400,17 +2444,18 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("cuentaBancaria");
 
+                entity.Property(e => e.EstadoDetalleFacturaNombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("estadoDetalleFacturaNombre");
+
+                entity.Property(e => e.EstadoFacturoId).HasColumnName("estadoFacturoId");
+
                 entity.Property(e => e.Factura)
                     .IsRequired()
                     .HasMaxLength(5)
                     .IsUnicode(false)
                     .HasColumnName("factura");
-
-                entity.Property(e => e.FacturaDescuento)
-                    .IsRequired()
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .HasColumnName("facturaDescuento");
 
                 entity.Property(e => e.IdBanco).HasColumnName("id_banco");
 

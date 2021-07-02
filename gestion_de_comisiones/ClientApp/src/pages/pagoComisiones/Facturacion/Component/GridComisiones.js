@@ -9,7 +9,7 @@ import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles'
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
-import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container,Tooltip ,Zoom , InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -87,19 +87,26 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
                             <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}</TableCell>   
-                            <TableCell align="center"> {row.facturaDescuento == "True"?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
+                            <TableCell align="center"> 
+                                    
+                                     {row.estadoFacturoId == 2?  <CheckBoxIcon  color="primary" /> : <CheckBoxOutlineBlankIcon  color="primary" /> }  
+                                   
+                            </TableCell>  
                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
-                                         <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={style.submitDetalle}
-                                            onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
+                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>
+                                        <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        alt={row.estadoDetalleFacturaNombre}
+                                        className={style.submitDetalle}
+                                        onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
                                         >
                                             Detalle
-                                        </Button>   
+                                        </Button>  
+                                     </Tooltip> 
                             </TableCell>   
                             </TableRow>
                         ))}

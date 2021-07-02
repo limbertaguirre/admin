@@ -65,7 +65,10 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision).ToList();
+                int idEstadoSinDefinir = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SIN_DEFINIR_CERO"));
+                int idEstadoNoFacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
+                int idEstadoSifacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.EstadoFacturoId == idEstadoNoFacturo || x.EstadoFacturoId == idEstadoSifacturo || x.EstadoFacturoId == idEstadoSinDefinir).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -97,7 +100,7 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerDetalleEmpresa()  idComisionDetalle: {idComisionDetalle} ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idComisionDetalle:{idComisionDetalle} ");
-               var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).Select(p => new VwObtenerComisionesDetalleEmpresaModel(p.IdComisionDetalleEmpresa, p.IdComisionDetalle, p.Empresa, p.Monto, p.MontoAFacturar, p.MontoTotalFacturar, p.RespaldoPath, p.NroAutorizacion, p.IdEmpresa, p.EstadoDetalleEmpresa) ).ToList();
+               var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).Select(p => new VwObtenerComisionesDetalleEmpresaModel(p.IdComisionDetalleEmpresa, p.IdComisionDetalle, p.Empresa, p.Monto, p.MontoAFacturar, p.MontoTotalFacturar, p.RespaldoPath, p.NroAutorizacion, p.IdEmpresa, p.EstadoDetalleEmpresa, p.VentasPersonales, p.VentasGrupales,p.Residual, p.MontoNeto, p.SiFacturo) ).ToList();
                
                 return ListComisiones;
             }
