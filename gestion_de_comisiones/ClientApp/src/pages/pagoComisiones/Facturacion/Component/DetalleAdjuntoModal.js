@@ -44,6 +44,8 @@ import { green } from '@material-ui/core/colors';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import  imageFac from "../../../../../src/assets/img/logoFacturado.png";
+
 import EditModal from "./EditModal";
 import MessageConfirm from "../../../../components/mesageModal/MessageConfirm";
 
@@ -151,7 +153,7 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa } = props;
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
@@ -270,9 +272,11 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    <Button autoFocus color="inherit" onClick={saveCondicional}>
-                      GUARDAR
-                    </Button>
+                    {!estadoComisionGlobalFacturado? 
+                      <Button autoFocus color="inherit" onClick={saveCondicional}>
+                        GUARDAR
+                      </Button>
+                    :null}
                 </Toolbar>
             </AppBar>     
                <Container maxWidth="sm" className={classes.containerPrincipal} >                          
@@ -280,7 +284,7 @@ const DetalleAdjuntoModal = (props) => {
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
                            <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
-                        <Grid container item xs={12} md={9}  >
+                        <Grid container item xs={12} md={4}  >
                              <Grid  item xs={12}   >
                                     <Typography variant="h6" gutterBottom>
                                         {Ficha.nombreFicha}
@@ -303,6 +307,11 @@ const DetalleAdjuntoModal = (props) => {
                                 VER
                                 </Button>   
                             </Grid>
+                        </Grid>
+                        <Grid container item xs={12} md={5} >
+                          {estadoComisionGlobalFacturado&&
+                            <img src={imageFac} alt={'sion'} style={{width:'100%'}} />
+                          }
                         </Grid>
                         <br />
                         </Grid>

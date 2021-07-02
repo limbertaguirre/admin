@@ -116,6 +116,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
+
+   const [estadoComisionGlobalFacturado, setEstadoComisionGlobalFacturado]= useState(false);
    const[Ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
    const[listaDetalleEmpresa, setListaDetalleEmpresa]= useState([]);
 
@@ -229,7 +231,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       
     }
 
-  const selecionarDetalleFrelances=(idDetalleComision)=>{
+  const selecionarDetalleFrelances=(idDetalleComision, estadoFacturado)=>{
      // console.log('selecionado iddetalle free: ', idDetalleComision);
      /*  const location = {
         pathname: '/facturacion/detalle/adjunto',
@@ -239,6 +241,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
           }
       } 
       history.push(location); */
+      setEstadoComisionGlobalFacturado(estadoFacturado== 2? true: false);//1 => pendiente, 2 facturado=>, 0 no tiene estadoo no se actualizo
       setiIdComsionDetalleSelected(idDetalleComision);
       ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
   }
@@ -276,7 +279,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
    useEffect(()=>{
      //console.log('ficha', Ficha);
      //console.log('lisdetalle :', listaDetalleEmpresa);
-   },[Ficha, listaDetalleEmpresa]);
+     console.log('global estado comision :', estadoComisionGlobalFacturado)
+   },[Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado]);
 
     return (
       <>      
@@ -384,7 +388,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} />
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} />
       </>
     );
 

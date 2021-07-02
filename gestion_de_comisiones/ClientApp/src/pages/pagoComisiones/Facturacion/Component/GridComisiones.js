@@ -102,7 +102,7 @@ import Paper from '@material-ui/core/Paper';
                                         color="primary"
                                         alt={row.estadoDetalleFacturaNombre}
                                         className={style.submitDetalle}
-                                        onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
+                                        onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`, `${row.estadoFacturoId}`)}                                         
                                         >
                                             Detalle
                                         </Button>  
