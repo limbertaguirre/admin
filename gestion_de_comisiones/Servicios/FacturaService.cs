@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Repository.Interfaces;
+﻿using gestion_de_comisiones.Modelos.Factura;
+using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -90,6 +91,30 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} error catch obtenerDetalleMasEmpresas() mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener datos de detalle empresa mas empresas", "");
+            }
+        }
+        public object ACtualizarComisionDetalleAFacturado(ComisionDetalleInput comisionDetalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} inicio el servicio ACtualizarComisionDetalleAFacturado() ");
+                int idEstadoFacturado = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                var comsiones = Repository.AcTualizarComisionDetalleEstado(comisionDetalle, 2);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} inicio RETORNO FALSE LA ACTUALIZACION, NO SE ACTUALIZO");
+                    return Respuesta.ReturnResultdo(1, "problemas al actualizar la comision del detalle", comsiones);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} error catch ACtualizarComisionDetalleAFacturado() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar una comision detalle a facturado", "");
             }
         }
 

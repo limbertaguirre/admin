@@ -7,6 +7,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SnackbarSion from "../../../components/message/SnackbarSion";
+import * as ActionMesaje from "../../../redux/actions/messageAction";
 
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
@@ -104,7 +105,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[])
-  const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+  const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
   const dispatch = useDispatch();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
@@ -118,6 +119,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
    const[Ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
    const[listaDetalleEmpresa, setListaDetalleEmpresa]= useState([]);
 
+   const [idComsionDetalleSelected, setiIdComsionDetalleSelected ]= useState(0);
+
+   useEffect(()=>{
+     //console.log('idcomision selected: ', idComsionDetalleSelected);
+   },[idComsionDetalleSelected])
   const [open, setOpen] =useState(false);
   useEffect(()=>{  
     obtenerCiclos();
@@ -138,7 +144,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         const value = e.target.value;
         if (texfiel === "idCiclo") {
             setIdCiclo(value);
-            console.log(value);
+           // console.log(value);
         }
         if (texfiel === "txtBusqueda") {
              setTxtBusqueda(value);
@@ -173,7 +179,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-        console.log('comisones : ', res);
+       // console.log('comisones : ', res);
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -197,7 +203,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         usuarioLogin:user,
         idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
        };
-       console.log('parame detalle  : ', data);
+      // console.log('parame detalle  : ', data);
        requestPost('Factura/ComisionesDetalleEmpresa',data,dispatch).then((res)=>{ 
        console.log('detalle  : ', res);
             if(res.code === 0){         
@@ -216,7 +222,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      }
 
     const buscarClientepornombre=(ev)=>{
-      console.log('enter');
+     // console.log('enter');
      // if(txtBusqueda === ""){
         ApiBuscarPorNombre(userName, idCiclo,txtBusqueda)
      // }
@@ -224,7 +230,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
   const selecionarDetalleFrelances=(idDetalleComision)=>{
-      console.log('selecionado iddetalle: ', idDetalleComision);
+     // console.log('selecionado iddetalle free: ', idDetalleComision);
      /*  const location = {
         pathname: '/facturacion/detalle/adjunto',
         state: {
@@ -233,18 +239,43 @@ const StyledBreadcrumb = withStyles((theme) => ({
           }
       } 
       history.push(location); */
+      setiIdComsionDetalleSelected(idDetalleComision);
       ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
   }
    const handleCloseConfirm=()=>{
-     setOpen(false);
+     console.log('fin select => iddetalleComision: ',idComsionDetalleSelected );
+     ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );
+    // setOpen(false);
    }
    const handleCloseCancel=()=>{
       setOpen(false);
    }
+   const ApiFacturarDetalleComision=(user,idcomisionDetalle,userId )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalle:parseInt(idcomisionDetalle),
+      usuarioId:userId
+     };
+    // console.log('parame detalle  : ', data);
+     requestPost('Factura/FacturarComisionDetalle',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR COMI DETALL  : ', res);
+          if(res.code === 0){         
+            setOpen(false);
+            if(idCiclo != 0){
+              obtenerComisiones(userName, idCiclo);
+            }
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
 
    useEffect(()=>{
-     console.log('ficha', Ficha);
-     console.log('lisdetalle :', listaDetalleEmpresa);
+     //console.log('ficha', Ficha);
+     //console.log('lisdetalle :', listaDetalleEmpresa);
    },[Ficha, listaDetalleEmpresa]);
 
     return (

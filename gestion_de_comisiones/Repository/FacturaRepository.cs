@@ -207,5 +207,40 @@ namespace gestion_de_comisiones.Repository
                 return obj;
             }
         }
+
+        public bool AcTualizarComisionDetalleEstado(ComisionDetalleInput comision, int estadoFacturado)
+        {
+            Logger.LogInformation($" usuario: {comision.usuarioLogin} -  inicio el AcTualizarComisionDetalleEstado() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objEstadoComisionDetalle = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == comision.idComisionDetalle).FirstOrDefault();
+
+                        if (objEstadoComisionDetalle != null)
+                        {
+                            objEstadoComisionDetalle.IdEstadoComisionDetalle = 2;
+                            context.SaveChanges();
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {comision.usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {comision.usuarioLogin} - RETURN!! no se encontro la comision detalle:  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
     }
 }

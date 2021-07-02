@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import {
-    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container
+    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container, Tooltip ,Zoom
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
@@ -45,6 +45,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import EditModal from "./EditModal";
+import MessageConfirm from "../../../../components/mesageModal/MessageConfirm";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -245,6 +246,18 @@ const DetalleAdjuntoModal = (props) => {
             }
           })    
      };
+     const [openModalSaveConfirmar,setOpenModalSaveConfirmar ] = useState(false);
+
+     const saveCondicional=()=>{
+      setOpenModalSaveConfirmar(true);
+     }
+     const closeModalConfirmGuardar=()=>{
+        setOpenModalSaveConfirmar(false);
+        handleCloseConfirm();
+     }
+     const closeModalCancelarGuardar=()=>{
+        setOpenModalSaveConfirmar(false);
+    }
 
     return (
         <Fragment>
@@ -257,7 +270,7 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    <Button autoFocus color="inherit" onClick={handleCloseConfirm}>
+                    <Button autoFocus color="inherit" onClick={saveCondicional}>
                       GUARDAR
                     </Button>
                 </Toolbar>
@@ -267,7 +280,7 @@ const DetalleAdjuntoModal = (props) => {
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
                            <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
-                        <Grid container item xs={12} md={6}  >
+                        <Grid container item xs={12} md={9}  >
                              <Grid  item xs={12}   >
                                     <Typography variant="h6" gutterBottom>
                                         {Ficha.nombreFicha}
@@ -326,12 +339,16 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right">{row.retencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
 
-                                            <TableCell align="center"> {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } </TableCell>  
+                                            <TableCell align="center"> 
+                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                             {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
+                                             </Tooltip>
+                                             </TableCell>  
                                             <TableCell align="center">
                                             <label >
                                               <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
                                                 <div className={classes.divCargar}>
-                                                {'CARGAR '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
+                                                {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
                                                 </div>                                                                                                                  
                                             </label>   
 
@@ -376,6 +393,7 @@ const DetalleAdjuntoModal = (props) => {
               nroAutorizacionSelected={nroAutorizacionSelected}
               
               />
+              <MessageConfirm open={openModalSaveConfirmar} titulo={'Confirmar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'esta seguro que desea procesar data'} handleCloseConfirm={closeModalConfirmGuardar} handleCloseCancel={closeModalCancelarGuardar}  />
         </Fragment>
     );
 
