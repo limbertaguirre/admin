@@ -65,7 +65,10 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision).ToList();
+                int idEstadoSinDefinir = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SIN_DEFINIR_CERO"));
+                int idEstadoNoFacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
+                int idEstadoSifacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.EstadoFacturoId == idEstadoNoFacturo || x.EstadoFacturoId == idEstadoSifacturo || x.EstadoFacturoId == idEstadoSinDefinir).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -97,7 +100,7 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerDetalleEmpresa()  idComisionDetalle: {idComisionDetalle} ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idComisionDetalle:{idComisionDetalle} ");
-               var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).Select(p => new VwObtenerComisionesDetalleEmpresaModel(p.IdComisionDetalleEmpresa, p.IdComisionDetalle, p.Empresa, p.Monto, p.MontoAFacturar, p.MontoTotalFacturar, p.RespaldoPath, p.NroAutorizacion, p.IdEmpresa, p.EstadoDetalleEmpresa) ).ToList();
+               var ListComisiones = contextMulti.VwObtenerComisionesDetalleEmpresas.Where(x => x.IdComisionDetalle== idComisionDetalle && x.EstadoDetalleEmpresa == true).Select(p => new VwObtenerComisionesDetalleEmpresaModel(p.IdComisionDetalleEmpresa, p.IdComisionDetalle, p.Empresa, p.Monto, p.MontoAFacturar, p.MontoTotalFacturar, p.RespaldoPath, p.NroAutorizacion, p.IdEmpresa, p.EstadoDetalleEmpresa, p.VentasPersonales, p.VentasGrupales,p.Residual, p.MontoNeto, p.SiFacturo) ).ToList();
                
                 return ListComisiones;
             }
@@ -202,6 +205,41 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuario} error catch obtenerEmpresas() mensaje : {ex}");
                 DetalleOutputModel obj = new DetalleOutputModel();
                 return obj;
+            }
+        }
+
+        public bool AcTualizarComisionDetalleEstado(ComisionDetalleInput comision, int estadoFacturado)
+        {
+            Logger.LogInformation($" usuario: {comision.usuarioLogin} -  inicio el AcTualizarComisionDetalleEstado() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objEstadoComisionDetalle = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == comision.idComisionDetalle).FirstOrDefault();
+
+                        if (objEstadoComisionDetalle != null)
+                        {
+                            objEstadoComisionDetalle.IdEstadoComisionDetalle = 2;
+                            context.SaveChanges();
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {comision.usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {comision.usuarioLogin} - RETURN!! no se encontro la comision detalle:  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
             }
         }
     }

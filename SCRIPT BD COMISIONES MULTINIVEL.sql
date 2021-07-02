@@ -656,6 +656,15 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION_DETALLE', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
+go
+
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(1, 'No facturo','no facturo la comision', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(2, 'Si facturo','estado facturado', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(3, 'Para forma de pago','estado  forma de pago', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(4, 'Para autorizar','previo para autorizar', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(5, 'Resagado','cuando no presenta factura o no tiene una forma de pago', 1 )
+
+go
 create table GP_COMISION_DETALLE
 (
     id_comision_detalle int not null primary key IDENTITY,
@@ -714,6 +723,12 @@ create table COMISION_DETALLE_EMPRESA
 	monto_total_facturar decimal(18,2),
 	id_comision_detalle int not null,
 	id_empresa int not null,
+	ventas_personales decimal(18,2) default 0 not null,
+	ventas_grupales decimal(18,2) default 0 not null,
+	residual decimal(18,2) default 0 not null,
+	retencion decimal(18,2) default 0 not null,
+	monto_neto decimal(18,2) default 0 not null,
+	si_facturo bit default 0 not null,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -1136,7 +1151,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-CREATE VIEW [dbo].[vwObtenercomisiones]
+create VIEW [dbo].[vwObtenercomisiones]
 AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
@@ -1150,7 +1165,8 @@ AS
 			GPDETA.monto_bruto AS 'montoBruto' ,
 		    case FIC.tiene_cuenta_bancaria when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
 			GPDETA.monto_neto AS 'montoNeto',
-			'False' As 'facturaDescuento',
+			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
+			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
 			GPCOMI.id_ciclo,
 			CI.nombre AS 'ciclo',
 			GPESTA.id_estado_comision
@@ -1160,6 +1176,8 @@ AS
 			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
 			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
 			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
+			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
 GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
@@ -1173,8 +1191,14 @@ AS
 		 ComiEmp.monto_total_facturar,
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
-		  Emp.id_empresa AS 'idEmpresa',
-		 ComiEmp.estado As 'estadoDetalleEmpresa'
+		 Emp.id_empresa AS 'idEmpresa',
+		 ComiEmp.estado As 'estadoDetalleEmpresa',
+		 ComiEmp.ventas_personales,
+		 ComiEmp.ventas_grupales,
+		 ComiEmp.residual,
+		 ComiEmp.retencion,
+		 ComiEmp.monto_neto,		 
+		 ComiEmp.si_facturo
      from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
 			inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA ComiEmp on ComiEmp.id_comision_detalle=GPDE.id_comision_detalle
 			inner join BDMultinivel.dbo.empresa Emp on Emp.id_empresa=ComiEmp.id_empresa

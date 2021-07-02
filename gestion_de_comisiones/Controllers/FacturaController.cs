@@ -115,6 +115,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/FacturarComisionDetalle
+        [HttpPost]
+        public ActionResult FacturarComisionDetalle([FromBody] ComisionDetalleInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller FacturarComisionDetalle() parametro: ");
+                var updateComisionDetalle = Service.ACtualizarComisionDetalleAFacturado(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller FacturarComisionDetalle()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  FacturarComisionDetalle() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al facturar el detalle comision" };
+                return Ok(Result);
+            }
+        }
 
     }
 }

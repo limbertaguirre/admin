@@ -15,6 +15,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object obtenerComisionDetalle(string usuario, int idComisionDetalle);
         public List<EmpresaOutput> obtenerEmpresas(string usuario);
         public DetalleOutputModel obtenerComisionDetalleEmpresa(string usuario, int idComisionDetalle);
+        public bool AcTualizarComisionDetalleEstado(ComisionDetalleInput comision, int estadoFacturado);
 
     }
 }

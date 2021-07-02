@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import {
-    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container
+    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container, Tooltip ,Zoom
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
@@ -44,7 +44,10 @@ import { green } from '@material-ui/core/colors';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import  imageFac from "../../../../../src/assets/img/logoFacturado.png";
+
 import EditModal from "./EditModal";
+import MessageConfirm from "../../../../components/mesageModal/MessageConfirm";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,6 +59,12 @@ const useStyles = makeStyles((theme) => ({
     containerPrincipal:{
       paddingLeft:theme.spacing(1),
       paddingRight:theme.spacing(1),
+      paddingTop:theme.spacing(4),
+      paddingBottom:theme.spacing(2),
+    },
+    containerGrid:{
+      paddingLeft:theme.spacing(6),
+      paddingRight:theme.spacing(6),
       paddingTop:theme.spacing(4),
       paddingBottom:theme.spacing(2),
     },
@@ -144,7 +153,7 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa } = props;
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
@@ -239,6 +248,18 @@ const DetalleAdjuntoModal = (props) => {
             }
           })    
      };
+     const [openModalSaveConfirmar,setOpenModalSaveConfirmar ] = useState(false);
+
+     const saveCondicional=()=>{
+      setOpenModalSaveConfirmar(true);
+     }
+     const closeModalConfirmGuardar=()=>{
+        setOpenModalSaveConfirmar(false);
+        handleCloseConfirm();
+     }
+     const closeModalCancelarGuardar=()=>{
+        setOpenModalSaveConfirmar(false);
+    }
 
     return (
         <Fragment>
@@ -251,17 +272,19 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    <Button autoFocus color="inherit" onClick={handleCloseConfirm}>
-                      GUARDAR
-                    </Button>
+                    {!estadoComisionGlobalFacturado? 
+                      <Button autoFocus color="inherit" onClick={saveCondicional}>
+                        GUARDAR
+                      </Button>
+                    :null}
                 </Toolbar>
             </AppBar>     
-               <Container maxWidth="md" className={classes.containerPrincipal} >                          
+               <Container maxWidth="sm" className={classes.containerPrincipal} >                          
                     <Grid  container item xs={12}  className={classes.gridContainer} >
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
                            <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
-                        <Grid container item xs={12} md={6}  >
+                        <Grid container item xs={12} md={4}  >
                              <Grid  item xs={12}   >
                                     <Typography variant="h6" gutterBottom>
                                         {Ficha.nombreFicha}
@@ -285,8 +308,15 @@ const DetalleAdjuntoModal = (props) => {
                                 </Button>   
                             </Grid>
                         </Grid>
+                        <Grid container item xs={12} md={5} >
+                          {estadoComisionGlobalFacturado&&
+                            <img src={imageFac} alt={'sion'} style={{width:'100%'}} />
+                          }
+                        </Grid>
                         <br />
-                         
+                        </Grid>
+                    </Container>   
+                    <Container maxWidth="xl" className={classes.containerGrid} >
                         <Grid  container item xs={12}  >
 
                                 <TableContainer component={Paper}>
@@ -295,7 +325,12 @@ const DetalleAdjuntoModal = (props) => {
                                         <TableRow>
                                           
                                             <TableCell align="center"><b>EMPRESAS</b></TableCell>
+                                            <TableCell align="center"><b>VENTAS PERSONALES</b></TableCell>
+                                            <TableCell align="center"><b>VENTAS GRUPALES</b></TableCell>
+                                            <TableCell align="center"><b>RESIDUAL</b></TableCell>
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
+                                            <TableCell align="center"><b>RETENCIÓN</b></TableCell>
+                                            <TableCell align="center"><b>NETO (USD)</b></TableCell>
                                             <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                            
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
@@ -303,23 +338,36 @@ const DetalleAdjuntoModal = (props) => {
                                         <TableBody>
                                         {listaDetalleEmpresa.map((row, index) => (
                                             <TableRow key={index }>
-                                            <TableCell align="center"scope="row"> {row.empresa} </TableCell>                                                                                      
+                                            <TableCell align="center"scope="row"> {row.empresa} </TableCell>
+                                            <TableCell align="right">{row.ventasPersonales.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                                            <TableCell align="right">{row.ventasGrupales.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                                            <TableCell align="right">{row.residual.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                                            
                                             <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            <TableCell align="center"> {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } </TableCell>  
+
+                                            <TableCell align="right">{row.retencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+
+                                            <TableCell align="center"> 
+                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                             {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
+                                             </Tooltip>
+                                             </TableCell>  
                                             <TableCell align="center">
                                             <label >
                                               <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
                                                 <div className={classes.divCargar}>
-                                                {'CARGAR '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
+                                                {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
                                                 </div>                                                                                                                  
-                                            </label>                                                      
-                                                <IconButton aria-label="delete" className={classes.margin} onClick={()=> abrirModalEdit(`${row.idComisionDetalleEmpresa}`)} >
-                                                  <EditIcon fontSize="inherit" />
-                                                </IconButton>
+                                            </label>   
 
-                                                <IconButton aria-label="delete" className={classes.margin} onClick={()=> openDeleteModal(`${row.idComisionDetalleEmpresa}`)} >
+                                               {/* <IconButton aria-label="delete" className={classes.margin} onClick={()=> abrirModalEdit(`${row.idComisionDetalleEmpresa}`)} >
+                                                  <EditIcon fontSize="inherit" />
+                                                </IconButton> */}
+
+                                                {/* <IconButton aria-label="delete" className={classes.margin} onClick={()=> openDeleteModal(`${row.idComisionDetalleEmpresa}`)} >
                                                   <DeleteIcon fontSize="inherit" />
-                                                </IconButton>
+                                                </IconButton> */}
 
                                             </TableCell>   
                                             </TableRow>
@@ -338,9 +386,9 @@ const DetalleAdjuntoModal = (props) => {
                                     />
                         </Grid>
 
-                        
-                    </Grid>
-                </Container>   
+                      </Container>       
+                   
+                  
             </Dialog> 
              <EditModal 
               open={openModalEdit} 
@@ -354,6 +402,7 @@ const DetalleAdjuntoModal = (props) => {
               nroAutorizacionSelected={nroAutorizacionSelected}
               
               />
+              <MessageConfirm open={openModalSaveConfirmar} titulo={'Confirmar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'esta seguro que desea procesar data'} handleCloseConfirm={closeModalConfirmGuardar} handleCloseCancel={closeModalCancelarGuardar}  />
         </Fragment>
     );
 
