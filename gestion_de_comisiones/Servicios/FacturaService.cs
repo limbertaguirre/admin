@@ -117,6 +117,27 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al actualizar una comision detalle a facturado", "");
             }
         }
+        public object ActualizarDetalleEmpresaEstado(UpdateDetalleEmpresaInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio ActualizarDetalleEmpresaEstado() ");                
+                var comsiones = Repository.ActualizarEstadoFacturarEmpresa(detalle.usuarioLogin, detalle.usuarioId, detalle.idComisionDetalle, detalle.idComisionDetalleEmpresa, detalle.estadoDetalleEmpresa);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                } else {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA ACTUALIZACION, NO SE ACTUALIZO  el estado comision detalle empresa");
+                    return Respuesta.ReturnResultdo(1, "problemas al actualizar el estado comision del detalle empresa", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch ActualizarDetalleEmpresaEstado() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el estado  comision detalle empresa a facturado", "");
+            }
+        }
+
 
 
     }

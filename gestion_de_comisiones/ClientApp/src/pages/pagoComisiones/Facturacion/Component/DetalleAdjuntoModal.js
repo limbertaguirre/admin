@@ -44,7 +44,9 @@ import { green } from '@material-ui/core/colors';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import  imageFac from "../../../../../src/assets/img/logoFacturado.png";
+import DoneIcon from '@material-ui/icons/Done';
+
+import  imageFac from "../../../../../src/assets/img/facturado2.png";
 
 import EditModal from "./EditModal";
 import MessageConfirm from "../../../../components/mesageModal/MessageConfirm";
@@ -153,7 +155,7 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado } = props;
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
@@ -199,6 +201,12 @@ const DetalleAdjuntoModal = (props) => {
      const [nroAutorizacionSelected, setNroAutorizacionSelected ]= useState("");
      const [montoFacturarSelected, setMontoFacturarSelected ]= useState(0);
      const [montoTotalFacturarSelected, setMontoTotalFacturarSelected ]= useState(0);
+
+     const [idComiDetallEmpreSelected, setIdComiDetallEmpreSelected]= useState(0);
+     const [siFacturoSelected, setSiFacturoSelected]= useState(false);
+
+
+     const [openModalCancel, setOpenModalCancel]= useState(false);
 
      const abrirModalEdit=(idDetalleEmpresa)=>{
        ApiObtenerDetalleEmpresa(userName,idDetalleEmpresa );       
@@ -261,6 +269,24 @@ const DetalleAdjuntoModal = (props) => {
         setOpenModalSaveConfirmar(false);
     }
 
+    const cancelarFacturaEmpresa=(idComisionDetalleEmpresa, siFacturo)=>{
+
+      setOpenModalCancel(true);
+      setIdComiDetallEmpreSelected(idComisionDetalleEmpresa);
+      setSiFacturoSelected(siFacturo);
+    }
+    const confirmCheckCancelModal =()=>{
+      
+      setOpenModalCancel(false);
+      //ejecutar la funcion 
+      desCheckdComisionDetalleEmpresa(idComiDetallEmpreSelected, !siFacturoSelected );
+
+    }
+    const closeCheckCancelModal=()=>{
+        setOpenModalCancel(false);
+    }
+
+
     return (
         <Fragment>
             <Dialog   fullScreen open={open}   TransitionComponent={Transition}  >
@@ -274,7 +300,7 @@ const DetalleAdjuntoModal = (props) => {
                     </Typography>
                     {!estadoComisionGlobalFacturado? 
                       <Button autoFocus color="inherit" onClick={saveCondicional}>
-                        GUARDAR
+                         PROCESAR FACTURA
                       </Button>
                     :null}
                 </Toolbar>
@@ -331,7 +357,10 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
                                             <TableCell align="center"><b>RETENCIÓN</b></TableCell>
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                            
+                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell> 
+                                              
+                                            <TableCell align="center"><b>FACTURO</b></TableCell>  
+                                                                              
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
                                         </TableHead>
@@ -353,13 +382,34 @@ const DetalleAdjuntoModal = (props) => {
                                              {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
                                              </Tooltip>
                                              </TableCell>  
+                                            
+                                            
+                                             <TableCell align="center"> 
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                                  {row.siFacturo? 
+                                                    <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
+                                                     <CheckBoxIcon style={{ color: green[500] }} />
+                                                    </IconButton>
+                                                  : 
+                                                    <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> checkdComisionDetalleEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
+                                                     <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
+                                                    </IconButton>
+                                                    } 
+                                                </Tooltip>
+                                             </TableCell>  
+                                            
                                             <TableCell align="center">
-                                            <label >
-                                              <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
-                                                <div className={classes.divCargar}>
-                                                {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
-                                                </div>                                                                                                                  
-                                            </label>   
+                                              {!estadoComisionGlobalFacturado&&
+                                                 <>
+                                                  <label >
+                                                    <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
+                                                      <div className={classes.divCargar}>
+                                                      {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
+                                                      </div>                                                                                                                  
+                                                  </label>  
+                                                
+                                                  </> 
+                                              }
 
                                                {/* <IconButton aria-label="delete" className={classes.margin} onClick={()=> abrirModalEdit(`${row.idComisionDetalleEmpresa}`)} >
                                                   <EditIcon fontSize="inherit" />
@@ -403,6 +453,8 @@ const DetalleAdjuntoModal = (props) => {
               
               />
               <MessageConfirm open={openModalSaveConfirmar} titulo={'Confirmar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'esta seguro que desea procesar data'} handleCloseConfirm={closeModalConfirmGuardar} handleCloseCancel={closeModalCancelarGuardar}  />
+              <MessageConfirm open={openModalCancel} titulo={'Cancelar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'desea Cancelar la factura empresa'} handleCloseConfirm={confirmCheckCancelModal} handleCloseCancel={closeCheckCancelModal}  />
+
         </Fragment>
     );
 

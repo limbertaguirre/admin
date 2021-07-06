@@ -218,11 +218,29 @@ namespace gestion_de_comisiones.Repository
                     try
                     {
                         var objEstadoComisionDetalle = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == comision.idComisionDetalle).FirstOrDefault();
-
                         if (objEstadoComisionDetalle != null)
                         {
                             objEstadoComisionDetalle.IdEstadoComisionDetalle = 2;
                             context.SaveChanges();
+
+                            var detallesComisiones = context.ComisionDetalleEmpresas.Where(x => x.Estado == true && x.IdComisionDetalle == comision.idComisionDetalle).ToList();
+                            if(detallesComisiones.Count > 0)
+                            {
+                                foreach(var item in detallesComisiones)
+                                {
+                                    var comisionEmpresa = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == item.IdComisionDetalleEmpresa).First();
+                                    if(comisionEmpresa != null)
+                                    {
+                                        if (comisionEmpresa.SiFacturo == false)
+                                        {
+                                            comisionEmpresa.SiFacturo = true;
+                                            comisionEmpresa.IdUsuario = comision.usuarioId;
+                                            comisionEmpresa.FechaActualizacion = DateTime.Now;
+                                            context.SaveChanges();
+                                        }
+                                    }
+                                }
+                            }
                             dbcontextTransaction.Commit();
                             Logger.LogInformation($" usuario: {comision.usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
                             return true;
@@ -242,5 +260,54 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
+
+        public bool ActualizarEstadoFacturarEmpresa( string usuarioLogin, int usuarioId, int idComisionDetalle, int idComisionDetalleEmpresa, bool estadoDetalleEmpresa)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el ActualizarEstadoFacturarEmpresa() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objEstadoComisionDetalle = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalleEmpresa).First();
+                        if (objEstadoComisionDetalle != null)
+                        {
+                            objEstadoComisionDetalle.SiFacturo = estadoDetalleEmpresa;
+                            objEstadoComisionDetalle.FechaActualizacion = DateTime.Now;
+                            context.SaveChanges();
+                            if(estadoDetalleEmpresa == false)
+                            {
+                                var comision = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
+                                if(comision != null)
+                                {
+                                    comision.IdEstadoComisionDetalle= int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
+                                    comision.FechaActualizacion = DateTime.Now;
+                                    comision.IdUsuario = usuarioId;
+                                    context.SaveChanges();
+                                }
+                            }
+                          
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalleEmpresa}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+
     }
 }
