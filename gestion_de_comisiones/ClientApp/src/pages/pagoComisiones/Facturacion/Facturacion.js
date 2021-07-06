@@ -166,7 +166,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     function handleClick(event) {
         event.preventDefault();
-        console.info('You clicked a breadcrumb.');
+      //  console.info('You clicked a breadcrumb.');
     }
 
     const closeSnackbar= (event, reason) => {
@@ -279,12 +279,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
    useEffect(()=>{
      //console.log('ficha', Ficha);
      //console.log('lisdetalle :', listaDetalleEmpresa);
-     console.log('global estado comision :', estadoComisionGlobalFacturado)
+   //  console.log('global estado comision :', estadoComisionGlobalFacturado)
    },[Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado]);
 
    const checkdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
-    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-     console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+     //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+     //console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
 
      const data={
       usuarioLogin:userName,
@@ -293,14 +293,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:(isFacturo === "false"),
       usuarioId:idUsuario
      };
-     console.log('parame estad detalle  : ', data);
+     //console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR estado : ', res);
+    // console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
-              if(isFacturo == false){
-                setEstadoComisionGlobalFacturado(false);
-              }              
+              
+              setEstadoComisionGlobalFacturado(false);            
               obtenerComisiones(userName, idCiclo);
               ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
            }    
@@ -317,8 +316,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
    
    const desCheckdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
     //llamar api y listar empresas devuelta..
-    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-    console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+    //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+   // console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
     ApiCambiarEstadoComisionDetalleEmpresa(userName, idComsionDetalleSelected, idComisionDetalleEmpresa, isFacturo, idUsuario );
 
    }
@@ -330,9 +329,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:pestadoDetalle,
       usuarioId:userId
      };
-     console.log('parame estad detalle  : ', data);
+    // console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR estado : ', res);
+     //console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
               if(pestadoDetalle == false){
@@ -349,6 +348,34 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
         })    
    };
+    
+   const procesarPdf =(idComisionDetalleEmpresa, base64pdf )=>{
+    //console.log('antes de id :', idComisionDetalleEmpresa);
+    //console.log(' entes pdf : ' ,base64pdf );
+    ApiSubirPdf(userName,idComisionDetalleEmpresa,base64pdf, idUsuario );
+   }
+
+   const ApiSubirPdf=(user, PidComisionDetalleEmpresa,archivoPdf ,userId )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalleEmpresa:parseInt(PidComisionDetalleEmpresa),
+      archivoPdf:archivoPdf,
+      usuarioId:userId
+     };
+    // console.log('parame estad detalle  : ', data);
+     requestPost('Factura/SubirArchivoFacturaPdfEmpresa',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR estado : ', res);
+          if(res.code === 0){     
+              if(idCiclo != 0){              
+                ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
+              }               
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
 
 
     return (
@@ -457,7 +484,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} />
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} />
       </>
     );
 

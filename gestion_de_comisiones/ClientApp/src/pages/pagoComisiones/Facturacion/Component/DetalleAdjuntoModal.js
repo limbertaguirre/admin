@@ -155,7 +155,7 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa } = props;
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
@@ -180,13 +180,14 @@ const DetalleAdjuntoModal = (props) => {
 
       }
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        console.log('iddetalleEMpresa :', idDetalleEmpresa);
+       // console.log('iddetalleEMpresa :', idDetalleEmpresa);
         var file = e.target.files[0];
         const reader = new FileReader();
         var url = reader.readAsDataURL(file);
-        console.log(URL.createObjectURL(file));
+        //console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
-          console.log('selecciondo file:', reader.result);
+         // console.log('selecciondo file:', reader.result);
+          procesarPdf(idDetalleEmpresa,reader.result);
          // setAvatar(reader.result);
         //  setNuevoAvatar(true);
         }.bind(this);
@@ -402,7 +403,7 @@ const DetalleAdjuntoModal = (props) => {
                                               {!estadoComisionGlobalFacturado&&
                                                  <>
                                                   <label >
-                                                    <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
+                                                    <input style={{display: 'none' ,}} type="file" accept=".pdf" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
                                                       <div className={classes.divCargar}>
                                                       {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
                                                       </div>                                                                                                                  

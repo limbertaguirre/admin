@@ -151,6 +151,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/SubirArchivoFacturaPdfEmpresa
+        [HttpPost]
+        public ActionResult SubirArchivoFacturaPdfEmpresa([FromBody] SubirArchivoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller SubirArchivoFacturaPdfEmpresa() parametro: ");
+                var updateComisionDetalle = Service.subirArchivoPdf(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller SubirArchivoFacturaPdfEmpresa()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  SubirArchivoFacturaPdfEmpresa() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
 
 
     }

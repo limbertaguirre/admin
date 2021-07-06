@@ -15,6 +15,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object obtenerDetalleMasEmpresas(string usuario, int idComisionDetalleEmpresa);
         public object ACtualizarComisionDetalleAFacturado(ComisionDetalleInput comisionDetalle);
         public object ActualizarDetalleEmpresaEstado(UpdateDetalleEmpresaInput detalle);
+        public object subirArchivoPdf(SubirArchivoInput detalle);
 
     }
 }

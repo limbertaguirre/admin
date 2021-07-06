@@ -137,6 +137,28 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al actualizar el estado  comision detalle empresa a facturado", "");
             }
         }
+        public object subirArchivoPdf(SubirArchivoInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio subirArchivoPdf() iddetalleEmpresa: {detalle.idComisionDetalleEmpresa } ");
+                var comsiones = Repository.SubirArchivo(detalle.usuarioLogin, detalle.usuarioId , detalle.idComisionDetalleEmpresa, detalle.archivopdf);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA subirArchivoPdf");
+                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch subirArchivoPdf() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el archivo pdf", "");
+            }
+        }
 
 
 
