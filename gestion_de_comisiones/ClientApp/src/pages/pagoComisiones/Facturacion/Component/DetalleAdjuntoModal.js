@@ -299,11 +299,11 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    {!estadoComisionGlobalFacturado? 
+                    {/* {!estadoComisionGlobalFacturado? 
                       <Button autoFocus color="inherit" onClick={saveCondicional}>
                          PROCESAR FACTURA
                       </Button>
-                    :null}
+                    :null} */}
                 </Toolbar>
             </AppBar>     
                <Container maxWidth="sm" className={classes.containerPrincipal} >                          

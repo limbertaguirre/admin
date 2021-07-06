@@ -1151,7 +1151,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-create VIEW [dbo].[vwObtenercomisiones]
+CREATE VIEW [dbo].[vwObtenercomisiones]
 AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
@@ -1163,7 +1163,7 @@ AS
 			FIC.id_banco,
 			BA.nombre AS 'nombreBanco',
 			GPDETA.monto_bruto AS 'montoBruto' ,
-		    case FIC.tiene_cuenta_bancaria when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
 			GPDETA.monto_neto AS 'montoNeto',
 			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
 			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',

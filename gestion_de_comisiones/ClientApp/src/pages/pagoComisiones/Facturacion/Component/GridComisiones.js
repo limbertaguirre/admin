@@ -74,7 +74,7 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="center"><b>Factura</b></TableCell>
                             <TableCell align="center"><b>Facturo (15%)</b></TableCell>
                             <TableCell align="center"><b>Monto Total Neto</b></TableCell>
-                            <TableCell align="right"> Adjuntos  </TableCell>
+                            <TableCell align="right">    </TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -94,19 +94,21 @@ import Paper from '@material-ui/core/Paper';
                             </TableCell>  
                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
-                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>
-                                        <Button
-                                        type="submit"
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        alt={row.estadoDetalleFacturaNombre}
-                                        className={style.submitDetalle}
-                                        onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`, `${row.estadoFacturoId}`)}                                         
-                                        >
+                                   {row.factura == "True"&& 
+                                        <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>
+                                            <Button
+                                            type="submit"
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            alt={row.estadoDetalleFacturaNombre}
+                                            className={style.submitDetalle}
+                                            onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`, `${row.estadoFacturoId}`)}                                         
+                                            >
                                             Detalle
-                                        </Button>  
-                                     </Tooltip> 
+                                            </Button>  
+                                        </Tooltip> 
+                                    }
                             </TableCell>   
                             </TableRow>
                         ))}
