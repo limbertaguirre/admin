@@ -133,6 +133,25 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/ActualizarDetalleEmpresaEstado
+        [HttpPost]
+        public ActionResult ActualizarDetalleEmpresaEstado([FromBody] UpdateDetalleEmpresaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ActualizarDetalleEmpresaEstado() parametro: ");
+                var updateComisionDetalle = Service.ActualizarDetalleEmpresaEstado(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ActualizarDetalleEmpresaEstado()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ActualizarDetalleEmpresaEstado() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
+
 
     }
 }

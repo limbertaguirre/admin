@@ -282,6 +282,75 @@ const StyledBreadcrumb = withStyles((theme) => ({
      console.log('global estado comision :', estadoComisionGlobalFacturado)
    },[Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado]);
 
+   const checkdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
+    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+     console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+
+     const data={
+      usuarioLogin:userName,
+      idComisionDetalle:parseInt(idComsionDetalleSelected),
+      idComisionDetalleEmpresa:parseInt(idComisionDetalleEmpresa),
+      estadoDetalleEmpresa:(isFacturo === "false"),
+      usuarioId:idUsuario
+     };
+     console.log('parame estad detalle  : ', data);
+     requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR estado : ', res);
+          if(res.code === 0){     
+            if(idCiclo != 0){
+              if(isFacturo == false){
+                setEstadoComisionGlobalFacturado(false);
+              }              
+              obtenerComisiones(userName, idCiclo);
+              ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
+           }    
+           
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+
+
+   }
+   
+   const desCheckdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
+    //llamar api y listar empresas devuelta..
+    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+    console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+    ApiCambiarEstadoComisionDetalleEmpresa(userName, idComsionDetalleSelected, idComisionDetalleEmpresa, isFacturo, idUsuario );
+
+   }
+   const ApiCambiarEstadoComisionDetalleEmpresa=(user,pidcomisionDetalle, PidComisionDetalleEmpresa, pestadoDetalle,userId )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalle:parseInt(pidcomisionDetalle),
+      idComisionDetalleEmpresa:parseInt(PidComisionDetalleEmpresa),
+      estadoDetalleEmpresa:pestadoDetalle,
+      usuarioId:userId
+     };
+     console.log('parame estad detalle  : ', data);
+     requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR estado : ', res);
+          if(res.code === 0){     
+            if(idCiclo != 0){
+              if(pestadoDetalle == false){
+                setEstadoComisionGlobalFacturado(false);
+              }              
+              obtenerComisiones(userName, idCiclo);
+              ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
+           }    
+           
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
+
     return (
       <>      
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
@@ -388,7 +457,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} />
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} />
       </>
     );
 
