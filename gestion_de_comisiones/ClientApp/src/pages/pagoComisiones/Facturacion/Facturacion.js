@@ -113,6 +113,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
+  const[idCicloSelected, setIdCicloSelected]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
@@ -154,6 +155,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     const cargarComisiones=()=>{
       if(idCiclo != 0){
+         setIdCicloSelected(idCiclo);
          obtenerComisiones(userName, idCiclo);
       }else{
         setOpenSnackbar(true);
@@ -219,7 +221,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      }
      const [openModalConfiCerrarFactura,setOpenModalConfiCerrarFactura]= useState(false);
      const CerrarFactura=()=>{
-        if(idCiclo != 0){            
+        if(idCicloSelected != 0){            
           setOpenModalConfiCerrarFactura(true); 
         }else{
             setOpenSnackbar(true);
