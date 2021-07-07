@@ -388,11 +388,11 @@ namespace gestion_de_comisiones.Repository
                         {
                             if (estadoFacturado == true)
                             {
-                                objComisionDetalleEstado.IdEstadoComisionDetalle = 2;
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));//2
                             }
                             else
                             {
-                                objComisionDetalleEstado.IdEstadoComisionDetalle = 1;
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA")); // 1
                             }
                             context.SaveChanges();
                             Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoFacturado}");
@@ -431,6 +431,41 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
+
+        public bool CerrarFactura(string usuarioLogin, int usuarioId, int idCiclo)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el CerrarFactura() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
+                        //if (objComisionDetalleEstado != null)
+                        //{
+                           
+                           // dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        //}
+                        //else
+                        //{
+                        //    Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
+                        //    dbcontextTransaction.Rollback();
+                        //    return false;
+                        //}
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogInformation($" usuario: {usuarioLogin} -  error catch repository mensaje: {ex.Message}");
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
 
     }
 }

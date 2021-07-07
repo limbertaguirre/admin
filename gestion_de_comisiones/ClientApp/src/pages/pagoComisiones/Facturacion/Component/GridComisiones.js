@@ -65,33 +65,31 @@ import Paper from '@material-ui/core/Paper';
                     <Table className={style.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
-                            <TableCell align="center"><b>Nro</b></TableCell>
-                            <TableCell align="right"><b>Nombre completo</b></TableCell>
-                            <TableCell align="right"><b>Cedula identidad</b></TableCell>
-                            <TableCell align="right"><b>Nro Cuenta</b></TableCell>
-                            <TableCell align="right"><b>Banco</b></TableCell>
-                            <TableCell align="center"><b>Monto Total Bruto</b></TableCell>
-                            <TableCell align="center"><b>Factura</b></TableCell>
-                            <TableCell align="center"><b>Facturo (15%)</b></TableCell>
-                            <TableCell align="center"><b>Monto Total Neto</b></TableCell> 
-                            <TableCell align="center"><b>Monto Retencion</b></TableCell> 
+                            <TableCell align="center"><b>NRO</b></TableCell>
+                            <TableCell align="right"><b>NOMBRE COMPLETO</b></TableCell>
+                            <TableCell align="right"><b>CEDULA IDENTIDAD</b></TableCell>
+                            <TableCell align="right"><b>NRO CUENTA</b></TableCell>
+                            <TableCell align="right"><b>BANCO</b></TableCell>
+                            <TableCell align="center"><b>MONTO TOTAL BRUTO</b></TableCell>
+                            <TableCell align="center"><b>FACTURA</b></TableCell>
+                            <TableCell align="center"><b>FACTURADO (15%)</b></TableCell>
+                            <TableCell align="center"><b>MONTO TOTAL NETO</b></TableCell> 
+                            <TableCell align="center"><b>MONTO RETENCION</b></TableCell> 
                             <TableCell align="right">    </TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
                         {listaComisionesPendientes.map((row, index) => (
-                            <TableRow key={index }>
-                            <TableCell align="center"scope="row"> {index} </TableCell>
+                            <TableRow key={index + 1 }>
+                            <TableCell align="center"scope="row"> {index +1} </TableCell>
                             <TableCell align="center">{row.nombre}</TableCell>
                             <TableCell align="right">{row.ci}</TableCell>
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
                             <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
-                            <TableCell align="center"> 
-                                    
-                                     {row.estadoFacturoId == 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }  
-                                   
+                            <TableCell align="center">                                     
+                                     {row.estadoFacturoId == 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }                                     
                             </TableCell>  
                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell> 
                             <TableCell align="right">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
@@ -128,7 +126,7 @@ import Paper from '@material-ui/core/Paper';
                     />
                </Grid>
                :<Card className={style.cardVacio}>                    
-                  <ErrorIcon /> {' '} {' No hay qué mostrar, selecione y cargue un ciclo'}
+                  <ErrorIcon style={{marginRight:'5px'}} />  {' No hay qué mostrar, selecione y cargue un ciclo'}
                </Card> 
             }
       </>

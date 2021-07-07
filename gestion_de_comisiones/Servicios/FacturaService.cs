@@ -182,6 +182,29 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al actualizar el archivo pdf", "");
             }
         }
+        public object CerrarFactura(CerrarFacturaInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio CerrarFactura()  ");
+                var comsiones = Repository.CerrarFactura(detalle.usuarioLogin, detalle.usuarioId, detalle.idCiclo );
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE al CerrarFactura()");
+                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch CerrarFactura() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al cerrar la factura", "");
+            }
+        }
+
 
 
 

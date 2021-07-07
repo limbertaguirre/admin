@@ -370,8 +370,8 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
                                             <TableCell align="center"><b>RETENCIÓN</b></TableCell>
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                               
-                                            <TableCell align="right"><b>FACTURO</b>{' '}
+                                            <TableCell align="center" ><b>ARCHIVO</b><PictureAsPdfIcon /><br /><br /><br />   </TableCell>                                          
+                                            <TableCell align="center"><b>FACTURADO</b><br />
                                               {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
                                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
                                                       {estadoComisionGlobalFacturado? 
@@ -421,7 +421,7 @@ const DetalleAdjuntoModal = (props) => {
                                              </TableCell>  
                                             
                                             
-                                             <TableCell align="right"> 
+                                             <TableCell align="center"> 
                                                {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
                                                 <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
                                                   {row.siFacturo? 

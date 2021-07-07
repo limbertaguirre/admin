@@ -17,7 +17,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ActualizarDetalleEmpresaEstado(UpdateDetalleEmpresaInput detalle);
         public object subirArchivoPdf(SubirArchivoInput detalle);
         public object AplicarFacturadoTodo(FacturadoTodoInput detalle);
-
+        public object CerrarFactura(CerrarFacturaInput detalle);
 
     }
 }

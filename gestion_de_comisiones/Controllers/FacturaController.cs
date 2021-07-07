@@ -4,6 +4,7 @@ using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -184,6 +185,25 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogError($"usuario : {param.usuarioLogin} error catch  AplicarFacturaTodoEstado() controller ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/CerrarFactura
+        [HttpPost]
+        public ActionResult CerrarFactura([FromBody] CerrarFacturaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarFactura() parametro: {JsonConvert.SerializeObject(param)}");
+               var updateComisionDetalle = Service.CerrarFactura(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller CerrarFactura()  ");
+                var Result = new GenericDataJson<string> { Code = 0, Message = "Se cerró la factura con éxito" };
+                return Ok(Result);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch controller  CerrarFactura() controller mensaje:{ex.Message} ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error  al cerrar factura" };
                 return Ok(Result);
             }
         }

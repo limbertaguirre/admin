@@ -18,6 +18,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import GridComisiones from './Component/GridComisiones';
 import DetalleAdjuntoModal from './Component/DetalleAdjuntoModal';
+import MessageConfirm from "../../../components/mesageModal/MessageConfirm";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -216,9 +217,27 @@ const StyledBreadcrumb = withStyles((theme) => ({
      const guardarFactura=()=>{
 
      }
+     const [openModalConfiCerrarFactura,setOpenModalConfiCerrarFactura]= useState(false);
      const CerrarFactura=()=>{
-       
+        if(idCiclo != 0){            
+          setOpenModalConfiCerrarFactura(true); 
+        }else{
+            setOpenSnackbar(true);
+            setMensajeSnackbar('¡Debe tener Seleccionado el ciclo para su cierre!');
+            settipTSnackbar('warning');
+        }      
      }
+     const cerrarModalCierre =()=>{
+      setOpenModalConfiCerrarFactura(false);
+     }
+
+     const condirmarCierreFacturar=()=>{
+      setOpenModalConfiCerrarFactura(false);
+      ApiCerrarFactura(userName,idUsuario, idCiclo)
+       
+     
+     }
+
 
     const buscarClientepornombre=(ev)=>{
      // console.log('enter');
@@ -398,6 +417,23 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
         })    
    };
+   const ApiCerrarFactura=(user,userId, cicloId )=>{
+    const data={
+      usuarioLogin:user,
+      idCiclo:cicloId,
+      usuarioId:userId
+     };
+     requestPost('Factura/CerrarFactura',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR COMI DETALL  : ', res);
+          if(res.code === 0){                    
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "success" }));
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
 
 
 
@@ -503,6 +539,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
             <DetalleAdjuntoModal namePage={namePage} open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
+            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACION'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ENERO 2021?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
       </Container>    
       </>
     );
