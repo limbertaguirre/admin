@@ -1,10 +1,9 @@
 import React, {useEffect, useState}  from 'react';
-import BorderWrapper from 'react-border-wrapper'
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import * as ActionMesaje from "../../../redux/actions/messageAction";
@@ -19,6 +18,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import GridComisiones from './Component/GridComisiones';
 import DetalleAdjuntoModal from './Component/DetalleAdjuntoModal';
+import MessageConfirm from "../../../components/mesageModal/MessageConfirm";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -113,6 +113,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
+  const[idCicloSelected, setIdCicloSelected]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const [txtBusqueda, setTxtBusqueda] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
@@ -146,7 +147,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
         const value = e.target.value;
         if (texfiel === "idCiclo") {
             setIdCiclo(value);
-           // console.log(value);
         }
         if (texfiel === "txtBusqueda") {
              setTxtBusqueda(value);
@@ -155,6 +155,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     const cargarComisiones=()=>{
       if(idCiclo != 0){
+         setIdCicloSelected(idCiclo);
          obtenerComisiones(userName, idCiclo);
       }else{
         setOpenSnackbar(true);
@@ -166,7 +167,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     function handleClick(event) {
         event.preventDefault();
-        console.info('You clicked a breadcrumb.');
     }
 
     const closeSnackbar= (event, reason) => {
@@ -181,7 +181,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-       // console.log('comisones : ', res);
+        console.log('comisones : ', res);
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -219,9 +219,27 @@ const StyledBreadcrumb = withStyles((theme) => ({
      const guardarFactura=()=>{
 
      }
+     const [openModalConfiCerrarFactura,setOpenModalConfiCerrarFactura]= useState(false);
      const CerrarFactura=()=>{
-       
+        if(idCicloSelected != 0){            
+          setOpenModalConfiCerrarFactura(true); 
+        }else{
+            setOpenSnackbar(true);
+            setMensajeSnackbar('¡Debe tener Seleccionado el ciclo para su cierre!');
+            settipTSnackbar('warning');
+        }      
      }
+     const cerrarModalCierre =()=>{
+      setOpenModalConfiCerrarFactura(false);
+     }
+
+     const condirmarCierreFacturar=()=>{
+      setOpenModalConfiCerrarFactura(false);
+      ApiCerrarFactura(userName,idUsuario, idCiclo)
+       
+     
+     }
+
 
     const buscarClientepornombre=(ev)=>{
      // console.log('enter');
@@ -232,23 +250,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
   const selecionarDetalleFrelances=(idDetalleComision, estadoFacturado)=>{
-     // console.log('selecionado iddetalle free: ', idDetalleComision);
-     /*  const location = {
-        pathname: '/facturacion/detalle/adjunto',
-        state: {
-            namePagina: namePage,
-            idDetalleComision: idDetalleComision
-          }
-      } 
-      history.push(location); */
       setEstadoComisionGlobalFacturado(estadoFacturado== 2? true: false);//1 => pendiente, 2 facturado=>, 0 no tiene estadoo no se actualizo
       setiIdComsionDetalleSelected(idDetalleComision);
       ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
   }
    const handleCloseConfirm=()=>{
      console.log('fin select => iddetalleComision: ',idComsionDetalleSelected );
-     ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );
-    // setOpen(false);
+     ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );   
    }
    const handleCloseCancel=()=>{
       setOpen(false);
@@ -279,12 +287,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
    useEffect(()=>{
      //console.log('ficha', Ficha);
      //console.log('lisdetalle :', listaDetalleEmpresa);
-     console.log('global estado comision :', estadoComisionGlobalFacturado)
+   //  console.log('global estado comision :', estadoComisionGlobalFacturado)
    },[Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado]);
 
    const checkdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
-    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-     console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+     //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+     //console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
 
      const data={
       usuarioLogin:userName,
@@ -293,14 +301,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:(isFacturo === "false"),
       usuarioId:idUsuario
      };
-     console.log('parame estad detalle  : ', data);
+     //console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR estado : ', res);
+    // console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
-              if(isFacturo == false){
-                setEstadoComisionGlobalFacturado(false);
-              }              
+              
+              setEstadoComisionGlobalFacturado(false);            
               obtenerComisiones(userName, idCiclo);
               ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
            }    
@@ -317,8 +324,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
    
    const desCheckdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
     //llamar api y listar empresas devuelta..
-    console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-    console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
+    //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
+   // console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
     ApiCambiarEstadoComisionDetalleEmpresa(userName, idComsionDetalleSelected, idComisionDetalleEmpresa, isFacturo, idUsuario );
 
    }
@@ -330,9 +337,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:pestadoDetalle,
       usuarioId:userId
      };
-     console.log('parame estad detalle  : ', data);
+    // console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR estado : ', res);
+     //console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
               if(pestadoDetalle == false){
@@ -349,10 +356,92 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
         })    
    };
+    
+   const procesarPdf =(idComisionDetalleEmpresa, base64pdf )=>{
+    ApiSubirPdf(userName,idComisionDetalleEmpresa,base64pdf, idUsuario );
+   }
+
+   const ApiSubirPdf=(user, PidComisionDetalleEmpresa,archivoPdf ,userId )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalleEmpresa:parseInt(PidComisionDetalleEmpresa),
+      archivoPdf:archivoPdf,
+      usuarioId:userId
+     };
+     requestPost('Factura/SubirArchivoFacturaPdfEmpresa',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR estado : ', res);
+          if(res.code === 0){     
+              if(idCiclo != 0){              
+                ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); 
+              }               
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
+   const cancelarTodo=()=>{
+    console.log('cancelar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
+    console.log('comision seleccionado: ', idComsionDetalleSelected);
+    setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
+    ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
+
+   }
+   const AceptarTodo=()=>{
+    console.log('aceptar todo: ');
+    console.log('aceptar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
+    console.log('comision seleccionado: ', idComsionDetalleSelected);
+    setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
+   ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
+   }
+
+   const ApiTAplicarTodoFactura=(user,idcomisionDetalle,userId, estadoFacturado )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalle:parseInt(idcomisionDetalle),
+      estadoFacturado:estadoFacturado,
+      usuarioId:userId
+     };
+    // console.log('parame detalle  : ', data);
+     requestPost('Factura/AplicarFacturaTodoEstado',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR COMI DETALL  : ', res);
+          if(res.code === 0){                    
+            if(idCiclo != 0){
+              
+              obtenerComisiones(userName, idCiclo);
+              ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected );
+            }
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+   const ApiCerrarFactura=(user,userId, cicloId )=>{
+    const data={
+      usuarioLogin:user,
+      idCiclo:cicloId,
+      usuarioId:userId
+     };
+     requestPost('Factura/CerrarFactura',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR COMI DETALL  : ', res);
+          if(res.code === 0){                    
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "success" }));
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
 
 
     return (
-      <>      
+      <>  
+      <Container maxWidth="xl" >
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
@@ -364,12 +453,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Typography variant="h4" gutterBottom className={style.etiqueta} >
              {'Facturacion'}
            </Typography>
-
            <Card> 
                 <Grid container className={style.gridContainer}> 
-                  <Grid item xs={12} md={4} className={style.containerSave} >
+                  <Grid item xs={12} md={3} className={style.containerSave} >
                      {listaComisionesPendientes.length>0&&
-                      <>
+                       <>
+                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)?
                            <Button
                             type="submit"
                             variant="contained"
@@ -377,21 +466,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             className={style.submitSAVE}
                             onClick = {()=> CerrarFactura()}                                         
                             >
-                            <SaveIcon />  {' '} GUARDAR 
+                             <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA
                             </Button> 
-                           <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className={style.submitSAVE}
-                            onClick = {()=> guardarFactura()}                                         
-                            >
-                             <SaveIcon />{' '} CERRAR FACTURA
-                            </Button> 
+                            :
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA </Button> 
+                              </Tooltip>
+                            }
                         </>
                        }     
                   </Grid>
-                  <Grid item xs={12} md={3} className={style.containerSave}>
+                  <Grid item xs={12} md={4} className={style.containerSave}>
                   {listaComisionesPendientes.length>0&&
                         <TextField
                           label="BUSCAR CLIENTE"
@@ -401,14 +486,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           name="txtBusqueda"                    
                           value={txtBusqueda}
                           onChange={onChange}
+                          fullWidth
                           onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
                               buscarClientepornombre();
                             }
-                          }}
-                        // className={styles.TextFielBusqueda}
-                        //  error={txtBusquedaError}
-                        // helperText={ txtBusquedaError && "El campo es requerido" }
+                          }}                    
                           InputProps={{
                               startAdornment: (
                               <InputAdornment position="start">
@@ -457,7 +540,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} />
+            <DetalleAdjuntoModal namePage={namePage} open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
+            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACION'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ENERO 2021?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
+      </Container>    
       </>
     );
 

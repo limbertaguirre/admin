@@ -1151,7 +1151,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-create VIEW [dbo].[vwObtenercomisiones]
+CREATE VIEW [dbo].[vwObtenercomisiones]
 AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
@@ -1163,13 +1163,14 @@ AS
 			FIC.id_banco,
 			BA.nombre AS 'nombreBanco',
 			GPDETA.monto_bruto AS 'montoBruto' ,
-		    case FIC.tiene_cuenta_bancaria when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
 			GPDETA.monto_neto AS 'montoNeto',
 			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
 			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
 			GPCOMI.id_ciclo,
 			CI.nombre AS 'ciclo',
-			GPESTA.id_estado_comision
+			GPESTA.id_estado_comision,
+			GPDETA.monto_retencion
 	        from BDMultinivel.dbo.GP_COMISION GPCOMI
 	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision

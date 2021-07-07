@@ -4,6 +4,8 @@ import {
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
+import * as permiso from '../../../../routes/permiso'; 
+import {  validarPermiso} from '../../../../lib/accesosPerfiles';
 
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -155,9 +157,9 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa } = props;
+      const {namePage, open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf, AceptarTodo, cancelarTodo } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
-
+      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
     let cerrarModal = () => {
         handleCloseConfirm();
     };
@@ -180,13 +182,12 @@ const DetalleAdjuntoModal = (props) => {
 
       }
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        console.log('iddetalleEMpresa :', idDetalleEmpresa);
         var file = e.target.files[0];
         const reader = new FileReader();
         var url = reader.readAsDataURL(file);
-        console.log(URL.createObjectURL(file));
+        //console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
-          console.log('selecciondo file:', reader.result);
+          procesarPdf(idDetalleEmpresa,reader.result);
          // setAvatar(reader.result);
         //  setNuevoAvatar(true);
         }.bind(this);
@@ -285,7 +286,20 @@ const DetalleAdjuntoModal = (props) => {
     const closeCheckCancelModal=()=>{
         setOpenModalCancel(false);
     }
+    const [openModalCancelDesCheck, setopenModalCancelDesCheck]= useState(false);
+    const DesChecTodo=()=> {
 
+      setopenModalCancelDesCheck(true)
+    }
+    
+    const confiCheckTodoCancelar=()=>{
+      setopenModalCancelDesCheck(false);
+      cancelarTodo()
+
+    }     
+    const cancelCheckTodo=()=>{
+      setopenModalCancelDesCheck(false);
+    }
 
     return (
         <Fragment>
@@ -298,27 +312,27 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    {!estadoComisionGlobalFacturado? 
+                    {/* {!estadoComisionGlobalFacturado? 
                       <Button autoFocus color="inherit" onClick={saveCondicional}>
                          PROCESAR FACTURA
                       </Button>
-                    :null}
+                    :null} */}
                 </Toolbar>
             </AppBar>     
-               <Container maxWidth="sm" className={classes.containerPrincipal} >                          
+               <Container maxWidth="md" className={classes.containerPrincipal} >                          
                     <Grid  container item xs={12}  className={classes.gridContainer} >
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
                            <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
                         <Grid container item xs={12} md={4}  >
                              <Grid  item xs={12}   >
-                                    <Typography variant="h6" gutterBottom>
+                                    <Typography variant="h6" gutterBottom style={{ textTransform: 'uppercase'}}>
                                         {Ficha.nombreFicha}
                                     </Typography>
-                                    <Typography variant="subtitle1" gutterBottom>
+                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
                                     <b>RANGO:</b> {Ficha.rango}
                                     </Typography>
-                                    <Typography variant="subtitle1" gutterBottom>
+                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
                                     <b>CICLO:</b>  {Ficha.ciclo}
                                     </Typography>
                             </Grid>
@@ -348,8 +362,7 @@ const DetalleAdjuntoModal = (props) => {
                                 <TableContainer component={Paper}>
                                     <Table className={classes.table} size="small" aria-label="a dense table">
                                         <TableHead>
-                                        <TableRow>
-                                          
+                                        <TableRow>                                          
                                             <TableCell align="center"><b>EMPRESAS</b></TableCell>
                                             <TableCell align="center"><b>VENTAS PERSONALES</b></TableCell>
                                             <TableCell align="center"><b>VENTAS GRUPALES</b></TableCell>
@@ -357,10 +370,34 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
                                             <TableCell align="center"><b>RETENCIÓN</b></TableCell>
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell> 
-                                              
-                                            <TableCell align="center"><b>FACTURO</b></TableCell>  
-                                                                              
+                                            <TableCell align="center" ><b>ARCHIVO</b><PictureAsPdfIcon /><br /><br /><br />   </TableCell>                                          
+                                            <TableCell align="center"><b>FACTURADO</b><br />
+                                              {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
+                                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
+                                                      {estadoComisionGlobalFacturado? 
+                                                        <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
+                                                        <CheckBoxIcon style={{ color: green[500] }} />
+                                                        </IconButton>
+                                                      : 
+                                                        <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> AceptarTodo()}  >
+                                                        <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
+                                                        </IconButton>
+                                                        } 
+                                                    </Tooltip>
+                                                    :
+                                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                                        {estadoComisionGlobalFacturado? 
+                                                          <IconButton edge="start" color="inherit"   aria-label="close" >
+                                                          <CheckBoxIcon color="disabled"  />
+                                                          </IconButton>
+                                                        : 
+                                                          <IconButton edge="start" color="inherit"  aria-label="close" >
+                                                          <CheckBoxOutlineBlankIcon color="disabled"  />
+                                                          </IconButton>
+                                                          } 
+                                                      </Tooltip>
+                                                } 
+                                            </TableCell>                                                                                
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
                                         </TableHead>
@@ -385,6 +422,7 @@ const DetalleAdjuntoModal = (props) => {
                                             
                                             
                                              <TableCell align="center"> 
+                                               {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
                                                 <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
                                                   {row.siFacturo? 
                                                     <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
@@ -396,13 +434,26 @@ const DetalleAdjuntoModal = (props) => {
                                                     </IconButton>
                                                     } 
                                                 </Tooltip>
+                                                :
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin acceso'}>
+                                                {row.siFacturo? 
+                                                  <IconButton edge="start" color="inherit"   aria-label="close"  >
+                                                   <CheckBoxIcon color="disabled" />
+                                                  </IconButton>
+                                                : 
+                                                  <IconButton edge="start" color="inherit"  aria-label="close" >
+                                                   <CheckBoxOutlineBlankIcon color="disabled" />
+                                                  </IconButton>
+                                                  } 
+                                              </Tooltip>
+                                              }
                                              </TableCell>  
                                             
                                             <TableCell align="center">
                                               {!estadoComisionGlobalFacturado&&
                                                  <>
                                                   <label >
-                                                    <input style={{display: 'none' ,}} type="file" accept="image/*" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
+                                                    <input style={{display: 'none' ,}} type="file" accept=".pdf" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
                                                       <div className={classes.divCargar}>
                                                       {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
                                                       </div>                                                                                                                  
@@ -454,6 +505,13 @@ const DetalleAdjuntoModal = (props) => {
               />
               <MessageConfirm open={openModalSaveConfirmar} titulo={'Confirmar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'esta seguro que desea procesar data'} handleCloseConfirm={closeModalConfirmGuardar} handleCloseCancel={closeModalCancelarGuardar}  />
               <MessageConfirm open={openModalCancel} titulo={'Cancelar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'desea Cancelar la factura empresa'} handleCloseConfirm={confirmCheckCancelModal} handleCloseCancel={closeCheckCancelModal}  />
+              <MessageConfirm open={openModalCancelDesCheck} 
+                 titulo={'Esta seguro!'} 
+                 subTituloModal={''} tipoModal={'info'} 
+                 mensaje={'Con Cancelar todas las facturas'} 
+                 handleCloseConfirm={confiCheckTodoCancelar} 
+                 handleCloseCancel={cancelCheckTodo}  />
+
 
         </Fragment>
     );

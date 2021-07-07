@@ -17,6 +17,9 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public DetalleOutputModel obtenerComisionDetalleEmpresa(string usuario, int idComisionDetalle);
         public bool AcTualizarComisionDetalleEstado(ComisionDetalleInput comision, int estadoFacturado);
         public bool ActualizarEstadoFacturarEmpresa(string usuarioLogin, int usuarioId, int idComisionDetalle, int idComisionDetalleEmpresa, bool estadoDetalleEmpresa);
+        public bool SubirArchivo(string usuarioLogin, int usuarioId, int idComisionDetalleEmpresa, string archivoPdf);
+        public bool AplicarFacturadoEstadoFacturarEmpresa(string usuarioLogin, int usuarioId, int idComisionDetalle, bool estadoFacturado);
+        public bool CerrarFactura(string usuarioLogin, int usuarioId, int idCiclo);
 
     }
 }

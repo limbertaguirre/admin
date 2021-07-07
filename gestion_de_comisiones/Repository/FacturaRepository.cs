@@ -2,9 +2,11 @@
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,9 +16,11 @@ namespace gestion_de_comisiones.Repository
     {
         BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<FacturaRepository> Logger;
-        public FacturaRepository(ILogger<FacturaRepository> logger)
+        private readonly IHostingEnvironment EEnv;
+        public FacturaRepository(ILogger<FacturaRepository> logger, IHostingEnvironment env)
         {
             Logger = logger;
+            EEnv = env;
         }
         public object listCiclosPendientes(string usuario )
         {
@@ -276,8 +280,10 @@ namespace gestion_de_comisiones.Repository
                             objEstadoComisionDetalle.SiFacturo = estadoDetalleEmpresa;
                             objEstadoComisionDetalle.FechaActualizacion = DateTime.Now;
                             context.SaveChanges();
-                            if(estadoDetalleEmpresa == false)
+                            Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoDetalleEmpresa}");
+                            if (estadoDetalleEmpresa == false)
                             {
+                                Logger.LogInformation($" usuario: {usuarioLogin} - se desahabilita el comision detalle");
                                 var comision = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
                                 if(comision != null)
                                 {
@@ -286,6 +292,24 @@ namespace gestion_de_comisiones.Repository
                                     comision.IdUsuario = usuarioId;
                                     context.SaveChanges();
                                 }
+                            }
+                            else
+                            {                                
+                                var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == true &&  x.IdComisionDetalle == idComisionDetalle && x.SiFacturo == false).ToList();
+                                Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle empresas no facturadas : {detallesEstados.Count}");
+                                if (detallesEstados.Count == 0)
+                                {
+                                  var  updatecomisiion = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
+                                    if (updatecomisiion != null)
+                                    {
+                                        Logger.LogInformation($" usuario: {usuarioLogin} - se habilitara el comision detalle ya que todos estan en facturado");
+                                        updatecomisiion.IdEstadoComisionDetalle= int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                                        updatecomisiion.FechaActualizacion = DateTime.Now;
+                                        updatecomisiion.IdUsuario = usuarioId;
+                                        context.SaveChanges();
+                                    }
+                                }
+
                             }
                           
                             dbcontextTransaction.Commit();
@@ -301,6 +325,140 @@ namespace gestion_de_comisiones.Repository
                     }
                     catch (Exception ex)
                     {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public bool SubirArchivo(string usuarioLogin, int usuarioId, int idComisionDetalleEmpresa, string archivoPdf)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el SubirArchivo() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objEstadoComisionDetalle = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalleEmpresa).First();
+                        if (objEstadoComisionDetalle != null)
+                        {                                               
+                            string contentRootPath = EEnv.ContentRootPath + "\\Archivos\\Facturas";
+                            if (!System.IO.Directory.Exists(contentRootPath))
+                            {
+                                System.IO.Directory.CreateDirectory(contentRootPath);
+                            }                           
+                            string nombreImage = "factura-"+idComisionDetalleEmpresa +"-"+ DateTime.Now.Year.ToString() + DateTime.Now.Month + DateTime.Now.Day + DateTime.Now.Minute + DateTime.Now.Second + ".pdf";
+                            System.IO.File.WriteAllBytes(Path.Combine(contentRootPath, nombreImage), Convert.FromBase64String(archivoPdf.Substring(28)));
+                            objEstadoComisionDetalle.FechaActualizacion = DateTime.Now;
+                            objEstadoComisionDetalle.RespaldoPath = nombreImage;
+                            context.SaveChanges();     
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE carga una factura pdf con el nombre: {nombreImage} ");
+                            dbcontextTransaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalleEmpresa}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public bool AplicarFacturadoEstadoFacturarEmpresa(string usuarioLogin, int usuarioId, int idComisionDetalle , bool estadoFacturado)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el ActualizarEstadoFacturarEmpresa() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
+                        if (objComisionDetalleEstado != null)
+                        {
+                            if (estadoFacturado == true)
+                            {
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));//2
+                            }
+                            else
+                            {
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA")); // 1
+                            }
+                            context.SaveChanges();
+                            Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoFacturado}");
+                            
+                            var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == true && x.IdComisionDetalle == idComisionDetalle ).ToList();
+                            Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle detalles a cambiar si facturo nro : {detallesEstados.Count}");
+
+                            foreach(var iten in detallesEstados)
+                            {
+                                var objEmpresa= context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == iten.IdComisionDetalleEmpresa).First();
+                                if(objEmpresa != null)
+                                {
+                                    objEmpresa.SiFacturo = estadoFacturado;
+                                    objEmpresa.FechaActualizacion = DateTime.Now;
+                                    objEmpresa.IdUsuario = usuarioId;
+                                    context.SaveChanges();
+                                }
+
+                            }                             
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public bool CerrarFactura(string usuarioLogin, int usuarioId, int idCiclo)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el CerrarFactura() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
+                        //if (objComisionDetalleEstado != null)
+                        //{
+                           
+                           // dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        //}
+                        //else
+                        //{
+                        //    Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
+                        //    dbcontextTransaction.Rollback();
+                        //    return false;
+                        //}
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogInformation($" usuario: {usuarioLogin} -  error catch repository mensaje: {ex.Message}");
                         dbcontextTransaction.Rollback();
                         return false;
                     }
