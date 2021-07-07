@@ -159,8 +159,7 @@ const DetalleAdjuntoModal = (props) => {
      const dispatch = useDispatch();
       const {namePage, open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf, AceptarTodo, cancelarTodo } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
-      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home}); 
-      console.log('modal  pagae name', namePage );  
+      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
     let cerrarModal = () => {
         handleCloseConfirm();
     };
@@ -183,13 +182,11 @@ const DetalleAdjuntoModal = (props) => {
 
       }
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-       // console.log('iddetalleEMpresa :', idDetalleEmpresa);
         var file = e.target.files[0];
         const reader = new FileReader();
         var url = reader.readAsDataURL(file);
         //console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
-         // console.log('selecciondo file:', reader.result);
           procesarPdf(idDetalleEmpresa,reader.result);
          // setAvatar(reader.result);
         //  setNuevoAvatar(true);
@@ -375,8 +372,8 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
                                             <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                               
                                             <TableCell align="right"><b>FACTURO</b>{' '}
-                                              {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)&& 
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
+                                              {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
+                                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
                                                       {estadoComisionGlobalFacturado? 
                                                         <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
                                                         <CheckBoxIcon style={{ color: green[500] }} />
@@ -387,6 +384,18 @@ const DetalleAdjuntoModal = (props) => {
                                                         </IconButton>
                                                         } 
                                                     </Tooltip>
+                                                    :
+                                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                                        {estadoComisionGlobalFacturado? 
+                                                          <IconButton edge="start" color="inherit"   aria-label="close" >
+                                                          <CheckBoxIcon color="disabled"  />
+                                                          </IconButton>
+                                                        : 
+                                                          <IconButton edge="start" color="inherit"  aria-label="close" >
+                                                          <CheckBoxOutlineBlankIcon color="disabled"  />
+                                                          </IconButton>
+                                                          } 
+                                                      </Tooltip>
                                                 } 
                                             </TableCell>                                                                                
                                             <TableCell align="right">   </TableCell>

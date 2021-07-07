@@ -1,10 +1,9 @@
 import React, {useEffect, useState}  from 'react';
-import BorderWrapper from 'react-border-wrapper'
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import * as ActionMesaje from "../../../redux/actions/messageAction";
@@ -146,7 +145,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
         const value = e.target.value;
         if (texfiel === "idCiclo") {
             setIdCiclo(value);
-           // console.log(value);
         }
         if (texfiel === "txtBusqueda") {
              setTxtBusqueda(value);
@@ -166,7 +164,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     function handleClick(event) {
         event.preventDefault();
-      //  console.info('You clicked a breadcrumb.');
     }
 
     const closeSnackbar= (event, reason) => {
@@ -232,23 +229,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
   const selecionarDetalleFrelances=(idDetalleComision, estadoFacturado)=>{
-     // console.log('selecionado iddetalle free: ', idDetalleComision);
-     /*  const location = {
-        pathname: '/facturacion/detalle/adjunto',
-        state: {
-            namePagina: namePage,
-            idDetalleComision: idDetalleComision
-          }
-      } 
-      history.push(location); */
       setEstadoComisionGlobalFacturado(estadoFacturado== 2? true: false);//1 => pendiente, 2 facturado=>, 0 no tiene estadoo no se actualizo
       setiIdComsionDetalleSelected(idDetalleComision);
       ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
   }
    const handleCloseConfirm=()=>{
      console.log('fin select => iddetalleComision: ',idComsionDetalleSelected );
-     ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );
-    // setOpen(false);
+     ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );   
    }
    const handleCloseCancel=()=>{
       setOpen(false);
@@ -350,8 +337,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
    };
     
    const procesarPdf =(idComisionDetalleEmpresa, base64pdf )=>{
-    //console.log('antes de id :', idComisionDetalleEmpresa);
-    //console.log(' entes pdf : ' ,base64pdf );
     ApiSubirPdf(userName,idComisionDetalleEmpresa,base64pdf, idUsuario );
    }
 
@@ -362,12 +347,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
       archivoPdf:archivoPdf,
       usuarioId:userId
      };
-    // console.log('parame estad detalle  : ', data);
      requestPost('Factura/SubirArchivoFacturaPdfEmpresa',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
               if(idCiclo != 0){              
-                ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); //este lista el detalle empresa
+                ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); 
               }               
           }else{
             dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
@@ -431,12 +415,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Typography variant="h4" gutterBottom className={style.etiqueta} >
              {'Facturacion'}
            </Typography>
-
            <Card> 
                 <Grid container className={style.gridContainer}> 
                   <Grid item xs={12} md={3} className={style.containerSave} >
                      {listaComisionesPendientes.length>0&&
                        <>
+                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)?
                            <Button
                             type="submit"
                             variant="contained"
@@ -444,8 +428,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             className={style.submitSAVE}
                             onClick = {()=> CerrarFactura()}                                         
                             >
-                             <SaveIcon />{' '} CERRAR FACTURA
+                             <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA
                             </Button> 
+                            :
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA </Button> 
+                              </Tooltip>
+                            }
                         </>
                        }     
                   </Grid>
@@ -464,10 +453,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             if (ev.key === 'Enter') {
                               buscarClientepornombre();
                             }
-                          }}
-                        // className={styles.TextFielBusqueda}
-                        //  error={txtBusquedaError}
-                        // helperText={ txtBusquedaError && "El campo es requerido" }
+                          }}                    
                           InputProps={{
                               startAdornment: (
                               <InputAdornment position="start">
