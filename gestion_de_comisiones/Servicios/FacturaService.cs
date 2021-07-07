@@ -160,6 +160,29 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object AplicarFacturadoTodo(FacturadoTodoInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio AplicarFacturadoTodo() iddetalleEmpresa: {detalle.idComisionDetalle } ");
+                var comsiones = Repository.AplicarFacturadoEstadoFacturarEmpresa(detalle.usuarioLogin, detalle.usuarioId, detalle.idComisionDetalle, detalle.estadoFacturado);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA AplicarFacturadoTodo");
+                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch AplicarFacturadoTodo() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el archivo pdf", "");
+            }
+        }
+
 
 
     }

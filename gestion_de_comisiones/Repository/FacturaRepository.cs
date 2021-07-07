@@ -374,5 +374,63 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public bool AplicarFacturadoEstadoFacturarEmpresa(string usuarioLogin, int usuarioId, int idComisionDetalle , bool estadoFacturado)
+        {
+            Logger.LogInformation($" usuario: {usuarioLogin} -  inicio el ActualizarEstadoFacturarEmpresa() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
+                        if (objComisionDetalleEstado != null)
+                        {
+                            if (estadoFacturado == true)
+                            {
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = 2;
+                            }
+                            else
+                            {
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = 1;
+                            }
+                            context.SaveChanges();
+                            Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoFacturado}");
+                            
+                            var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == true && x.IdComisionDetalle == idComisionDetalle ).ToList();
+                            Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle detalles a cambiar si facturo nro : {detallesEstados.Count}");
+
+                            foreach(var iten in detallesEstados)
+                            {
+                                var objEmpresa= context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == iten.IdComisionDetalleEmpresa).First();
+                                if(objEmpresa != null)
+                                {
+                                    objEmpresa.SiFacturo = estadoFacturado;
+                                    objEmpresa.FechaActualizacion = DateTime.Now;
+                                    objEmpresa.IdUsuario = usuarioId;
+                                    context.SaveChanges();
+                                }
+
+                            }                             
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -181,7 +181,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-       // console.log('comisones : ', res);
+        console.log('comisones : ', res);
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -376,6 +376,45 @@ const StyledBreadcrumb = withStyles((theme) => ({
         })    
    };
 
+   const cancelarTodo=()=>{
+    console.log('cancelar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
+    console.log('comision seleccionado: ', idComsionDetalleSelected);
+    setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
+    ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
+
+   }
+   const AceptarTodo=()=>{
+    console.log('aceptar todo: ');
+    console.log('aceptar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
+    console.log('comision seleccionado: ', idComsionDetalleSelected);
+    setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
+   ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
+   }
+
+   const ApiTAplicarTodoFactura=(user,idcomisionDetalle,userId, estadoFacturado )=>{
+    const data={
+      usuarioLogin:user,
+      idComisionDetalle:parseInt(idcomisionDetalle),
+      estadoFacturado:estadoFacturado,
+      usuarioId:userId
+     };
+    // console.log('parame detalle  : ', data);
+     requestPost('Factura/AplicarFacturaTodoEstado',data,dispatch).then((res)=>{ 
+     console.log('ACTUALIZAR COMI DETALL  : ', res);
+          if(res.code === 0){                    
+            if(idCiclo != 0){
+              
+              obtenerComisiones(userName, idCiclo);
+              ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected );
+            }
+            
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));
+          }
+
+        })    
+   };
+
 
 
     return (
@@ -394,9 +433,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
            <Card> 
                 <Grid container className={style.gridContainer}> 
-                  <Grid item xs={12} md={4} className={style.containerSave} >
+                  <Grid item xs={12} md={3} className={style.containerSave} >
                      {listaComisionesPendientes.length>0&&
-                      <>
+                       <>
                            <Button
                             type="submit"
                             variant="contained"
@@ -404,21 +443,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             className={style.submitSAVE}
                             onClick = {()=> CerrarFactura()}                                         
                             >
-                            <SaveIcon />  {' '} GUARDAR 
-                            </Button> 
-                           <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className={style.submitSAVE}
-                            onClick = {()=> guardarFactura()}                                         
-                            >
                              <SaveIcon />{' '} CERRAR FACTURA
                             </Button> 
                         </>
                        }     
                   </Grid>
-                  <Grid item xs={12} md={3} className={style.containerSave}>
+                  <Grid item xs={12} md={4} className={style.containerSave}>
                   {listaComisionesPendientes.length>0&&
                         <TextField
                           label="BUSCAR CLIENTE"
@@ -428,6 +458,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           name="txtBusqueda"                    
                           value={txtBusqueda}
                           onChange={onChange}
+                          fullWidth
                           onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
                               buscarClientepornombre();
@@ -484,7 +515,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} />
+            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
       </>
     );
 

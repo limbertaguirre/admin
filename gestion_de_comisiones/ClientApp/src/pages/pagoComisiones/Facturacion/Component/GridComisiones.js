@@ -65,7 +65,7 @@ import Paper from '@material-ui/core/Paper';
                     <Table className={style.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
-                            <TableCell align="center"><b>ID</b></TableCell>
+                            <TableCell align="center"><b>Nro</b></TableCell>
                             <TableCell align="right"><b>Nombre completo</b></TableCell>
                             <TableCell align="right"><b>Cedula identidad</b></TableCell>
                             <TableCell align="right"><b>Nro Cuenta</b></TableCell>
@@ -73,7 +73,8 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="center"><b>Monto Total Bruto</b></TableCell>
                             <TableCell align="center"><b>Factura</b></TableCell>
                             <TableCell align="center"><b>Facturo (15%)</b></TableCell>
-                            <TableCell align="center"><b>Monto Total Neto</b></TableCell>
+                            <TableCell align="center"><b>Monto Total Neto</b></TableCell> 
+                            <TableCell align="center"><b>Monto Retencion</b></TableCell> 
                             <TableCell align="right">    </TableCell>
                         </TableRow>
                         </TableHead>
@@ -86,13 +87,14 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
                             <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}</TableCell>   
+                            <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
                             <TableCell align="center"> 
                                     
-                                     {row.estadoFacturoId == 2?  <CheckBoxIcon  color="primary" /> : <CheckBoxOutlineBlankIcon  color="primary" /> }  
+                                     {row.estadoFacturoId == 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }  
                                    
                             </TableCell>  
-                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell> 
+                            <TableCell align="right">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
                                    {row.factura == "True"&& 
                                         <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>

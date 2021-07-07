@@ -155,7 +155,7 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf } = props;
+      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf, AceptarTodo, cancelarTodo } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
 
     let cerrarModal = () => {
@@ -286,7 +286,20 @@ const DetalleAdjuntoModal = (props) => {
     const closeCheckCancelModal=()=>{
         setOpenModalCancel(false);
     }
+    const [openModalCancelDesCheck, setopenModalCancelDesCheck]= useState(false);
+    const DesChecTodo=()=> {
 
+      setopenModalCancelDesCheck(true)
+    }
+    
+    const confiCheckTodoCancelar=()=>{
+      setopenModalCancelDesCheck(false);
+      cancelarTodo()
+
+    }     
+    const cancelCheckTodo=()=>{
+      setopenModalCancelDesCheck(false);
+    }
 
     return (
         <Fragment>
@@ -360,7 +373,19 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
                                             <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell> 
                                               
-                                            <TableCell align="center"><b>FACTURO</b></TableCell>  
+                                            <TableCell align="center"><b>FACTURO</b>
+                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
+                                                  {estadoComisionGlobalFacturado? 
+                                                    <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
+                                                     <CheckBoxIcon style={{ color: green[500] }} />
+                                                    </IconButton>
+                                                   : 
+                                                    <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> AceptarTodo()}  >
+                                                     <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
+                                                    </IconButton>
+                                                    } 
+                                                </Tooltip>
+                                            </TableCell>  
                                                                               
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
@@ -455,6 +480,13 @@ const DetalleAdjuntoModal = (props) => {
               />
               <MessageConfirm open={openModalSaveConfirmar} titulo={'Confirmar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'esta seguro que desea procesar data'} handleCloseConfirm={closeModalConfirmGuardar} handleCloseCancel={closeModalCancelarGuardar}  />
               <MessageConfirm open={openModalCancel} titulo={'Cancelar facturacion'} subTituloModal={'facturado'} tipoModal={'info'} mensaje={'desea Cancelar la factura empresa'} handleCloseConfirm={confirmCheckCancelModal} handleCloseCancel={closeCheckCancelModal}  />
+              <MessageConfirm open={openModalCancelDesCheck} 
+                 titulo={'Esta seguro!'} 
+                 subTituloModal={''} tipoModal={'info'} 
+                 mensaje={'Con Cancelar todas las facturas'} 
+                 handleCloseConfirm={confiCheckTodoCancelar} 
+                 handleCloseCancel={cancelCheckTodo}  />
+
 
         </Fragment>
     );

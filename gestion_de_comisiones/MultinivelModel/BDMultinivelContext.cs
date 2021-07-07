@@ -2477,6 +2477,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("montoNeto");
 
+                entity.Property(e => e.MontoRetencion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_retencion");
+
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(511)

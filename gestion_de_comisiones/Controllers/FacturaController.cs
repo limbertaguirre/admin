@@ -169,6 +169,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/AplicarFacturaTodoEstado
+        [HttpPost]
+        public ActionResult AplicarFacturaTodoEstado([FromBody] FacturadoTodoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller AplicarFacturaTodoEstado() parametro: ");
+                var updateComisionDetalle = Service.AplicarFacturadoTodo(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicarFacturaTodoEstado()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  AplicarFacturaTodoEstado() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
 
 
     }
