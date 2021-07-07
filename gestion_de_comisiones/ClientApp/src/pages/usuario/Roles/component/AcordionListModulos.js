@@ -64,16 +64,16 @@ const  AcordionListModulos =(props)=>  {
          <>    
             {listado.map((value,index) => {
                 return (
-                    <ul>
+                    <ul key={index}>
                         <li><b>Modulo :</b> {value.nombre}
                              <ul>
-                                {value.listmodulos.map((value1,index) => {
+                                {value.listmodulos.map((value1,index1) => {
                                     return (
-                                      <li><b>Pagina :</b> {value1.nombre}
+                                      <li key={index1}><b>Pagina :</b> {value1.nombre}
                                          <ul>
-                                            {value1.permisos.map((value2,index) => {
+                                            {value1.permisos.map((value2,index2) => {
                                                     return (
-                                                      <li>{value2.permiso}</li>
+                                                      <li key={index2}>{value2.permiso}</li>
                                                     );
                                                 })}  
                                          </ul>                                    

@@ -192,9 +192,9 @@ const MenuOne = (props) => {
           })}
         >
           <div className={classes.drawerHeader} />
-		          <Container>
+		          <>
                 {props.children}
-              </Container>
+              </>
         </main>        
       </div>
     </>

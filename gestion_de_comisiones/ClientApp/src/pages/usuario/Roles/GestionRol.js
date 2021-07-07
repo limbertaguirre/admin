@@ -1,8 +1,8 @@
 
 
-import React,{useState, useEffect }  from 'react';
-import { TextField, Typography, InputAdornment } from "@material-ui/core";
-import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
+import React,{ useEffect }  from 'react';
+import {  Typography } from "@material-ui/core";
+import {  Button, Grid, Container } from "@material-ui/core"
 import { makeStyles, emphasize, withStyles  } from '@material-ui/core/styles';
 import { useSelector,useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -75,6 +75,7 @@ const  GestionRol =()=>  {
   
     return (
          <>    
+         <Container  >
           <br/>
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
@@ -106,14 +107,13 @@ const  GestionRol =()=>  {
             <div className={style.contentMenu}>
 
                 {globalModules.map((value,index)=>(
-                    <CardRol  modulo={value} redirecionarEditRol={redirecionarEditRol} />
+                    <CardRol key={index}  modulo={value} redirecionarEditRol={redirecionarEditRol} />
                 ))}
 
             </div>
 
-            </Grid>
-          
-
+            </Grid>          
+            </Container>
          </>
     );
 }

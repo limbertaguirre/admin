@@ -4,6 +4,8 @@ import {
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
+import * as permiso from '../../../../routes/permiso'; 
+import {  validarPermiso} from '../../../../lib/accesosPerfiles';
 
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -155,9 +157,10 @@ const DetalleAdjuntoModal = (props) => {
      //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
-      const { open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf, AceptarTodo, cancelarTodo } = props;
+      const {namePage, open,  handleCloseConfirm, handleCloseCancel, Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado, checkdComisionDetalleEmpresa, desCheckdComisionDetalleEmpresa, procesarPdf, AceptarTodo, cancelarTodo } = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
-
+      const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home}); 
+      console.log('modal  pagae name', namePage );  
     let cerrarModal = () => {
         handleCloseConfirm();
     };
@@ -319,20 +322,20 @@ const DetalleAdjuntoModal = (props) => {
                     :null} */}
                 </Toolbar>
             </AppBar>     
-               <Container maxWidth="sm" className={classes.containerPrincipal} >                          
+               <Container maxWidth="md" className={classes.containerPrincipal} >                          
                     <Grid  container item xs={12}  className={classes.gridContainer} >
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
                            <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
                         <Grid container item xs={12} md={4}  >
                              <Grid  item xs={12}   >
-                                    <Typography variant="h6" gutterBottom>
+                                    <Typography variant="h6" gutterBottom style={{ textTransform: 'uppercase'}}>
                                         {Ficha.nombreFicha}
                                     </Typography>
-                                    <Typography variant="subtitle1" gutterBottom>
+                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
                                     <b>RANGO:</b> {Ficha.rango}
                                     </Typography>
-                                    <Typography variant="subtitle1" gutterBottom>
+                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
                                     <b>CICLO:</b>  {Ficha.ciclo}
                                     </Typography>
                             </Grid>
@@ -362,8 +365,7 @@ const DetalleAdjuntoModal = (props) => {
                                 <TableContainer component={Paper}>
                                     <Table className={classes.table} size="small" aria-label="a dense table">
                                         <TableHead>
-                                        <TableRow>
-                                          
+                                        <TableRow>                                          
                                             <TableCell align="center"><b>EMPRESAS</b></TableCell>
                                             <TableCell align="center"><b>VENTAS PERSONALES</b></TableCell>
                                             <TableCell align="center"><b>VENTAS GRUPALES</b></TableCell>
@@ -371,22 +373,22 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right"><b>MONTO (USD)</b></TableCell>
                                             <TableCell align="center"><b>RETENCIÓN</b></TableCell>
                                             <TableCell align="center"><b>NETO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell> 
-                                              
-                                            <TableCell align="center"><b>FACTURO</b>
-                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
-                                                  {estadoComisionGlobalFacturado? 
-                                                    <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
-                                                     <CheckBoxIcon style={{ color: green[500] }} />
-                                                    </IconButton>
-                                                   : 
-                                                    <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> AceptarTodo()}  >
-                                                     <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
-                                                    </IconButton>
-                                                    } 
-                                                </Tooltip>
-                                            </TableCell>  
-                                                                              
+                                            <TableCell align="center"><b>ARCHIVO</b><PictureAsPdfIcon /></TableCell>                                               
+                                            <TableCell align="right"><b>FACTURO</b>{' '}
+                                              {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)&& 
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
+                                                      {estadoComisionGlobalFacturado? 
+                                                        <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
+                                                        <CheckBoxIcon style={{ color: green[500] }} />
+                                                        </IconButton>
+                                                      : 
+                                                        <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> AceptarTodo()}  >
+                                                        <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
+                                                        </IconButton>
+                                                        } 
+                                                    </Tooltip>
+                                                } 
+                                            </TableCell>                                                                                
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
                                         </TableHead>
@@ -410,7 +412,8 @@ const DetalleAdjuntoModal = (props) => {
                                              </TableCell>  
                                             
                                             
-                                             <TableCell align="center"> 
+                                             <TableCell align="right"> 
+                                               {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
                                                 <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
                                                   {row.siFacturo? 
                                                     <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
@@ -422,6 +425,19 @@ const DetalleAdjuntoModal = (props) => {
                                                     </IconButton>
                                                     } 
                                                 </Tooltip>
+                                                :
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin acceso'}>
+                                                {row.siFacturo? 
+                                                  <IconButton edge="start" color="inherit"   aria-label="close"  >
+                                                   <CheckBoxIcon color="disabled" />
+                                                  </IconButton>
+                                                : 
+                                                  <IconButton edge="start" color="inherit"  aria-label="close" >
+                                                   <CheckBoxOutlineBlankIcon color="disabled" />
+                                                  </IconButton>
+                                                  } 
+                                              </Tooltip>
+                                              }
                                              </TableCell>  
                                             
                                             <TableCell align="center">

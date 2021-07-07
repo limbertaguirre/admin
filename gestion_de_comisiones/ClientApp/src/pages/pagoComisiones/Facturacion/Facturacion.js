@@ -418,7 +418,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 
     return (
-      <>      
+      <>  
+      <Container maxWidth="xl" >
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
@@ -515,7 +516,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <br />           
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
-            <DetalleAdjuntoModal open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
+            <DetalleAdjuntoModal namePage={namePage} open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
+      </Container>    
       </>
     );
 
