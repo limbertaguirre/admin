@@ -159,7 +159,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          obtenerComisiones(userName, idCiclo);
       }else{
         setOpenSnackbar(true);
-        setMensajeSnackbar('¡Debe Seleccionar un permiso!');
+        setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
         settipTSnackbar('warning');
       }
       
