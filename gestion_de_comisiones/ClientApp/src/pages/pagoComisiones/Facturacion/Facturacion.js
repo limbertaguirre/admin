@@ -3,7 +3,7 @@ import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
-import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, Button, Grid, TextField, Typography,FormControl, InputLabel, Select,MenuItem } from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import * as ActionMesaje from "../../../redux/actions/messageAction";

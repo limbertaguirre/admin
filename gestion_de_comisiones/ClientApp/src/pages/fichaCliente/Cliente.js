@@ -23,7 +23,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { green, red } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
-import { TextField, Typography, InputAdornment, Grid, Button } from "@material-ui/core";
+import { TextField, InputAdornment, Grid, Button, Container } from "@material-ui/core";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -46,8 +46,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       minWidth: 650,
     },
     submit: {
-      //  width:'30px',
-        height:'25px',
+        height:'27px',
         background: "#1872b8", 
         boxShadow: '2px 4px 5px #1872b8',
         color:'white'
@@ -91,7 +90,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [txtBusquedaError, setTxtBusquedaError] = useState(false);
 
     useEffect(()=>{ 
-       dispatch(ActionCliente.obtenerClientes());
+       //dispatch(ActionCliente.obtenerClientes());
      },[])
 
      const handleChangePage = (event, newPage) => {
@@ -102,8 +101,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setPage(0);
     };
     const selecionarCliente=(idcliente)=>{
-       //console.log('click', idcliente);
-       
+
         const location = {
           pathname: '/cliente/ficha',
           state: {
@@ -120,7 +118,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
         const value = e.target.value;
         if (texfiel === "txtBusqueda") {
           setTxtBusqueda(value);
-          console.log(value);
         }
 
     };
@@ -135,6 +132,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      
     return (
       <>
+        <Container maxWidth="xl" >
           <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
               <Breadcrumbs aria-label="breadcrumb">                    
                         <StyledBreadcrumb key={2} component="a" label="Cliente" icon={<HomeIcon fontSize="small" />} />                        
@@ -185,12 +183,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     <Table className={styles.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
-                            <TableCell align="center">ID</TableCell>
-                            <TableCell align="right">Nombre completo</TableCell>
-                            <TableCell align="right">Cedula identidad</TableCell>
-                            <TableCell align="right">Nro Cuenta</TableCell>
-                            <TableCell align="right">Banco</TableCell>
-                            <TableCell align="center">Estado cliente</TableCell>
+                            <TableCell align="center"><b>ID</b></TableCell>
+                            <TableCell align="right"><b>Nombre completo</b></TableCell>
+                            <TableCell align="right"><b>Cedula identidad</b></TableCell>
+                            <TableCell align="right"><b>Nro Cuenta</b></TableCell>
+                            <TableCell align="right"><b>Banco</b></TableCell>
+                            <TableCell align="center"><b>Estado cliente</b></TableCell>
                             <TableCell align="right">   </TableCell>
                         </TableRow>
                         </TableHead>
@@ -234,7 +232,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                     />
            </div>
-
+        </Container>
       </>
     );
 
