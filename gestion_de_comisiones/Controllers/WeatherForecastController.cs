@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using gestion_de_comisiones.Models;
 using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,10 +27,7 @@ namespace gestion_de_comisiones.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            Home home = new Home();
-            var datotempo = home.obtenerVariable();
-            var context = new BDGestorPruebaContext();
-            var studentWithGrade = context.Personas.ToList();
+          
 
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

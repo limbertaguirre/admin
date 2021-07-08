@@ -1,4 +1,3 @@
-using gestion_de_comisiones.Models;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -51,8 +50,7 @@ namespace gestion_de_comisiones
             });
 
             //configuracion y conexion al db context
-            services.AddDbContext<BDGestorPruebaContext>(options => 
-            options.UseSqlServer(Configuration.GetConnectionString("ConecctionBDPrueba")));
+            
 
         }
 
