@@ -61,8 +61,9 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
-        public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
+        public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
+        public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
@@ -2201,12 +2202,12 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El usuario_id es el id del último usuario que modificó el registro.");
             });
 
-            modelBuilder.Entity<UsuriosRole>(entity =>
+            modelBuilder.Entity<UsuariosRole>(entity =>
             {
                 entity.HasKey(e => e.IdUsuariosRoles)
                     .HasName("PK__USURIOS___720F812BE54AB333");
 
-                entity.ToTable("USURIOS_ROLES");
+                entity.ToTable("USUARIOS_ROLES");
 
                 entity.HasIndex(e => e.IdUsuario, "UQ__USURIOS___4E3E04AC7702B449")
                     .IsUnique();
@@ -2355,6 +2356,32 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentaConexionId)
                     .HasColumnName("venta_conexion_id")
                     .HasComment("Este es el codigo de la venta en conexion.");
+            });
+
+            modelBuilder.Entity<VwObtenerCiclo>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerCiclos");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
             });
 
             modelBuilder.Entity<VwObtenerComisionesDetalleEmpresa>(entity =>
