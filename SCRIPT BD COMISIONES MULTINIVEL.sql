@@ -152,7 +152,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO', N'COLUMN', N'fecha_actualizacion'
 go
 
-create table USURIOS_ROLES
+create table USUARIOS_ROLES
 (
     id_usuarios_roles int not null primary key IDENTITY,
     id_usuario int not null unique,
@@ -163,13 +163,13 @@ create table USURIOS_ROLES
     fecha_actualizacion datetime default GETDATE(),
 );
 go
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_usuarios_roles'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace referencia a la tabla usuario', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_usuario'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace relacion con la tabla Rol', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_rol'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado del requistro booleano true o false', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'estado'
-EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'usuario_id'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'fecha_creacion'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'fecha_actualizacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_usuarios_roles'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace referencia a la tabla usuario', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_usuario'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace relacion con la tabla Rol', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_rol'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado del requistro booleano true o false', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'estado'
+EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'usuario_id'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'fecha_creacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'fecha_actualizacion'
 
 go
 create table MODULO

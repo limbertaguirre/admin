@@ -246,9 +246,9 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" inicio el  obtenerRolxUsuario() la busqueda de rol por usuario");
-                var obj = contextMulti.Rols.Join(contextMulti.UsuriosRoles,
+                var obj = contextMulti.Rols.Join(contextMulti.UsuariosRoles,
                                                       Rol => Rol.IdRol,
-                                                     UsuriosRole => UsuriosRole.IdRol,
+                                                     UsuariosRole => UsuariosRole.IdRol,
                                                       (Rol, UsuriosRole) => new RolUserResulModel
                                                       {
                                                           idRol = Rol.IdRol,
