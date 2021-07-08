@@ -1,7 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Area;
 using gestion_de_comisiones.Modelos.Sucursal;
-using gestion_de_comisiones.Models;
 using gestion_de_comisiones.Repository;
 using Newtonsoft.Json;
 using System;

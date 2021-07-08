@@ -1,20 +1,15 @@
 import React, { Fragment, useState } from "react";
 import {
-    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography,Grid, Container, Tooltip ,Zoom
+    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
 import * as permiso from '../../../../routes/permiso'; 
 import {  validarPermiso} from '../../../../lib/accesosPerfiles';
 
-import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
-import { Alert, AlertTitle } from '@material-ui/lab';
+
 import { makeStyles } from '@material-ui/core/styles';
 
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
