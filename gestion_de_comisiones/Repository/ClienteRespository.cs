@@ -83,45 +83,9 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<ClienteOutputModel> listCliente = new List<ClienteOutputModel>();
-                Logger.LogInformation($" usuario: {usuario} inicio el buscarCliente()riterio : {criterio}");                
-                var clientes = contextMulti.Fichas.Where(x => x.Nombres.Contains(criterio)).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).ToList();
-
-                foreach (var item in clientes)
-                {
-                    ClienteOutputModel objCliente = new ClienteOutputModel();
-                    objCliente.idFicha = item.IdFicha;
-                    objCliente.nombreCompleto = item.Nombres + ' ' + item.Apellidos;
-                    objCliente.estado = item.Estado;
-                    objCliente.tieneCuentaBancaria = item.TieneCuentaBancaria;
-                    objCliente.cuentaBancaria = item.CuentaBancaria;
-                    objCliente.avatar = item.Avatar;
-                    objCliente.ci = item.Ci;
-                    objCliente.codigo = item.Codigo;
-                    if (item.IdBanco > 0 && item.IdBanco != null)
-                    {
-                        var objBanco = contextMulti.Bancoes.Where(x => x.IdBanco == item.IdBanco).Select(p => new { p.IdBanco, p.Nombre, p.Descripcion, p.Codigo }).FirstOrDefault();
-                        if (objBanco != null)
-                        {
-                            objCliente.nombreBanco = objBanco.Nombre;
-                            objCliente.idBanco = objBanco.IdBanco;
-                            objCliente.codigoBanco = objBanco.Codigo;
-                        }
-                        else
-                        {
-                            objCliente.nombreBanco = "-------";
-                            objCliente.idBanco = 0;
-                            objCliente.codigoBanco = "";
-                        }
-                    }
-                    else
-                    {
-                        objCliente.nombreBanco = "-------";
-                        objCliente.idBanco = 0;
-                        objCliente.codigoBanco = "";
-                    }
-                    listCliente.Add(objCliente);
-                }
-                return listCliente;
+                Logger.LogInformation($" usuario: {usuario} inicio el buscarCliente()riterio : {criterio}");
+                var cliente = contextMulti.VwObtenerFichas.Where(x => x.Ci.Contains(criterio)).Select(c => new ClienteOutputModel(c.IdFicha, c.Codigo, c.NombreCompleto, c.Ci, c.TieneCuentaBancaria, c.IdBanco, c.NombreBanco, c.CodigoBanco, c.CuentaBancaria, c.Estado, c.Avatar, c.Nivel)).ToList();
+                return cliente;
             }
             catch (Exception ex)
             {

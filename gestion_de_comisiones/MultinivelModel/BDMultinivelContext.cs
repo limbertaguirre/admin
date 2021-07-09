@@ -65,6 +65,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Venta> Ventas { get; set; }
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
+        public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2447,6 +2448,63 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentasPersonales)
                     .HasColumnType("decimal(18, 0)")
                     .HasColumnName("ventas_personales");
+            });
+
+            modelBuilder.Entity<VwObtenerFicha>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerFicha");
+
+                entity.Property(e => e.Avatar)
+                    .IsUnicode(false)
+                    .HasColumnName("avatar");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.Codigo)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("codigo");
+
+                entity.Property(e => e.CodigoBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("codigoBanco");
+
+                entity.Property(e => e.CuentaBancaria)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaBancaria");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
+                entity.Property(e => e.IdBanco).HasColumnName("idBanco");
+
+                entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.Nivel)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nivel");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreBanco");
+
+                entity.Property(e => e.NombreCompleto)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreCompleto");
+
+                entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tieneCuentaBancaria");
             });
 
             modelBuilder.Entity<VwObtenercomisione>(entity =>

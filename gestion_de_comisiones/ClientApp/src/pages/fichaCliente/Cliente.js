@@ -23,7 +23,9 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { green, red } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
-import { TextField, InputAdornment, Grid, Button, Container } from "@material-ui/core";
+import { TextField, InputAdornment, Grid, Button, Container, Tooltip ,Zoom } from "@material-ui/core";
+import IconButton from '@material-ui/core/IconButton';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -183,11 +185,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     <Table className={styles.table} size="medium" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
-                            <TableCell align="center"><b>ID</b></TableCell>
-                            <TableCell align="right"><b>Nombre completo</b></TableCell>
+                            <TableCell align="center"><b>Nro</b></TableCell>
+                            <TableCell align="center"><b>Nombre completo</b></TableCell>
                             <TableCell align="right"><b>Cedula identidad</b></TableCell>
-                            <TableCell align="right"><b>Nro Cuenta</b></TableCell>
+                            <TableCell align="right"><b>Cuenta bancaria </b></TableCell>
                             <TableCell align="right"><b>Banco</b></TableCell>
+                            <TableCell align="right"><b>Rango</b></TableCell>
                             <TableCell align="center"><b>Estado cliente</b></TableCell>
                             <TableCell align="right">   </TableCell>
                         </TableRow>
@@ -200,22 +203,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             <TableCell align="right">{row.ci}</TableCell>
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
+                            <TableCell align="right">{row.nivel}</TableCell>  
                             <TableCell align="center">
                                 {row.estado === 1? <CheckCircleIcon  style={{ color: green[500], fontSize: 30 }} />
                                 : <CancelIcon  style={{ color: red[500],fontSize: 30 }} />
                                  }                               
                             </TableCell>   
                             <TableCell align="center">
-                                         <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={styles.submit}
-                                            onClick = {()=> selecionarCliente(`${row.idFicha}`)}                                         
-                                        >
-                                            Ver ficha
-                                        </Button>   
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver ficha'}>
+                                  <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarCliente(`${row.idFicha}`)} >
+                                  <VisibilityIcon  style={{ fontSize: 30 }} />
+                                  </IconButton>
+                              </Tooltip>                                                                                
                             </TableCell>   
                             </TableRow>
                         ))}

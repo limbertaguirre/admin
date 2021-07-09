@@ -233,7 +233,7 @@ go
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Porrateo','/porrateo','facIcon',3,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',3,1,3,1);
 
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/cliente','facIcon',2,1,4,1);  
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,4,1);  
   
   
 
@@ -1204,4 +1204,26 @@ AS
 			inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA ComiEmp on ComiEmp.id_comision_detalle=GPDE.id_comision_detalle
 			inner join BDMultinivel.dbo.empresa Emp on Emp.id_empresa=ComiEmp.id_empresa
 			
+GO
+
+CREATE VIEW [dbo].[vwObtenerFicha]
+AS
+		 select top(100)
+		  F.id_ficha as 'idFicha',
+		  F.codigo,
+		  F.nombres + ' '+F.apellidos as 'nombreCompleto',
+		  F.ci,
+		  F.tiene_cuenta_bancaria as 'tieneCuentaBancaria',
+		  CASE WHEN  F.id_banco IS NULL THEN 0 ELSE F.id_banco END As 'idBanco',	  
+		  CASE WHEN  B.nombre IS NULL THEN '' ELSE B.nombre END As 'nombreBanco',
+		  CASE WHEN   B.codigo IS NULL THEN '' ELSE  B.codigo END As 'codigoBanco',
+		   CASE WHEN   F.cuenta_bancaria IS NULL THEN '' ELSE  F.cuenta_bancaria END As 'cuentaBancaria',
+		  F.estado,
+		  F.avatar,	
+		 CASE WHEN  NI.nombre IS NULL THEN 'Asesor Comercial' ELSE NI.nombre END As 'nivel'
+		 from BDMultinivel.dbo.FICHA F
+		 left join BDMultinivel.dbo.BANCO B ON B.id_banco = F.id_banco
+		 left join BDMultinivel.dbo.FICHA_NIVEL_I FNIV ON FNIV.id_ficha=F.id_ficha 
+		 inner join BDMultinivel.dbo.NIVEL NI ON NI.id_nivel=FNIV.id_nivel
+
 GO
