@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { grey } from '@material-ui/core/colors';
 import { Typography, Grid } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
@@ -17,7 +17,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AcordionListModulos from './AcordionListModulos';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   iconMenu:{

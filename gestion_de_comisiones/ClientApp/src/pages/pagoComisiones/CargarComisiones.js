@@ -1,10 +1,10 @@
-import React, {useEffect, useState}  from 'react';
+import React, {useEffect}  from 'react';
 
 import { Breadcrumbs, Chip, emphasize, withStyles } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 
 import * as permiso from '../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
+import { verificarAcceso} from '../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
