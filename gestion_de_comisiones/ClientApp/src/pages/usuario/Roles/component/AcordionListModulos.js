@@ -1,23 +1,11 @@
 
 
-import React, { useState }  from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    icono: {
-        width: '40px',
-        height: '40px',
-    }
-      
-}));
-
+import React from 'react';
 
 const  AcordionListModulos =(props)=>  { 
-    const {listHisotrico  } = props   
-    const [listaFiltrada,setListaFiltrada] =useState([]); 
-    const style = useStyles();
+    const {listHisotrico  } = props;   
     const recargarModulos =(todosModulo)=>{
-        let global=[];
+       
         
         let nroModules=todosModulo.length;
         let newListModulos=[];

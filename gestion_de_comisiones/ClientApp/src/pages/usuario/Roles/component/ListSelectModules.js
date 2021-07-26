@@ -1,21 +1,11 @@
 
 
 import React  from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
 import WebIcon from '@material-ui/icons/Web';
 
-const useStyles = makeStyles((theme) => ({
-    icono: {
-        width: '40px',
-        height: '40px',
-    }
-      
-}));
-
-
 const  ListSelectModules =({listaSelecionada})=>  {   
-    const style = useStyles();
+  
     return (
          <>    
             {listaSelecionada.map((value,index) => {

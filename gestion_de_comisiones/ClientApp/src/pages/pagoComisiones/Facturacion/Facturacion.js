@@ -181,7 +181,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-        console.log('comisones : ', res);
+        //console.log('comisones : ', res);
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }

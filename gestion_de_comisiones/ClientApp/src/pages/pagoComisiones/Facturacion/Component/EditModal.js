@@ -1,13 +1,7 @@
-import React, {useEffect, useState}  from 'react';
-import * as permiso from '../../../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles';
-import {useSelector,useDispatch} from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import {
-    Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Paper, Typography,Grid, MenuItem, InputLabel, FormControl, Select, TextField
+    Button, Dialog, DialogContent, Typography,Grid, MenuItem, InputLabel, FormControl, Select, TextField
 } from "@material-ui/core";
-import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
-import { Alert, AlertTitle } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,13 +35,6 @@ const EditModal = (props) => {
    const { open , handleCloseConfirmEdit, handleCloseCancelEdit, listEmpresas, idDetalleEmpresaSelected, idEmpresaSelected, montoSelected, onChangeregistroEdit, nroAutorizacionSelected }= props;
    const classes = useStyles();
 
-  /*   let history = useHistory();
-    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-    useEffect(()=>{  try{  
-       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
-       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
-    },[]) */
-
 
   return (
     <>
@@ -75,8 +62,7 @@ const EditModal = (props) => {
                                 >
                                 <InputLabel id="demo-simple-select-outlined-empresa">Empresa</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-outlined-labelempresa"
-                                    //disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                                    labelId="demo-simple-select-outlined-labelempresa"                                    
                                    // id="demo-simple-select-outlined"
                                     value={idEmpresaSelected}
                                     name="idEmpresaSelected"
@@ -96,8 +82,7 @@ const EditModal = (props) => {
                                         <TextField                            
                                         label=" Monto"
                                         type={'number'}
-                                        variant="outlined"
-                                      //  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                                        variant="outlined"                                      
                                         name="montoSelected"
                                         value={montoSelected}
                                         
@@ -121,8 +106,7 @@ const EditModal = (props) => {
                                         <TextField                            
                                         label="Nro Autorizacion"
                                         type={'text'}
-                                        variant="outlined"
-                                      //  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
+                                        variant="outlined"                                      
                                         name="nroAutorizacionSelected"
                                         value={nroAutorizacionSelected}                                        
                                         className={classes.TextFiel}

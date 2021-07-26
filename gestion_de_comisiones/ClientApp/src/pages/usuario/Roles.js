@@ -1,8 +1,8 @@
 
 
-import React,{useState, useEffect, useReducer }  from 'react';
+import React,{useState, useEffect }  from 'react';
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
-import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
+import {  Button, Grid } from "@material-ui/core"
 import { makeStyles, emphasize, withStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import { useHistory, Link } from "react-router-dom";
@@ -188,7 +188,7 @@ const  Roles =()=>  {
          }
        ]
      
-   // const [historial, setHistorial] = useReducer(appReducer ,incializador);
+   
     const [pageSelected, setPageSelected]= useState({id_pagina:0, nombre: ''})
     const [moduloSelected, setModuloSelected]= useState({idModulo:0, nombre: ''})
     const [listHisotrico, setListHisotrico]= useState([])
@@ -520,14 +520,14 @@ const  Roles =()=>  {
 
             </Grid>
  
-            <Grid container xs={12} spacing={1} alignItems="center" className={style.root}>
+            <Grid container  spacing={1} alignItems="center" className={style.root}>
                 <Grid item xs={4} >
                   <List dense component="div" role="list"  >
                       <Paper className={style.paper}>
                           
                             {lModulos.map((value, index) => {
                               return (
-                                  <div className={style.rootAcordion}>
+                                  <div className={style.rootAcordion} key={index}>
                                     <Accordion square   >
                                       <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
