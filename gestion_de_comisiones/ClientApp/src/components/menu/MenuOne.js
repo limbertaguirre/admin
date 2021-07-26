@@ -171,12 +171,7 @@ const MenuOne = (props) => {
                 </ListItemIcon>
                 <ListItemText primary={'Configuraciones'} />
               </ListItem>
-              <ListItem button key={2} onClick={()=>history.push('/gestion/roles')}>
-                <ListItemIcon>
-                  <ImageIcons name={'rol'} />
-                </ListItemIcon>
-                <ListItemText primary={'Gestion de roles'} />
-              </ListItem>
+  
               <ListItem button key={3} onClick={()=> cerrarSesion()}>
                 <ListItemIcon>
                   <ImageIcons name={'salir'} />
