@@ -1,7 +1,7 @@
 import * as Types from '../types/homeTypes';
 import {requestGet} from '../../service/request';
 
-const menuWeb=[
+/* const menuWeb=[
    {
      idMenu:1,
      titleMenu:'Gestion de pagos',
@@ -26,31 +26,12 @@ const menuWeb=[
                           namePage:'cargaComisiones',
                           path:'/cargar/Comisiones',
                           icon:'factura'            
-                        },
-                        {
-                          idPage:3,
-                          title:'Prorrateo',
-                          descripion:'aqui se mostrara el proceso de facturacion',
-                          namePage:'prorrateo',
-                          path:'/prorrateo',
-                          icon:'prorrateo'            
-                        },
-                        {
-                          idPage:4,
-                          title:'Forma de pago',
-                          descripion:'aqui se mostrara el proceso de facturacion',
-                          namePage:'formaPago',
-                          path:'/forma/pago',
-                          icon:'factura'            
                         }
-
                     ]
-                  }
-                  
+                  }                  
                 ]
-   },
-   
-]
+      },
+    ] */
 
 export const loadHome= ()=>{
   return (dispatch)=>{   

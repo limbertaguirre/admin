@@ -1,5 +1,4 @@
 import React, {useEffect, useState}  from 'react';
-import BorderWrapper from 'react-border-wrapper'
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
@@ -12,12 +11,11 @@ import { useHistory } from 'react-router-dom';
 import * as ActionCliente from '../../redux/actions/clienteAction';
 import * as moment from "moment";
 import "moment/locale/es";
-import { Dialog, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {  Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select,MenuItem } from "@material-ui/core";
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
 import Avatar from '@material-ui/core/Avatar';
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import { requestPost } from "../../service/request";
 import MessageConfirm from '../../components/mesageModal/MessageConfirm';
@@ -207,7 +205,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
        // console.log('nuevo obtener : ', res.data);
             if(res.code === 0){  
                let data= res.data;
-               setAvatar(data.avatar ===null || data.avatar == ""? "": data.avatar);               
+               setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
                setIdFicha(data.idFicha);
@@ -239,7 +237,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          
                setRazonSocial(data.razonSocial === null? "": data.razonSocial);
                setNit(data.nit === null? "" : data.nit);
-               setCheckTieneFactura(data.nit != null && data.nit != "");
+               setCheckTieneFactura(data.nit !== null && data.nit !== "");
                
                setIdBanco(data.idBanco);
                setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );
@@ -406,9 +404,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
               }
     };
     
-    const editarPerfil=()=>{
-       console.log('en proceso cambiar perfil');
-    };
 
     const handleCloseConfirm=()=>{
         setOpenModalConfirm(false);
