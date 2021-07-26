@@ -167,7 +167,7 @@ export const getPaginas= ()=>{
             if(res.code === 0){                
                 dispatch({ type:Types.OBJETO_GLOBAL_ROLES_MODULOS_VACIO, })
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
-                history.push('/gestion/roles');
+                history.goBack();
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   

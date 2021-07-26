@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   }
 
 }));
-const CardRol = ({modulo, redirecionarEditRol})=>{
+const CardRol = ({modulo, redirecionarEditRol, actualizar})=>{
   const classes = useStyles();
   const history = useHistory();
 
@@ -110,10 +110,12 @@ const CardRol = ({modulo, redirecionarEditRol})=>{
                     </Typography>
                     </Grid>
                     <Grid item xs={2} className={classes.gridEditRol}>
+                      {actualizar&& 
                         <IconButton color="primary" component="span" onClick={()=>redirecionarEditRol(modulo.idRol)}>
                             <EditOutlinedIcon />
-                        </IconButton>                     
-                     </Grid>
+                        </IconButton>
+                      }                       
+                    </Grid>
             </Grid>
               
            

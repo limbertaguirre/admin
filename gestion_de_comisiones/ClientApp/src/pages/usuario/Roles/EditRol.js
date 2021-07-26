@@ -81,7 +81,8 @@ const  EditRol =(props)=>  {
     const [allModules, setAllModules]= useState([]);
     const [listaSelecionada, setListaSelecionada]= useState([]);
 
- 
+    console.log('props edit ', props);
+
     useEffect(()=>{
         setIdRol(props.location.state.idRol)
         setRolName(objetoRol.nombre);
@@ -284,13 +285,14 @@ const  EditRol =(props)=>  {
                         </Typography>  
                         </Grid>
                     <Grid item xs={6} className={style.gridNewRol} >
-                        <Button variant="contained" 
-                            /* color="primary" */ 
+                      {props.location.state.permisoActualizar&& 
+                        <Button variant="contained"                          
                             className={style.botonAzul}
                             onClick={cargarModal} 
                              >                            
                             {' '}{' Procesar Cambios'}
                         </Button>
+                      }
                     </Grid>  
                 <Grid item xs={12}>
 
