@@ -400,7 +400,7 @@ const  Roles =()=>  {
 
     const onchangeRegistrarRol= ()=>{
 
-          dispatch(Action.registrarRoles(rolName, rolDescripcion, listHisotrico ));
+          dispatch(Action.registrarRoles(rolName, rolDescripcion, listHisotrico, history ));
 
     }
     const validarBotonHistori=()=> {
