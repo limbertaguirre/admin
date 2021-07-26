@@ -19,12 +19,12 @@ const  AcordionListModulos =(props)=>  {
                        let newListPermisos=[];
                        for(let pe=0; pe<nroPermiso; pe++){
                          let objPermiso= objPagina.permisos[pe];
-                         if(objPermiso.estado == true){                         
+                         if(objPermiso.estado === true){                         
                            newListPermisos.push(objPermiso);
                          }
                        }
                        //crear pagina y add permisos
-                       if(newListPermisos.length != 0){//addPagina
+                       if(newListPermisos.length !== 0){//addPagina
                          const newObjPagina={
                            id_pagina: objPagina.id_pagina,
                            nombre: objPagina.nombre,
@@ -35,7 +35,7 @@ const  AcordionListModulos =(props)=>  {
                        }
                    
                }
-               if(newLisPaginas.length != 0){//addModulo
+               if(newLisPaginas.length !== 0){//addModulo
                  const newobjModelo={
                    idModulo: objModulo.idModulo,
                    nombre: objModulo.nombre,

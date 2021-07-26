@@ -1,15 +1,11 @@
 import React, { useState}  from 'react';
-import { emphasize, makeStyles } from '@material-ui/core/styles';
-
-import * as permiso from '../../../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles';
-
-
-
+import { makeStyles } from '@material-ui/core/styles';
+// import * as permiso from '../../../../routes/permiso'; 
+// import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles'; 
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
-import {Container,Tooltip ,Zoom , InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Tooltip ,Zoom ,Card, Button, Grid } from "@material-ui/core";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -43,8 +39,7 @@ import Paper from '@material-ui/core/Paper';
  const GridComisiones =(props)=> {
     let style= useStyles();
     const {listaComisionesPendientes, selecionarDetalleFrelances, txtBusqueda} = props;
- 
-        //tabla
+
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);
 
@@ -87,14 +82,14 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
                             <TableCell align="right">{row.nombreBanco}</TableCell>   
                             <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
+                            <TableCell align="right">{row.factura === "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
                             <TableCell align="center">                                     
-                                     {row.estadoFacturoId == 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }                                     
+                                     {row.estadoFacturoId === 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }                                     
                             </TableCell>  
                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell> 
                             <TableCell align="right">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
-                                   {row.factura == "True"&& 
+                                   {row.factura === "True"&& 
                                         <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>
                                             <Button
                                             type="submit"

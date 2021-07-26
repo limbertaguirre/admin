@@ -6,17 +6,12 @@ import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
 import * as permiso from '../../../../routes/permiso'; 
 import {  validarPermiso} from '../../../../lib/accesosPerfiles';
-
-
 import { makeStyles } from '@material-ui/core/styles';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-
-
 import Avatar from '@material-ui/core/Avatar';
 import { blue  } from '@material-ui/core/colors';
 
@@ -31,17 +26,15 @@ import Paper from '@material-ui/core/Paper';
 
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import ErrorIcon from '@material-ui/icons/Error';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green } from '@material-ui/core/colors';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-
-import DoneIcon from '@material-ui/icons/Done';
+//import EditIcon from '@material-ui/icons/Edit';
+//import DeleteIcon from '@material-ui/icons/Delete';
+//import DoneIcon from '@material-ui/icons/Done';
 
 import  imageFac from "../../../../../src/assets/img/facturado2.png";
 
@@ -173,13 +166,11 @@ const DetalleAdjuntoModal = (props) => {
           setRowsPerPage(parseInt(event.target.value, 10));
           setPage(0);
       };
-      const onChangeEmpresa = (idDetalleEmpresa)=>{
 
-      }
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        var file = e.target.files[0];
+        //var file = e.target.files[0];
         const reader = new FileReader();
-        var url = reader.readAsDataURL(file);
+        //var url = reader.readAsDataURL(file);
         //console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
           procesarPdf(idDetalleEmpresa,reader.result);
@@ -204,10 +195,10 @@ const DetalleAdjuntoModal = (props) => {
 
      const [openModalCancel, setOpenModalCancel]= useState(false);
 
-     const abrirModalEdit=(idDetalleEmpresa)=>{
+     /* const abrirModalEdit=(idDetalleEmpresa)=>{
        ApiObtenerDetalleEmpresa(userName,idDetalleEmpresa );       
        setOpenModalEdit(true);
-     };
+     }; */
      const onChangeregistroEdit= (e)=> {
         const texfiel = e.target.name;
         const value = e.target.value;
@@ -230,9 +221,7 @@ const DetalleAdjuntoModal = (props) => {
       setOpenModalEdit(false);
      };
 
-     const openDeleteModal=()=>{
-      
-     }
+     
      const ApiObtenerDetalleEmpresa=(user,idcomisionDetalle )=>{
       const data={
         usuarioLogin:user,
@@ -254,9 +243,9 @@ const DetalleAdjuntoModal = (props) => {
      };
      const [openModalSaveConfirmar,setOpenModalSaveConfirmar ] = useState(false);
 
-     const saveCondicional=()=>{
+    /*  const saveCondicional=()=>{
       setOpenModalSaveConfirmar(true);
-     }
+     } */
      const closeModalConfirmGuardar=()=>{
         setOpenModalSaveConfirmar(false);
         handleCloseConfirm();
@@ -307,17 +296,12 @@ const DetalleAdjuntoModal = (props) => {
                     <Typography variant="h6" className={classes.title}>
                       DETALLE DE ADJUNTOS
                     </Typography>
-                    {/* {!estadoComisionGlobalFacturado? 
-                      <Button autoFocus color="inherit" onClick={saveCondicional}>
-                         PROCESAR FACTURA
-                      </Button>
-                    :null} */}
                 </Toolbar>
             </AppBar>     
                <Container maxWidth="md" className={classes.containerPrincipal} >                          
                     <Grid  container item xs={12}  className={classes.gridContainer} >
                         <Grid item xs={12} md={3} className={classes.containerPhoto}  >
-                           <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !=""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
+                           <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !==""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar>
                         </Grid>
                         <Grid container item xs={12} md={4}  >
                              <Grid  item xs={12}   >
@@ -410,15 +394,15 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
 
                                             <TableCell align="center"> 
-                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
-                                             {row.respaldoPath != ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
+                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath === ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                             {row.respaldoPath !== ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
                                              </Tooltip>
                                              </TableCell>  
                                             
                                             
                                              <TableCell align="center"> 
                                                {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo == ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo === ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
                                                   {row.siFacturo? 
                                                     <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
                                                      <CheckBoxIcon style={{ color: green[500] }} />

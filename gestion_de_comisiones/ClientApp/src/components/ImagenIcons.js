@@ -19,6 +19,7 @@ import SecurityIcon from '@material-ui/icons/Security';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 const useStyles = makeStyles((theme) => ({
     imgStyle: {
         fontSize:24,
@@ -59,6 +60,8 @@ const ImageIcons = ({name})=>{
             return <AssignmentIndIcon  className={classes.imgStyle}/>;
         case 'gestionSeguridadIcon':
             return <SecurityIcon  className={classes.imgStyle}/>;
+        case 'gestionRolesIcon':
+            return <SupervisedUserCircleIcon  className={classes.imgStyle}/>;
         case 'gestionPagoIcon':
             return <PaymentIcon  className={classes.imgStyle}/>;
         case 'pagoComisionesIcon':

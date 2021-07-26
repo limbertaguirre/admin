@@ -5,8 +5,10 @@ import {  Typography } from "@material-ui/core";
 import {  Button, Grid, Container } from "@material-ui/core"
 import { makeStyles, emphasize, withStyles  } from '@material-ui/core/styles';
 import { useSelector,useDispatch } from "react-redux";
+import {requestGet, requestPost} from '../../../service/request'; 
 import { useHistory } from "react-router-dom";
 import * as Action from '../../../redux/actions/usuarioAction';
+import * as ActionMensaje from '../../../redux/actions/messageAction';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
@@ -65,9 +67,23 @@ const  GestionRol =(props)=>  {
        }catch (err) {  verificarAcceso(perfiles, 'none', history); }
     },[])
 
-    const {globalModules } = useSelector((stateSelector) =>{ return stateSelector.usuario});
+    const [listaModulos, setListaModulos]= useState([]);
+    const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+
+    const obtenerModulos = () =>{ 
+            const headers={userLogin:userName};
+            requestGet('Rol/ObtenerRolesAllModules',headers,dispatch).then((res)=>{ 
+              if(res.code === 0){        
+                setListaModulos(res.data)        
+                     
+              }else{
+                  dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+              }   
+            })    
+     }
+
      useEffect(()=>{        
-           dispatch(Action.ObtenerRolesModulos());     
+          obtenerModulos();
      },[ ]);
 
     const redirecionarEditRol=(idRol)=>{
@@ -78,7 +94,9 @@ const  GestionRol =(props)=>  {
         }
         history.push(location);
     }
-  
+    useEffect(()=>{        
+    },[listaModulos ]);
+
     return (
          <>    
            <Container>
@@ -111,7 +129,7 @@ const  GestionRol =(props)=>  {
               <br /> 
                 <Grid item xs={12} >
                   <div className={style.contentMenu}>
-                      {globalModules.map((value,index)=>(
+                      {listaModulos.map((value,index)=>(
                           <CardRol key={index}  modulo={value} redirecionarEditRol={redirecionarEditRol} actualizar={validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)} />
                       ))}
                   </div>

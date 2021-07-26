@@ -1,12 +1,6 @@
-import React, {useEffect, useState}  from 'react';
+import React from 'react';
 
-import { Breadcrumbs, Chip, emphasize, withStyles } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
-
-import * as permiso from '../../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
-import {useSelector,useDispatch} from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import {  Chip, emphasize, withStyles } from "@material-ui/core";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -26,12 +20,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 const DetalleAdjunto = (props) => {
 
-    let history = useHistory();
-  /*   const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-    useEffect(()=>{  try{  
-       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
-       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
-    },[]) */
+
 
 
   return (
