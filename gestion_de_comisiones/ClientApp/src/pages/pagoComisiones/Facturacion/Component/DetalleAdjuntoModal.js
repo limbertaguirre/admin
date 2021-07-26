@@ -168,9 +168,9 @@ const DetalleAdjuntoModal = (props) => {
       };
 
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        var file = e.target.files[0];
+        //var file = e.target.files[0];
         const reader = new FileReader();
-        var url = reader.readAsDataURL(file);
+        //var url = reader.readAsDataURL(file);
         //console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
           procesarPdf(idDetalleEmpresa,reader.result);

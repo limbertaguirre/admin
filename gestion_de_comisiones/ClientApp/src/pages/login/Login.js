@@ -206,8 +206,12 @@ const useStyles2 = makeStyles((theme) => ({
                                   error={passwordError}
                                   helperText={
                                     passwordError &&  "La constraseña no cumple los criterios de seguridad"
-                                  }  
-
+                                  }
+                                  onKeyPress={(ev) => {
+                                    if (ev.key === 'Enter' && isFormValid()) {
+                                      _handleRegistrar();
+                                    }
+                                  }}            
                                   InputProps={{ 
                                     endAdornment: (
                                       <InputAdornment position="end">
