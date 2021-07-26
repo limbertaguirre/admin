@@ -54,18 +54,11 @@ const menuWeb=[
 
 export const loadHome= ()=>{
   return (dispatch)=>{   
-     /*   requestGet('weatherforecast',{},dispatch).then((res)=>{
-      
-       })    */ 
   }
 }
 export const cargarMenu= ()=>{
   return (dispatch)=>{   
       
-     /*   dispatch({
-        type: Types.MENU_PAGE,
-         menu:menuWeb,
-       }) */
     
   }
 }

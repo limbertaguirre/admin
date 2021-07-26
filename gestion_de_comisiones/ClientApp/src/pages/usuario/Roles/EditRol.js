@@ -13,7 +13,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import { verificaAlfanumerico } from "../../../lib/expresiones";
 import SnackbarSion from '../../../components/message/SnackbarSion';
-
+import {Container } from "@material-ui/core";
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import EditAcordionModulo from './component/EditAcordionModulo';
 import EditModalConfirm from './component/EditModalConfirm';
@@ -80,8 +80,6 @@ const  EditRol =(props)=>  {
     const [hisotryModules, setHisotryModules]= useState([]);
     const [allModules, setAllModules]= useState([]);
     const [listaSelecionada, setListaSelecionada]= useState([]);
-
-    console.log('props edit ', props);
 
     useEffect(()=>{
         setIdRol(props.location.state.idRol)
@@ -268,7 +266,8 @@ const  EditRol =(props)=>  {
 
 
     return (
-         <>    
+         <> 
+         <Container maxWidth="xl" >
           <br/>
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
@@ -340,14 +339,15 @@ const  EditRol =(props)=>  {
                 <div className={style.rootAcordion}>
                     {hisotryModules.map((value, index)=>{                               
                         return( 
-                                 <EditAcordionModulo modulo={value} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
+                                 <EditAcordionModulo key={index} modulo={value} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
                         )
                      })}                           
                 </div>                                 
             </div>  
             <EditModalConfirm open={open} handConfirm={handConfirm} handleCloseModal={handleCloseModal} listaSelecionada={listaSelecionada} />    
 
-            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={'warning'} duracion={2000} mensaje={'¡Debe Seleccionar un permiso!'} />    
+            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={'warning'} duracion={2000} mensaje={'¡Debe Seleccionar un permiso!'} />  
+            </Container>  
          </>
     );
 }
