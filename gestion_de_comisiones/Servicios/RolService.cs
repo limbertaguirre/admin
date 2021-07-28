@@ -301,6 +301,7 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+
         public object ActualizarRol(RolActualizarInputModel objRol)
         {
             try
@@ -361,6 +362,11 @@ namespace gestion_de_comisiones.Servicios
                 return newListPaginas;
             }
 
+        }
+
+        public List<RolResulModel> GetAllRoles(string usuario)
+        {
+            return RolRepository.obtenerRolesAll(usuario);
         }
 
     }

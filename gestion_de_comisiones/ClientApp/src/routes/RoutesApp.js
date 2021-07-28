@@ -28,6 +28,7 @@ import {useSelector,useDispatch} from "react-redux";
                 <Route path='/clientes' component={Pages.Cliente} exact />  
                 <Route  path='/cliente/ficha' component={Pages.Ficha} exact />  
                 <Route  path='/facturacion/detalle/adjunto' component={Pages.DetalleAdjunto} exact />  
+                <Route  path='/usuario/asignar-roles' component={Pages.SetRol} exact />  
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>
          </Layout> :

@@ -19,5 +19,7 @@ namespace gestion_de_comisiones.Servicios
         public object ActualizarRol(RolActualizarInputModel objRol);
         public List<PaginaResulModelWithPermisos> funcionRecargarpaginas(RolActualizarInputModel objRol);
 
+        public List<RolResulModel> GetAllRoles(string usuario);
+
     }
 }
