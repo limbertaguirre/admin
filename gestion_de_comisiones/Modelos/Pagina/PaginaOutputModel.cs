@@ -15,6 +15,8 @@ namespace gestion_de_comisiones.Modelos.Pagina
         public string namePage { get; set; }
         public string path { get; set; }
         public string icon { get; set; }
+        public int Orden { get; set; }
+
 
     }
 }
