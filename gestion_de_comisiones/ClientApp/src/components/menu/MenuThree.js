@@ -150,12 +150,7 @@ return(
                         </List>
                          <Divider />
                         <List>
-                            <ListItem button key={1} onClick={()=>history.push('/configuraciones')}>
-                                <ListItemIcon>
-                                <ImageIcons name={'config'} />
-                                </ListItemIcon>
-                                <ListItemText primary={'Configuraciones'} />
-                            </ListItem>
+                            
                             <ListItem button key={2} onClick={()=> cerrarSesion()}>
                                 <ListItemIcon>
                                 <ImageIcons name={'salir'} />

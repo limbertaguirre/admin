@@ -27,8 +27,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario} inicio el listCiclos() repository");
-                int pendiente = int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
-                int idtipoComision = int.Parse(Environment.GetEnvironmentVariable("TIPO_PAGO_COMISIONES_ID"));
+                int pendiente = 1;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                int idtipoComision = 1; // int.Parse(Environment.GetEnvironmentVariable("TIPO_PAGO_COMISIONES_ID"));
 
                 var listiclos = contextMulti.GpComisions.Join(contextMulti.GpComisionEstadoComisionIs,
                                                   GpComision => GpComision.IdComision,
@@ -69,9 +69,9 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
-                int idEstadoSinDefinir = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SIN_DEFINIR_CERO"));
-                int idEstadoNoFacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
-                int idEstadoSifacturo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                int idEstadoSinDefinir = 0; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SIN_DEFINIR_CERO"));
+                int idEstadoNoFacturo = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
+                int idEstadoSifacturo = 2; //int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
                 var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.EstadoFacturoId == idEstadoNoFacturo || x.EstadoFacturoId == idEstadoSifacturo || x.EstadoFacturoId == idEstadoSinDefinir).ToList();
                 return ListComisiones;
             }
@@ -171,7 +171,7 @@ namespace gestion_de_comisiones.Repository
             {
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerEmpresas() ");
-                int activo= int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
+                int activo = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
                 var ListComisiones = contextMulti.Empresas.Where(x => x.Estado == activo).Select( p => new EmpresaOutput(p.IdEmpresa, p.Nombre)).ToList();
                 return ListComisiones;
             }
@@ -189,7 +189,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerEmpresas() ");
                 DetalleOutputModel obj = new DetalleOutputModel();
-                int activo = int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
+                int activo = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_EMPRESA_ACTIVO"));
                 var detalle = contextMulti.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalle).Select(p => new ComisionDetalleEmpresaOutput(p.IdComisionDetalleEmpresa, p.Monto, p.NroAutorizacion ,p.IdEmpresa, p.MontoAFacturar, p.MontoTotalFacturar)).FirstOrDefault();
                 if(detalle != null)
                 {
@@ -287,7 +287,7 @@ namespace gestion_de_comisiones.Repository
                                 var comision = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
                                 if(comision != null)
                                 {
-                                    comision.IdEstadoComisionDetalle= int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
+                                    comision.IdEstadoComisionDetalle = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA"));
                                     comision.FechaActualizacion = DateTime.Now;
                                     comision.IdUsuario = usuarioId;
                                     context.SaveChanges();
@@ -303,7 +303,7 @@ namespace gestion_de_comisiones.Repository
                                     if (updatecomisiion != null)
                                     {
                                         Logger.LogInformation($" usuario: {usuarioLogin} - se habilitara el comision detalle ya que todos estan en facturado");
-                                        updatecomisiion.IdEstadoComisionDetalle= int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                                        updatecomisiion.IdEstadoComisionDetalle = 2; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
                                         updatecomisiion.FechaActualizacion = DateTime.Now;
                                         updatecomisiion.IdUsuario = usuarioId;
                                         context.SaveChanges();
@@ -388,11 +388,11 @@ namespace gestion_de_comisiones.Repository
                         {
                             if (estadoFacturado == true)
                             {
-                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));//2
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = 2;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));//2
                             }
                             else
                             {
-                                objComisionDetalleEstado.IdEstadoComisionDetalle = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA")); // 1
+                                objComisionDetalleEstado.IdEstadoComisionDetalle = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_NO_FACTURA")); // 1
                             }
                             context.SaveChanges();
                             Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoFacturado}");
