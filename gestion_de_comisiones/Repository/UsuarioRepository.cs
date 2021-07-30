@@ -23,12 +23,89 @@ namespace gestion_de_comisiones.Repository
 
         }
 
-        public async Task<List<UsuarioSelectModel>> GetUsuarios(string usuario)
+        public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
         {
-            var usuarios = await multinivelDbContext.Usuarios
-                .Select(u=>  new UsuarioSelectModel { IdUsuario = u.IdUsuario, Nombres = u.Nombres, Apellidos = u.Apellidos, Login = u.Usuario1  })
+
+            //None
+            if (model.Operation.Equals(2)) 
+            {
+                return new List<UsuarioSelectModel>();
+            }
+
+            //new
+            if (model.Operation.Equals(0))
+            {
+                var usuarios = multinivelDbContext.Usuarios;
+                var usuariosRoles = multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true));
+                return await usuarios
+                    .Where(u => u.Estado.Equals(true) && !usuariosRoles.Any(ur => ur.IdUsuario.Equals(u.IdUsuario)))
+                    .Select(u => new UsuarioSelectModel { IdUsuario = u.IdUsuario, Nombres = u.Nombres, Apellidos = u.Apellidos, Login = u.Usuario1 })
+                    .ToListAsync();
+            }
+            //Edits
+            else
+            {
+                return await multinivelDbContext.UsuariosRoles.Where(ur=>ur.Estado.Equals(true)).Join(
+                 multinivelDbContext.Usuarios,
+                 ur => ur.IdUsuario,
+                 us => us.IdUsuario,
+                 (ur, us) =>
+                 new UsuarioSelectModel
+                 {
+                     IdUsuario = us.IdUsuario,
+                     Nombres = us.Nombres,
+                     Apellidos = us.Apellidos,
+                     Login = us.Usuario1,
+                 })
+                 .ToListAsync();
+            }
+          
+        }
+
+        public async Task<bool> DeleteUsuarioRol(DeleteUserRolInputModel model)
+        {
+            var userRol = await multinivelDbContext.UsuariosRoles.FirstOrDefaultAsync(ur => ur.IdUsuariosRoles.Equals(model.UsuarioRolId));
+            if (userRol is null)
+            {
+                throw new Exception($"Registro no encontrado");
+            }
+
+            userRol.Estado = false;
+            userRol.FechaActualizacion = DateTime.Now;
+            await multinivelDbContext.SaveChangesAsync();
+
+            return true;
+
+        }
+        public async Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario)
+        {
+            var usuariosRol =await multinivelDbContext.UsuariosRoles.Where(ur=>ur.Estado.Equals(true)).Join(
+                multinivelDbContext.Usuarios,
+                ur => ur.IdUsuario,
+                us => us.IdUsuario,
+                (ur, us) => 
+                new { UsuarioRolId=ur.IdUsuariosRoles, 
+                    UsuarioId = us.IdUsuario, 
+                    Usuario=us.Usuario1,
+                    Nombres=us.Nombres, 
+                    Apellidos=us.Apellidos,
+                    RolId=ur.IdRol
+                    }).Join(
+                multinivelDbContext.Rols,
+                ur =>ur.RolId,
+                r => r.IdRol,
+                (ur,r)=> new UsuarioRolListViewModel
+                {
+                    UsuarioRolId=ur.UsuarioRolId,
+                   UsuarioId = ur.UsuarioId,
+                    Usuario=ur.Usuario,
+                    Nombres=ur.Nombres,
+                    Apellidos=ur.Apellidos,
+                   RolId = r.IdRol,
+                   Rol=r.Nombre
+                })
                 .ToListAsync();
-            return usuarios;
+            return usuariosRol;
         }
 
         public async Task<bool> SetRolByUsuario(SetRolModel model)
@@ -48,32 +125,38 @@ namespace gestion_de_comisiones.Repository
             }
 
             //Check if exist roles by user and disable
-            bool existRoles = multinivelDbContext.UsuariosRoles
-                                .Where(ur =>ur.Estado.Equals(true) && ur.IdUsuario.Equals(model.UsuarioId))
+            bool existUsuarioRol = multinivelDbContext.UsuariosRoles
+                                .Where(ur => ur.IdUsuario.Equals(model.UsuarioId))
                                 .Any();
-            if (existRoles)
+            if (existUsuarioRol)
             {
                 //Disable rol if exist
-                var rolesByUser = multinivelDbContext.UsuariosRoles
-                                    .Where(ur => ur.IdUsuario.Equals(model.UsuarioId) && ur.IdRol.Equals(model.RolId) && ur.Estado.Equals(true));
-                foreach (var rolUser in rolesByUser)
-                {
-                    rolUser.Estado = false;
-                    rolUser.FechaActualizacion = DateTime.Now;
-                }
+                var userRol = multinivelDbContext.UsuariosRoles
+                                    .FirstOrDefault(ur => ur.IdUsuario.Equals(model.UsuarioId));
+
+
+                userRol.IdRol = model.RolId;
+                userRol.Estado = true;
+                userRol.FechaActualizacion = DateTime.Now;
+
+
+            }
+            else
+            {
+                //Create UsuarioRol
+                UsuariosRole usuariosRole = new UsuariosRole();
+                usuariosRole.IdUsuario = usuario.IdUsuario;
+                usuariosRole.IdRol = rol.IdRol;
+                usuariosRole.Estado = true;
+                usuariosRole.UsuarioId = model.UserOperationId;
+
+                multinivelDbContext.UsuariosRoles.Add(usuariosRole);
             }
 
-            //Create UsuarioRol
-            UsuariosRole usuariosRole = new UsuariosRole();
-            usuariosRole.IdUsuario = usuario.IdUsuario;
-            usuariosRole.IdRol = rol.IdRol;
-            usuariosRole.Estado = true;
-            usuariosRole.UsuarioId = model.UserOperationId;
-
-            await multinivelDbContext.UsuariosRoles.AddAsync(usuariosRole);
+            
             await multinivelDbContext.SaveChangesAsync();
 
-            return (usuariosRole.IdUsuariosRoles >0);
+            return true;
         }
 
 

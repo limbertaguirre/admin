@@ -10,6 +10,6 @@ namespace gestion_de_comisiones.Modelos.Usuario
         public int UsuarioId { get; set; }
         public int RolId { get; set; }
         public int UserOperationId { get; set; }
-        public int UserOperationUsername { get; set; }
+        public string UserOperationUsername { get; set; }
     }
 }

@@ -23,10 +23,19 @@ namespace gestion_de_comisiones.Servicios
         {
             return await usuarioRepository.SetRolByUsuario(model);
         }
-
-        public async Task<List<UsuarioSelectModel>> GetUsuarios(string usuario)
+        public async Task<bool> DeleteUserRol(DeleteUserRolInputModel model)
         {
-            return await usuarioRepository.GetUsuarios(usuario);
+            return await usuarioRepository.DeleteUsuarioRol(model);
+        }
+
+        public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
+        {
+            return await usuarioRepository.GetUsuarios(model);
+        }
+
+        public async Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario)
+        {
+            return await usuarioRepository.GetUsuariosRol(usuario);
         }
 
         public object RegistraUsuario(UsuarioRegisterInputModel user)

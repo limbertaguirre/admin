@@ -2,8 +2,10 @@ import React, {useEffect,useState}  from 'react';
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import HomeIcon from '@material-ui/icons/Home';
-import UsuarioRolTable from './components/UsuariosRolesTable';
+import UsuariosRolesListView from './components/UsuariosRolesListView';
+import AsignarRolesDetailView from './components/AsignarRolesDetailView';
 import { requestPost, requestGet } from "../../service/request";
+import AsignarRolesLookupDetailView from './components/AsignarRolesLookupDetailView';
 import {Container, 
   InputAdornment,
   Tooltip ,
@@ -20,6 +22,11 @@ import {Container,
   MenuItem,
   sMenuItem,
   Chip } from "@material-ui/core";
+import CheckIcon from '@material-ui/icons/Check';
+import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
+import * as Action from '../../redux/actions/messageAction';
   
 import * as permiso from '../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
@@ -69,47 +76,120 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }));
 
     let style= useStyles();
+
     const dispatch = useDispatch();
+    const [operation,setOperation] = useState(2);//0: new item; 1: edit item; 2:none;
+    const [open,setOpen] = useState(false);
     const [idRolSelected,setIdRolSelected] = useState(0);
+    const [idUserSelected,setIdUserSelected] = useState(0);
     const [roles,setRoles] = useState([]);
     const [usuarios,setUsuarios] = useState([]);
-    const [idUserSelected,setIdUserSelected] = useState(0);
+    const [reloadListView, setReloadListView] = useState(false);
+    const [usuariosRol,setUsuariosRol] =useState([]);
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
 
-    const getRoles=()=>{
-      const headerData={usuarioLogin:userName};
-       requestGet('Rol/GetRoles',headerData,dispatch).then((res)=>{ 
-            if(res.code === 0){                 
-              setRoles(res.data);
-            }
-          })    
-     };
 
-     const getUsuarios=()=>{
-      const headerData={usuarioLogin:userName};
-       requestGet('Usuario/GetUsuariosForSelect',headerData,dispatch).then((res)=>{ 
-            if(res.code === 0){                 
-              setUsuarios(res.data);
-            }
-          })    
-     };
+     /*AsignarRolesLookupDetailView */
 
-     useEffect(()=>{
+     const handleRolParent= (id) =>{
+      setIdRolSelected(id);
+    }
+
+    const handleUserParent= (id) =>{
+      setIdUserSelected(id);
+    }
+     
+    const newUsuarioRol=()=>{
+      //0: Nuevo asignacion de rol
+      setOperation(0);
+      reloadData(0,0);
+      setOpen(true);
+    }
+
+    const editUsuarioRol=(idUsuario, idRol)=>{
+      //1: Editar rol de usuario
+      setOperation(1);
+      reloadData(idUsuario,idRol);
+      setOpen(true);
+
+
+    }
+
+
+
+    /*UsuariosRolesListView */
+
+    const getUsuariosRol=()=>{
+      const headerData={usuarioLogin:userName};
+      requestGet('Usuario/GetUsuariosRol',headerData,dispatch).then((res)=>{ 
+        if(res.code === 0){                 
+          setUsuariosRol(res.data);
+        }
+      })   
+    }
+
+
+
+    const handleCloseConfirmParent=()=>{
+      
+      let body={
+        usuarioId: idUserSelected, 
+        rolId: idRolSelected,
+        userOperationId: idUsuario,
+        userOperationUsername: userName
+      };
+      
+        requestPost('Usuario/SetRol',body,dispatch).then((res)=>{ 
+            if(res.code === 0){
+
+                getUsuariosRol();
+                dispatch(Action.showMessage({ message: 'Operación completada exitosamente', variant: "success" }));
+                setOpen(false);
+            }
+            else{
+              dispatch(Action.showMessage({ message: res.message, variant: "error" }));
+            }
+        }) 
+    }
+
+    const reloadData=(usuario, rol)=>{
       getRoles();
-     },[]);
-
-     useEffect(()=>{
       getUsuarios();
-     },[]);
-
-     const handleClickSelectedRol= (e) =>{
-      setIdRolSelected(e.target.value);
+      setIdRolSelected(usuario);
+      setIdUserSelected(rol);
     }
 
-    const HandleCliclSelectedUsurio= (e) =>{
-      setIdUserSelected(e.target.value);
+    const getRoles=()=>{
+        const headerData={usuarioLogin:userName};
+        requestGet('Rol/GetRoles',headerData,dispatch).then((res)=>{ 
+            if(res.code === 0){                 
+            setRoles(res.data);
+            }
+        })    
+    };
+
+    const getUsuarios=()=>{
+      const bodyData={idUsuario:idUsuario,usuarioLogin:userName, operation:operation};
+          requestPost('Usuario/GetUsuariosForSelect',bodyData,dispatch).then((res)=>{ 
+              if(res.code === 0){                 
+              setUsuarios(res.data);
+              }
+          })    
+    };
+
+    const handleCloseCancelParent= ()=>{
+      setOpen(false);
+      setOperation(2);
     }
 
+    useEffect(()=>{
+      reloadData(idUserSelected,idRolSelected);
+
+    },[operation]);
+
+    useEffect(()=>{
+      getUsuariosRol();
+    },[]);
 
     return (
       <>
@@ -124,74 +204,40 @@ const StyledBreadcrumb = withStyles((theme) => ({
           <br/>
           <Typography variant="h4" gutterBottom className={style.etiqueta} >
              {'Asinación de roles'}
-           </Typography>
-           <Card>
-             <Grid container spacing={3} className={style.gridContainer}>
-                <Grid item xs={6}>
-                  <FormControl variant="outlined" fullWidth>
-                    <InputLabel id="lb-usuario">Usuario</InputLabel>
-                    <Select
-                        labelId="lb-usuario"
-                        id="sl-usuario"
-                        name="usuario"
-                        label="Usuaario"
-                        value={idUserSelected}
-                        onChange={HandleCliclSelectedUsurio}
-                        >
-                        <MenuItem value={0}>
-                            <em>Seleccione el usuario</em>
-                        </MenuItem>
-                        {usuarios.map((v, i)=> (
-                          <MenuItem key={'user_'+v.idUsuario} value={v.idUsuario}>
-                           <em>{v.login}</em>
-                          </MenuItem>
-                        ))}                    
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={6}>
-                  <FormControl variant="outlined" fullWidth>
-                    <InputLabel id="lb-rol">Rol</InputLabel>
-                    <Select
-                        labelId="lb-rol"
-                        id="sl-rol"
-                        name="rol"
-                        label="Rol"
-                        value={idRolSelected}
-                        onChange={handleClickSelectedRol}
-                        >
-                        <MenuItem value={0}>
-                            <em>Seleccione el rol</em>
-                        </MenuItem>
-                        {roles.map((v, i)=> (
-                          <MenuItem key={'rol_'+v.idRol} value={v.idRol}>
-                           <em>{v.nombre}</em>
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-
-                <Button variant="contained" color="primary">
-                  Editar rol
-                </Button>
-                <Button variant="contained" color="secondary">
-                  Eliminar rol
-                </Button>
+          </Typography>
+          <Card>
+            <Grid container spacing={3}  justify="space-between" className={style.gridContainer}>
+              <Grid item>
+              <Typography variant="h5" gutterBottom className={style.etiqueta} >
+                {'Listado de usuarios con rol'}
+              </Typography>
               </Grid>
-             </Grid>
-           </Card>
-            <hr/>
-           <Card>
-            <Grid container spacing={3} className={style.gridContainer}>
-              <Grid item xs={12}>
-
+              <Grid item>
+              <Button variant="contained" color="primary" onClick={()=>{newUsuarioRol()}}>
+                  <AddIcon/> Asignar rol
+              </Button>
               </Grid>
             </Grid>
-           </Card>
-        <UsuarioRolTable />
+          </Card>
+          <UsuariosRolesListView 
+            handleEditOperation={editUsuarioRol} 
+            usuariosRol={usuariosRol} 
+            handleData={getUsuariosRol}
+          />
         </Container>
+        <AsignarRolesLookupDetailView 
+          open ={open}
+          idUserSelected={idUserSelected}
+          idRolSelected={idRolSelected}
+          usuarios={usuarios}
+          roles={roles}
+          
+          handleCloseConfirmParent ={handleCloseConfirmParent}
+          handleCloseCancelParent ={handleCloseCancelParent}
+          operation={operation}
+          handleRol={handleRolParent}
+          handleUser={handleUserParent}
+           />
       </>
     );
 

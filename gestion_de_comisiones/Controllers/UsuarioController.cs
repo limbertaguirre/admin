@@ -20,12 +20,13 @@ namespace gestion_de_comisiones.Controllers
             this.usuarioService = usuarioService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUsuariosForSelect([FromHeader] string usuarioLogin)
+        [HttpPost]
+        public async Task<IActionResult> GetUsuariosForSelect([FromBody] UsuariosSelectInputModel model)
         {
+            //TODO: jaflores register log
             try
             {
-                var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuarios(usuarioLogin));
+                var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuarios(model));
                 return Ok(responseApi);
             }
             catch (Exception ex)
@@ -34,19 +35,35 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetUsuariosRol([FromHeader] string usuarioLogin)
-        //{
-        //    try
-        //    {
-        //        var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuarios(usuarioLogin));
-        //        return Ok(responseApi);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new ResponseApi<List<UsuarioSelectModel>>(ex.Message) { Data = new List<UsuarioSelectModel>() });
-        //    }
-        //}
+        [HttpPost]
+        public async Task<IActionResult> DeleteUsuarioRol([FromBody] DeleteUserRolInputModel model)
+        {
+            //TODO: jaflores register log
+            try
+            {
+                var responseApi = new ResponseApi<bool>(await usuarioService.DeleteUserRol(model));
+                return Ok(responseApi);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseApi<bool>(ex.Message) { Data = false });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsuariosRol([FromHeader] string usuarioLogin)
+        {
+            //TODO: jaflores register log
+            try
+            {
+                var responseApi = new ResponseApi<List<UsuarioRolListViewModel>>(await usuarioService.GetUsuariosRol(usuarioLogin));
+                return Ok(responseApi);
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseApi<List<UsuarioRolListViewModel>>(ex.Message) { Data = new List<UsuarioRolListViewModel>() });
+            }
+        }
 
 
         [HttpPost]
@@ -56,7 +73,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 var responseApi = new ResponseApi<bool>(await usuarioService.SetRolByUsuario(model));
-                //var responseApi = new ResponseApi<bool>(true);
+                
                 return Ok(responseApi);
             }
             catch (Exception ex)

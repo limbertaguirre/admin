@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Modelos.Usuario
     public class UsuarioRolListViewModel
     {
         public int UsuarioRolId { get; set; }
-        public string usuario { get; set; }
+        public string Usuario { get; set; }
         public string Nombres { get; set; }
         public string Apellidos { get; set; }
         public int UsuarioId { get; set; }
