@@ -40,7 +40,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerlistComisionesPendiente() ");
-                int idEstado= int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                int idEstado = 1;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
                 var comsiones = Repository.obtenerComisiones(usuario, idCiclo, idEstado);
                 return Respuesta.ReturnResultdo(0, "ok", comsiones);
             }
@@ -55,7 +55,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio buscarComisionesPorNombre() ");
-                int idEstado = int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                int idEstado = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
                 var comsiones = Repository.buscarcomisionXnombre(usuario, idCiclo, idEstado, nombreCriterio);
                 return Respuesta.ReturnResultdo(0, "ok", comsiones);
             }
@@ -98,8 +98,8 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} inicio el servicio ACtualizarComisionDetalleAFacturado() ");
-                int idEstadoFacturado = int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
-                var comsiones = Repository.AcTualizarComisionDetalleEstado(comisionDetalle, 2);
+                int idEstadoFacturado = 2;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                var comsiones = Repository.AcTualizarComisionDetalleEstado(comisionDetalle, idEstadoFacturado);
                 if (comsiones)
                 {
                     return Respuesta.ReturnResultdo(0, "ok", comsiones);
