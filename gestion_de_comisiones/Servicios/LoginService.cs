@@ -80,15 +80,15 @@ namespace gestion_de_comisiones.Servicios
                     PerfilModel objPerfil = new PerfilModel();
                     List<PerfilHash> listaHash = new List<PerfilHash>();
                     List<MenuModel> ListMenu = new List<MenuModel>();
-                    foreach(var item in moduloPadres)
+                    foreach(var item in moduloPadres.OrderBy(mp=>mp.Orden))
                     {
                     var listModulohijo = RolRepository.obtnerSubModulosXIdPadre(usuario, item.IdModulo);
                     List<SubMenuModel> ListSubMenu = new List<SubMenuModel>();
-                    foreach(var itemPadre in listModulohijo)
+                    foreach(var itemPadre in listModulohijo.OrderBy(mh=>mh.Orden))
                     {
                         List<PaginaModel> oldPaginas = RolRepository.obtenerPaginasXModulo(usuario, itemPadre.IdModulo);
                         List<PaginaOutputModel> ListPages = new List<PaginaOutputModel>();
-                        foreach(var itempag in oldPaginas)
+                        foreach(var itempag in oldPaginas.OrderBy(p=>p.Orden))
                         {
                             var tienePagina = RolRepository.obtenerRolPaginaXPagina(usuario, itempag.IdPagina, idRol);
                             if(tienePagina != null)
