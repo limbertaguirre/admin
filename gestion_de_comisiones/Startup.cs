@@ -1,7 +1,9 @@
+using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
 using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,12 +37,17 @@ namespace gestion_de_comisiones
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IFacturaService, FacturaService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IClienteRepository, ClienteRespository>();
             services.AddScoped<IPaisRepository, PaisRepository>();
             services.AddScoped<IFacturaRepository, FacturaRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+
+            services.AddScoped<BDMultinivelContext>();
 
 
             // In production, the React files will be served from this directory
@@ -50,7 +57,7 @@ namespace gestion_de_comisiones
             });
 
             //configuracion y conexion al db context
-            
+
 
         }
 

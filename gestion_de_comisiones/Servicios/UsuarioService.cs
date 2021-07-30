@@ -1,6 +1,8 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Usuario;
 using gestion_de_comisiones.Repository;
+using gestion_de_comisiones.Repository.Interfaces;
+using gestion_de_comisiones.Servicios.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +10,37 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Servicios
 {
-    public class UsuarioService
+    public class UsuarioService:IUsuarioService
     {
+        private readonly IUsuarioRepository usuarioRepository;
+
+        public UsuarioService(IUsuarioRepository usuarioRepository)
+        {
+            this.usuarioRepository = usuarioRepository;
+        }
+
+        public async Task<bool> SetRolByUsuario(SetRolModel model)
+        {
+            return await usuarioRepository.SetRolByUsuario(model);
+        }
+        public async Task<bool> DeleteUserRol(DeleteUserRolInputModel model)
+        {
+            return await usuarioRepository.DeleteUsuarioRol(model);
+        }
+
+        public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
+        {
+            return await usuarioRepository.GetUsuarios(model);
+        }
+
+        public async Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario)
+        {
+            return await usuarioRepository.GetUsuariosRol(usuario);
+        }
+
         public object RegistraUsuario(UsuarioRegisterInputModel user)
         {
-            UsuarioRepository UserRepos = new UsuarioRepository();
+            UsuarioRepository UserRepos = (UsuarioRepository)usuarioRepository;
             var objetoo = UserRepos.ObtenerUsuarioPorId(user.userName);
             if (objetoo == null)
             {
