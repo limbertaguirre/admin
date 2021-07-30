@@ -163,13 +163,6 @@ const MenuOne = (props) => {
           </List>
           <Divider />
           <List>
-            
-              <ListItem button key={1} onClick={()=>history.push('/configuraciones')}>
-                <ListItemIcon>
-                  <ImageIcons name={'config'} />
-                </ListItemIcon>
-                <ListItemText primary={'Configuraciones'} />
-              </ListItem>
   
               <ListItem button key={3} onClick={()=> cerrarSesion()}>
                 <ListItemIcon>

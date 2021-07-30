@@ -195,9 +195,9 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_actualizacion'
 go
---insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de Pagos','gestionPagoIcon','1',1,null,1); --padre
-----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de Clientes','gestionClienteIcon','1',1,null,1);--padre
---  insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de seguridad','gestionSeguridadIcon','3',1,null,1); --padre
+--insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon','1',1,null,1); --padre
+----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon','1',1,null,1);--padre
+--  insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config','3',1,null,1); --padre
 
 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon','1',1,1,1);--hijo
 ----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
@@ -230,7 +230,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'PAGINA', N'COLUMN', N'fecha_actualizacion'
 go
 --add modulo antes estos hacen referencia a los id de los modulos hijos
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('facturacion','/facturacion','facIcon',1,1,3,1);
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturacion','/facturacion','facIcon',1,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cargar comisiones','/cargar/comisiones','facIcon',1,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',3,1,3,1);
@@ -846,6 +846,7 @@ go
 CREATE TABLE EMPRESA(
   id_empresa int NOT NULL PRIMARY KEY identity,
   codigo int not null,
+  codigo_cnx int not null,
   nombre varchar(100) not null,
   estado int not null, --1 o cero 
   id_usuario int not null,
@@ -1231,3 +1232,23 @@ AS
 		 inner join BDMultinivel.dbo.NIVEL NI ON NI.id_nivel=FNIV.id_nivel
 
 GO
+CREATE TABLE LOG_DETALLE_COMISION_EMPRESA_FAIL(
+  id_detalle_comisio_empresa_fail int NOT NULL PRIMARY KEY identity,
+  id_ciclo int not null,
+  id_ficha int not null,
+  codigo_cliente int not null,
+  total_monto_Bruto decimal(18, 2) NOT NULL,
+  descripcion varchar(max),
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla autoincremental.', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comisio_empresa_fail'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El idciclo es la llave foranea de comision ciclo', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_ciclo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id ficha de la tabla comisiones', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_ficha'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo del contacto del guardian, es el cliente', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'codigo_cliente'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el monto total bruto de la comision de freelancer', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'total_monto_Bruto'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'descripcion'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
+go

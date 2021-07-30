@@ -10,9 +10,7 @@ const  NotFoundLoad =()=>  {
             <br />
             
          
-            <div style={{ width: '100%', display: 'flex',  alignContent:'center', justifyContent: 'center'}} >
-                <img src={process.env.PUBLIC_URL + pantera } alt="" style={{width: '80%'}} />
-            </div>                       
+                                
          </>
     );
 }
