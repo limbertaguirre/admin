@@ -152,6 +152,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
         }) 
     }
 
+    const handleCloseCancelParent= ()=>{
+      setOpen(false);
+      setOperation(2);
+    }
+
     const reloadData=(usuario, rol)=>{
       getRoles();
       getUsuarios();
@@ -177,13 +182,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
           })    
     };
 
-    const handleCloseCancelParent= ()=>{
-      setOpen(false);
-      setOperation(2);
-    }
+    
 
     useEffect(()=>{
-      reloadData(idUserSelected,idRolSelected);
+      if (operation != 2) {
+        
+        reloadData(idUserSelected,idRolSelected);
+      }
 
     },[operation]);
 

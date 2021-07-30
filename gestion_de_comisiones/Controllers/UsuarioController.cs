@@ -2,8 +2,10 @@
 using gestion_de_comisiones.Modelos.Usuario;
 using gestion_de_comisiones.Servicios;
 using gestion_de_comisiones.Servicios.Interfaces;
+using gestion_de_comisiones.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +16,12 @@ namespace gestion_de_comisiones.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService usuarioService;
+        private readonly ILogger<UsuarioController> logger;
 
-        public UsuarioController(IUsuarioService usuarioService)
+        public UsuarioController(IUsuarioService usuarioService, ILogger<UsuarioController> logger)
         {
             this.usuarioService = usuarioService;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -26,11 +30,14 @@ namespace gestion_de_comisiones.Controllers
             //TODO: jaflores register log
             try
             {
+                logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioController.GetUsuariosForSelect)));
                 var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuarios(model));
+                logger.LogInformation(MessageLogger.FunctionOut(model.UsuarioLogin, nameof(UsuarioController.GetUsuariosForSelect)));
                 return Ok(responseApi);
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, MessageLogger.ExcepcionMessage(model.UsuarioLogin, nameof(UsuarioController.GetUsuariosForSelect)));
                 return Ok(new ResponseApi<List<UsuarioSelectModel>>(ex.Message) { Data = new List<UsuarioSelectModel>() });
             }
         }

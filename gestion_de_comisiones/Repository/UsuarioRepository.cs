@@ -3,6 +3,7 @@ using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,12 @@ namespace gestion_de_comisiones.Repository
     {
 
         private readonly BDMultinivelContext multinivelDbContext;
-        public UsuarioRepository(BDMultinivelContext multinivelDbContext)
+        private readonly ILogger<UsuarioRepository> logger;
+
+        public UsuarioRepository(BDMultinivelContext multinivelDbContext, ILogger<UsuarioRepository> logger)
         {
             this.multinivelDbContext = multinivelDbContext;
+            this.logger = logger;
         }
         public UsuarioRepository()
         {
@@ -25,41 +29,38 @@ namespace gestion_de_comisiones.Repository
 
         public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
         {
+            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuarios)));
+            var result = new List<UsuarioSelectModel>();
 
-            //None
-            if (model.Operation.Equals(2)) 
+            switch (model.Operation)
             {
-                return new List<UsuarioSelectModel>();
-            }
-
-            //new
-            if (model.Operation.Equals(0))
-            {
-                var usuarios = multinivelDbContext.Usuarios;
-                var usuariosRoles = multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true));
-                return await usuarios
-                    .Where(u => u.Estado.Equals(true) && !usuariosRoles.Any(ur => ur.IdUsuario.Equals(u.IdUsuario)))
-                    .Select(u => new UsuarioSelectModel { IdUsuario = u.IdUsuario, Nombres = u.Nombres, Apellidos = u.Apellidos, Login = u.Usuario1 })
+                case 0://new operation
+                    var usuarios = multinivelDbContext.Usuarios;
+                    var usuariosRoles = multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true));
+                    result = await usuarios
+                        .Where(u => u.Estado.Equals(true) && !usuariosRoles.Any(ur => ur.IdUsuario.Equals(u.IdUsuario)))
+                        .Select(u => new UsuarioSelectModel { IdUsuario = u.IdUsuario, Nombres = u.Nombres, Apellidos = u.Apellidos, Login = u.Usuario1 })
+                        .ToListAsync();
+                 break;
+                case 1://edit operation
+                    result = await multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true)).Join(
+                    multinivelDbContext.Usuarios,
+                    ur => ur.IdUsuario,
+                    us => us.IdUsuario,
+                    (ur, us) =>
+                    new UsuarioSelectModel
+                    {
+                        IdUsuario = us.IdUsuario,
+                        Nombres = us.Nombres,
+                        Apellidos = us.Apellidos,
+                        Login = us.Usuario1,
+                    })
                     .ToListAsync();
+                break;
             }
-            //Edits
-            else
-            {
-                return await multinivelDbContext.UsuariosRoles.Where(ur=>ur.Estado.Equals(true)).Join(
-                 multinivelDbContext.Usuarios,
-                 ur => ur.IdUsuario,
-                 us => us.IdUsuario,
-                 (ur, us) =>
-                 new UsuarioSelectModel
-                 {
-                     IdUsuario = us.IdUsuario,
-                     Nombres = us.Nombres,
-                     Apellidos = us.Apellidos,
-                     Login = us.Usuario1,
-                 })
-                 .ToListAsync();
-            }
-          
+
+            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuarios)));
+            return result;
         }
 
         public async Task<bool> DeleteUsuarioRol(DeleteUserRolInputModel model)

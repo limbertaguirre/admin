@@ -74,13 +74,13 @@ export default function UsuariosRolesListView(props) {
     setModalConfirmOpen(false);
    }
 
-   const handleDeleteUsuarioRolConfirm =()=>{
+   const handleDeleteUsuarioRolConfirm = ()=>{
     const body ={
       usuarioRolId:idUsuarioRolSelected,
       operationUserId:idUsuario,
       operationLogin: userName
     }
-    requestPost('Usuario/DeleteUsuarioRol',body,dispatch)
+     requestPost('Usuario/DeleteUsuarioRol',body,dispatch)
       .then((res)=>
       { 
         if(res.code === 0){

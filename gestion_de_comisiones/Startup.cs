@@ -3,6 +3,7 @@ using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
 using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -56,7 +57,7 @@ namespace gestion_de_comisiones
             });
 
             //configuracion y conexion al db context
-            
+
 
         }
 

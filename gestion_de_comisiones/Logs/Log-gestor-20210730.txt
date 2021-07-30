@@ -1,0 +1,10 @@
+2021-07-30T10:12:02.1233583-04:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2021-07-30T10:12:02.1307596-04:00  [INF] Hosting environment: "Development" (c3307c92)
+2021-07-30T10:12:02.1321585-04:00  [INF] Content root path: "C:\Proyectos\gestor_de_comisiones_proyect\gestion_de_comisiones" (b5d60022)
+2021-07-30T10:12:06.2369660-04:00  [ERR] Browserslist: caniuse-lite is outdated. Please run:
+ (02daff8f)
+2021-07-30T10:31:59.3795787-04:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2021-07-30T10:31:59.3916150-04:00  [INF] Hosting environment: "Development" (c3307c92)
+2021-07-30T10:31:59.3936399-04:00  [INF] Content root path: "C:\Proyectos\gestor_de_comisiones_proyect\gestion_de_comisiones" (b5d60022)
+2021-07-30T10:32:06.0473279-04:00  [ERR] Browserslist: caniuse-lite is outdated. Please run:
+ (02daff8f)
