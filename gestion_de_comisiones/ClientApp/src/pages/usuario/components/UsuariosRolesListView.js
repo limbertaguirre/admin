@@ -38,7 +38,7 @@ const columns = [
   {id: 'actions', label: 'Acciones', minWidth:170}
 
 ];
-const deleteConfirmMessage='Estas seguro eliminar el rol para este usuario?'
+const deleteConfirmMessage =(u, r)=>`¿Está seguro de eliminar el rol de "${r}" para el usuario "${u}"?`;
 
 
 export default function UsuariosRolesListView(props) {
@@ -50,6 +50,7 @@ export default function UsuariosRolesListView(props) {
   const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
   const [modalConfirmOpen, setModalConfirmOpen] =useState(false);
   const [idUsuarioRolSelected,setIdUsuarioRolSelected] = useState(0);
+  const [rowSelected, setRowSelected] = useState({}); 
 
   const onChangePage =()=>{
 
@@ -64,16 +65,16 @@ export default function UsuariosRolesListView(props) {
     setPage(0);
   };
 
-   const handleDeleteUsuarioRolOperation=(idUsuarioRol)=>{
+   const handleDeleteUsuarioRolOperation=(row)=>{
      setModalConfirmOpen(true);
-     setIdUsuarioRolSelected(idUsuarioRol);
+     setIdUsuarioRolSelected(row.usuarioRolId);
+     setRowSelected(row);
    }
 
    const handleDeleteUsuarioRolCancel=()=>{
     setIdUsuarioRolSelected(0);
     setModalConfirmOpen(false);
    }
-
    const handleDeleteUsuarioRolConfirm = ()=>{
     const body ={
       usuarioRolId:idUsuarioRolSelected,
@@ -142,7 +143,7 @@ export default function UsuariosRolesListView(props) {
                                 // fullWidth
                                 variant="contained"
                                 color="secondary"
-                                onClick = {()=>{handleDeleteUsuarioRolOperation(row.usuarioRolId)}}                            
+                                onClick = {()=>{handleDeleteUsuarioRolOperation(row)}}                            
                            >
                             <DeleteIcon/>
                         </IconButton >  
@@ -167,9 +168,9 @@ export default function UsuariosRolesListView(props) {
     </Paper>
      <MessageConfirm 
       open={modalConfirmOpen} 
-      titulo={'Confirmación'} 
-      tipoModal={"info"} 
-      mensaje={deleteConfirmMessage} 
+      titulo={'Mensaje de confirmación'} 
+      tipoModal={"error"} 
+      mensaje={deleteConfirmMessage(rowSelected.usuario, rowSelected.rol)} 
       handleCloseConfirm={handleDeleteUsuarioRolConfirm} 
       handleCloseCancel={handleDeleteUsuarioRolCancel}  />
      </>
