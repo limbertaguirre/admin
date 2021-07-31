@@ -69,7 +69,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
-                var resulcliente = Service.buscarComisionesPorNombre(param.usuarioLogin, param.idCiclo,param.nombreCriterio);
+                var resulcliente = Service.BuscarComisiones(param.usuarioLogin, param.idCiclo,param.nombreCriterio);
                 Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarComisionNombre()  ");
                 return Ok(resulcliente);
             }
