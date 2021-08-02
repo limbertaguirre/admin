@@ -135,6 +135,7 @@ create table USUARIO
     usuario_id int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	estado bit NOT NULL DEFAULT 1,
 );
 
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla USUARIO.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO', N'COLUMN', N'id_usuario'
@@ -202,7 +203,7 @@ go
 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon','1',1,1,1);--hijo
 ----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de roles','gestionRolesIcon','1',1,5,1);--hijo
-
+-- INSERT INTO MODULO VALUES('Usuarios','gestionClienteIcon',2,1,5,1,GETDATE(),GETDATE());
 go
 create table PAGINA
 (
@@ -238,6 +239,7 @@ go
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,4,1);  
 
    --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
+   --INSERT INTO PAGINA VALUES('Asignación de roles','/usuario/asignar-roles','facIcon',1,1,@@Identity,1,GETDATE(),GETDATE());
   
   
 

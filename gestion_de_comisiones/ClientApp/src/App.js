@@ -10,8 +10,8 @@ export default class App extends Component {
     return (
       <>
         <Message />
-        <ProgressDialog />
         <RoutesApp />
+        <ProgressDialog />
       </>
     );
   }

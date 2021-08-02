@@ -115,10 +115,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[idCiclo, setIdCiclo]= useState(0);
   const[idCicloSelected, setIdCicloSelected]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
-  const [txtBusqueda, setTxtBusqueda] = useState("");
+  const[txtBusqueda, setTxtBusqueda] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
 
-   const [estadoComisionGlobalFacturado, setEstadoComisionGlobalFacturado]= useState(false);
+   const[estadoComisionGlobalFacturado, setEstadoComisionGlobalFacturado]= useState(false);
    const[Ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
    const[listaDetalleEmpresa, setListaDetalleEmpresa]= useState([]);
 

@@ -5,6 +5,8 @@ import {
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -15,6 +17,16 @@ const useStyles = makeStyles((theme) => ({
     },
     botones:{
         background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',  
+        marginBottom:theme.spacing(1),
+        marginTop:theme.spacing(1),
+        marginRight:theme.spacing(1),
+        marginLeft:theme.spacing(1),
+    },
+
+    botonesSecondary:{
+        background: "#f44336", 
         boxShadow: '2px 4px 5px #1872b8',
         color:'white',  
         marginBottom:theme.spacing(1),
@@ -54,12 +66,13 @@ let MessageConfirm = ({ open, titulo,subTituloModal, tipoModal, mensaje, handleC
                        
                         </div>                   
                         <Grid  container item xs={12}  justify="flex-end"  >
+                            <Button onClick={cerrarModal} variant="contained"  className={classes.botonesSecondary} color="secondary">
+                                <CheckCircleIcon/> Aceptar
+                            </Button>
                             <Button onClick={handleCloseCancel} variant="contained" color="primary" className={classes.botones} >
-                                Cancelar
+                                <CancelIcon/> Cancelar
                             </Button>
-                            <Button onClick={cerrarModal} variant="contained" color="primary" className={classes.botones}>
-                                Aceptar
-                            </Button>
+                            
                       </Grid>
                 </DialogContent>             
             </Dialog>
