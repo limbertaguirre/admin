@@ -65,11 +65,11 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right"><b>CEDULA IDENTIDAD</b></TableCell>
                             <TableCell align="right"><b>NRO CUENTA</b></TableCell>
                             <TableCell align="right"><b>BANCO</b></TableCell>
-                            <TableCell align="center"><b>MONTO TOTAL BRUTO</b></TableCell>
+                            <TableCell align="center"><b>MONTO BRUTO</b></TableCell>
                             <TableCell align="center"><b>PRESENTA FACTURA?</b></TableCell>
                             <TableCell align="center"><b>FACTURO?</b></TableCell>                            
-                            <TableCell align="center"><b>RETENCION (15.5%)</b></TableCell> 
-                            <TableCell align="center"><b>TOTAL NETO</b></TableCell> 
+                            <TableCell align="center"><b>MONTO RETENCION (15.5%)</b></TableCell> 
+                            <TableCell align="center"><b>MONTO NETO</b></TableCell> 
                             <TableCell align="right">    </TableCell>
                         </TableRow>
                         </TableHead>

@@ -160,7 +160,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                 
                   <Grid item xs={12} md={6}  className={styles.contentTitle} >
                       <TextField
-                      label="Buscar Clientes"
+                      label="Buscar freelancer"
                       type={'text'}
                       variant="outlined"
                       name="txtBusqueda"                    
@@ -168,6 +168,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                       onChange={_onChangeregistro}
                       className={styles.TextFielBusqueda}
                       error={txtBusquedaError}
+                      placeholder="Buscar  por carnet identidad"
                       helperText={ txtBusquedaError &&
                       "El campo es requerido"
                       }
@@ -218,9 +219,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             <TableCell align="center">{row.nombreBanco}</TableCell>   
                             <TableCell align="center">{row.nivel}</TableCell>  
                             <TableCell align="center">
-                                {row.estado === 1? <CheckCircleIcon  style={{ color: green[500], fontSize: 30 }} />
-                                : <CancelIcon  style={{ color: red[500],fontSize: 30 }} />
-                                 }                               
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estado === 1? "Usuario Activo": "El usuario se encuentra bloqueado.!"}>
+                                  {row.estado === 1? <CheckCircleIcon  style={{ color: green[500], fontSize: 30 }} />
+                                  : <CancelIcon  style={{ color: red[500],fontSize: 30 }} />
+                                  }                               
+                              </Tooltip>
                             </TableCell>   
                             <TableCell align="center">
                               <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver ficha'}>

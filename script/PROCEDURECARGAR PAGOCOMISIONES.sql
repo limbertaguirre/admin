@@ -233,74 +233,146 @@ BEGIN TRY
 														 SET @SION_IDDETALLE_SCOPE = SCOPE_IDENTITY ();
 														 select @SION_IDDETALLE_SCOPE as 'id total solo de empresa sion'
 													END
-													--IF(@NETO_KINTAS >0)
-													--BEGIN
-													--	  DECLARE @KINTAS_IDDETALLE_SCOPE INT;
-													--	  SET @KINTAS_IDDETALLE_SCOPE=0;
-													--	  DECLARE @KINTAS_TOTALBRUTO DECIMAL(18,2),@KINTAS_MONTONETO DECIMAL(18,2), @KINTAS_MONTORETENCION DECIMAL(18,2), @KINTAS_RESIDUAL DECIMAL(18,2);
-													--	  DECLARE @KINTAS_IDEMPRESA INT, @KINTAS_CODIGOEMPRESA INT;
-													--	  SET @KINTAS_IDEMPRESA=2 SET @KINTAS_CODIGOEMPRESA=2;
-													--	  SET @KINTAS_TOTALBRUTO=0; SET @KINTAS_MONTONETO=0;SET @KINTAS_MONTORETENCION=0; SET @KINTAS_RESIDUAL=0;
-											 											   
-													--	   SET @KINTAS_MONTONETO = @NETO_KINTAS;
-													--	   SET @KINTAS_RESIDUAL = (@KINTAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-													--	   SET @KINTAS_TOTALBRUTO = @KINTAS_MONTONETO + @KINTAS_RESIDUAL;
-													--	   SET @KINTAS_MONTORETENCION = @KINTAS_RESIDUAL;
-													--	  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
-													--	  values(
-													--		  @KINTAS_TOTALBRUTO,--monto
-													--		  @ESTADO_COMISION_DETALLE_EMPRESA_PENDIENTE, --estado pendiente 1
-													--		  '', --path-respaldo vacio
-													--		  '', --nro autirizacion
-													--		  @KINTAS_TOTALBRUTO, --montoa facturar
-													--		  @KINTAS_TOTALBRUTO, --monto total a facturar
-													--		  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
-													--		  @KINTAS_IDEMPRESA, --idempresa =1
-													--		  @USUARIO_DEFAULT, 
-													--		  0, --venta personales
-													--		  0, --ventas grupales..
-													--		  @KINTAS_RESIDUAL, --residual
-													--		  @KINTAS_MONTORETENCION, -- retencion
-													--		  @KINTAS_MONTONETO, --monto neto
-													--		  @NO_FACTURO --si facturo
-													--	  );
-													--	 SET @KINTAS_IDDETALLE_SCOPE = SCOPE_IDENTITY ();
-													--	 select @KINTAS_IDDETALLE_SCOPE as 'id total solo de empresa sion'
-													--END
-													--IF(@NETO_ZURIEL >0)
-													--BEGIN
-													--	  DECLARE @ZURIEL_IDDETALLE_SCOPE INT;
-													--	  SET @ZURIEL_IDDETALLE_SCOPE=0;
-													--	  DECLARE @ZURIEL_TOTALBRUTO DECIMAL(18,2),@ZURIEL_MONTONETO DECIMAL(18,2), @ZURIEL_MONTORETENCION DECIMAL(18,2), @ZURIEL_RESIDUAL DECIMAL(18,2);
-													--	  DECLARE @ZURIEL_IDEMPRESA INT, @ZURIEL_CODIGOEMPRESA INT;
-													--	  SET @ZURIEL_IDEMPRESA=3 SET @ZURIEL_CODIGOEMPRESA=3;
-													--	  SET @ZURIEL_TOTALBRUTO=0; SET @ZURIEL_MONTONETO=0;SET @ZURIEL_MONTORETENCION=0; SET @ZURIEL_RESIDUAL=0;
-											 											   
-													--	   SET @ZURIEL_MONTONETO = @NETO_ZURIEL;
-													--	   SET @ZURIEL_RESIDUAL = (@ZURIEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-													--	   SET @ZURIEL_TOTALBRUTO = @ZURIEL_MONTONETO + @ZURIEL_RESIDUAL;
-													--	   SET @ZURIEL_MONTORETENCION = @ZURIEL_RESIDUAL;
-													--	  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
-													--	  values(
-													--		  @ZURIEL_TOTALBRUTO,--monto
-													--		  @ESTADO_COMISION_DETALLE_EMPRESA_PENDIENTE, --estado pendiente 1
-													--		  '', --path-respaldo vacio
-													--		  '', --nro autirizacion
-													--		  @ZURIEL_TOTALBRUTO, --montoa facturar
-													--		  @ZURIEL_TOTALBRUTO, --monto total a facturar
-													--		  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
-													--		  @ZURIEL_IDEMPRESA, --idempresa =1
-													--		  @USUARIO_DEFAULT, 
-													--		  0, --venta personales
-													--		  0, --ventas grupales..
-													--		  @ZURIEL_RESIDUAL, --residual
-													--		  @ZURIEL_MONTORETENCION, -- retencion
-													--		  @ZURIEL_MONTONETO, --monto neto
-													--		  @NO_FACTURO --si facturo
-													--	  );
-													--	 SET @ZURIEL_IDDETALLE_SCOPE = SCOPE_IDENTITY ();
-													--	 select @ZURIEL_IDDETALLE_SCOPE as 'id total solo de empresa sion'
-													--END
+													IF(@NETO_KINTAS >0)
+													BEGIN
+														  DECLARE @KINTAS_IDDETALLE_SCOPE INT;
+														  SET @KINTAS_IDDETALLE_SCOPE=0;
+														  DECLARE @KINTAS_TOTALBRUTO DECIMAL(18,2),@KINTAS_MONTONETO DECIMAL(18,2), @KINTAS_MONTORETENCION DECIMAL(18,2), @KINTAS_RESIDUAL DECIMAL(18,2), @KINTAS_VENTA_GRUPAL DECIMAL(18,2), @KINTAS_VENTA_PERSONAL DECIMAL(18,2);
+														  DECLARE @KINTAS_IDEMPRESA INT, @KINTAS_CODIGOEMPRESA INT;
+														  SET @KINTAS_IDEMPRESA=2 SET @KINTAS_CODIGOEMPRESA=2;
+														  SET @KINTAS_TOTALBRUTO=0; SET @KINTAS_MONTONETO=0;SET @KINTAS_MONTORETENCION=0; SET @KINTAS_RESIDUAL=0; SET @KINTAS_VENTA_GRUPAL=0; SET @KINTAS_VENTA_PERSONAL=0;
+											 					----venta grupal
+																	DECLARE @ventaGrupalKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalKintas  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @KINTAS_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalKintas where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@KINTAS_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@KINTAS_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @KINTAS_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalKintas SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @KINTAS_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalKintas  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@KINTAS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@KINTAS_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @KINTAS_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualKintas   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @KINTAS_RESIDUAL= SUM(r.dmonto)  from @tableResidualKintas  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@KINTAS_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@KINTAS_RESIDUAL < 0)
+																	BEGIN
+																	 SET @KINTAS_RESIDUAL= 0
+																	END
+
+															---------------------------								   
+															SET @KINTAS_MONTONETO = @NETO_KINTAS;												   
+															SET @KINTAS_MONTORETENCION = (@KINTAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+															SET @KINTAS_TOTALBRUTO = @KINTAS_MONTONETO + @KINTAS_MONTORETENCION;
+
+														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
+														  values(
+															  @KINTAS_TOTALBRUTO,--monto
+															  @ESTADO_COMISION_DETALLE_EMPRESA_PENDIENTE, --estado pendiente 1
+															  '', --path-respaldo vacio
+															  '', --nro autirizacion
+															  @KINTAS_TOTALBRUTO, --montoa facturar
+															  @KINTAS_TOTALBRUTO, --monto total a facturar
+															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
+															  @KINTAS_IDEMPRESA, --idempresa =1
+															  @USUARIO_DEFAULT, 
+															  @KINTAS_VENTA_PERSONAL, --venta personales
+															  @KINTAS_VENTA_GRUPAL, --ventas grupales..
+															  @KINTAS_RESIDUAL, --residual
+															  @KINTAS_MONTORETENCION, -- retencion
+															  @KINTAS_MONTONETO, --monto neto
+															  @NO_FACTURO --si facturo
+														  );
+														 SET @KINTAS_IDDETALLE_SCOPE = SCOPE_IDENTITY ();
+														 select @KINTAS_IDDETALLE_SCOPE as 'id total solo de empresa sion'
+													END
+													IF(@NETO_ZURIEL >0)
+													BEGIN
+														  DECLARE @ZURIEL_IDDETALLE_SCOPE INT;
+														  SET @ZURIEL_IDDETALLE_SCOPE=0;
+														  DECLARE @ZURIEL_TOTALBRUTO DECIMAL(18,2),@ZURIEL_MONTONETO DECIMAL(18,2), @ZURIEL_MONTORETENCION DECIMAL(18,2), @ZURIEL_RESIDUAL DECIMAL(18,2), @ZURIEL_VENTA_GRUPAL DECIMAL(18,2), @ZURIEL_VENTA_PERSONAL DECIMAL(18,2);
+														  DECLARE @ZURIEL_IDEMPRESA INT, @ZURIEL_CODIGOEMPRESA INT;
+														  SET @ZURIEL_IDEMPRESA=3 SET @ZURIEL_CODIGOEMPRESA=3;
+														  SET @ZURIEL_TOTALBRUTO=0; SET @ZURIEL_MONTONETO=0;SET @ZURIEL_MONTORETENCION=0; SET @ZURIEL_RESIDUAL=0;SET @ZURIEL_VENTA_GRUPAL=0; SET @ZURIEL_VENTA_PERSONAL=0;
+											 				 ----venta grupal
+																	DECLARE @ventaGrupalZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalZuriel  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @ZURIEL_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalZuriel where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@ZURIEL_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@ZURIEL_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @ZURIEL_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalZuriel SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @ZURIEL_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalZuriel  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@KINTAS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@ZURIEL_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @ZURIEL_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualZuriel   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @ZURIEL_RESIDUAL= SUM(r.dmonto)  from @tableResidualZuriel  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@ZURIEL_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@ZURIEL_RESIDUAL < 0)
+																	BEGIN
+																	 SET @ZURIEL_RESIDUAL= 0
+																	END
+
+															---------------------------												   
+														   SET @ZURIEL_MONTONETO = @NETO_ZURIEL;
+														   SET @ZURIEL_MONTORETENCION =  (@ZURIEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @ZURIEL_TOTALBRUTO = @ZURIEL_MONTONETO + @ZURIEL_MONTORETENCION;
+														   
+														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
+														  values(
+															  @ZURIEL_TOTALBRUTO,--monto
+															  @ESTADO_COMISION_DETALLE_EMPRESA_PENDIENTE, --estado pendiente 1
+															  '', --path-respaldo vacio
+															  '', --nro autirizacion
+															  @ZURIEL_TOTALBRUTO, --montoa facturar
+															  @ZURIEL_TOTALBRUTO, --monto total a facturar
+															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
+															  @ZURIEL_IDEMPRESA, --idempresa =1
+															  @USUARIO_DEFAULT, 
+															  @ZURIEL_VENTA_PERSONAL, --venta personales
+															  @ZURIEL_VENTA_GRUPAL, --ventas grupales..
+															  @ZURIEL_RESIDUAL, --residual
+															  @ZURIEL_MONTORETENCION, -- retencion
+															  @ZURIEL_MONTONETO, --monto neto
+															  @NO_FACTURO --si facturo
+														  );
+														 SET @ZURIEL_IDDETALLE_SCOPE = SCOPE_IDENTITY ();
+														 select @ZURIEL_IDDETALLE_SCOPE as 'id total solo de empresa sion'
+													END
 													--IF(@NETO_NICAPOLIS >0)
 													--BEGIN
 													--	  DECLARE @NICAPOLIS_IDDETALLE_SCOPE INT;
