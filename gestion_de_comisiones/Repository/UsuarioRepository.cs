@@ -27,9 +27,15 @@ namespace gestion_de_comisiones.Repository
 
         }
 
-        public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
+
+        /// <summary>
+        /// Obtiene todos los usuarios con estado activo(true).
+        /// Model.Operation=0: todos los usuarios sin rol.
+        /// Model.Operation=1: todos los usuarios con rol.
+        /// </summary>
+        public async Task<List<UsuarioSelectModel>> GetUsuariosForSelect(UsuariosSelectInputModel model)
         {
-            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuarios)));
+            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuariosForSelect)));
             var result = new List<UsuarioSelectModel>();
 
             switch (model.Operation)
@@ -59,7 +65,7 @@ namespace gestion_de_comisiones.Repository
                 break;
             }
 
-            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuarios)));
+            logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuariosForSelect)));
             return result;
         }
 

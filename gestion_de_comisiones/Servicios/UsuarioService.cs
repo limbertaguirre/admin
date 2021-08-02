@@ -28,9 +28,9 @@ namespace gestion_de_comisiones.Servicios
             return await usuarioRepository.DeleteUsuarioRol(model);
         }
 
-        public async Task<List<UsuarioSelectModel>> GetUsuarios(UsuariosSelectInputModel model)
+        public async Task<List<UsuarioSelectModel>> GetUsuariosForSelect(UsuariosSelectInputModel model)
         {
-            return await usuarioRepository.GetUsuarios(model);
+            return await usuarioRepository.GetUsuariosForSelect(model);
         }
 
         public async Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario)

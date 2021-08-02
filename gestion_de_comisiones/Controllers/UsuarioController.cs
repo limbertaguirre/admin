@@ -31,7 +31,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioController.GetUsuariosForSelect)));
-                var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuarios(model));
+                var responseApi = new ResponseApi<List<UsuarioSelectModel>>(await usuarioService.GetUsuariosForSelect(model));
                 logger.LogInformation(MessageLogger.FunctionOut(model.UsuarioLogin, nameof(UsuarioController.GetUsuariosForSelect)));
                 return Ok(responseApi);
             }

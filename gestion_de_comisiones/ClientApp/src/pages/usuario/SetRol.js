@@ -32,6 +32,7 @@ import * as permiso from '../../routes/permiso';
 import { verificarAcceso, validarPermiso} from '../../lib/accesosPerfiles';
 import {useSelector, useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { set } from 'date-fns';
 
 
 const StyledBreadcrumb = withStyles((theme) => ({
@@ -101,18 +102,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
      
     const newUsuarioRol=()=>{
       //0: Nuevo asignacion de rol
+      setIdUserSelected(0);
+      setIdRolSelected(0);
       setOperation(0);
-      reloadData(0,0);
+      // reloadData(0,0);
       setOpen(true);
     }
 
     const editUsuarioRol=(idUsuario, idRol)=>{
       //1: Editar rol de usuario
+      setIdUserSelected(idUsuario);
+      setIdRolSelected(idRol);
       setOperation(1);
-      reloadData(idUsuario,idRol);
+      // reloadData(idUsuario,idRol);
       setOpen(true);
-
-
     }
 
 
@@ -122,7 +125,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const getUsuariosRol=()=>{
       const headerData={usuarioLogin:userName};
       requestGet('Usuario/GetUsuariosRol',headerData,dispatch).then((res)=>{ 
-        if(res.code === 0){                 
+        if(res.code === 0){   
+          // console.log('recargo la lista de usuario:', res.data)              
           setUsuariosRol(res.data);
         }
       })   
@@ -144,24 +148,26 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
                 getUsuariosRol();
                 dispatch(Action.showMessage({ message: 'Operación completada exitosamente', variant: "success" }));
+                // setOperation(2);
                 setOpen(false);
             }
             else{
               dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }
-        }) 
+        })
+
     }
 
     const handleCloseCancelParent= ()=>{
       setOpen(false);
-      setOperation(2);
+      // setOperation(2);
     }
 
     const reloadData=(usuario, rol)=>{
       getRoles();
       getUsuarios();
-      setIdRolSelected(usuario);
-      setIdUserSelected(rol);
+      setIdRolSelected(rol);
+      setIdUserSelected(usuario);
     }
 
     const getRoles=()=>{
@@ -175,9 +181,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     const getUsuarios=()=>{
       const bodyData={idUsuario:idUsuario,usuarioLogin:userName, operation:operation};
-          requestPost('Usuario/GetUsuariosForSelect',bodyData,dispatch).then((res)=>{ 
-              if(res.code === 0){                 
-              setUsuarios(res.data);
+         let response =  requestPost('Usuario/GetUsuariosForSelect',bodyData,dispatch);
+       
+         response.then((res)=>{ 
+              if(res.code === 0){
+                // console.log('combo datos',res.data)                 
+                setUsuarios(res.data);
               }
           })    
     };
@@ -185,12 +194,19 @@ const StyledBreadcrumb = withStyles((theme) => ({
     
 
     useEffect(()=>{
+      
       if (operation != 2) {
-        
+        // console.log('ingreso use effect'+operation);
         reloadData(idUserSelected,idRolSelected);
       }
 
     },[operation]);
+
+    useEffect(()=>{
+      if (!open) {
+        setOperation(2);
+      }
+    },[open])
 
     useEffect(()=>{
       getUsuariosRol();
@@ -201,14 +217,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
         <Container maxWidth="xl">
           <div className="col-xl-12 col-lg-12 d-none d-lg-block"  style={{ paddingLeft: "0px", paddingRight: "0px" }}>
               <Breadcrumbs aria-label="breadcrumb">
-                        <StyledBreadcrumb key={1} component="a" label="Gestión de seguridad"icon={<HomeIcon fontSize="small" />}  />
-                        <StyledBreadcrumb key={2} component="a" label="Gestión de usuarios"  />
-                        <StyledBreadcrumb key={3} label="Asinación de roles" />
+                        <StyledBreadcrumb key={1} component="a" label="Configuraciones"icon={<HomeIcon fontSize="small" />}  />
+                        <StyledBreadcrumb key={2} component="a" label="Usuarios"  />
+                        <StyledBreadcrumb key={3} label="Asignación de roles" />
               </Breadcrumbs>
           </div>
           <br/>
           <Typography variant="h4" gutterBottom className={style.etiqueta} >
-             {'Asinación de roles'}
+             {'Asignación de roles'}
           </Typography>
           <Card>
             <Grid container spacing={3}  justify="space-between" className={style.gridContainer}>
@@ -232,17 +248,16 @@ const StyledBreadcrumb = withStyles((theme) => ({
         </Container>
         <AsignarRolesLookupDetailView 
           open ={open}
-          idUserSelected={idUserSelected}
-          idRolSelected={idRolSelected}
-          usuarios={usuarios}
-          roles={roles}
-          
+
+          operation={operation}
+
+          idUserSelected={idUserSelected}  handleRol={handleRolParent} usuarios={usuarios}
+          idRolSelected={idRolSelected} handleUser={handleUserParent} roles={roles}
+
           handleCloseConfirmParent ={handleCloseConfirmParent}
           handleCloseCancelParent ={handleCloseCancelParent}
-          operation={operation}
-          handleRol={handleRolParent}
-          handleUser={handleUserParent}
-           />
+          
+        />
       </>
     );
 

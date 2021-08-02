@@ -6,6 +6,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import { requestPost, requestGet } from "../../../service/request";
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import SaveIcon from '@material-ui/icons/Save';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {Container, 
     InputAdornment,
     Tooltip ,
@@ -63,7 +66,7 @@ const AsignarRolesLookupDetailView = (props) => {
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     
     const [rolError,setRolError] = useState(false);
-    const TITLE_OPERATION=operation===0?'Nueva asignación':'Editar asignación';
+    const TITLE_OPERATION=operation===0?'Nueva asignación de rol':'Editar asignación de rol ';
 
     const handleConfirmModal = () => {
         handleCloseConfirmParent();
@@ -105,12 +108,11 @@ const AsignarRolesLookupDetailView = (props) => {
                     <InputLabel id="lb-usuario">Usuario</InputLabel>
                         <Select
                         labelId="lb-usuario"
-                        id="sl-usuario"
                         name="usuario"
                         label="Usuaario"
                         value={idUserSelected}
                         onChange={(e)=>{handleUser(e.target.value)}}
-                        disabled={operation===1}
+                        disabled={operation===1} // op 1 edit
                         >
                             <MenuItem value={0}>
                                 <em>Seleccione el usuario</em>
@@ -128,7 +130,6 @@ const AsignarRolesLookupDetailView = (props) => {
                         <InputLabel id="lb-rol">Rol</InputLabel>
                         <Select
                             labelId="lb-rol"
-                            id="sl-rol"
                             name="rol"
                             label="Rol"
                             value={idRolSelected}
@@ -148,12 +149,12 @@ const AsignarRolesLookupDetailView = (props) => {
                 
             </DialogContent>  
             <DialogActions>
-                    <Button disabled={!isFormValid()} onClick={handleConfirmModal} variant="contained" color="primary" className={style.botones}>
-                        Aceptar
+                    <Button disabled={!isFormValid()} onClick={handleConfirmModal} variant="contained" color="secondary" className={style.botones}>
+                        <SaveIcon/> Aceptar
                     </Button>
 
-                    <Button onClick={handleCancelModal} variant="contained" color="secondary" className={style.botones} >
-                        Cancelar
+                    <Button onClick={handleCancelModal} variant="contained" color="primary" className={style.botones} >
+                        <CancelIcon /> Cancelar
                     </Button>
             </DialogActions>           
             </Dialog>
