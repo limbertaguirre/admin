@@ -42,7 +42,7 @@ const deleteConfirmMessage =(u, r)=>`¿Está seguro de eliminar el rol de "${r}"
 
 
 export default function UsuariosRolesListView(props) {
-  const {handleEditOperation,usuariosRol,handleData} = props;
+  const {handleEditOperation,usuariosRol,handleData, Actualizar, Eliminar} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -128,9 +128,9 @@ export default function UsuariosRolesListView(props) {
                   <TableCell>{row.rol}</TableCell>
                   <TableCell>
                         <>
+                        {Actualizar ?
                         <Tooltip title="Editar" aria-label="editar">
-                        <IconButton  
-                                // fullWidth
+                          <IconButton  
                                 variant="contained"
                                 color="primary"
                                 onClick = {(e)=>{ handleEditOperation(row.usuarioId, row.rolId)}}                            
@@ -138,9 +138,17 @@ export default function UsuariosRolesListView(props) {
                             <EditIcon />
                         </IconButton >  
                         </Tooltip>
-                        <Tooltip title="Eliminar" aria-label="eliminar">
+                        :  
+                         <Tooltip title="Sin permiso para editar" >
+                            <IconButton     variant="contained"    >
+                              <EditIcon />
+                            </IconButton > 
+                          </Tooltip> 
+                        }
+
+                        {Eliminar? 
+                        <Tooltip title="Eliminar" >
                         <IconButton 
-                                // fullWidth
                                 variant="contained"
                                 color="secondary"
                                 onClick = {()=>{handleDeleteUsuarioRolOperation(row)}}                            
@@ -148,6 +156,13 @@ export default function UsuariosRolesListView(props) {
                             <DeleteIcon/>
                         </IconButton >  
                         </Tooltip>
+                        :
+                          <Tooltip title="Sin permiso para eliminar" >
+                            <IconButton variant="contained" color={"action"}>
+                                <DeleteIcon/>
+                            </IconButton >  
+                          </Tooltip>
+                        }
                         </>
                       </TableCell>
                 </TableRow>

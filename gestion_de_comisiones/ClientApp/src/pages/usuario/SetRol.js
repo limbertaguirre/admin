@@ -7,24 +7,13 @@ import AsignarRolesDetailView from './components/AsignarRolesDetailView';
 import { requestPost, requestGet } from "../../service/request";
 import AsignarRolesLookupDetailView from './components/AsignarRolesLookupDetailView';
 import {Container, 
-  InputAdornment,
   Tooltip ,
-  Zoom, 
-  Dialog,
+  Fade,
   Card, 
   Button, 
-  Grid, 
-  TextField, 
+  Grid,  
   Typography,
-  FormControl, 
-  InputLabel, 
-  Select,
-  MenuItem,
-  sMenuItem,
   Chip } from "@material-ui/core";
-import CheckIcon from '@material-ui/icons/Check';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import * as Action from '../../redux/actions/messageAction';
   
@@ -74,6 +63,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
       gridContainer: {
         padding: theme.spacing(2),
       },
+      botonAsignar: {                 
+        background: "#1872b8", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',
+       }
     }));
 
     let style= useStyles();
@@ -89,8 +83,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [usuariosRol,setUsuariosRol] =useState([]);
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
 
-
-     /*AsignarRolesLookupDetailView */
 
      const handleRolParent= (id) =>{
       setIdRolSelected(id);
@@ -114,19 +106,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setIdUserSelected(idUsuario);
       setIdRolSelected(idRol);
       setOperation(1);
-      // reloadData(idUsuario,idRol);
       setOpen(true);
     }
 
 
-
-    /*UsuariosRolesListView */
-
     const getUsuariosRol=()=>{
       const headerData={usuarioLogin:userName};
       requestGet('Usuario/GetUsuariosRol',headerData,dispatch).then((res)=>{ 
-        if(res.code === 0){   
-          // console.log('recargo la lista de usuario:', res.data)              
+        if(res.code === 0){            
           setUsuariosRol(res.data);
         }
       })   
@@ -184,8 +171,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          let response =  requestPost('Usuario/GetUsuariosForSelect',bodyData,dispatch);
        
          response.then((res)=>{ 
-              if(res.code === 0){
-                // console.log('combo datos',res.data)                 
+              if(res.code === 0){                          
                 setUsuarios(res.data);
               }
           })    
@@ -196,7 +182,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
     useEffect(()=>{
       
       if (operation != 2) {
-        // console.log('ingreso use effect'+operation);
         reloadData(idUserSelected,idRolSelected);
       }
 
@@ -234,9 +219,19 @@ const StyledBreadcrumb = withStyles((theme) => ({
               </Typography>
               </Grid>
               <Grid item>
-              <Button variant="contained" color="primary" onClick={()=>{newUsuarioRol()}}>
-                  <AddIcon/> Asignar rol
-              </Button>
+                {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
+                  <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} title="Asignar rol a un nuevo usuario.">
+                    <Button variant="contained" color="primary" className={style.botonAsignar} onClick={()=>{newUsuarioRol()}}>
+                        <AddIcon/> Asignar rol
+                    </Button>
+                 </Tooltip>
+                :
+                <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} title="Sin acceso, para asignar roles.">
+                  <Button variant="contained" color={"disabled"}  >
+                     <AddIcon/> Asignar rol 
+                  </Button>
+                 </Tooltip>
+                }
               </Grid>
             </Grid>
           </Card>
@@ -244,6 +239,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
             handleEditOperation={editUsuarioRol} 
             usuariosRol={usuariosRol} 
             handleData={getUsuariosRol}
+            Actualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)}
+            Eliminar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ELIMINAR)}
           />
         </Container>
         <AsignarRolesLookupDetailView 
