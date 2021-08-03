@@ -182,7 +182,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-        //console.log('comisones : ', res);
+           console.log('comisones : ', res);
+           
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -268,7 +269,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       idComisionDetalle:parseInt(idcomisionDetalle),
       usuarioId:userId
      };
-    // console.log('parame detalle  : ', data);
+     console.log('parame detalle  : ', data);
      requestPost('Factura/FacturarComisionDetalle',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR COMI DETALL  : ', res);
           if(res.code === 0){         

@@ -1215,7 +1215,7 @@ GO
 
 CREATE VIEW [dbo].[vwObtenerFicha]
 AS
-		 select top(100)
+		 select 
 		  F.id_ficha as 'idFicha',
 		  F.codigo,
 		  F.nombres + ' '+F.apellidos as 'nombreCompleto',
