@@ -202,7 +202,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-       // console.log('nuevo obtener : ', res.data);
             if(res.code === 0){  
                let data= res.data;
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
