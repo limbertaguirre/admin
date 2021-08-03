@@ -275,11 +275,27 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
+                        decimal porcentajeRetencion = decimal.Parse("15.5");
+                        decimal retencion = 0;
                         var objEstadoComisionDetalle = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalleEmpresa).First();
                         if (objEstadoComisionDetalle != null)
                         {
+                            if(estadoDetalleEmpresa == true)
+                            {//sifacturo
+                                retencion = objEstadoComisionDetalle.Retencion;
+                                objEstadoComisionDetalle.MontoNeto = objEstadoComisionDetalle.MontoNeto + objEstadoComisionDetalle.Retencion;
+                                objEstadoComisionDetalle.Retencion = 0;
+
+                            }
+                            else
+                            {//no facturo
+                                retencion = objEstadoComisionDetalle.Monto * porcentajeRetencion / 100;
+                                objEstadoComisionDetalle.MontoNeto = objEstadoComisionDetalle.Monto - retencion;
+                                objEstadoComisionDetalle.Retencion = retencion;
+                            }
                             objEstadoComisionDetalle.SiFacturo = estadoDetalleEmpresa;
                             objEstadoComisionDetalle.FechaActualizacion = DateTime.Now;
+
                             context.SaveChanges();
                             Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoDetalleEmpresa}");
                             if (estadoDetalleEmpresa == false)

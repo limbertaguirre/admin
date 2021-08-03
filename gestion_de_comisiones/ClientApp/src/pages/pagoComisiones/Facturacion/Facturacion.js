@@ -183,7 +183,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
            console.log('comisones : ', res);
-           
+
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -207,7 +207,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         usuarioLogin:user,
         idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
        };
-      // console.log('parame detalle  : ', data);
+       console.log('parame detalle  : ', data);
        requestPost('Factura/ComisionesDetalleEmpresa',data,dispatch).then((res)=>{ 
        console.log('detalle  : ', res);
             if(res.code === 0){         
