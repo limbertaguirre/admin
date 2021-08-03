@@ -117,7 +117,7 @@ BEGIN TRY
 						SET @ID_ESTADO_NO_FACTURADO= 1;
 						SET @ID_COMISIONEMPRESA_SELECTED=0;
 						SET @ESTADO_COMISION_DETALLE_EMPRESA_PENDIENTE=1;
-						SET @NO_FACTURO=1;
+						SET @NO_FACTURO=0;
 
 						SET @MontoBruto=@TOTALBRUTOItem;
 						SET @MontoRetencion= (@TOTALBRUTOItem * @porcentajeRetencionComisionFrelancer ) / 100;
@@ -167,15 +167,51 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @SION_IDDETALLE_SCOPE INT;
 														  SET @SION_IDDETALLE_SCOPE=0;
-														  DECLARE @SION_TOTALBRUTO DECIMAL(18,2),@SION_MONTONETO DECIMAL(18,2), @SION_MONTORETENCION DECIMAL(18,2), @SION_RESIDUAL DECIMAL(18,2);
+														  DECLARE @SION_TOTALBRUTO DECIMAL(18,2),@SION_MONTONETO DECIMAL(18,2), @SION_MONTORETENCION DECIMAL(18,2), @SION_RESIDUAL DECIMAL(18,2), @SION_VENTA_GRUPAL DECIMAL(18,2), @SION_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @SION_IDEMPRESA INT, @SION_CODIGOEMPRESA INT;
 														  SET @SION_IDEMPRESA=1 SET @SION_CODIGOEMPRESA=1;
-														  SET @SION_TOTALBRUTO=0; SET @SION_MONTONETO=0;SET @SION_MONTORETENCION=0; SET @SION_RESIDUAL=0;
-											 											   
+														  SET @SION_TOTALBRUTO=0; SET @SION_MONTONETO=0;SET @SION_MONTORETENCION=0; SET @SION_RESIDUAL=0; SET @SION_VENTA_GRUPAL=0; SET @SION_VENTA_PERSONAL=0;
+											 				----venta grupal
+																	DECLARE @ventaGrupal as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupal  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @SION_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupal where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@SION_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@SION_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @SION_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonal as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonal SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @SION_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonal  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@SION_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@SION_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @SION_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidual as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidual   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @SION_RESIDUAL= SUM(r.dmonto)  from @tableResidual  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@SION_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@SION_RESIDUAL < 0)
+																	BEGIN
+																	 SET @SION_RESIDUAL= 0
+																	END
+
+															---------------------------		
 														   SET @SION_MONTONETO = @NETO_SiON;
-														   SET @SION_RESIDUAL = (@SION_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @SION_TOTALBRUTO = @SION_MONTONETO + @SION_RESIDUAL;
-														   SET @SION_MONTORETENCION = @SION_RESIDUAL;
+														    SET @SION_MONTORETENCION = (@SION_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @SION_TOTALBRUTO = @SION_MONTONETO + @SION_MONTORETENCION;
+														  
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @SION_TOTALBRUTO,--monto
@@ -187,8 +223,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @SION_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @SION_VENTA_PERSONAL, --venta personales
+															  @SION_VENTA_GRUPAL, --ventas grupales..
 															  @SION_RESIDUAL, --residual
 															  @SION_MONTORETENCION, -- retencion
 															  @SION_MONTONETO, --monto neto
@@ -201,15 +237,51 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @KINTAS_IDDETALLE_SCOPE INT;
 														  SET @KINTAS_IDDETALLE_SCOPE=0;
-														  DECLARE @KINTAS_TOTALBRUTO DECIMAL(18,2),@KINTAS_MONTONETO DECIMAL(18,2), @KINTAS_MONTORETENCION DECIMAL(18,2), @KINTAS_RESIDUAL DECIMAL(18,2);
+														  DECLARE @KINTAS_TOTALBRUTO DECIMAL(18,2),@KINTAS_MONTONETO DECIMAL(18,2), @KINTAS_MONTORETENCION DECIMAL(18,2), @KINTAS_RESIDUAL DECIMAL(18,2), @KINTAS_VENTA_GRUPAL DECIMAL(18,2), @KINTAS_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @KINTAS_IDEMPRESA INT, @KINTAS_CODIGOEMPRESA INT;
 														  SET @KINTAS_IDEMPRESA=2 SET @KINTAS_CODIGOEMPRESA=2;
-														  SET @KINTAS_TOTALBRUTO=0; SET @KINTAS_MONTONETO=0;SET @KINTAS_MONTORETENCION=0; SET @KINTAS_RESIDUAL=0;
-											 											   
-														   SET @KINTAS_MONTONETO = @NETO_KINTAS;
-														   SET @KINTAS_RESIDUAL = (@KINTAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @KINTAS_TOTALBRUTO = @KINTAS_MONTONETO + @KINTAS_RESIDUAL;
-														   SET @KINTAS_MONTORETENCION = @KINTAS_RESIDUAL;
+														  SET @KINTAS_TOTALBRUTO=0; SET @KINTAS_MONTONETO=0;SET @KINTAS_MONTORETENCION=0; SET @KINTAS_RESIDUAL=0; SET @KINTAS_VENTA_GRUPAL=0; SET @KINTAS_VENTA_PERSONAL=0;
+											 					----venta grupal
+																	DECLARE @ventaGrupalKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalKintas  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @KINTAS_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalKintas where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@KINTAS_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@KINTAS_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @KINTAS_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalKintas SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @KINTAS_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalKintas  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@KINTAS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@KINTAS_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @KINTAS_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualKintas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualKintas   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @KINTAS_RESIDUAL= SUM(r.dmonto)  from @tableResidualKintas  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@KINTAS_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@KINTAS_RESIDUAL < 0)
+																	BEGIN
+																	 SET @KINTAS_RESIDUAL= 0
+																	END
+
+															---------------------------								   
+															SET @KINTAS_MONTONETO = @NETO_KINTAS;												   
+															SET @KINTAS_MONTORETENCION = (@KINTAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+															SET @KINTAS_TOTALBRUTO = @KINTAS_MONTONETO + @KINTAS_MONTORETENCION;
+
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @KINTAS_TOTALBRUTO,--monto
@@ -221,8 +293,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @KINTAS_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @KINTAS_VENTA_PERSONAL, --venta personales
+															  @KINTAS_VENTA_GRUPAL, --ventas grupales..
 															  @KINTAS_RESIDUAL, --residual
 															  @KINTAS_MONTORETENCION, -- retencion
 															  @KINTAS_MONTONETO, --monto neto
@@ -235,15 +307,51 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @ZURIEL_IDDETALLE_SCOPE INT;
 														  SET @ZURIEL_IDDETALLE_SCOPE=0;
-														  DECLARE @ZURIEL_TOTALBRUTO DECIMAL(18,2),@ZURIEL_MONTONETO DECIMAL(18,2), @ZURIEL_MONTORETENCION DECIMAL(18,2), @ZURIEL_RESIDUAL DECIMAL(18,2);
+														  DECLARE @ZURIEL_TOTALBRUTO DECIMAL(18,2),@ZURIEL_MONTONETO DECIMAL(18,2), @ZURIEL_MONTORETENCION DECIMAL(18,2), @ZURIEL_RESIDUAL DECIMAL(18,2), @ZURIEL_VENTA_GRUPAL DECIMAL(18,2), @ZURIEL_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @ZURIEL_IDEMPRESA INT, @ZURIEL_CODIGOEMPRESA INT;
 														  SET @ZURIEL_IDEMPRESA=3 SET @ZURIEL_CODIGOEMPRESA=3;
-														  SET @ZURIEL_TOTALBRUTO=0; SET @ZURIEL_MONTONETO=0;SET @ZURIEL_MONTORETENCION=0; SET @ZURIEL_RESIDUAL=0;
-											 											   
+														  SET @ZURIEL_TOTALBRUTO=0; SET @ZURIEL_MONTONETO=0;SET @ZURIEL_MONTORETENCION=0; SET @ZURIEL_RESIDUAL=0;SET @ZURIEL_VENTA_GRUPAL=0; SET @ZURIEL_VENTA_PERSONAL=0;
+											 				 ----venta grupal
+																	DECLARE @ventaGrupalZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalZuriel  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @ZURIEL_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalZuriel where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@ZURIEL_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@ZURIEL_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @ZURIEL_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalZuriel SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @ZURIEL_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalZuriel  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@KINTAS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@ZURIEL_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @ZURIEL_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualZuriel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualZuriel   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @ZURIEL_RESIDUAL= SUM(r.dmonto)  from @tableResidualZuriel  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@ZURIEL_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@ZURIEL_RESIDUAL < 0)
+																	BEGIN
+																	 SET @ZURIEL_RESIDUAL= 0
+																	END
+
+															---------------------------												   
 														   SET @ZURIEL_MONTONETO = @NETO_ZURIEL;
-														   SET @ZURIEL_RESIDUAL = (@ZURIEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @ZURIEL_TOTALBRUTO = @ZURIEL_MONTONETO + @ZURIEL_RESIDUAL;
-														   SET @ZURIEL_MONTORETENCION = @ZURIEL_RESIDUAL;
+														   SET @ZURIEL_MONTORETENCION =  (@ZURIEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @ZURIEL_TOTALBRUTO = @ZURIEL_MONTONETO + @ZURIEL_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @ZURIEL_TOTALBRUTO,--monto
@@ -255,8 +363,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @ZURIEL_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @ZURIEL_VENTA_PERSONAL, --venta personales
+															  @ZURIEL_VENTA_GRUPAL, --ventas grupales..
 															  @ZURIEL_RESIDUAL, --residual
 															  @ZURIEL_MONTORETENCION, -- retencion
 															  @ZURIEL_MONTONETO, --monto neto
@@ -269,15 +377,51 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @NICAPOLIS_IDDETALLE_SCOPE INT;
 														  SET @NICAPOLIS_IDDETALLE_SCOPE=0;
-														  DECLARE @NICAPOLIS_TOTALBRUTO DECIMAL(18,2),@NICAPOLIS_MONTONETO DECIMAL(18,2), @NICAPOLIS_MONTORETENCION DECIMAL(18,2), @NICAPOLIS_RESIDUAL DECIMAL(18,2);
+														  DECLARE @NICAPOLIS_TOTALBRUTO DECIMAL(18,2),@NICAPOLIS_MONTONETO DECIMAL(18,2), @NICAPOLIS_MONTORETENCION DECIMAL(18,2), @NICAPOLIS_RESIDUAL DECIMAL(18,2), @NICAPOLIS_VENTA_GRUPAL DECIMAL(18,2), @NICAPOLIS_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @NICAPOLIS_IDEMPRESA INT, @NICAPOLIS_CODIGOEMPRESA INT;
 														  SET @NICAPOLIS_IDEMPRESA=4 SET @NICAPOLIS_CODIGOEMPRESA=4;
-														  SET @NICAPOLIS_TOTALBRUTO=0; SET @NICAPOLIS_MONTONETO=0;SET @NICAPOLIS_MONTORETENCION=0; SET @NICAPOLIS_RESIDUAL=0;
-											 											   
+														  SET @NICAPOLIS_TOTALBRUTO=0; SET @NICAPOLIS_MONTONETO=0;SET @NICAPOLIS_MONTORETENCION=0; SET @NICAPOLIS_RESIDUAL=0; SET @NICAPOLIS_VENTA_GRUPAL=0; SET @NICAPOLIS_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalNicapo as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalNicapo  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @NICAPOLIS_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalNicapo where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@NICAPOLIS_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@NICAPOLIS_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @NICAPOLIS_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalNicapo as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalNicapo SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @NICAPOLIS_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalNicapo  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@NICAPOLIS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@NICAPOLIS_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @NICAPOLIS_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualNicapo as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualNicapo   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @NICAPOLIS_RESIDUAL= SUM(r.dmonto)  from @tableResidualNicapo  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@NICAPOLIS_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@NICAPOLIS_RESIDUAL < 0)
+																	BEGIN
+																	 SET @NICAPOLIS_RESIDUAL= 0
+																	END
+
+															---------------------------														   
 														   SET @NICAPOLIS_MONTONETO = @NETO_NICAPOLIS;
-														   SET @NICAPOLIS_RESIDUAL = (@NICAPOLIS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @NICAPOLIS_TOTALBRUTO = @NICAPOLIS_MONTONETO + @NICAPOLIS_RESIDUAL;
-														   SET @NICAPOLIS_MONTORETENCION = @NICAPOLIS_RESIDUAL;
+														   SET @NICAPOLIS_MONTORETENCION =  (@NICAPOLIS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @NICAPOLIS_TOTALBRUTO = @NICAPOLIS_MONTONETO + @NICAPOLIS_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @NICAPOLIS_TOTALBRUTO,--monto
@@ -289,8 +433,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @NICAPOLIS_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @NICAPOLIS_VENTA_PERSONAL, --venta personales
+															  @NICAPOLIS_VENTA_GRUPAL, --ventas grupales..
 															  @NICAPOLIS_RESIDUAL, --residual
 															  @NICAPOLIS_MONTORETENCION, -- retencion
 															  @NICAPOLIS_MONTONETO, --monto neto
@@ -303,15 +447,51 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @ASHER_IDDETALLE_SCOPE INT;
 														  SET @ASHER_IDDETALLE_SCOPE=0;
-														  DECLARE @ASHER_TOTALBRUTO DECIMAL(18,2),@ASHER_MONTONETO DECIMAL(18,2), @ASHER_MONTORETENCION DECIMAL(18,2), @ASHER_RESIDUAL DECIMAL(18,2);
+														  DECLARE @ASHER_TOTALBRUTO DECIMAL(18,2),@ASHER_MONTONETO DECIMAL(18,2), @ASHER_MONTORETENCION DECIMAL(18,2), @ASHER_RESIDUAL DECIMAL(18,2), @ASHER_VENTA_GRUPAL DECIMAL(18,2), @ASHER_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @ASHER_IDEMPRESA INT, @ASHER_CODIGOEMPRESA INT;
 														  SET @ASHER_IDEMPRESA=5 SET @ASHER_CODIGOEMPRESA=5;
-														  SET @ASHER_TOTALBRUTO=0; SET @ASHER_MONTONETO=0;SET @ASHER_MONTORETENCION=0; SET @ASHER_RESIDUAL=0;
-											 											   
+														  SET @ASHER_TOTALBRUTO=0; SET @ASHER_MONTONETO=0;SET @ASHER_MONTORETENCION=0; SET @ASHER_RESIDUAL=0; SET @ASHER_VENTA_GRUPAL=0; SET @ASHER_VENTA_PERSONAL=0;
+											 				   		 ----venta grupal
+																	DECLARE @ventaGrupalAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalAsher  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @ASHER_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalAsher where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@ASHER_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@ASHER_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @ASHER_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalAsher SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @ASHER_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalAsher  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@ASHER_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@ASHER_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @ASHER_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualAsher   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @ASHER_RESIDUAL= SUM(r.dmonto)  from @tableResidualAsher  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@ASHER_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@ASHER_RESIDUAL < 0)
+																	BEGIN
+																	 SET @ASHER_RESIDUAL= 0
+																	END
+
+															---------------------------										   
 														   SET @ASHER_MONTONETO = @NETO_ASHER;
-														   SET @ASHER_RESIDUAL = (@ASHER_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @ASHER_TOTALBRUTO = @ASHER_MONTONETO + @ASHER_RESIDUAL;
-														   SET @ASHER_MONTORETENCION = @ASHER_RESIDUAL;
+														   SET @ASHER_MONTORETENCION =  (@ASHER_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @ASHER_TOTALBRUTO = @ASHER_MONTONETO + @ASHER_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @ASHER_TOTALBRUTO,--monto
@@ -323,8 +503,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @ASHER_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @ASHER_VENTA_PERSONAL, --venta personales
+															  @ASHER_VENTA_GRUPAL, --ventas grupales..
 															  @ASHER_RESIDUAL, --residual
 															  @ASHER_MONTORETENCION, -- retencion
 															  @ASHER_MONTONETO, --monto neto
@@ -337,15 +517,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @SHOFAR_IDDETALLE_SCOPE INT;
 														  SET @SHOFAR_IDDETALLE_SCOPE=0;
-														  DECLARE @SHOFAR_TOTALBRUTO DECIMAL(18,2),@SHOFAR_MONTONETO DECIMAL(18,2), @SHOFAR_MONTORETENCION DECIMAL(18,2), @SHOFAR_RESIDUAL DECIMAL(18,2);
+														  DECLARE @SHOFAR_TOTALBRUTO DECIMAL(18,2),@SHOFAR_MONTONETO DECIMAL(18,2), @SHOFAR_MONTORETENCION DECIMAL(18,2), @SHOFAR_RESIDUAL DECIMAL(18,2), @SHOFAR_VENTA_GRUPAL DECIMAL(18,2), @SHOFAR_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @SHOFAR_IDEMPRESA INT, @SHOFAR_CODIGOEMPRESA INT;
 														  SET @SHOFAR_IDEMPRESA=6 SET @SHOFAR_CODIGOEMPRESA=6;
-														  SET @SHOFAR_TOTALBRUTO=0; SET @SHOFAR_MONTONETO=0;SET @SHOFAR_MONTORETENCION=0; SET @SHOFAR_RESIDUAL=0;
-											 											   
-														   SET @SHOFAR_MONTONETO = @NETO_SHOFAR;
-														   SET @SHOFAR_RESIDUAL = (@SHOFAR_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @SHOFAR_TOTALBRUTO = @SHOFAR_MONTONETO + @SHOFAR_RESIDUAL;
-														   SET @SHOFAR_MONTORETENCION = @SHOFAR_RESIDUAL;
+														  SET @SHOFAR_TOTALBRUTO=0; SET @SHOFAR_MONTONETO=0;SET @SHOFAR_MONTORETENCION=0; SET @SHOFAR_RESIDUAL=0;SET @SHOFAR_VENTA_GRUPAL=0; SET @SHOFAR_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalShofar as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalShofar  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @SHOFAR_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalShofar where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@SHOFAR_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@SHOFAR_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @SHOFAR_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalShofar as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalShofar SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @SHOFAR_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalShofar  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@SHOFAR_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@SHOFAR_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @SHOFAR_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualShofar as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualShofar   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @SHOFAR_RESIDUAL= SUM(r.dmonto)  from @tableResidualShofar  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@SHOFAR_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@SHOFAR_RESIDUAL < 0)
+																	BEGIN
+																	 SET @SHOFAR_RESIDUAL= 0
+																	END
+
+															---------------------------													   
+														   SET @SHOFAR_MONTONETO = @NETO_SHOFAR;				
+														   SET @SHOFAR_MONTORETENCION = (@SHOFAR_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @SHOFAR_TOTALBRUTO = @SHOFAR_MONTONETO + @SHOFAR_MONTORETENCION;
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @SHOFAR_TOTALBRUTO,--monto
@@ -357,8 +572,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @SHOFAR_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @SHOFAR_VENTA_PERSONAL, --venta personales
+															  @SHOFAR_VENTA_GRUPAL, --ventas grupales..
 															  @SHOFAR_RESIDUAL, --residual
 															  @SHOFAR_MONTORETENCION, -- retencion
 															  @SHOFAR_MONTONETO, --monto neto
@@ -371,15 +586,49 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @MEXICO_IDDETALLE_SCOPE INT;
 														  SET @MEXICO_IDDETALLE_SCOPE=0;
-														  DECLARE @MEXICO_TOTALBRUTO DECIMAL(18,2),@MEXICO_MONTONETO DECIMAL(18,2), @MEXICO_MONTORETENCION DECIMAL(18,2), @MEXICO_RESIDUAL DECIMAL(18,2);
+														  DECLARE @MEXICO_TOTALBRUTO DECIMAL(18,2),@MEXICO_MONTONETO DECIMAL(18,2), @MEXICO_MONTORETENCION DECIMAL(18,2), @MEXICO_RESIDUAL DECIMAL(18,2), @MEXICO_VENTA_GRUPAL DECIMAL(18,2), @MEXICO_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @MEXICO_IDEMPRESA INT, @MEXICO_CODIGOEMPRESA INT;
 														  SET @MEXICO_IDEMPRESA=8 SET @MEXICO_CODIGOEMPRESA=8;
-														  SET @MEXICO_TOTALBRUTO=0; SET @MEXICO_MONTONETO=0;SET @MEXICO_MONTORETENCION=0; SET @MEXICO_RESIDUAL=0;
-											 											   
+														  SET @MEXICO_TOTALBRUTO=0; SET @MEXICO_MONTONETO=0;SET @MEXICO_MONTORETENCION=0; SET @MEXICO_RESIDUAL=0; SET @MEXICO_VENTA_GRUPAL=0; SET @MEXICO_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalMexico as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalMexico  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @MEXICO_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalMexico where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@MEXICO_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@MEXICO_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @MEXICO_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalMexico as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalMexico SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @MEXICO_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalMexico  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@MEXICO_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@MEXICO_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @MEXICO_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualMexico as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualMexico   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @MEXICO_RESIDUAL= SUM(r.dmonto)  from @tableResidualMexico  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@MEXICO_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@MEXICO_RESIDUAL < 0)
+																	BEGIN
+																	 SET @MEXICO_RESIDUAL= 0
+																	END
+															---------------------------							   
 														   SET @MEXICO_MONTONETO = @NETO_MEXICO;
-														   SET @MEXICO_RESIDUAL = (@MEXICO_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @MEXICO_TOTALBRUTO = @MEXICO_MONTONETO + @MEXICO_RESIDUAL;
-														   SET @MEXICO_MONTORETENCION = @MEXICO_RESIDUAL;
+														   SET @MEXICO_MONTORETENCION = (@MEXICO_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @MEXICO_TOTALBRUTO = @MEXICO_MONTONETO + @MEXICO_MONTORETENCION;
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @MEXICO_TOTALBRUTO,--monto
@@ -391,8 +640,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @MEXICO_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @MEXICO_VENTA_PERSONAL, --venta personales
+															  @MEXICO_VENTA_GRUPAL, --ventas grupales..
 															  @MEXICO_RESIDUAL, --residual
 															  @MEXICO_MONTORETENCION, -- retencion
 															  @MEXICO_MONTONETO, --monto neto
@@ -405,15 +654,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @PRADERAS_IDDETALLE_SCOPE INT;
 														  SET @PRADERAS_IDDETALLE_SCOPE=0;
-														  DECLARE @PRADERAS_TOTALBRUTO DECIMAL(18,2),@PRADERAS_MONTONETO DECIMAL(18,2), @PRADERAS_MONTORETENCION DECIMAL(18,2), @PRADERAS_RESIDUAL DECIMAL(18,2);
+														  DECLARE @PRADERAS_TOTALBRUTO DECIMAL(18,2),@PRADERAS_MONTONETO DECIMAL(18,2), @PRADERAS_MONTORETENCION DECIMAL(18,2), @PRADERAS_RESIDUAL DECIMAL(18,2), @PRADERAS_VENTA_GRUPAL DECIMAL(18,2), @PRADERAS_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @PRADERAS_IDEMPRESA INT, @PRADERAS_CODIGOEMPRESA INT;
 														  SET @PRADERAS_IDEMPRESA=10 SET @PRADERAS_CODIGOEMPRESA=10;
-														  SET @PRADERAS_TOTALBRUTO=0; SET @PRADERAS_MONTONETO=0;SET @PRADERAS_MONTORETENCION=0; SET @PRADERAS_RESIDUAL=0;
-											 											   
-														   SET @PRADERAS_MONTONETO = @NETO_PRADERAS;
-														   SET @PRADERAS_RESIDUAL = (@PRADERAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @PRADERAS_TOTALBRUTO = @PRADERAS_MONTONETO + @PRADERAS_RESIDUAL;
-														   SET @PRADERAS_MONTORETENCION = @PRADERAS_RESIDUAL;
+														  SET @PRADERAS_TOTALBRUTO=0; SET @PRADERAS_MONTONETO=0;SET @PRADERAS_MONTORETENCION=0; SET @PRADERAS_RESIDUAL=0; SET @PRADERAS_VENTA_GRUPAL=0; SET @PRADERAS_VENTA_PERSONAL=0;
+											 				   ----venta grupal
+																	DECLARE @ventaGrupalPaderas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalPaderas  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @PRADERAS_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalPaderas where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@PRADERAS_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@PRADERAS_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @PRADERAS_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalPraderas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalPraderas SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @PRADERAS_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalPraderas  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@PRADERAS_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@PRADERAS_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @PRADERAS_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualPraderas as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualPraderas   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @PRADERAS_RESIDUAL= SUM(r.dmonto)  from @tableResidualPraderas  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@PRADERAS_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@PRADERAS_RESIDUAL < 0)
+																	BEGIN
+																	 SET @PRADERAS_RESIDUAL = 0
+																	END
+															---------------------------						   
+														   SET @PRADERAS_MONTONETO = @NETO_PRADERAS;														   
+														    SET @PRADERAS_MONTORETENCION = (@PRADERAS_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @PRADERAS_TOTALBRUTO = @PRADERAS_MONTONETO + @PRADERAS_MONTORETENCION;
+														  
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @PRADERAS_TOTALBRUTO,--monto
@@ -425,8 +709,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @PRADERAS_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @PRADERAS_VENTA_PERSONAL, --venta personales
+															  @PRADERAS_VENTA_GRUPAL, --ventas grupales..
 															  @PRADERAS_RESIDUAL, --residual
 															  @PRADERAS_MONTORETENCION, -- retencion
 															  @PRADERAS_MONTONETO, --monto neto
@@ -439,15 +723,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @KALOMAI_IDDETALLE_SCOPE INT;
 														  SET @KALOMAI_IDDETALLE_SCOPE=0;
-														  DECLARE @KALOMAI_TOTALBRUTO DECIMAL(18,2),@KALOMAI_MONTONETO DECIMAL(18,2), @KALOMAI_MONTORETENCION DECIMAL(18,2), @KALOMAI_RESIDUAL DECIMAL(18,2);
+														  DECLARE @KALOMAI_TOTALBRUTO DECIMAL(18,2),@KALOMAI_MONTONETO DECIMAL(18,2), @KALOMAI_MONTORETENCION DECIMAL(18,2), @KALOMAI_RESIDUAL DECIMAL(18,2), @KALOMAI_VENTA_GRUPAL DECIMAL(18,2), @KALOMAI_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @KALOMAI_IDEMPRESA INT, @KALOMAI_CODIGOEMPRESA INT;
 														  SET @KALOMAI_IDEMPRESA=12 SET @KALOMAI_CODIGOEMPRESA=12;
-														  SET @KALOMAI_TOTALBRUTO=0; SET @KALOMAI_MONTONETO=0;SET @KALOMAI_MONTORETENCION=0; SET @KALOMAI_RESIDUAL=0;
-											 											   
-														   SET @KALOMAI_MONTONETO = @NETO_KALOMAI;
-														   SET @KALOMAI_RESIDUAL = (@KALOMAI_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @KALOMAI_TOTALBRUTO = @KALOMAI_MONTONETO + @KALOMAI_RESIDUAL;
-														   SET @KALOMAI_MONTORETENCION = @KALOMAI_RESIDUAL;
+														  SET @KALOMAI_TOTALBRUTO=0; SET @KALOMAI_MONTONETO=0;SET @KALOMAI_MONTORETENCION=0; SET @KALOMAI_RESIDUAL=0;SET @KALOMAI_VENTA_GRUPAL=0; SET @KALOMAI_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalKalimai as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalKalimai  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @KALOMAI_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalKalimai where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@KALOMAI_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@KALOMAI_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @KALOMAI_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalKalomai as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalKalomai SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @KALOMAI_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalKalomai  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@KALOMAI_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@KALOMAI_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @KALOMAI_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualKalomai as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualKalomai   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @KALOMAI_RESIDUAL= SUM(r.dmonto)  from @tableResidualKalomai  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@KALOMAI_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@KALOMAI_RESIDUAL < 0)
+																	BEGIN
+																	 SET @KALOMAI_RESIDUAL = 0
+																	END
+															---------------------------									   
+														   SET @KALOMAI_MONTONETO = @NETO_KALOMAI;														   
+														   SET @KALOMAI_MONTORETENCION = (@KALOMAI_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @KALOMAI_TOTALBRUTO = @KALOMAI_MONTONETO + @KALOMAI_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @KALOMAI_TOTALBRUTO,--monto
@@ -459,8 +778,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @KALOMAI_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @KALOMAI_VENTA_PERSONAL, --venta personales
+															  @KALOMAI_VENTA_GRUPAL, --ventas grupales..
 															  @KALOMAI_RESIDUAL, --residual
 															  @KALOMAI_MONTORETENCION, -- retencion
 															  @KALOMAI_MONTONETO, --monto neto
@@ -473,15 +792,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @ANGOSTURA_IDDETALLE_SCOPE INT;
 														  SET @ANGOSTURA_IDDETALLE_SCOPE=0;
-														  DECLARE @ANGOSTURA_TOTALBRUTO DECIMAL(18,2),@ANGOSTURA_MONTONETO DECIMAL(18,2), @ANGOSTURA_MONTORETENCION DECIMAL(18,2), @ANGOSTURA_RESIDUAL DECIMAL(18,2);
+														  DECLARE @ANGOSTURA_TOTALBRUTO DECIMAL(18,2),@ANGOSTURA_MONTONETO DECIMAL(18,2), @ANGOSTURA_MONTORETENCION DECIMAL(18,2), @ANGOSTURA_RESIDUAL DECIMAL(18,2), @ANGOSTURA_VENTA_GRUPAL DECIMAL(18,2), @ANGOSTURA_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @ANGOSTURA_IDEMPRESA INT, @ANGOSTURA_CODIGOEMPRESA INT;
 														  SET @ANGOSTURA_IDEMPRESA=13 SET @ANGOSTURA_CODIGOEMPRESA=13;
-														  SET @ANGOSTURA_TOTALBRUTO=0; SET @ANGOSTURA_MONTONETO=0;SET @ANGOSTURA_MONTORETENCION=0; SET @ANGOSTURA_RESIDUAL=0;
-											 											   
+														  SET @ANGOSTURA_TOTALBRUTO=0; SET @ANGOSTURA_MONTONETO=0;SET @ANGOSTURA_MONTORETENCION=0; SET @ANGOSTURA_RESIDUAL=0;SET @ANGOSTURA_VENTA_GRUPAL=0; SET @ANGOSTURA_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalANGOSTURA as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalANGOSTURA  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @ANGOSTURA_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalANGOSTURA where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@ANGOSTURA_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@ANGOSTURA_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @ANGOSTURA_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalANGOSTURA as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalANGOSTURA SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @ANGOSTURA_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalANGOSTURA  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@ANGOSTURA_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@ANGOSTURA_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @ANGOSTURA_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualAngostura as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualAngostura   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @ANGOSTURA_RESIDUAL= SUM(r.dmonto)  from @tableResidualAngostura  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@ANGOSTURA_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@ANGOSTURA_RESIDUAL < 0)
+																	BEGIN
+																	 SET @ANGOSTURA_RESIDUAL = 0
+																	END
+															---------------------------							   
 														   SET @ANGOSTURA_MONTONETO = @NETO_VALLE_ANGOSTURA;
-														   SET @ANGOSTURA_RESIDUAL = (@ANGOSTURA_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @ANGOSTURA_TOTALBRUTO = @ANGOSTURA_MONTONETO + @ANGOSTURA_RESIDUAL;
-														   SET @ANGOSTURA_MONTORETENCION = @ANGOSTURA_RESIDUAL;
+														   SET @ANGOSTURA_MONTORETENCION = (@ANGOSTURA_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @ANGOSTURA_TOTALBRUTO = @ANGOSTURA_MONTONETO + @ANGOSTURA_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @ANGOSTURA_TOTALBRUTO,--monto
@@ -493,8 +847,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @ANGOSTURA_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @ANGOSTURA_VENTA_PERSONAL, --venta personales
+															  @ANGOSTURA_VENTA_GRUPAL, --ventas grupales..
 															  @ANGOSTURA_RESIDUAL, --residual
 															  @ANGOSTURA_MONTORETENCION, -- retencion
 															  @ANGOSTURA_MONTONETO, --monto neto
@@ -507,15 +861,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @JAYIL_IDDETALLE_SCOPE INT;
 														  SET @JAYIL_IDDETALLE_SCOPE=0;
-														  DECLARE @JAYIL_TOTALBRUTO DECIMAL(18,2),@JAYIL_MONTONETO DECIMAL(18,2), @JAYIL_MONTORETENCION DECIMAL(18,2), @JAYIL_RESIDUAL DECIMAL(18,2);
+														  DECLARE @JAYIL_TOTALBRUTO DECIMAL(18,2),@JAYIL_MONTONETO DECIMAL(18,2), @JAYIL_MONTORETENCION DECIMAL(18,2), @JAYIL_RESIDUAL DECIMAL(18,2), @JAYIL_VENTA_GRUPAL DECIMAL(18,2), @JAYIL_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @JAYIL_IDEMPRESA INT, @JAYIL_CODIGOEMPRESA INT;
 														  SET @JAYIL_IDEMPRESA=14 SET @JAYIL_CODIGOEMPRESA=14;
-														  SET @JAYIL_TOTALBRUTO=0; SET @JAYIL_MONTONETO=0;SET @JAYIL_MONTORETENCION=0; SET @JAYIL_RESIDUAL=0;
-											 											   
+														  SET @JAYIL_TOTALBRUTO=0; SET @JAYIL_MONTONETO=0;SET @JAYIL_MONTORETENCION=0; SET @JAYIL_RESIDUAL=0;SET @JAYIL_VENTA_GRUPAL=0; SET @JAYIL_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalJayil  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @JAYIL_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalJayil where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@JAYIL_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@JAYIL_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @JAYIL_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalJayil SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @JAYIL_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalJayil  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@JAYIL_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@JAYIL_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @JAYIL_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualJayil   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @JAYIL_RESIDUAL= SUM(r.dmonto)  from @tableResidualJayil  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@JAYIL_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@JAYIL_RESIDUAL < 0)
+																	BEGIN
+																	 SET @JAYIL_RESIDUAL = 0
+																	END
+															---------------------------							   
 														   SET @JAYIL_MONTONETO = @NETO_JAYIL;
-														   SET @JAYIL_RESIDUAL = (@JAYIL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @JAYIL_TOTALBRUTO = @JAYIL_MONTONETO + @JAYIL_RESIDUAL;
-														   SET @JAYIL_MONTORETENCION = @JAYIL_RESIDUAL;
+														   SET @JAYIL_MONTORETENCION = (@JAYIL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @JAYIL_TOTALBRUTO = @JAYIL_MONTONETO + @JAYIL_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @JAYIL_TOTALBRUTO,--monto
@@ -527,8 +916,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @JAYIL_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @JAYIL_VENTA_PERSONAL, --venta personales
+															  @JAYIL_VENTA_GRUPAL, --ventas grupales..
 															  @JAYIL_RESIDUAL, --residual
 															  @JAYIL_MONTORETENCION, -- retencion
 															  @JAYIL_MONTONETO, --monto neto
@@ -541,15 +930,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @NEIZANJAYIL_IDDETALLE_SCOPE INT;
 														  SET @NEIZANJAYIL_IDDETALLE_SCOPE=0;
-														  DECLARE @NEIZANJAYIL_TOTALBRUTO DECIMAL(18,2),@NEIZANJAYIL_MONTONETO DECIMAL(18,2), @NEIZANJAYIL_MONTORETENCION DECIMAL(18,2), @NEIZANJAYIL_RESIDUAL DECIMAL(18,2);
+														  DECLARE @NEIZANJAYIL_TOTALBRUTO DECIMAL(18,2),@NEIZANJAYIL_MONTONETO DECIMAL(18,2), @NEIZANJAYIL_MONTORETENCION DECIMAL(18,2), @NEIZANJAYIL_RESIDUAL DECIMAL(18,2), @NEIZANJAYIL_VENTA_GRUPAL DECIMAL(18,2), @NEIZANJAYIL_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @NEIZANJAYIL_IDEMPRESA INT, @NEIZANJAYIL_CODIGOEMPRESA INT;
 														  SET @NEIZANJAYIL_IDEMPRESA=15 SET @NEIZANJAYIL_CODIGOEMPRESA=15;
-														  SET @NEIZANJAYIL_TOTALBRUTO=0; SET @NEIZANJAYIL_MONTONETO=0;SET @NEIZANJAYIL_MONTORETENCION=0; SET @NEIZANJAYIL_RESIDUAL=0;
-											 											   
+														  SET @NEIZANJAYIL_TOTALBRUTO=0; SET @NEIZANJAYIL_MONTONETO=0;SET @NEIZANJAYIL_MONTORETENCION=0; SET @NEIZANJAYIL_RESIDUAL=0;SET @NEIZANJAYIL_VENTA_GRUPAL=0; SET @NEIZANJAYIL_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalNeizanJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalNeizanJayil  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @NEIZANJAYIL_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalNeizanJayil where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@NEIZANJAYIL_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@NEIZANJAYIL_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @NEIZANJAYIL_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalNeizanJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalNeizanJayil SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @NEIZANJAYIL_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalNeizanJayil  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@NEIZANJAYIL_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@NEIZANJAYIL_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @NEIZANJAYIL_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualNeizanJayil as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualNeizanJayil   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @NEIZANJAYIL_RESIDUAL= SUM(r.dmonto)  from @tableResidualNeizanJayil  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@NEIZANJAYIL_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@NEIZANJAYIL_RESIDUAL < 0)
+																	BEGIN
+																	 SET @NEIZANJAYIL_RESIDUAL = 0
+																	END
+															---------------------------							   
 														   SET @NEIZANJAYIL_MONTONETO = @NETO_NEIZAN_JAYIL;
-														   SET @NEIZANJAYIL_RESIDUAL = (@NEIZANJAYIL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @NEIZANJAYIL_TOTALBRUTO = @NEIZANJAYIL_MONTONETO + @NEIZANJAYIL_RESIDUAL;
-														   SET @NEIZANJAYIL_MONTORETENCION = @NEIZANJAYIL_RESIDUAL;
+														   SET @NEIZANJAYIL_MONTORETENCION = (@NEIZANJAYIL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @NEIZANJAYIL_TOTALBRUTO = @NEIZANJAYIL_MONTONETO + @NEIZANJAYIL_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @NEIZANJAYIL_TOTALBRUTO,--monto
@@ -561,8 +985,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @NEIZANJAYIL_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @NEIZANJAYIL_VENTA_PERSONAL, --venta personales
+															  @NEIZANJAYIL_VENTA_GRUPAL, --ventas grupales..
 															  @NEIZANJAYIL_RESIDUAL, --residual
 															  @NEIZANJAYIL_MONTORETENCION, -- retencion
 															  @NEIZANJAYIL_MONTONETO, --monto neto
@@ -575,15 +999,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @NEIZANASHER_IDDETALLE_SCOPE INT;
 														  SET @NEIZANASHER_IDDETALLE_SCOPE=0;
-														  DECLARE @NEIZANASHER_TOTALBRUTO DECIMAL(18,2),@NEIZANASHER_MONTONETO DECIMAL(18,2), @NEIZANASHER_MONTORETENCION DECIMAL(18,2), @NEIZANASHER_RESIDUAL DECIMAL(18,2);
+														  DECLARE @NEIZANASHER_TOTALBRUTO DECIMAL(18,2),@NEIZANASHER_MONTONETO DECIMAL(18,2), @NEIZANASHER_MONTORETENCION DECIMAL(18,2), @NEIZANASHER_RESIDUAL DECIMAL(18,2), @NEIZANASHER_VENTA_GRUPAL DECIMAL(18,2), @NEIZANASHER_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @NEIZANASHER_IDEMPRESA INT, @NEIZANASHER_CODIGOEMPRESA INT;
 														  SET @NEIZANASHER_IDEMPRESA=16 SET @NEIZANASHER_CODIGOEMPRESA=16;
-														  SET @NEIZANASHER_TOTALBRUTO=0; SET @NEIZANASHER_MONTONETO=0;SET @NEIZANASHER_MONTORETENCION=0; SET @NEIZANASHER_RESIDUAL=0;
-											 											   
+														  SET @NEIZANASHER_TOTALBRUTO=0; SET @NEIZANASHER_MONTONETO=0;SET @NEIZANASHER_MONTORETENCION=0; SET @NEIZANASHER_RESIDUAL=0;SET @NEIZANASHER_VENTA_GRUPAL=0; SET @NEIZANASHER_VENTA_PERSONAL=0;
+											 					 ----venta grupal
+																	DECLARE @ventaGrupalNeizanAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalNeizanAsher  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @NEIZANASHER_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalNeizanAsher where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@NEIZANASHER_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@NEIZANASHER_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @NEIZANASHER_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalNeizanAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalNeizanAsher SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @NEIZANASHER_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalNeizanAsher  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@NEIZANASHER_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@NEIZANASHER_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @NEIZANASHER_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualNeizanAsher as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualNeizanAsher   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @NEIZANASHER_RESIDUAL= SUM(r.dmonto)  from @tableResidualNeizanAsher  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@NEIZANASHER_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@NEIZANASHER_RESIDUAL < 0)
+																	BEGIN
+																	 SET @NEIZANASHER_RESIDUAL = 0
+																	END
+															---------------------------							   
 														   SET @NEIZANASHER_MONTONETO = @NETO_NEIZAN_ASHER;
-														   SET @NEIZANASHER_RESIDUAL = (@NEIZANASHER_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @NEIZANASHER_TOTALBRUTO = @NEIZANASHER_MONTONETO + @NEIZANASHER_RESIDUAL;
-														   SET @NEIZANASHER_MONTORETENCION = @NEIZANASHER_RESIDUAL;
+														     SET @NEIZANASHER_MONTORETENCION = (@NEIZANASHER_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @NEIZANASHER_TOTALBRUTO = @NEIZANASHER_MONTONETO + @NEIZANASHER_MONTORETENCION;
+														 
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @NEIZANASHER_TOTALBRUTO,--monto
@@ -595,8 +1054,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @NEIZANASHER_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @NEIZANASHER_VENTA_PERSONAL, --venta personales
+															  @NEIZANASHER_VENTA_GRUPAL, --ventas grupales..
 															  @NEIZANASHER_RESIDUAL, --residual
 															  @NEIZANASHER_MONTORETENCION, -- retencion
 															  @NEIZANASHER_MONTONETO, --monto neto
@@ -609,15 +1068,50 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @ROYALPARI_IDDETALLE_SCOPE INT;
 														  SET @ROYALPARI_IDDETALLE_SCOPE=0;
-														  DECLARE @ROYALPARI_TOTALBRUTO DECIMAL(18,2),@ROYALPARI_MONTONETO DECIMAL(18,2), @ROYALPARI_MONTORETENCION DECIMAL(18,2), @ROYALPARI_RESIDUAL DECIMAL(18,2);
+														  DECLARE @ROYALPARI_TOTALBRUTO DECIMAL(18,2),@ROYALPARI_MONTONETO DECIMAL(18,2), @ROYALPARI_MONTORETENCION DECIMAL(18,2), @ROYALPARI_RESIDUAL DECIMAL(18,2), @ROYALPARI_VENTA_GRUPAL DECIMAL(18,2), @ROYALPARI_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @ROYALPARI_IDEMPRESA INT, @ROYALPARI_CODIGOEMPRESA INT;
 														  SET @ROYALPARI_IDEMPRESA=20 SET @ROYALPARI_CODIGOEMPRESA=20;
-														  SET @ROYALPARI_TOTALBRUTO=0; SET @ROYALPARI_MONTONETO=0;SET @ROYALPARI_MONTORETENCION=0; SET @ROYALPARI_RESIDUAL=0;
-											 											   
+														  SET @ROYALPARI_TOTALBRUTO=0; SET @ROYALPARI_MONTONETO=0;SET @ROYALPARI_MONTORETENCION=0; SET @ROYALPARI_RESIDUAL=0;SET @ROYALPARI_VENTA_GRUPAL=0; SET @ROYALPARI_VENTA_PERSONAL=0;
+											 				  ----venta grupal
+																	DECLARE @ventaGrupalRoyalPari as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalRoyalPari  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @ROYALPARI_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalRoyalPari where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@ROYALPARI_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@ROYALPARI_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @ROYALPARI_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalRoyalpari as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalRoyalpari SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @ROYALPARI_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalRoyalpari  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@ROYALPARI_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@ROYALPARI_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @ROYALPARI_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualRoyalpari as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualRoyalpari   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @ROYALPARI_RESIDUAL= SUM(r.dmonto)  from @tableResidualRoyalpari  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@ROYALPARI_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@ROYALPARI_RESIDUAL < 0)
+																	BEGIN
+																	 SET @ROYALPARI_RESIDUAL = 0
+																	END
+															---------------------------								   
 														   SET @ROYALPARI_MONTONETO = @NETO_NEIZAN_ASHER;
-														   SET @ROYALPARI_RESIDUAL = (@ROYALPARI_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @ROYALPARI_TOTALBRUTO = @ROYALPARI_MONTONETO + @ROYALPARI_RESIDUAL;
-														   SET @ROYALPARI_MONTORETENCION = @ROYALPARI_RESIDUAL;
+														   SET @ROYALPARI_MONTORETENCION = (@ROYALPARI_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @ROYALPARI_TOTALBRUTO = @ROYALPARI_MONTONETO + @ROYALPARI_MONTORETENCION;
+														   
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @ROYALPARI_TOTALBRUTO,--monto
@@ -629,8 +1123,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @ROYALPARI_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @ROYALPARI_VENTA_PERSONAL, --venta personales
+															  @ROYALPARI_VENTA_GRUPAL, --ventas grupales..
 															  @ROYALPARI_RESIDUAL, --residual
 															  @ROYALPARI_MONTORETENCION, -- retencion
 															  @ROYALPARI_MONTONETO, --monto neto
@@ -643,15 +1137,49 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @MENORAH_IDDETALLE_SCOPE INT;
 														  SET @MENORAH_IDDETALLE_SCOPE=0;
-														  DECLARE @MENORAH_TOTALBRUTO DECIMAL(18,2),@MENORAH_MONTONETO DECIMAL(18,2), @MENORAH_MONTORETENCION DECIMAL(18,2), @MENORAH_RESIDUAL DECIMAL(18,2);
+														  DECLARE @MENORAH_TOTALBRUTO DECIMAL(18,2),@MENORAH_MONTONETO DECIMAL(18,2), @MENORAH_MONTORETENCION DECIMAL(18,2), @MENORAH_RESIDUAL DECIMAL(18,2), @MENORAH_VENTA_GRUPAL DECIMAL(18,2), @MENORAH_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @MENORAH_IDEMPRESA INT, @MENORAH_CODIGOEMPRESA INT;
 														  SET @MENORAH_IDEMPRESA=18 SET @MENORAH_CODIGOEMPRESA=18;
-														  SET @MENORAH_TOTALBRUTO=0; SET @MENORAH_MONTONETO=0;SET @MENORAH_MONTORETENCION=0; SET @MENORAH_RESIDUAL=0;
-											 											   
-														   SET @MENORAH_MONTONETO = @NETO_MENORAH;
-														   SET @MENORAH_RESIDUAL = (@MENORAH_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @MENORAH_TOTALBRUTO = @MENORAH_MONTONETO + @MENORAH_RESIDUAL;
-														   SET @MENORAH_MONTORETENCION = @MENORAH_RESIDUAL;
+														  SET @MENORAH_TOTALBRUTO=0; SET @MENORAH_MONTONETO=0;SET @MENORAH_MONTORETENCION=0; SET @MENORAH_RESIDUAL=0; SET @MENORAH_VENTA_GRUPAL=0; SET  @MENORAH_VENTA_PERSONAL=0;
+											 				     ----venta grupal
+																	DECLARE @ventaGrupalMenorah as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalMenorah  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @MENORAH_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalMenorah where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@MENORAH_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@MENORAH_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @MENORAH_VENTA_GRUPAL=0;
+																	 END
+															 --venta personal..
+															   		 DECLARE @ventaPersonalMenorah as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalMenorah SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @MENORAH_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalMenorah  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@MENORAH_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@MENORAH_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @MENORAH_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualMenorah as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualMenorah   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @MENORAH_RESIDUAL= SUM(r.dmonto)  from @tableResidualMenorah  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@MENORAH_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@MENORAH_RESIDUAL < 0)
+																	BEGIN
+																	 SET @MENORAH_RESIDUAL = 0
+																	END
+															---------------------------											   
+														   SET @MENORAH_MONTONETO = @NETO_MENORAH;												
+														   SET @MENORAH_MONTORETENCION =(@MENORAH_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @MENORAH_TOTALBRUTO = @MENORAH_MONTONETO + @MENORAH_MONTORETENCION;
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @MENORAH_TOTALBRUTO,--monto
@@ -663,8 +1191,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @MENORAH_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @MENORAH_VENTA_PERSONAL, --venta personales
+															  @MENORAH_VENTA_GRUPAL, --ventas grupales..
 															  @MENORAH_RESIDUAL, --residual
 															  @MENORAH_MONTORETENCION, -- retencion
 															  @MENORAH_MONTONETO, --monto neto
@@ -677,15 +1205,49 @@ BEGIN TRY
 													BEGIN
 														  DECLARE @AVDEL_IDDETALLE_SCOPE INT;
 														  SET @AVDEL_IDDETALLE_SCOPE=0;
-														  DECLARE @AVDEL_TOTALBRUTO DECIMAL(18,2),@AVDEL_MONTONETO DECIMAL(18,2), @AVDEL_MONTORETENCION DECIMAL(18,2), @AVDEL_RESIDUAL DECIMAL(18,2);
+														  DECLARE @AVDEL_TOTALBRUTO DECIMAL(18,2),@AVDEL_MONTONETO DECIMAL(18,2), @AVDEL_MONTORETENCION DECIMAL(18,2), @AVDEL_RESIDUAL DECIMAL(18,2), @AVDEL_VENTA_GRUPAL DECIMAL(18,2), @AVDEL_VENTA_PERSONAL DECIMAL(18,2);
 														  DECLARE @AVDEL_IDEMPRESA INT, @AVDEL_CODIGOEMPRESA INT;
 														  SET @AVDEL_IDEMPRESA=11 SET @AVDEL_CODIGOEMPRESA=12;
-														  SET @AVDEL_TOTALBRUTO=0; SET @AVDEL_MONTONETO=0;SET @AVDEL_MONTORETENCION=0; SET @AVDEL_RESIDUAL=0;
-											 											   
-														   SET @AVDEL_MONTONETO = @NETO_AVDEL;
-														   SET @AVDEL_RESIDUAL = (@AVDEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
-														   SET @AVDEL_TOTALBRUTO = @AVDEL_MONTONETO + @AVDEL_RESIDUAL;
-														   SET @AVDEL_MONTORETENCION = @AVDEL_RESIDUAL;
+														  SET @AVDEL_TOTALBRUTO=0; SET @AVDEL_MONTONETO=0;SET @AVDEL_MONTORETENCION=0; SET @AVDEL_RESIDUAL=0; SET @AVDEL_VENTA_GRUPAL=0; SET @AVDEL_VENTA_PERSONAL=0;
+											 				  ----venta grupal
+																	DECLARE @ventaGrupalAvdel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	 insert into @ventaGrupalAvdel  select gru.empresa, gru.lempresa_id, gru.lcontacto_id, gru.dcomision from (SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventagrupo vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id GROUP BY emp.lEmpresa_id, vta.lcontacto_id
+																		')) as gru 
+																	 select @AVDEL_VENTA_GRUPAL = SUM(dcomision)  from @ventaGrupalAvdel where  lcontacto_id=@CONTACTOIDItem and lempresa_id=@AVDEL_CODIGOEMPRESA group by lempresa_id, lempresa_id
+															         IF(@AVDEL_VENTA_GRUPAL < 0)
+																	 BEGIN
+																	   SET @AVDEL_VENTA_GRUPAL=0;
+																	 END
+															  --venta personal..
+															   		 DECLARE @ventaPersonalAvdel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dcomision numeric(12, 2) );
+																	  insert into @ventaPersonalAvdel SELECT * FROM OPENQUERY ( [10.2.10.222],'select emp.empresa, emp.lempresa_id, vta.lcontacto_id, vta.dcomision  from administracionventapersonal vta
+																		inner join administracioncontrato cto on cto.lcontrato_id = vta.lcontrato_id and vta.lciclo_id = 80
+																		inner join administracioncomplejo comp on comp.lcomplejo_id = cto.lcomplejo_id
+																		INNER JOIN administracionempresa emp on emp.lempresa_id = comp.lempresa_id
+																		') as dat 
+																	  select @AVDEL_VENTA_PERSONAL= sum(dcomision)  from  @ventaPersonalAvdel  where lcontacto_id=@CONTACTOIDItem   and lempresa_id=@AVDEL_CODIGOEMPRESA  group by lempresa_id, lempresa_id
+																	  IF(@AVDEL_VENTA_PERSONAL < 0)
+																	  BEGIN
+																	    SET @AVDEL_VENTA_PERSONAL=0;
+																	  END
+													          --residual
+																   DECLARE @tableResidualAvdel as table(empresa varchar(100),lempresa_id INT, lcontacto_id INT, dmonto numeric(12, 2) );
+																	insert into @tableResidualAvdel   SELECT * FROM OPENQUERY ( [10.2.10.222],'select empre.empresa, empre.lempresa_id, reci.lcontacto_id, reci.dmonto  from administracionredempresacomplejo reci	
+																	 inner join administracioncomplejo comp on comp.lcomplejo_id = reci.lcomplejo_id  and reci.lciclo_id = 80
+																	 inner join administracionempresa empre on empre.lempresa_id = comp.lempresa_id  
+																	')as resid                                                                
+																	select @AVDEL_RESIDUAL= SUM(r.dmonto)  from @tableResidualAvdel  r where r.lcontacto_id=@CONTACTOIDItem and lEmpresa_id=@AVDEL_CODIGOEMPRESA  GROUP BY r.lEmpresa_id, r.lcontacto_id
+																	IF(@AVDEL_RESIDUAL < 0)
+																	BEGIN
+																	 SET @AVDEL_RESIDUAL = 0
+																	END
+															---------------------------							   
+														   SET @AVDEL_MONTONETO = @NETO_AVDEL;	
+														   SET @AVDEL_MONTORETENCION = (@AVDEL_MONTONETO * @porcentajeRetencionComisionFrelancer) / (100 - @porcentajeRetencionComisionFrelancer);
+														   SET @AVDEL_TOTALBRUTO = @AVDEL_MONTONETO + @AVDEL_MONTORETENCION;
 														  INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 														  values(
 															  @AVDEL_TOTALBRUTO,--monto
@@ -697,8 +1259,8 @@ BEGIN TRY
 															  @IDCOMISIONDETALLE_SCOPE, --idcomisiondetalle
 															  @AVDEL_IDEMPRESA, --idempresa =1
 															  @USUARIO_DEFAULT, 
-															  0, --venta personales
-															  0, --ventas grupales..
+															  @AVDEL_VENTA_PERSONAL, --venta personales
+															  @AVDEL_VENTA_GRUPAL, --ventas grupales..
 															  @AVDEL_RESIDUAL, --residual
 															  @AVDEL_MONTORETENCION, -- retencion
 															  @AVDEL_MONTONETO, --monto neto

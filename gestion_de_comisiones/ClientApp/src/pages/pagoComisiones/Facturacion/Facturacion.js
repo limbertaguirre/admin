@@ -116,6 +116,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[idCicloSelected, setIdCicloSelected]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
   const[txtBusqueda, setTxtBusqueda] = useState("");
+  const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
 
    const[estadoComisionGlobalFacturado, setEstadoComisionGlobalFacturado]= useState(false);
@@ -436,7 +437,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
         })    
    };
-
+   
+   const seleccionarNombreCombo = (nombre)=>{
+     setNameComboSeleccionado(nombre);
+   }
 
 
     return (
@@ -519,7 +523,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                       <MenuItem value={0}>
                                           <em>Seleccione un ciclo</em>
                                       </MenuItem>
-                                      {ciclos.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
+                                      {ciclos.map((value,index)=> ( <MenuItem key={index} onClick={()=> seleccionarNombreCombo(`${value.nombre}`)}  value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
                                   </Select>                               
                               </FormControl>
                     </Grid>
@@ -541,7 +545,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
             <DetalleAdjuntoModal namePage={namePage} open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
-            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACION'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ENERO 2021?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
+            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACION'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ' + nameComboSeleccionado.toUpperCase()+ '?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
       </Container>    
       </>
     );

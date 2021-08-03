@@ -65,11 +65,11 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="right"><b>CEDULA IDENTIDAD</b></TableCell>
                             <TableCell align="right"><b>NRO CUENTA</b></TableCell>
                             <TableCell align="right"><b>BANCO</b></TableCell>
-                            <TableCell align="center"><b>MONTO TOTAL BRUTO</b></TableCell>
-                            <TableCell align="center"><b>FACTURA</b></TableCell>
-                            <TableCell align="center"><b>FACTURADO (15%)</b></TableCell>
-                            <TableCell align="center"><b>MONTO TOTAL NETO</b></TableCell> 
-                            <TableCell align="center"><b>MONTO RETENCION</b></TableCell> 
+                            <TableCell align="center"><b>MONTO BRUTO</b></TableCell>
+                            <TableCell align="center"><b>PRESENTA FACTURA?</b></TableCell>
+                            <TableCell align="center"><b>FACTURO?</b></TableCell>                            
+                            <TableCell align="center"><b>MONTO RETENCION (15.5%)</b></TableCell> 
+                            <TableCell align="center"><b>MONTO NETO</b></TableCell> 
                             <TableCell align="right">    </TableCell>
                         </TableRow>
                         </TableHead>
@@ -86,8 +86,8 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="center">                                     
                                      {row.estadoFacturoId === 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }                                     
                             </TableCell>  
-                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell> 
                             <TableCell align="right">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>                             
                             <TableCell align="center">
                                    {row.factura === "True"&& 
                                         <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estadoDetalleFacturaNombre}>
@@ -104,7 +104,7 @@ import Paper from '@material-ui/core/Paper';
                                             </Button>  
                                         </Tooltip> 
                                     }
-                            </TableCell>   
+                            </TableCell>                               
                             </TableRow>
                         ))}
                         </TableBody>

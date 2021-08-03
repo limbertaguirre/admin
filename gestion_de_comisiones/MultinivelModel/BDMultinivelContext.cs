@@ -504,6 +504,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("codigo")
                     .HasComment("Es el codigo de empresa externo de guardian de gruposion");
 
+                entity.Property(e => e.CodigoCnx)
+                    .HasColumnName("codigo_cnx")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Estado)
                     .HasColumnName("estado")
                     .HasComment("Estado de la empresa activo o inactivo 1 true , 0  false");

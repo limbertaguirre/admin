@@ -147,20 +147,17 @@ import * as Action from './messageAction';
           const data={
              usuarioNameLogueado:getState().load.userName,
              usuarioIDLogueado: getState().load.idUsuario,
-             //------------------
              nuevoAvatar :nuevoAvatar,
              avatar:avatar,
-            //-----------
              idFicha:idFicha,
              codigo:codigo,
              nombre:nombre,
              apellido: apellido,
              ci:ci,
-             telOficina:parseInt(telOficina),
-             telMovil : parseInt(telMovil),
-             telFijo : parseInt(telFijo),
+             telOficina:parseInt(telOficina === ""? 0 : telOficina),
+             telMovil : parseInt(telMovil === ""? 0 : telMovil),
+             telFijo : parseInt(telFijo === ""? 0 : telFijo),
              direccion : (direccion),
-             //-------------
              idCiudad : idCiudad,
              idPais :idPais,
              correoElectronico :correoElectronico,
@@ -170,22 +167,22 @@ import * as Action from './messageAction';
              idNivel :idNivel,
              idNivelDetalle:idNivelDetalle,
              comentario :comentario,
-             //------------
+
              tieneCuenta: tieneCuenta,
              idBanco : idBanco,
              cuentaBancaria :cuentaBancaria,
-            //-------------
+
              tieneFactura : tieneFactura,
              razonSocial :razonSocial,
              nit : nit,
-            //---------------
+
              tieneBaja : tieneBaja,
              idFichaTipoBaja : idFichaTipoBaja,
              idTipoBaja : idTipoBaja,
              fechaBaja : fechaBaja,
              motivoBaja : motivoBaja,
            };
-           console.log('data :', data)
+
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
              console.log('actualizar cliente res:  : ', res);
                 if(res.code === 0){                        
