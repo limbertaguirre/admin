@@ -1177,7 +1177,8 @@ AS
 			GPCOMI.id_ciclo,
 			CI.nombre AS 'ciclo',
 			GPESTA.id_estado_comision,
-			GPDETA.monto_retencion
+			GPDETA.monto_retencion,
+			GPDETA.monto_aplicacion
 	        from BDMultinivel.dbo.GP_COMISION GPCOMI
 	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision

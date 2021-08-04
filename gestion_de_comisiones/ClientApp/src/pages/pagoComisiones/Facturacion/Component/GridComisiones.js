@@ -64,9 +64,10 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="center"><b>NOMBRE COMPLETO</b></TableCell>
                             <TableCell align="center"><b>CEDULA IDENTIDAD</b></TableCell>
                             <TableCell align="center"><b>PRESENTA FACTURA?</b></TableCell>
-                            <TableCell align="center"><b>MONTO BRUTO</b></TableCell>                                                                                                           
+                            <TableCell align="center"><b>MONTO BRUTO</b></TableCell> 
+                            <TableCell align="center"><b>DESCUENTO</b></TableCell>                                                                                                            
                             <TableCell align="center"><b>MONTO RETENCION (15.5%)</b></TableCell> 
-                            <TableCell align="center"><b>MONTO NETO</b></TableCell>   
+                            <TableCell align="center"><b>MONTO A PAGAR</b></TableCell>   
                             <TableCell align="center"><b>FACTURO?</b></TableCell>  
                             <TableCell align="right">    </TableCell>
                         </TableRow>
@@ -79,6 +80,7 @@ import Paper from '@material-ui/core/Paper';
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.factura === "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
                             <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>                                   
+                            <TableCell align="right">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>
                             <TableCell align="right">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell> 
                             <TableCell align="center">  {row.estadoFacturoId === 2?  <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"  /> }  </TableCell>                         
