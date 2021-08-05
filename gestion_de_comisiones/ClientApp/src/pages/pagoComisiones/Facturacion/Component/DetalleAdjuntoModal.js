@@ -394,7 +394,7 @@ const DetalleAdjuntoModal = (props) => {
                                             <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
 
                                             <TableCell align="center"> 
-                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath === ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath === ""? 'Debe seleccionar un archivo (opcional)': 'Tiene archivo Cargado'}>
                                              {row.respaldoPath !== ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
                                              </Tooltip>
                                              </TableCell>  
@@ -402,7 +402,7 @@ const DetalleAdjuntoModal = (props) => {
                                             
                                              <TableCell align="center"> 
                                                {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo === ""? 'Debe seleccionar un archico (opcional)': 'Tiene archivo Cargado'}>
+                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo === ""? 'Debe seleccionar un archivo (opcional)': 'Tiene archivo Cargado'}>
                                                   {row.siFacturo? 
                                                     <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
                                                      <CheckBoxIcon style={{ color: green[500] }} />

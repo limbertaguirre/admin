@@ -275,11 +275,30 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
+                        decimal porcentajeRetencion = decimal.Parse("15.5");
+                        decimal retencion = 0;
+                        decimal Neto = 0;
                         var objEstadoComisionDetalle = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == idComisionDetalleEmpresa).First();
                         if (objEstadoComisionDetalle != null)
                         {
+                            if(estadoDetalleEmpresa == true)
+                            {//sifacturo
+                                retencion = objEstadoComisionDetalle.Retencion;
+                                Neto= objEstadoComisionDetalle.MontoNeto + objEstadoComisionDetalle.Retencion;
+                                objEstadoComisionDetalle.MontoNeto = objEstadoComisionDetalle.MontoNeto + objEstadoComisionDetalle.Retencion;
+                                objEstadoComisionDetalle.Retencion = 0;
+                                
+                            }
+                            else
+                            {//no facturo
+                                retencion = objEstadoComisionDetalle.Monto * porcentajeRetencion / 100;
+                                Neto= objEstadoComisionDetalle.Monto - retencion;
+                                objEstadoComisionDetalle.MontoNeto = objEstadoComisionDetalle.Monto - retencion;
+                                objEstadoComisionDetalle.Retencion = retencion;
+                            }
                             objEstadoComisionDetalle.SiFacturo = estadoDetalleEmpresa;
                             objEstadoComisionDetalle.FechaActualizacion = DateTime.Now;
+
                             context.SaveChanges();
                             Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoDetalleEmpresa}");
                             if (estadoDetalleEmpresa == false)
@@ -293,6 +312,18 @@ namespace gestion_de_comisiones.Repository
                                     comision.IdUsuario = usuarioId;
                                     context.SaveChanges();
                                 }
+                                //calcular la cabecera por false, el neto y el descuento.
+                                Logger.LogInformation($" usuario: {usuarioLogin} - se calcula el neto y la retencion, destickeo la  factura");
+                                var comisionDetalle = context.GpComisionDetalles.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
+                                if(comisionDetalle != null)
+                                { //suma retencion y descuenta neto
+                                    decimal netoCalculado = (decimal)(comisionDetalle.MontoNeto - retencion);
+                                    decimal retencionCalculo = (decimal)(comisionDetalle.MontoRetencion + retencion);
+                                    comisionDetalle.MontoNeto = netoCalculado;
+                                    comisionDetalle.MontoRetencion = retencionCalculo;
+                                    context.SaveChanges();
+                                }
+
                             }
                             else
                             {                                
@@ -310,6 +341,24 @@ namespace gestion_de_comisiones.Repository
                                         context.SaveChanges();
                                     }
                                 }
+                                //calcular la cabecera por false, el neto y el descuento.
+                                 Logger.LogInformation($" usuario: {usuarioLogin} - se calcula el neto y la retencion, porque presento factura");
+                                var comisionDetalle = context.GpComisionDetalles.Where(x => x.IdComisionDetalle == idComisionDetalle).FirstOrDefault();
+                                    if (comisionDetalle != null)
+                                    {   // decuenta retencion e incrementa neto
+                                        decimal netocalculad = (decimal)(comisionDetalle.MontoNeto + retencion);
+                                        decimal retencionCalculad = (decimal)(comisionDetalle.MontoRetencion - retencion);
+                                        comisionDetalle.MontoNeto = netocalculad;
+                                        //if (detallesEstados.Count == 0)
+                                        //{
+                                        //     comisionDetalle.MontoRetencion = 0;
+                                        //}
+                                        //else
+                                        //{
+                                            comisionDetalle.MontoRetencion = retencionCalculad;
+                                        //}                                        
+                                        context.SaveChanges();
+                                    }
 
                             }
                           
@@ -384,6 +433,7 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
+                        decimal porcentaje = decimal.Parse("15.5");
                         var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
                         if (objComisionDetalleEstado != null)
                         {
@@ -401,18 +451,69 @@ namespace gestion_de_comisiones.Repository
                             var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == true && x.IdComisionDetalle == idComisionDetalle ).ToList();
                             Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle detalles a cambiar si facturo nro : {detallesEstados.Count}");
 
+                            decimal retencionGlobal = 0;
+                            decimal netoGlobal = 0;
+
                             foreach(var iten in detallesEstados)
                             {
-                                var objEmpresa= context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == iten.IdComisionDetalleEmpresa).First();
-                                if(objEmpresa != null)
+                                //aplica a los destikear todo
+                                if (estadoFacturado == false)
                                 {
-                                    objEmpresa.SiFacturo = estadoFacturado;
-                                    objEmpresa.FechaActualizacion = DateTime.Now;
-                                    objEmpresa.IdUsuario = usuarioId;
-                                    context.SaveChanges();
+                                    var objEmpresa = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == iten.IdComisionDetalleEmpresa).First();
+                                    if (objEmpresa != null)
+                                    {
+                                        if (objEmpresa.SiFacturo == true) //aqui se lo se le quita la factura a todos
+                                        {// retencion suma - resta neto
+                                            decimal retencionUnitario = objEmpresa.Monto * porcentaje / 100;
+                                            decimal netoUnitario = objEmpresa.Monto - retencionUnitario;
+                                            objEmpresa.Retencion = retencionUnitario;
+                                            objEmpresa.MontoNeto = netoUnitario;
+                                            retencionGlobal = retencionGlobal + retencionUnitario;
+                                            netoGlobal = netoGlobal + netoUnitario;
+                                        }
+                                        objEmpresa.SiFacturo = estadoFacturado;
+                                        objEmpresa.FechaActualizacion = DateTime.Now;
+                                        objEmpresa.IdUsuario = usuarioId;                                        
+                                        context.SaveChanges();
+                                    }
                                 }
-
-                            }                             
+                                else
+                                {//aplica si ya tiene factura
+                                    var objEmpresa = context.ComisionDetalleEmpresas.Where(x => x.IdComisionDetalleEmpresa == iten.IdComisionDetalleEmpresa).First();
+                                    if (objEmpresa != null)
+                                    {
+                                        if (objEmpresa.SiFacturo == false)//aplixar factura a todos lo quen o tienen
+                                        {
+                                            decimal retencionUnitario = objEmpresa.Retencion;
+                                            decimal netoUnitario = objEmpresa.MontoNeto + retencionUnitario;
+                                            objEmpresa.Retencion = 0;
+                                            objEmpresa.MontoNeto = netoUnitario;
+                                            retencionGlobal = retencionGlobal + retencionUnitario;
+                                            netoGlobal = netoGlobal + netoUnitario;
+                                        }
+                                        objEmpresa.SiFacturo = estadoFacturado;
+                                        objEmpresa.FechaActualizacion = DateTime.Now;
+                                        objEmpresa.IdUsuario = usuarioId;                                        
+                                        context.SaveChanges();
+                                    }
+                                }
+                            }
+                            var objComisionDetallee= context.GpComisionDetalles.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
+                            if (estadoFacturado == false)
+                            {// incrementa retencion , resta neto
+                                decimal totalRetencionGLO = (decimal)(objComisionDetallee.MontoRetencion + retencionGlobal);
+                                decimal totalNetoGlo = (decimal)(objComisionDetallee.MontoNeto - retencionGlobal);
+                                objComisionDetallee.MontoRetencion = totalRetencionGLO;
+                                objComisionDetallee.MontoNeto = totalNetoGlo;
+                            }
+                            else
+                            {// estado true, resata retencion y resta neto
+                                decimal totalRetencionGLO = (decimal)(objComisionDetallee.MontoRetencion - retencionGlobal);
+                                decimal totalNetoGlo = (decimal)(objComisionDetallee.MontoNeto + retencionGlobal);
+                                objComisionDetallee.MontoRetencion = totalRetencionGLO;
+                                objComisionDetallee.MontoNeto = totalNetoGlo;
+                            }
+                            context.SaveChanges();
                             dbcontextTransaction.Commit();
                             Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
                             return true;
@@ -442,20 +543,61 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
-                        //var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
-                        //if (objComisionDetalleEstado != null)
-                        //{
+
+                        int estadoPendienteComision = 1;  // pendiente a facturacion #VARIABLE 
+                        int idCerradoFactura = 2;  // a facturacion #VARIABLE 
+                        int idNoFacturo = 1;  // no facturo #VARIABLE 
+                        int idSiFacturo = 2;  // no facturo #VARIABLE 
+                        int idResagado = 5; //  resagado por no presentar factura #VARIABLE 
+                        int idNoPresentaFactura = 6; // no presenta Factura VARIABLE
+                        var objComisionPendiente = context.GpComisions.Join(context.GpComisionEstadoComisionIs, 
+                                                                          GpComision => GpComision.IdComision, GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                                         (GpComision, GpComisionEstadoComisionI) => new {
+                                                                             idComision = GpComision.IdComision,
+                                                                             idciclo = GpComision.IdCiclo,
+                                                                             estadoComision = GpComisionEstadoComisionI.IdEstadoComision,
+                                                                             estado = GpComisionEstadoComisionI.Habilitado
+                                                                         }).Where(x => x.estado == true && x.estadoComision == estadoPendienteComision && x.idciclo == idCiclo).FirstOrDefault();
+                        if (objComisionPendiente != null)
+                        {
+                            var objComisiones = context.VwObtenercomisiones.Where(x => x.IdComision == objComisionPendiente.idComision).ToList();
+                            var ComisionMaster = context.GpComisionEstadoComisionIs.Where(x => x.IdComision == objComisionPendiente.idComision).FirstOrDefault();
+                            if (ComisionMaster != null)
+                            {
+                                ComisionMaster.IdEstadoComision = idCerradoFactura;
+                                context.SaveChanges();
+                            }
+                            foreach(var iten in objComisiones)
+                            {
+                                var comisionEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == iten.IdComisionDetalle && x.Habilitado == true && (x.IdEstadoComisionDetalle == idNoFacturo || x.IdEstadoComisionDetalle == idSiFacturo )).FirstOrDefault();
+                                if (comisionEstado != null)
+                                {
+                                    if (iten.Factura == "True")
+                                    {    //se lo pone a resagado
+                                        if (iten.EstadoFacturoId == idNoFacturo)
+                                        {
+                                            comisionEstado.IdEstadoComisionDetalle = idResagado;
+                                            context.SaveChanges();
+                                        }
+                                    }
+                                    else
+                                    {  // aqui si no presenta factura se la procesa cambia el idestado  6
+                                        comisionEstado.IdEstadoComisionDetalle = idNoPresentaFactura;
+                                        context.SaveChanges();
+                                    }
+                                }
+                            }
                            
-                           // dbcontextTransaction.Commit();
-                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE  el ciclo en facturado");
                             return true;
-                        //}
-                        //else
-                        //{
-                        //    Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
-                        //    dbcontextTransaction.Rollback();
-                        //    return false;
-                        //}
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - el ciclo no se encuentra en estado pendiente para ser procesada para el cierre, idciclo :{idCiclo}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
                     }
                     catch (Exception ex)
                     {

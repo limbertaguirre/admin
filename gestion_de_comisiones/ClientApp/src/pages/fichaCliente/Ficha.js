@@ -770,7 +770,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                        <Grid item xs={3} >
                             {avatar !== ""? 
                            <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
-                             : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> { nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
+                             : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> {nombre === null?"P": nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
                        </Grid>
                        <Grid item xs={2} >
                          

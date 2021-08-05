@@ -2610,6 +2610,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdFicha).HasColumnName("idFicha");
 
+                entity.Property(e => e.MontoAplicacion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_aplicacion");
+
                 entity.Property(e => e.MontoBruto)
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("montoBruto");

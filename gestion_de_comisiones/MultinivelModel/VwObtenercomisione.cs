@@ -24,5 +24,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public string Ciclo { get; set; }
         public int? IdEstadoComision { get; set; }
         public decimal? MontoRetencion { get; set; }
+        public decimal? MontoAplicacion { get; set; }
     }
 }

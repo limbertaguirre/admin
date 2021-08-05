@@ -182,7 +182,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-        //console.log('comisones : ', res);
+           console.log('comisones : ', res);
+
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
             }
@@ -206,7 +207,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         usuarioLogin:user,
         idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
        };
-      // console.log('parame detalle  : ', data);
+       console.log('parame detalle  : ', data);
        requestPost('Factura/ComisionesDetalleEmpresa',data,dispatch).then((res)=>{ 
        console.log('detalle  : ', res);
             if(res.code === 0){         
@@ -268,7 +269,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       idComisionDetalle:parseInt(idcomisionDetalle),
       usuarioId:userId
      };
-    // console.log('parame detalle  : ', data);
+     console.log('parame detalle  : ', data);
      requestPost('Factura/FacturarComisionDetalle',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR COMI DETALL  : ', res);
           if(res.code === 0){         
@@ -483,10 +484,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
                   <Grid item xs={12} md={4} className={style.containerSave}>
                   {listaComisionesPendientes.length>0&&
                         <TextField
-                          label="BUSCAR CLIENTE"
+                          label="Buscar freelancer"
                           type={'text'}
                           variant="outlined"
-                          placeholder={'Buscar cliente...'}
+                          placeholder={'Buscar por carnet identidad'}
                           name="txtBusqueda"                    
                           value={txtBusqueda}
                           onChange={onChange}
