@@ -484,10 +484,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
                   <Grid item xs={12} md={4} className={style.containerSave}>
                   {listaComisionesPendientes.length>0&&
                         <TextField
-                          label="BUSCAR CLIENTE"
+                          label="Buscar freelancer"
                           type={'text'}
                           variant="outlined"
-                          placeholder={'Buscar cliente...'}
+                          placeholder={'Buscar por carnet identidad'}
                           name="txtBusqueda"                    
                           value={txtBusqueda}
                           onChange={onChange}
