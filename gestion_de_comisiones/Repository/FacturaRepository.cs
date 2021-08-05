@@ -543,20 +543,61 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
-                        //var objComisionDetalleEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == idComisionDetalle).First();
-                        //if (objComisionDetalleEstado != null)
-                        //{
+
+                        int estadoPendienteComision = 1;  // pendiente a facturacion #VARIABLE 
+                        int idCerradoFactura = 2;  // a facturacion #VARIABLE 
+                        int idNoFacturo = 1;  // no facturo #VARIABLE 
+                        int idSiFacturo = 2;  // no facturo #VARIABLE 
+                        int idResagado = 5; //  resagado por no presentar factura #VARIABLE 
+                        int idNoPresentaFactura = 6; // no presenta Factura VARIABLE
+                        var objComisionPendiente = context.GpComisions.Join(context.GpComisionEstadoComisionIs, 
+                                                                          GpComision => GpComision.IdComision, GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                                         (GpComision, GpComisionEstadoComisionI) => new {
+                                                                             idComision = GpComision.IdComision,
+                                                                             idciclo = GpComision.IdCiclo,
+                                                                             estadoComision = GpComisionEstadoComisionI.IdEstadoComision,
+                                                                             estado = GpComisionEstadoComisionI.Habilitado
+                                                                         }).Where(x => x.estado == true && x.estadoComision == estadoPendienteComision && x.idciclo == idCiclo).FirstOrDefault();
+                        if (objComisionPendiente != null)
+                        {
+                            var objComisiones = context.VwObtenercomisiones.Where(x => x.IdComision == objComisionPendiente.idComision).ToList();
+                            var ComisionMaster = context.GpComisionEstadoComisionIs.Where(x => x.IdComision == objComisionPendiente.idComision).FirstOrDefault();
+                            if (ComisionMaster != null)
+                            {
+                                ComisionMaster.IdEstadoComision = idCerradoFactura;
+                                context.SaveChanges();
+                            }
+                            foreach(var iten in objComisiones)
+                            {
+                                var comisionEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == iten.IdComisionDetalle && x.Habilitado == true && (x.IdEstadoComisionDetalle == idNoFacturo || x.IdEstadoComisionDetalle == idSiFacturo )).FirstOrDefault();
+                                if (comisionEstado != null)
+                                {
+                                    if (iten.Factura == "True")
+                                    {    //se lo pone a resagado
+                                        if (iten.EstadoFacturoId == idNoFacturo)
+                                        {
+                                            comisionEstado.IdEstadoComisionDetalle = idResagado;
+                                            context.SaveChanges();
+                                        }
+                                    }
+                                    else
+                                    {  // aqui si no presenta factura se la procesa cambia el idestado  6
+                                        comisionEstado.IdEstadoComisionDetalle = idNoPresentaFactura;
+                                        context.SaveChanges();
+                                    }
+                                }
+                            }
                            
-                           // dbcontextTransaction.Commit();
-                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE ");
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE  el ciclo en facturado");
                             return true;
-                        //}
-                        //else
-                        //{
-                        //    Logger.LogWarning($" usuario: {usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa:{idComisionDetalle}  ");
-                        //    dbcontextTransaction.Rollback();
-                        //    return false;
-                        //}
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {usuarioLogin} - el ciclo no se encuentra en estado pendiente para ser procesada para el cierre, idciclo :{idCiclo}  ");
+                            dbcontextTransaction.Rollback();
+                            return false;
+                        }
                     }
                     catch (Exception ex)
                     {

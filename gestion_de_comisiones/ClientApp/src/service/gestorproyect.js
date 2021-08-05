@@ -4,7 +4,7 @@ const apiUrl = "";
 
 export const apiComerce = axios.create({
   baseURL: apiUrl,
-  timeout: 30000,
+  timeout: 90000,
   headers: {
     
   },
