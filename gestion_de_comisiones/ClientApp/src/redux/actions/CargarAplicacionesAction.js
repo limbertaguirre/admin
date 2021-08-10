@@ -38,13 +38,10 @@ export const getAplicaciones = (cicloId)=>{
                 usuarioLogin:userName,
                 idCiclo: cicloId
                };
-            requestPost('Aplicaciones/Index',data,dispatch).then((res)=>{ 
+            requestGet('Aplicaciones/ObtenerAplicaciones',data,dispatch).then((res)=>{ 
                 console.log('getCiclos response => ', res);
                 if(res.code === 0){  
-                    dispatch({
-                        type:Types.LISTA_APLICACIONES,
-                        ciclosList:res.data,
-                    })              
+                   console.log('agregando lista aplicaciones :', res)        
                                 
                 }else{
                     dispatch(Action.showMessage({ message: res.message, variant: "error" }));

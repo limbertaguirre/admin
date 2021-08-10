@@ -55,18 +55,13 @@ namespace gestion_de_comisiones.Controllers
         //[HttpPost]
         //public ActionResult Index([FromBody] ComisionesInputModel param)
         //public ActionResult Index([FromBody] Dictionary<string, string> data)
-        [HttpPost]
-        public ActionResult Index([FromBody] dynamic dataBody)
+        
+        public ActionResult ObtenerAplicaciones([FromHeader] string usuarioLogin)
         {
 
-            dynamic data = JsonConvert.DeserializeObject<dynamic>(dataBody.ToString());
-            var usuarioLogin = data.usuarioLogin;
-            //var idCiclo = "-1";
-            int idCiclo = int.Parse(data.idCiclo);
-            //Request.Form["idCiclo"];
-            //if (data.TryGetValue("usuarioLogin", out usuarioLogin) && data.TryGetValue("idCiclo", out idCiclo))
-            //{        
-                //int idCiclo = int.Parse(Request.Form["idCiclo"]);
+        
+            int idCiclo = 1; 
+          
                 try
                 {               
                     Logger.LogInformation($"usuario request : {usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{idCiclo}");
