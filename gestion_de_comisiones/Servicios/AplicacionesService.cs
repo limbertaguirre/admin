@@ -42,13 +42,12 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio AplicacionesService => getCiclos()");
-                //ESTADO_COMISION_PENDIENTE_APLICACION
-                //ESTADO_PENDIENTE_COMISION
-                List<CicloDto> ciclos = (List<CicloDto>) Repository.GetCiclos(usuario, int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION")));
+                int idEstadoCerradoFacturacion = 2; //parametro
+                List<CicloDto> ciclos = (List<CicloDto>) Repository.GetCiclos(usuario, idEstadoCerradoFacturacion);
                 if(ciclos.Count > 0) { 
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
                 } else { 
-                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Lista de ciclos vacía", ciclos);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos en estado de cierre. ", ciclos);
                 }
             }
             catch (Exception ex)

@@ -140,6 +140,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
      // console.log('ciclos : ', res);
           if(res.code === 0){                 
             setCiclos(res.data);
+          }else{
+            dispatch(ActionMesaje.showMessage({ message: res.message, variant: "warning" }));
           }
 
         })    

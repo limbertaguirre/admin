@@ -59,8 +59,10 @@ namespace gestion_de_comisiones.Controllers
         public ActionResult ObtenerAplicaciones([FromHeader] string usuarioLogin)
         {
 
-        
-            int idCiclo = 1; 
+            // dynamic data = JsonConvert.DeserializeObject<dynamic>(dataBody.ToString());
+            // var usuarioLogin = data.usuarioLogin;
+            //var idCiclo = "-1";
+            int idCiclo = 1; //int.Parse(data.idCiclo);
           
                 try
                 {               

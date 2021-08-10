@@ -3,19 +3,16 @@ import React, {useEffect, useState}  from 'react';
 import {Container, Chip, InputAdornment, Dialog,Card, DialogContent, Button,
    Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl,
     InputLabel, Select, FormHelperText,MenuItem, Breadcrumbs } from "@material-ui/core";
-
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
-
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-
 import HomeIcon from "@material-ui/icons/Home";
-
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as CargarAplicacionesAction from '../../../redux/actions/CargarAplicacionesAction';
-
+import {requestGet, requestPost} from '../../../service/request';
+import * as ActionMensaje from '../../../redux/actions/messageAction';
 
 // import GridContainer from '../../../components/Grid/GridContainer';
 // import GridItem from '../../../components/Grid/GridItem';
@@ -49,9 +46,7 @@ const CargarAplicaciones = (props) => {
       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[]);
-
-  const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
-  const {ciclosList} = useSelector((stateSelector) =>{ return stateSelector.cargarAplicaciones});
+  const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
   const dispatch = useDispatch();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
@@ -59,18 +54,25 @@ const CargarAplicaciones = (props) => {
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
-  const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
+  const[listaComisionesCerrados, setListaComisionesCerrados]= useState([]);
   useEffect(()=>{ 
     handleOnGetCiclos();
   },[])
 
   const handleOnGetCiclos=()=>{
-    dispatch(CargarAplicacionesAction.getCiclos());
+        const headers={usuarioLogin:userName};
+        requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{ 
+            console.log('getCiclos response => ', res);
+            if(res.code === 0){                 
+              setCiclos(res.data);                            
+            }else{
+                dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+            }    
+        })   
    };
 
    const handleOnGetAplicaciones=()=>{
-    if(idCiclo && idCiclo != 0){
-       //obtenerComisiones(userName, idCiclo);
+    if(idCiclo && idCiclo != 0){       
        dispatch(CargarAplicacionesAction.getAplicaciones(idCiclo));
     }else{
       setOpenSnackbar(true);
@@ -99,60 +101,105 @@ const onChangeSelectCiclo= (e) => {
 
   return (
     <>
-     {/* <h2 variant="h4" gutterBottom  >
-             {'Cargar Aplicaciones'}
-           </h2> */}
-           <Typography variant="h4" gutterBottom  >
-             {'Cargar Aplicaciones'}
-           </Typography>
+           
       <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
                         <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
                         <StyledBreadcrumb key={3} label="Cargar Aplicaciones"  onClick={handleClick}/>
               </Breadcrumbs>
-           </div>
-          
+      </div>
+      <br/>
+      <Typography variant="h4" gutterBottom  >
+             {'Cargar Aplicaciones'}
+           </Typography>
       <Card>
-        <Grid
-          container
-          justify="center"
-          alignItems="center">
-
-<Grid item xs={12} md={3} className={style.containerCiclo}>
-                               <FormControl  variant="outlined"  
-                                fullWidth                       
-                                className={style.TextFiel}
-                                >
-                                  <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
-                                  <Select
-                                      labelId="demo-simple-select-outlined-labelciclo"
-                                      id="demo-simple-select-outlined"
-                                      value={idCiclo}
-                                      name="idCiclo"
-                                      onChange={onChangeSelectCiclo}
-                                      label="CICLO # "
-                                      >
-                                      <MenuItem value={0}>
-                                          <em>Seleccione un ciclo</em>
-                                      </MenuItem>
-                                      {ciclosList.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
-                                  </Select>                               
-                              </FormControl>
-                    </Grid>
-                    <Grid item  xs={12} md={2}  >
-                            <Button
+         <Grid container className={style.gridContainer} >
+           <Grid item xs={12} md={3} className={style.containerSave} >
+                     
+                     {/*   <>
+                       
+                           <Button
                             type="submit"
-                            fullWidth
                             variant="contained"
                             color="primary"
-                            onClick = {()=> handleOnGetAplicaciones()}                                         
-                            > 
-                             {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
-                            </Button>   
-                    </Grid>
-        </Grid>
+                            className={style.submitSAVE}
+                            onClick = {()=> CerrarFactura()}                                         
+                            >
+                             <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA
+                            </Button> 
+                            :
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA </Button> 
+                              </Tooltip>
+                            
+                        </> */}
+                          
+                  </Grid>
+                  <Grid item xs={12} md={4} className={style.containerSave}>
+                 
+                       {/*  <TextField
+                          label="Buscar freelancer"
+                          type={'text'}
+                          variant="outlined"
+                          placeholder={'Buscar por carnet identidad'}
+                          name="txtBusqueda"                    
+                          value={txtBusqueda}
+                          onChange={onChange}
+                          fullWidth
+                          onKeyPress={(ev) => {
+                            if (ev.key === 'Enter') {
+                              buscarClientepornombre();
+                            }
+                          }}                    
+                          InputProps={{
+                              startAdornment: (
+                              <InputAdornment position="start">
+                                  <SearchIcon />
+                              </InputAdornment>
+                              ),
+                          }}                    
+                        />       */}
+                      
+            </Grid>
+
+            <Grid item xs={12} md={3} className={style.containerCiclo}>
+                        <FormControl  variant="outlined"  
+                        fullWidth                       
+                        className={style.TextFiel}
+                        >
+                          <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
+                          <Select
+                              labelId="demo-simple-select-outlined-labelciclo"                              
+                              value={idCiclo}
+                              name="idCiclo"                              
+                              onChange={onChangeSelectCiclo}
+                              label="CICLO # "
+                              >
+                              <MenuItem value={0}>
+                                  <em>Seleccione un ciclo</em>
+                              </MenuItem>
+                              {ciclos.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
+                          </Select>                               
+                      </FormControl>
+              </Grid>
+              <Grid item  xs={12} md={2}  className={style.containerCargar} >
+                    <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={style.submitCargar}
+                    onClick = {()=> handleOnGetAplicaciones()}                                         
+                    > 
+                      {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
+                    </Button>   
+              </Grid>
+         </Grid>
       </Card>
+
+
+
     </>
   );
 };

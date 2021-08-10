@@ -25,8 +25,16 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerlistCiclos() ");
-                var ciclos = Repository.listCiclosPendientes(usuario);
-                return Respuesta.ReturnResultdo(0, "ok", ciclos);
+                List<CicloOutputModel> ciclos = Repository.listCiclosPendientes(usuario);
+                if(ciclos.Count > 0)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", ciclos);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No tiene ciclos pendientes.", ciclos);
+                }
+              
             }
             catch (Exception ex)
             {
