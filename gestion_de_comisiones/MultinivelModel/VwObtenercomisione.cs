@@ -18,9 +18,11 @@ namespace gestion_de_comisiones.MultinivelModel
         public decimal? MontoBruto { get; set; }
         public string Factura { get; set; }
         public decimal? MontoNeto { get; set; }
-        public string FacturaDescuento { get; set; }
+        public int? EstadoFacturoId { get; set; }
+        public string EstadoDetalleFacturaNombre { get; set; }
         public int? IdCiclo { get; set; }
         public string Ciclo { get; set; }
         public int? IdEstadoComision { get; set; }
+        public decimal? MontoRetencion { get; set; }
     }
 }

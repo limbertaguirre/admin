@@ -1,3 +1,4 @@
+using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Models;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
@@ -28,6 +29,7 @@ namespace gestion_de_comisiones
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddAutoMapper(typeof(MappingProfiles));
 
             services.AddControllersWithViews();
 
@@ -36,12 +38,14 @@ namespace gestion_de_comisiones
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IFacturaService, FacturaService>();
+            services.AddScoped<IAplicacionesService, AplicacionesService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IClienteRepository, ClienteRespository>();
             services.AddScoped<IPaisRepository, PaisRepository>();
             services.AddScoped<IFacturaRepository, FacturaRepository>();
+            services.AddScoped<IAplicacionesRepository, AplicacionesRepository>();
 
 
             // In production, the React files will be served from this directory
@@ -93,6 +97,7 @@ namespace gestion_de_comisiones
 
                 if (env.IsDevelopment())
                 {
+                    spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });

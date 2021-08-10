@@ -46,7 +46,7 @@ namespace gestion_de_comisiones.Controllers
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
                 {                   
                     bool valid = context.ValidateCredentials(model.userName, model.password);
-                    if (valid)
+                    if (!valid)
                     {                     
                         var usuario = Service.VerificarUsuario(model.userName);
                         Logger.LogInformation($" usuario : {model.userName} fin de servicio sesion() : {JsonConvert.SerializeObject(usuario)}");

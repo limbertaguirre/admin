@@ -14,6 +14,10 @@ namespace gestion_de_comisiones.Servicios
 {
     public class ConfiguracionService
     {
+        public static readonly int SUCCESS = 0;
+
+        public static readonly int ERROR = 1;
+
         public object ObtenerListAreas()
         {
             Result<List<AreaResultModel>> resultado;
@@ -47,6 +51,13 @@ namespace gestion_de_comisiones.Servicios
             return result;
         }
 
+        public Result<T> ReturnResult<T>(int code, string message)
+        {
+            Result<T> result = new Result<T>();
+            result.Code = code;
+            result.Message = message;
+            return result;
+        }
 
     }
 }

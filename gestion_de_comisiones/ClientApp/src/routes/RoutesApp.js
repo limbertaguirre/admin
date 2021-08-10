@@ -18,6 +18,7 @@ import {useSelector,useDispatch} from "react-redux";
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
                 <Route path='/cargar/comisiones' component={Pages.CargarComisiones} />
+                <Route path='/cargar-aplicaciones' component={Pages.CargarAplicaciones} />
                 <Route path='/prorrateo' component={Pages.Prorrateo} exact />
                 <Route path='/facturacion' component={Pages.Facturacion} exact />     
                 <Route path='/forma/pago' component={Pages.FormaPago} exact />                  
