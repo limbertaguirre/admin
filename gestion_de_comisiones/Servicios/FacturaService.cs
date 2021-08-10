@@ -195,13 +195,13 @@ namespace gestion_de_comisiones.Servicios
                 else
                 {
                     Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE al CerrarFactura()");
-                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                    return Respuesta.ReturnResultdo(1, "No se pudo procesar la factura", comsiones);
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch CerrarFactura() mensaje: {ex.Message}");
-                return Respuesta.ReturnResultdo(1, "problemas al cerrar la factura", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al cerrar la factura", "");
             }
         }
 

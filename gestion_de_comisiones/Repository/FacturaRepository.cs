@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace gestion_de_comisiones.Repository
 {
@@ -566,31 +568,34 @@ namespace gestion_de_comisiones.Repository
                             {
                                 ComisionMaster.IdEstadoComision = idCerradoFactura;
                                 context.SaveChanges();
-                            }
-                            foreach(var iten in objComisiones)
+                            }                     
+                            var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                               new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = idCiclo
+                              }};
+                            var result = context.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES] @id_ciclo  ", parameterReturn);
+                            var returnValue = parameterReturn;
+                            if(result > 0)
                             {
-                                var comisionEstado = context.GpComisionDetalleEstadoIs.Where(x => x.IdComisionDetalle == iten.IdComisionDetalle && x.Habilitado == true && (x.IdEstadoComisionDetalle == idNoFacturo || x.IdEstadoComisionDetalle == idSiFacturo )).FirstOrDefault();
-                                if (comisionEstado != null)
-                                {
-                                    if (iten.Factura == "True")
-                                    {    //se lo pone a resagado
-                                        if (iten.EstadoFacturoId == idNoFacturo)
-                                        {
-                                            comisionEstado.IdEstadoComisionDetalle = idResagado;
-                                            context.SaveChanges();
-                                        }
-                                    }
-                                    else
-                                    {  // aqui si no presenta factura se la procesa cambia el idestado  6
-                                        comisionEstado.IdEstadoComisionDetalle = idNoPresentaFactura;
-                                        context.SaveChanges();
-                                    }
-                                }
+                                dbcontextTransaction.Commit();
+                                Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE  el ciclo en facturado");
+                                return true;
                             }
-                           
-                            dbcontextTransaction.Commit();
-                            Logger.LogInformation($" usuario: {usuarioLogin}-  SE ACTUALIZO EXITOSAMENTE  el ciclo en facturado");
-                            return true;
+                            else
+                            {
+                                dbcontextTransaction.Rollback();
+                                Logger.LogInformation($" usuario: {usuarioLogin}-  NO se actualizo el cierre de factura porque el [SP_PROCESAR_FACTURAS_PENDIENTES] devuelte cero (0) en registro, no hubo ningun registro ni actualizacion.");
+                                return false;
+                            }
+                            // var result2 = context.Database.ExecuteSqlRaw("SP_PROCESAR_FACTURAS_PENDIENTES {0}", 80); //funciona pero no retorna                                                    
                         }
                         else
                         {

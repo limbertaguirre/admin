@@ -197,8 +197,8 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarFactura() parametro: {JsonConvert.SerializeObject(param)}");
                var updateComisionDetalle = Service.CerrarFactura(param);
                 Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller CerrarFactura()  ");
-                var Result = new GenericDataJson<string> { Code = 0, Message = "Se cerró la factura con éxito" };
-                return Ok(Result);
+               // var Result = new GenericDataJson<string> { Code = 0, Message = "Se cerró la factura con éxito" };
+                return Ok(updateComisionDetalle);
             }
             catch (Exception ex)
             {
