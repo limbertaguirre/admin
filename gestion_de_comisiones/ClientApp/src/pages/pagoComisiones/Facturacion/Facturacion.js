@@ -115,6 +115,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const[idCiclo, setIdCiclo]= useState(0);
   const[idCicloSelected, setIdCicloSelected]= useState(0);
   const[listaComisionesPendientes, setListaComisionesPendientes]= useState([]);
+  const[listaHabilitada, setListaHabilitada]= useState(false);
   const[txtBusqueda, setTxtBusqueda] = useState("");
   const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
   const[idDetalleComisionSelect, setIdDetalleComisionSelect ]= useState(0);
@@ -186,6 +187,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
+              setListaHabilitada(true);
             }
           })    
      };
@@ -199,6 +201,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       //  console.log('search  : ', res);
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
+              setListaHabilitada(true)
             }
           })    
      };
@@ -461,7 +464,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Card> 
                 <Grid container className={style.gridContainer}> 
                   <Grid item xs={12} md={3} className={style.containerSave} >
-                     {listaComisionesPendientes.length>0&&
+                     {listaHabilitada&&
                        <>
                          {validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)?
                            <Button
@@ -482,7 +485,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                        }     
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
-                  {listaComisionesPendientes.length>0&&
+                  {listaHabilitada&&
                         <TextField
                           label="Buscar freelancer"
                           type={'text'}
