@@ -190,18 +190,18 @@ namespace gestion_de_comisiones.Servicios
                 var comsiones = Repository.CerrarFactura(detalle.usuarioLogin, detalle.usuarioId, detalle.idCiclo );
                 if (comsiones)
                 {
-                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                    return Respuesta.ReturnResultdo(0, "Se realizo el cierre de la facturación con éxito.", comsiones);
                 }
                 else
                 {
                     Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE al CerrarFactura()");
-                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                    return Respuesta.ReturnResultdo(1, "No se pudo procesar la factura", comsiones);
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch CerrarFactura() mensaje: {ex.Message}");
-                return Respuesta.ReturnResultdo(1, "problemas al cerrar la factura", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al cerrar la factura", "");
             }
         }
 
