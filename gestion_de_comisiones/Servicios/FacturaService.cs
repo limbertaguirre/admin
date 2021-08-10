@@ -190,7 +190,7 @@ namespace gestion_de_comisiones.Servicios
                 var comsiones = Repository.CerrarFactura(detalle.usuarioLogin, detalle.usuarioId, detalle.idCiclo );
                 if (comsiones)
                 {
-                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                    return Respuesta.ReturnResultdo(0, "Se realizo el cierre de la facturación con éxito.", comsiones);
                 }
                 else
                 {
