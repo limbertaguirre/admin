@@ -29,6 +29,7 @@ namespace gestion_de_comisiones
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddAutoMapper(typeof(MappingProfiles));
 
             services.AddControllersWithViews();
 
@@ -37,6 +38,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IFacturaService, FacturaService>();
+            services.AddScoped<IAplicacionesService, AplicacionesService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
 
             //interfaces de repositorios
@@ -44,6 +46,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IClienteRepository, ClienteRespository>();
             services.AddScoped<IPaisRepository, PaisRepository>();
             services.AddScoped<IFacturaRepository, FacturaRepository>();
+            services.AddScoped<IAplicacionesRepository, AplicacionesRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 
@@ -98,6 +101,7 @@ namespace gestion_de_comisiones
 
                 if (env.IsDevelopment())
                 {
+                    spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });

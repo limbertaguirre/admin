@@ -4,6 +4,7 @@ import Facturacion from '../pages/pagoComisiones/Facturacion/Facturacion'
 import DetalleAdjunto from '../pages/pagoComisiones/Facturacion/DetalleAdjunto'
 import  Prorrateo  from '../pages/pagoComisiones/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
+import  CargarAplicaciones  from '../pages/pagoComisiones/CargarAplicaciones/CargarAplicaciones';
 import FormaPago from '../pages/pagoComisiones/FormaPago';
 import NotFoundLoad from '../components/notfound/NotFoundLoad';
 import SinAcceso from '../components/notfound/SinAcceso';
@@ -28,6 +29,7 @@ export default {
     DetalleAdjunto,
     Prorrateo,
     CargarComisiones,
+    CargarAplicaciones,
     FormaPago,
     NotFoundLoad,
     SinAcceso,
