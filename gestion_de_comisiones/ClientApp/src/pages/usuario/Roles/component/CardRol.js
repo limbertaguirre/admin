@@ -1,18 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { grey } from '@material-ui/core/colors';
 import { Typography, Grid } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
+
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
 
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -20,7 +17,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AcordionListModulos from './AcordionListModulos';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   iconMenu:{
@@ -87,19 +83,14 @@ const useStyles = makeStyles((theme) => ({
   }
 
 }));
-const CardRol = ({modulo, redirecionarEditRol})=>{
+const CardRol = ({modulo, redirecionarEditRol, actualizar})=>{
   const classes = useStyles();
-  const history = useHistory();
 
-  useEffect(()=>{
-  },[])
 
   return(
     <Card className={classes.root}>
       <CardActionArea>
-
         <CardContent>
-         
              <Grid container item xs={12}  >
                  <Grid item xs={10}  >
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
@@ -110,13 +101,13 @@ const CardRol = ({modulo, redirecionarEditRol})=>{
                     </Typography>
                     </Grid>
                     <Grid item xs={2} className={classes.gridEditRol}>
+                      {actualizar&& 
                         <IconButton color="primary" component="span" onClick={()=>redirecionarEditRol(modulo.idRol)}>
                             <EditOutlinedIcon />
-                        </IconButton>                     
-                     </Grid>
+                        </IconButton>
+                      }                       
+                  </Grid>
             </Grid>
-              
-           
         </CardContent>
         <>      
              <Accordion>

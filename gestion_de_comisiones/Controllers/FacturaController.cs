@@ -4,6 +4,7 @@ using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
-                var resulcliente = Service.buscarComisionesPorNombre(param.usuarioLogin, param.idCiclo,param.nombreCriterio);
+                var resulcliente = Service.BuscarComisiones(param.usuarioLogin, param.idCiclo,param.nombreCriterio);
                 Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarComisionNombre()  ");
                 return Ok(resulcliente);
             }
@@ -115,6 +116,98 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: FacturaController/FacturarComisionDetalle
+        [HttpPost]
+        public ActionResult FacturarComisionDetalle([FromBody] ComisionDetalleInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller FacturarComisionDetalle() parametro: ");
+                var updateComisionDetalle = Service.ACtualizarComisionDetalleAFacturado(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller FacturarComisionDetalle()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  FacturarComisionDetalle() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al facturar el detalle comision" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/ActualizarDetalleEmpresaEstado
+        [HttpPost]
+        public ActionResult ActualizarDetalleEmpresaEstado([FromBody] UpdateDetalleEmpresaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ActualizarDetalleEmpresaEstado() parametro: ");
+                var updateComisionDetalle = Service.ActualizarDetalleEmpresaEstado(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ActualizarDetalleEmpresaEstado()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ActualizarDetalleEmpresaEstado() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/SubirArchivoFacturaPdfEmpresa
+        [HttpPost]
+        public ActionResult SubirArchivoFacturaPdfEmpresa([FromBody] SubirArchivoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller SubirArchivoFacturaPdfEmpresa() parametro: ");
+                var updateComisionDetalle = Service.subirArchivoPdf(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller SubirArchivoFacturaPdfEmpresa()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  SubirArchivoFacturaPdfEmpresa() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/AplicarFacturaTodoEstado
+        [HttpPost]
+        public ActionResult AplicarFacturaTodoEstado([FromBody] FacturadoTodoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller AplicarFacturaTodoEstado() parametro: ");
+                var updateComisionDetalle = Service.AplicarFacturadoTodo(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicarFacturaTodoEstado()  ");
+                return Ok(updateComisionDetalle);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  AplicarFacturaTodoEstado() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar  elestado  detalle comision empresa" };
+                return Ok(Result);
+            }
+        }
+        // POST: FacturaController/CerrarFactura
+        [HttpPost]
+        public ActionResult CerrarFactura([FromBody] CerrarFacturaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarFactura() parametro: {JsonConvert.SerializeObject(param)}");
+               var updateComisionDetalle = Service.CerrarFactura(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller CerrarFactura()  ");
+               // var Result = new GenericDataJson<string> { Code = 0, Message = "Se cerró la factura con éxito" };
+                return Ok(updateComisionDetalle);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch controller  CerrarFactura() controller mensaje:{ex.Message} ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error  al cerrar factura" };
+                return Ok(Result);
+            }
+        }
+
 
     }
 }

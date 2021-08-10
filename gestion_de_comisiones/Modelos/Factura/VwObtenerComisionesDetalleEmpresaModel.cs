@@ -7,7 +7,7 @@ namespace gestion_de_comisiones.Modelos.Factura
 {
     public class VwObtenerComisionesDetalleEmpresaModel
     {
-        public VwObtenerComisionesDetalleEmpresaModel(int idComisionDetalleEmpresa, int idComisionDetalle, string empresa, decimal monto, decimal? montoAFacturar, decimal? montoTotalFacturar, string respaldoPath, string nroAutorizacion, int idEmpresa, bool estadoDetalleEmpresa)
+        public VwObtenerComisionesDetalleEmpresaModel(int idComisionDetalleEmpresa, int idComisionDetalle, string empresa, decimal monto, decimal? montoAFacturar, decimal? montoTotalFacturar, string respaldoPath, string nroAutorizacion, int idEmpresa, bool estadoDetalleEmpresa, decimal ventasPersonales, decimal ventasGrupales, decimal residual, decimal retencion, decimal montoNeto, bool siFacturo)
         {
             IdComisionDetalleEmpresa = idComisionDetalleEmpresa;
             IdComisionDetalle = idComisionDetalle;
@@ -19,6 +19,12 @@ namespace gestion_de_comisiones.Modelos.Factura
             NroAutorizacion = nroAutorizacion;
             IdEmpresa = idEmpresa;
             EstadoDetalleEmpresa = estadoDetalleEmpresa;
+            VentasPersonales = ventasPersonales;
+            VentasGrupales = ventasGrupales;
+            Residual = residual;
+            Retencion = retencion;
+            MontoNeto = montoNeto;
+            SiFacturo = siFacturo;
         }
 
         public int IdComisionDetalleEmpresa { get; set; }
@@ -31,6 +37,14 @@ namespace gestion_de_comisiones.Modelos.Factura
         public string NroAutorizacion { get; set; }
         public int IdEmpresa { get; set; }
         public bool EstadoDetalleEmpresa { get; set; }
+        public decimal VentasPersonales { get; set; }
+        public decimal VentasGrupales { get; set; }
+        public decimal Residual { get; set; }
+        public decimal Retencion { get; set; }
+        public decimal MontoNeto { get; set; }
+        public bool SiFacturo { get; set; }
+
+
 
     }
 }

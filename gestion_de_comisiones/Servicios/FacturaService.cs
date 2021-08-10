@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Repository.Interfaces;
+﻿using gestion_de_comisiones.Modelos.Factura;
+using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -39,7 +40,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio obtenerlistComisionesPendiente() ");
-                int idEstado= int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                int idEstado = 1;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
                 var comsiones = Repository.obtenerComisiones(usuario, idCiclo, idEstado);
                 return Respuesta.ReturnResultdo(0, "ok", comsiones);
             }
@@ -49,13 +50,13 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista comisiones para facturar", "problemas en el servidor, intente mas tarde");
             }
         }
-        public object buscarComisionesPorNombre(string usuario, int idCiclo, string nombreCriterio)
+        public object BuscarComisiones(string usuario, int idCiclo, string nombreCriterio)
         {
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio buscarComisionesPorNombre() ");
-                int idEstado = int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
-                var comsiones = Repository.buscarcomisionXnombre(usuario, idCiclo, idEstado, nombreCriterio);
+                int idEstado = 1; // int.Parse(Environment.GetEnvironmentVariable("ESTADO_PENDIENTE_COMISION"));
+                var comsiones = Repository.BuscarComisiones(usuario, idCiclo, idEstado, nombreCriterio);
                 return Respuesta.ReturnResultdo(0, "ok", comsiones);
             }
             catch (Exception ex)
@@ -92,6 +93,119 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener datos de detalle empresa mas empresas", "");
             }
         }
+        public object ACtualizarComisionDetalleAFacturado(ComisionDetalleInput comisionDetalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} inicio el servicio ACtualizarComisionDetalleAFacturado() ");
+                int idEstadoFacturado = 2;// int.Parse(Environment.GetEnvironmentVariable("ESTADO_COMISION_DETALLE_SI_FACTURO"));
+                var comsiones = Repository.AcTualizarComisionDetalleEstado(comisionDetalle, idEstadoFacturado);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} inicio RETORNO FALSE LA ACTUALIZACION, NO SE ACTUALIZO");
+                    return Respuesta.ReturnResultdo(1, "problemas al actualizar la comision del detalle", comsiones);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {comisionDetalle.usuarioLogin} error catch ACtualizarComisionDetalleAFacturado() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar una comision detalle a facturado", "");
+            }
+        }
+        public object ActualizarDetalleEmpresaEstado(UpdateDetalleEmpresaInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio ActualizarDetalleEmpresaEstado() ");                
+                var comsiones = Repository.ActualizarEstadoFacturarEmpresa(detalle.usuarioLogin, detalle.usuarioId, detalle.idComisionDetalle, detalle.idComisionDetalleEmpresa, detalle.estadoDetalleEmpresa);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                } else {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA ACTUALIZACION, NO SE ACTUALIZO  el estado comision detalle empresa");
+                    return Respuesta.ReturnResultdo(1, "problemas al actualizar el estado comision del detalle empresa", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch ActualizarDetalleEmpresaEstado() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el estado  comision detalle empresa a facturado", "");
+            }
+        }
+        public object subirArchivoPdf(SubirArchivoInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio subirArchivoPdf() iddetalleEmpresa: {detalle.idComisionDetalleEmpresa } ");
+                var comsiones = Repository.SubirArchivo(detalle.usuarioLogin, detalle.usuarioId , detalle.idComisionDetalleEmpresa, detalle.archivopdf);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA subirArchivoPdf");
+                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch subirArchivoPdf() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el archivo pdf", "");
+            }
+        }
+
+        public object AplicarFacturadoTodo(FacturadoTodoInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio AplicarFacturadoTodo() iddetalleEmpresa: {detalle.idComisionDetalle } ");
+                var comsiones = Repository.AplicarFacturadoEstadoFacturarEmpresa(detalle.usuarioLogin, detalle.usuarioId, detalle.idComisionDetalle, detalle.estadoFacturado);
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE LA AplicarFacturadoTodo");
+                    return Respuesta.ReturnResultdo(1, "problemas al subir el archivo pdf", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch AplicarFacturadoTodo() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al actualizar el archivo pdf", "");
+            }
+        }
+        public object CerrarFactura(CerrarFacturaInput detalle)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio el servicio CerrarFactura()  ");
+                var comsiones = Repository.CerrarFactura(detalle.usuarioLogin, detalle.usuarioId, detalle.idCiclo );
+                if (comsiones)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se realizo el cierre de la facturación con éxito.", comsiones);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {detalle.usuarioLogin} inicio RETORNO FALSE al CerrarFactura()");
+                    return Respuesta.ReturnResultdo(1, "No se pudo procesar la factura", comsiones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {detalle.usuarioLogin} error catch CerrarFactura() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "Problemas al cerrar la factura", "");
+            }
+        }
+
+
 
 
     }

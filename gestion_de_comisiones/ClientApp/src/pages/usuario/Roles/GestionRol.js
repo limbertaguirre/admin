@@ -1,17 +1,22 @@
 
 
-import React,{useState, useEffect }  from 'react';
-import { TextField, Typography, InputAdornment } from "@material-ui/core";
-import { Dialog, DialogContent, Button, Grid } from "@material-ui/core"
+import React,{ useEffect, useState }  from 'react';
+import {  Typography } from "@material-ui/core";
+import {  Button, Grid, Container } from "@material-ui/core"
 import { makeStyles, emphasize, withStyles  } from '@material-ui/core/styles';
 import { useSelector,useDispatch } from "react-redux";
+import {requestGet, requestPost} from '../../../service/request'; 
 import { useHistory } from "react-router-dom";
 import * as Action from '../../../redux/actions/usuarioAction';
+import * as ActionMensaje from '../../../redux/actions/messageAction';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Chip from '@material-ui/core/Chip';
 import HomeIcon from '@material-ui/icons/Home';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import CardRol from './component/CardRol';
+import * as permiso from '../../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
+
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
       backgroundColor: theme.palette.grey[100],
@@ -50,70 +55,86 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const  GestionRol =()=>  {       
+const  GestionRol =(props)=>  {      
     const style = useStyles();
     const dispatch = useDispatch();
-    const history = useHistory();
-    const {globalModules } = useSelector((stateSelector) =>{ return stateSelector.usuario});
+    let history = useHistory();
+    const [namePage, setNamePage]= useState('');
+    const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
+    useEffect(()=>{  try{  
+      setNamePage(props.location.state.namePagina);
+       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
+       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
+    },[])
 
-     useEffect(()=>{
-        // if(globalModules.length >=0){ //quitar esta consicion despues
-           dispatch(Action.ObtenerRolesModulos());
-        // }
-     
+    const [listaModulos, setListaModulos]= useState([]);
+    const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+
+    const obtenerModulos = () =>{ 
+            const headers={userLogin:userName};
+            requestGet('Rol/ObtenerRolesAllModules',headers,dispatch).then((res)=>{ 
+              if(res.code === 0){        
+                setListaModulos(res.data)        
+                     
+              }else{
+                  dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+              }   
+            })    
+     }
+
+     useEffect(()=>{        
+          obtenerModulos();
      },[ ]);
 
     const redirecionarEditRol=(idRol)=>{
         dispatch(Action.ObtenerRolModulos(idRol));
         const location = {
           pathname: '/gestion/edit/rol',
-          state: {idRol: idRol }
+          state: {idRol: idRol, permisoActualizar:validarPermiso(perfiles, namePage + permiso.ACTUALIZAR) }
         }
         history.push(location);
     }
-  
-  
+    useEffect(()=>{        
+    },[listaModulos ]);
+
     return (
          <>    
-          <br/>
-            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
-              <Breadcrumbs aria-label="breadcrumb">
-                        <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />
-              
-              </Breadcrumbs>
-           </div>
-           <br/>
-           <div className={style.root}>
-                <Grid container spacing={3}>
-                    <Grid item xs={6}>
-                        <Typography variant="h6" gutterBottom>
-                            Gestion de Roles
-                        </Typography>  
+           <Container>
+            <br/>
+              <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
+                <Breadcrumbs aria-label="breadcrumb">
+                          <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />              
+                </Breadcrumbs>
+              </div>
+            <br/>
+              <div className={style.root}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={6}>
+                            <Typography variant="h6" gutterBottom>
+                                Gestion de Roles
+                            </Typography>  
+                            </Grid>
+                        <Grid item xs={6} className={style.gridNewRol} >
+                            {validarPermiso(perfiles, namePage + permiso.CREAR)&& 
+                              <Button variant="contained" 
+                                  color="primary" 
+                                  onClick={()=> history.push("/gestion/nuevo/roles")} >
+                                  <AddCircleOutlineIcon />
+                                  {' '}{' NUEVO ROL'}
+                              </Button>
+                            }
                         </Grid>
-                    <Grid item xs={6} className={style.gridNewRol} >
-                        <Button variant="contained" 
-                            color="primary" 
-                            onClick={()=> history.push("/gestion/nuevo/roles")} >
-                            <AddCircleOutlineIcon />
-                            {' '}{' NUEVO ROL'}
-                        </Button>
                     </Grid>
-                </Grid>
-            </div>        
-             
-            <br /> 
-            <Grid item xs={12} >
-            <div className={style.contentMenu}>
-
-                {globalModules.map((value,index)=>(
-                    <CardRol  modulo={value} redirecionarEditRol={redirecionarEditRol} />
-                ))}
-
-            </div>
-
-            </Grid>
-          
-
+                </div>                     
+              <br /> 
+                <Grid item xs={12} >
+                  <div className={style.contentMenu}>
+                      {listaModulos.map((value,index)=>(
+                          <CardRol key={index}  modulo={value} redirecionarEditRol={redirecionarEditRol} actualizar={validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)} />
+                      ))}
+                  </div>
+                </Grid>          
+            </Container>
          </>
     );
 }

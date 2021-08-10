@@ -129,5 +129,20 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetRoles([FromHeader] string userLogin)
+        {
+            try
+            {
+                var responseApi = new ResponseApi<List<RolResulModel>>(Service.GetAllRoles(userLogin));
+                return Ok(responseApi);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return Ok(new ResponseApi<List<RolResulModel>>(ex.Message) { Data = new List<RolResulModel>() });
+            }
+        }
+
     }
 }

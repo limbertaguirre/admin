@@ -7,6 +7,27 @@ namespace gestion_de_comisiones.Modelos.Cliente
 {
     public class ClienteOutputModel
     {
+      
+        public ClienteOutputModel()
+        {
+        }
+
+        public ClienteOutputModel(int idFicha, string codigo, string nombreCompleto, string ci, bool tieneCuentaBancaria, int idBanco, string nombreBanco, string codigoBanco, string cuentaBancaria, int estado, string avatar, string nivel)
+        {
+            this.idFicha = idFicha;
+            this.codigo = codigo;
+            this.nombreCompleto = nombreCompleto;
+            this.ci = ci;
+            this.tieneCuentaBancaria = tieneCuentaBancaria;
+            this.idBanco = idBanco;
+            this.nombreBanco = nombreBanco;
+            this.codigoBanco = codigoBanco;
+            this.cuentaBancaria = cuentaBancaria;
+            this.estado = estado;
+            this.avatar = avatar;
+            this.nivel = nivel;
+        }
+
         public int idFicha { get; set; }     
         public string codigo { get; set; }        
         public string nombreCompleto { get; set; }         
@@ -18,20 +39,8 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string cuentaBancaria { get; set; }
         public int? estado { get; set; }
         public string avatar { get; set; }
+        public string nivel { get; set; }
 
-        //public string CorreoElectronico { get; set; }        
-        //public DateTime? FechaRegistro { get; set; }        
-        //public string TelOficina { get; set; }        
-        //public string TelMovil { get; set; }        
-        //public string TelFijo { get; set; }        
-        //public string Direccion { get; set; }        
-        //public DateTime? FechaNacimiento { get; set; }        
-        //public string Contrasena { get; set; }        
-        //public string Comentario { get; set; }        
-        //public bool? FacturaHabilitado { get; set; }
-        //public string RazonSocial { get; set; }        
-        //public string Nit { get; set; }        
-        
 
     }
 }

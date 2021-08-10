@@ -23,7 +23,9 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { green, red } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
-import { TextField, Typography, InputAdornment, Grid, Button } from "@material-ui/core";
+import { TextField, InputAdornment, Grid, Button, Container, Tooltip ,Zoom, Card } from "@material-ui/core";
+import IconButton from '@material-ui/core/IconButton';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -46,8 +48,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       minWidth: 650,
     },
     submit: {
-      //  width:'30px',
-        height:'25px',
+        height:'27px',
         background: "#1872b8", 
         boxShadow: '2px 4px 5px #1872b8',
         color:'white'
@@ -68,6 +69,19 @@ const StyledBreadcrumb = withStyles((theme) => ({
       },
       containerBusqueda:{
         paddingLeft:theme.spacing(1),
+        paddingTop:theme.spacing(2),
+      },
+      contendidoText:{
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center', 
+        paddingBottom:theme.spacing(2),
+        paddingTop:theme.spacing(2),
+      },
+      cardContent:{
+        paddingLeft:theme.spacing(1),
+        paddingRight:theme.spacing(1),
+        paddingBottom:theme.spacing(2),
         paddingTop:theme.spacing(2),
       }
 
@@ -91,7 +105,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [txtBusquedaError, setTxtBusquedaError] = useState(false);
 
     useEffect(()=>{ 
-       dispatch(ActionCliente.obtenerClientes());
+       //dispatch(ActionCliente.obtenerClientes());
      },[])
 
      const handleChangePage = (event, newPage) => {
@@ -102,8 +116,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setPage(0);
     };
     const selecionarCliente=(idcliente)=>{
-       //console.log('click', idcliente);
-       
+
         const location = {
           pathname: '/cliente/ficha',
           state: {
@@ -120,13 +133,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
         const value = e.target.value;
         if (texfiel === "txtBusqueda") {
           setTxtBusqueda(value);
-          console.log(value);
         }
 
     };
     const BuscarCliente=()=>{
         if(txtBusqueda === ""){
-            dispatch(ActionCliente.obtenerClientes());
+           // dispatch(ActionCliente.obtenerClientes());
         }else{
           dispatch(ActionCliente.buscarClientesXnombre(txtBusqueda));
         }
@@ -135,6 +147,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      
     return (
       <>
+        <Container maxWidth="xl" >
           <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
               <Breadcrumbs aria-label="breadcrumb">                    
                         <StyledBreadcrumb key={2} component="a" label="Cliente" icon={<HomeIcon fontSize="small" />} />                        
@@ -142,82 +155,82 @@ const StyledBreadcrumb = withStyles((theme) => ({
            </div>           
            <br/>
            <br/>
-                <Grid container> 
-                <Grid item xs={12} md={10}  className={styles.contentTitle} >
-                    <TextField
-                    label="Buscar Clientes"
-                    type={'text'}
-                    variant="outlined"
-                    name="txtBusqueda"                    
-                    value={txtBusqueda}
-                    onChange={_onChangeregistro}
-                    className={styles.TextFielBusqueda}
-                    error={txtBusquedaError}
-                    helperText={ txtBusquedaError &&
-                    "El campo es requerido"
-                    }
-                    InputProps={{
-                        startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon />
-                        </InputAdornment>
-                        ),
-                    }}                    
-                  />      
+              <Card >
+                <Grid container className={styles.contendidoText} > 
+                
+                  <Grid item xs={12} md={6}  className={styles.contentTitle} >
+                      <TextField
+                      label="Buscar freelancer"
+                      type={'text'}
+                      variant="outlined"
+                      name="txtBusqueda"                    
+                      value={txtBusqueda}
+                      onChange={_onChangeregistro}
+                      className={styles.TextFielBusqueda}
+                      error={txtBusquedaError}
+                      placeholder="Buscar  por carnet identidad"
+                      helperText={ txtBusquedaError &&
+                      "El campo es requerido"
+                      }
+                      onKeyPress={(ev) => {
+                        if (ev.key === 'Enter') {
+                          BuscarCliente();
+                        }
+                      }}   
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                              <IconButton  color="inherit"   aria-label="close" onClick = {()=> BuscarCliente()}   >
+                                <SearchIcon />
+                              </IconButton>
+                          </InputAdornment>
+                          ),
+                      }}                    
+                    />      
+                  </Grid>
+                         
                 </Grid>
-                <Grid item  xs={12} md={2} className={styles.containerBusqueda}  >
-                        <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={styles.submitBusqueda}
-                        onClick = {()=> BuscarCliente()}                                         
-                        >
-                         BUSCAR {' '} <SearchIcon />
-                        </Button>   
-                </Grid>
-                </Grid>
+                </Card>
             <br />
             <div>
                
+            <Card className={styles.cardContent} > 
                 <TableContainer component={Paper}>
                     <Table className={styles.table} size="medium" aria-label="a dense table">
-                        <TableHead>
+                        <TableHead style={{backgroundColor:'#DCDFE3'}}>
                         <TableRow>
-                            <TableCell align="center">ID</TableCell>
-                            <TableCell align="right">Nombre completo</TableCell>
-                            <TableCell align="right">Cedula identidad</TableCell>
-                            <TableCell align="right">Nro Cuenta</TableCell>
-                            <TableCell align="right">Banco</TableCell>
-                            <TableCell align="center">Estado cliente</TableCell>
+                            <TableCell align="center"><b>Nro</b></TableCell>
+                            <TableCell align="center"><b>Nombre completo</b></TableCell>
+                            <TableCell align="right"><b>Cedula identidad</b></TableCell>
+                            <TableCell align="right"><b>Cuenta bancaria </b></TableCell>
+                            <TableCell align="center"><b>Banco</b></TableCell>
+                            <TableCell align="center"><b>Rango</b></TableCell>
+                            <TableCell align="center"><b>Estado</b></TableCell>
                             <TableCell align="right">   </TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {listClientes.map((row) => (
+                        {listClientes.map((row, index) => (
                             <TableRow key={row.idFicha  }>
-                            <TableCell align="center"scope="row"> {row.idFicha} </TableCell>
+                            <TableCell align="center"scope="row"> {index + 1} </TableCell>
                             <TableCell align="center">{row.nombreCompleto}</TableCell>
                             <TableCell align="right">{row.ci}</TableCell>
                             <TableCell align="right">{row.cuentaBancaria}</TableCell>
-                            <TableCell align="right">{row.nombreBanco}</TableCell>   
+                            <TableCell align="center">{row.nombreBanco}</TableCell>   
+                            <TableCell align="center">{row.nivel}</TableCell>  
                             <TableCell align="center">
-                                {row.estado === 1? <CheckCircleIcon  style={{ color: green[500], fontSize: 30 }} />
-                                : <CancelIcon  style={{ color: red[500],fontSize: 30 }} />
-                                 }                               
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.estado === 1? "Usuario Activo": "El usuario se encuentra bloqueado.!"}>
+                                  {row.estado === 1? <CheckCircleIcon  style={{ color: green[500], fontSize: 30 }} />
+                                  : <CancelIcon  style={{ color: red[500],fontSize: 30 }} />
+                                  }                               
+                              </Tooltip>
                             </TableCell>   
                             <TableCell align="center">
-                                         <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={styles.submit}
-                                            onClick = {()=> selecionarCliente(`${row.idFicha}`)}                                         
-                                        >
-                                            Ver ficha
-                                        </Button>   
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver ficha'}>
+                                  <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarCliente(`${row.idFicha}`)} >
+                                  <VisibilityIcon  style={{ fontSize: 30 }} />
+                                  </IconButton>
+                              </Tooltip>                                                                                
                             </TableCell>   
                             </TableRow>
                         ))}
@@ -233,8 +246,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                     />
-           </div>
+            </Card>   
 
+           </div>
+        </Container>
       </>
     );
 

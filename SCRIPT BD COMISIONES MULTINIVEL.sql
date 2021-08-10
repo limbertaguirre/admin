@@ -135,6 +135,7 @@ create table USUARIO
     usuario_id int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	estado bit NOT NULL DEFAULT 1,
 );
 
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla USUARIO.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO', N'COLUMN', N'id_usuario'
@@ -152,7 +153,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO', N'COLUMN', N'fecha_actualizacion'
 go
 
-create table USURIOS_ROLES
+create table USUARIOS_ROLES
 (
     id_usuarios_roles int not null primary key IDENTITY,
     id_usuario int not null unique,
@@ -163,13 +164,13 @@ create table USURIOS_ROLES
     fecha_actualizacion datetime default GETDATE(),
 );
 go
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_usuarios_roles'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace referencia a la tabla usuario', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_usuario'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace relacion con la tabla Rol', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'id_rol'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado del requistro booleano true o false', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'estado'
-EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'usuario_id'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'fecha_creacion'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USURIOS_ROLES', N'COLUMN', N'fecha_actualizacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_usuarios_roles'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace referencia a la tabla usuario', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_usuario'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace relacion con la tabla Rol', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'id_rol'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado del requistro booleano true o false', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'estado'
+EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'usuario_id'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'fecha_creacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIOS_ROLES', N'COLUMN', N'fecha_actualizacion'
 
 go
 create table MODULO
@@ -195,12 +196,14 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_actualizacion'
 go
---insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de Pagos','gestioIcon','1',1,null,1); --padre
---insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de Clientes','gestioIcon','1',1,null,1);--padre
+--insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon','1',1,null,1); --padre
+----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon','1',1,null,1);--padre
+--  insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config','3',1,null,1); --padre
 
---insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','gestioIcon','1',1,1,1);--hijo
---insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','gestioIcon','1',1,2,1);--hijo
-
+--insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon','1',1,1,1);--hijo
+----insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
+-- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de roles','gestionRolesIcon','1',1,5,1);--hijo
+-- INSERT INTO MODULO VALUES('Usuarios','gestionClienteIcon',2,1,5,1,GETDATE(),GETDATE());
 go
 create table PAGINA
 (
@@ -228,12 +231,15 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'PAGINA', N'COLUMN', N'fecha_actualizacion'
 go
 --add modulo antes estos hacen referencia a los id de los modulos hijos
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('facturacion','/facturacion','facIcon',1,1,3,1);
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturacion','/facturacion','facIcon',1,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cargar comisiones','/cargar/comisiones','facIcon',1,1,3,1);
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Porrateo','/porrateo','facIcon',3,1,3,1);
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,3,1);
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',3,1,3,1);
 
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/cliente','facIcon',2,1,4,1);  
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,4,1);  
+
+   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
+   --INSERT INTO PAGINA VALUES('Asignación de roles','/usuario/asignar-roles','facIcon',1,1,@@Identity,1,GETDATE(),GETDATE());
   
   
 
@@ -656,6 +662,15 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION_DETALLE', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_COMISION_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
+go
+
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(1, 'No facturo','no facturo la comision', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(2, 'Si facturo','estado facturado', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(3, 'Para forma de pago','estado  forma de pago', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(4, 'Para autorizar','previo para autorizar', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(5, 'Resagado','cuando no presenta factura o no tiene una forma de pago', 1 )
+
+go
 create table GP_COMISION_DETALLE
 (
     id_comision_detalle int not null primary key IDENTITY,
@@ -714,6 +729,12 @@ create table COMISION_DETALLE_EMPRESA
 	monto_total_facturar decimal(18,2),
 	id_comision_detalle int not null,
 	id_empresa int not null,
+	ventas_personales decimal(18,2) default 0 not null,
+	ventas_grupales decimal(18,2) default 0 not null,
+	residual decimal(18,2) default 0 not null,
+	retencion decimal(18,2) default 0 not null,
+	monto_neto decimal(18,2) default 0 not null,
+	si_facturo bit default 0 not null,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -827,6 +848,7 @@ go
 CREATE TABLE EMPRESA(
   id_empresa int NOT NULL PRIMARY KEY identity,
   codigo int not null,
+  codigo_cnx int not null,
   nombre varchar(100) not null,
   estado int not null, --1 o cero 
   id_usuario int not null,
@@ -1148,18 +1170,23 @@ AS
 			FIC.id_banco,
 			BA.nombre AS 'nombreBanco',
 			GPDETA.monto_bruto AS 'montoBruto' ,
-		    case FIC.tiene_cuenta_bancaria when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
 			GPDETA.monto_neto AS 'montoNeto',
-			'False' As 'facturaDescuento',
+			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
+			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
 			GPCOMI.id_ciclo,
 			CI.nombre AS 'ciclo',
-			GPESTA.id_estado_comision
+			GPESTA.id_estado_comision,
+			GPDETA.monto_retencion,
+			GPDETA.monto_aplicacion
 	        from BDMultinivel.dbo.GP_COMISION GPCOMI
 	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
 			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
 			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
+			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
 GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
@@ -1173,8 +1200,14 @@ AS
 		 ComiEmp.monto_total_facturar,
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
-		  Emp.id_empresa AS 'idEmpresa',
-		 ComiEmp.estado As 'estadoDetalleEmpresa'
+		 Emp.id_empresa AS 'idEmpresa',
+		 ComiEmp.estado As 'estadoDetalleEmpresa',
+		 ComiEmp.ventas_personales,
+		 ComiEmp.ventas_grupales,
+		 ComiEmp.residual,
+		 ComiEmp.retencion,
+		 ComiEmp.monto_neto,		 
+		 ComiEmp.si_facturo
      from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
 			inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA ComiEmp on ComiEmp.id_comision_detalle=GPDE.id_comision_detalle
 			inner join BDMultinivel.dbo.empresa Emp on Emp.id_empresa=ComiEmp.id_empresa
@@ -1194,3 +1227,44 @@ AS
 		INNER JOIN BDMultinivel.DBO.GP_TIPO_COMISION T ON CC.id_tipo_comision = T.id_tipo_comision
 		INNER JOIN BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I CE ON CE.id_comision = CC.id_comision
 		INNER JOIN BDMultinivel.DBO.GP_ESTADO_COMISION E ON E.id_estado_comision = CE.id_estado_comision
+CREATE VIEW [dbo].[vwObtenerFicha]
+AS
+		 select 
+		  F.id_ficha as 'idFicha',
+		  F.codigo,
+		  F.nombres + ' '+F.apellidos as 'nombreCompleto',
+		  F.ci,
+		  F.tiene_cuenta_bancaria as 'tieneCuentaBancaria',
+		  CASE WHEN  F.id_banco IS NULL THEN 0 ELSE F.id_banco END As 'idBanco',	  
+		  CASE WHEN  B.nombre IS NULL THEN '' ELSE B.nombre END As 'nombreBanco',
+		  CASE WHEN   B.codigo IS NULL THEN '' ELSE  B.codigo END As 'codigoBanco',
+		   CASE WHEN   F.cuenta_bancaria IS NULL THEN '' ELSE  F.cuenta_bancaria END As 'cuentaBancaria',
+		  F.estado,
+		  F.avatar,	
+		 CASE WHEN  NI.nombre IS NULL THEN 'Asesor Comercial' ELSE NI.nombre END As 'nivel'
+		 from BDMultinivel.dbo.FICHA F
+		 left join BDMultinivel.dbo.BANCO B ON B.id_banco = F.id_banco
+		 left join BDMultinivel.dbo.FICHA_NIVEL_I FNIV ON FNIV.id_ficha=F.id_ficha 
+		 inner join BDMultinivel.dbo.NIVEL NI ON NI.id_nivel=FNIV.id_nivel
+
+GO
+CREATE TABLE LOG_DETALLE_COMISION_EMPRESA_FAIL(
+  id_detalle_comisio_empresa_fail int NOT NULL PRIMARY KEY identity,
+  id_ciclo int not null,
+  id_ficha int not null,
+  codigo_cliente int not null,
+  total_monto_Bruto decimal(18, 2) NOT NULL,
+  descripcion varchar(max),
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla autoincremental.', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comisio_empresa_fail'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El idciclo es la llave foranea de comision ciclo', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_ciclo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id ficha de la tabla comisiones', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'id_ficha'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo del contacto del guardian, es el cliente', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'codigo_cliente'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el monto total bruto de la comision de freelancer', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'total_monto_Bruto'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'descripcion'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
+go

@@ -9,12 +9,17 @@ import {
     Lock,
     LockOpen,
     Person,
-    LocalMall,            
+    LocalMall,   
 } from '@material-ui/icons';
 import PaymentIcon from '@material-ui/icons/Payment';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ControlPointDuplicateIcon from '@material-ui/icons/ControlPointDuplicate';
+import SecurityIcon from '@material-ui/icons/Security';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 const useStyles = makeStyles((theme) => ({
     imgStyle: {
         fontSize:24,
@@ -51,6 +56,18 @@ const ImageIcons = ({name})=>{
             return <SettingsIcon  className={classes.imgStyle}/>;
         case 'rol':
             return <ControlPointDuplicateIcon  className={classes.imgStyle}/>;
+        case 'gestionClienteIcon':
+            return <AssignmentIndIcon  className={classes.imgStyle}/>;
+        case 'gestionSeguridadIcon':
+            return <SecurityIcon  className={classes.imgStyle}/>;
+        case 'gestionRolesIcon':
+            return <SupervisedUserCircleIcon  className={classes.imgStyle}/>;
+        case 'gestionPagoIcon':
+            return <PaymentIcon  className={classes.imgStyle}/>;
+        case 'pagoComisionesIcon':
+            return <AccountBalanceWalletIcon  className={classes.imgStyle}/>;
+        case 'fichaClientIcon':
+            return <PeopleAltIcon  className={classes.imgStyle}/>;   
         default:
             return <BrokenImage  className={classes.imgStyle}/>;
     }

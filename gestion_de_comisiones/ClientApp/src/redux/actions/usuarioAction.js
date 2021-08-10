@@ -94,7 +94,7 @@ export const getPaginas= ()=>{
     }
   }
 
-  export const registrarRoles= (nombre, descripcion,lista)=>{
+  export const registrarRoles= (nombre, descripcion,lista,history)=>{
     let body={
         nombre :nombre,
         descripcion:descripcion,
@@ -106,8 +106,9 @@ export const getPaginas= ()=>{
         requestPost('Rol/Registrar',body,dispatch).then((res)=>{ 
             if(res.code === 0){                
                 dispatch({ type: Types.LISTA_GLOBAL_ROLES_MODULOS_VACIAR }) 
-                dispatch(Action.showMessage({ message: res.message, variant: "success" }));
-                window.location.replace('/gestion/roles');
+                dispatch(Action.showMessage({ message: res.message, variant: "success" }));               
+                history.goBack();
+
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   
@@ -115,22 +116,7 @@ export const getPaginas= ()=>{
 
     }
   }
-  export const ObtenerRolesModulos= ()=>{
-    return (dispatch)=>{        
-        const headers={userLogin:"USER_DEVELOP"};
-            requestGet('Rol/ObtenerRolesAllModules',headers,dispatch).then((res)=>{ 
-                if(res.code === 0){                
-                    dispatch({
-                        type: Types.LISTA_GLOBAL_ROLES_MODULOS,
-                        globalModules:res.data
-                    })                    
-                }else{
-                    dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-                }   
-    })    
 
-    }
-  }
   export const vaciarRolesModulos= ()=>{
         return (dispatch)=>{                    
             dispatch({ type: Types.LISTA_GLOBAL_ROLES_MODULOS_VACIAR })    
@@ -167,7 +153,7 @@ export const getPaginas= ()=>{
             if(res.code === 0){                
                 dispatch({ type:Types.OBJETO_GLOBAL_ROLES_MODULOS_VACIO, })
                 dispatch(Action.showMessage({ message: res.message, variant: "success" }));
-                history.push('/gestion/roles');
+                history.goBack();
             }else{
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }   

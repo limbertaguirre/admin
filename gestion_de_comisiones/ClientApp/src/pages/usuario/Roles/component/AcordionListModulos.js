@@ -1,23 +1,11 @@
 
 
-import React, { useState }  from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-    icono: {
-        width: '40px',
-        height: '40px',
-    }
-      
-}));
-
+import React from 'react';
 
 const  AcordionListModulos =(props)=>  { 
-    const {listHisotrico  } = props   
-    const [listaFiltrada,setListaFiltrada] =useState([]); 
-    const style = useStyles();
+    const {listHisotrico  } = props;   
     const recargarModulos =(todosModulo)=>{
-        let global=[];
+       
         
         let nroModules=todosModulo.length;
         let newListModulos=[];
@@ -31,12 +19,12 @@ const  AcordionListModulos =(props)=>  {
                        let newListPermisos=[];
                        for(let pe=0; pe<nroPermiso; pe++){
                          let objPermiso= objPagina.permisos[pe];
-                         if(objPermiso.estado == true){                         
+                         if(objPermiso.estado === true){                         
                            newListPermisos.push(objPermiso);
                          }
                        }
                        //crear pagina y add permisos
-                       if(newListPermisos.length != 0){//addPagina
+                       if(newListPermisos.length !== 0){//addPagina
                          const newObjPagina={
                            id_pagina: objPagina.id_pagina,
                            nombre: objPagina.nombre,
@@ -47,7 +35,7 @@ const  AcordionListModulos =(props)=>  {
                        }
                    
                }
-               if(newLisPaginas.length != 0){//addModulo
+               if(newLisPaginas.length !== 0){//addModulo
                  const newobjModelo={
                    idModulo: objModulo.idModulo,
                    nombre: objModulo.nombre,
@@ -64,16 +52,16 @@ const  AcordionListModulos =(props)=>  {
          <>    
             {listado.map((value,index) => {
                 return (
-                    <ul>
+                    <ul key={index}>
                         <li><b>Modulo :</b> {value.nombre}
                              <ul>
-                                {value.listmodulos.map((value1,index) => {
+                                {value.listmodulos.map((value1,index1) => {
                                     return (
-                                      <li><b>Pagina :</b> {value1.nombre}
+                                      <li key={index1}><b>Pagina :</b> {value1.nombre}
                                          <ul>
-                                            {value1.permisos.map((value2,index) => {
+                                            {value1.permisos.map((value2,index2) => {
                                                     return (
-                                                      <li>{value2.permiso}</li>
+                                                      <li key={index2}>{value2.permiso}</li>
                                                     );
                                                 })}  
                                          </ul>                                    

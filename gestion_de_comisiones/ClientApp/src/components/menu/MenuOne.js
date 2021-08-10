@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container } from "reactstrap";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -164,19 +163,7 @@ const MenuOne = (props) => {
           </List>
           <Divider />
           <List>
-            
-              <ListItem button key={1} onClick={()=>history.push('/configuraciones')}>
-                <ListItemIcon>
-                  <ImageIcons name={'config'} />
-                </ListItemIcon>
-                <ListItemText primary={'Configuraciones'} />
-              </ListItem>
-              <ListItem button key={2} onClick={()=>history.push('/gestion/roles')}>
-                <ListItemIcon>
-                  <ImageIcons name={'rol'} />
-                </ListItemIcon>
-                <ListItemText primary={'Gestion de roles'} />
-              </ListItem>
+  
               <ListItem button key={3} onClick={()=> cerrarSesion()}>
                 <ListItemIcon>
                   <ImageIcons name={'salir'} />
@@ -192,9 +179,9 @@ const MenuOne = (props) => {
           })}
         >
           <div className={classes.drawerHeader} />
-		          <Container>
+		          <>
                 {props.children}
-              </Container>
+              </>
         </main>        
       </div>
     </>

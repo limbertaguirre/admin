@@ -26,9 +26,10 @@ import {useSelector,useDispatch} from "react-redux";
                 <Route path='/gestion/nuevo/roles' component={Pages.Roles} exact /> 
                 <Route path='/gestion/edit/rol' component={Pages.EditRol} exact />        
                 <Route path='/page/sin-acceso' component={Pages.SinAcceso} exact />  
-                <Route path='/cliente' component={Pages.Cliente} exact />  
+                <Route path='/clientes' component={Pages.Cliente} exact />  
                 <Route  path='/cliente/ficha' component={Pages.Ficha} exact />  
                 <Route  path='/facturacion/detalle/adjunto' component={Pages.DetalleAdjunto} exact />  
+                <Route  path='/usuario/asignar-roles' component={Pages.SetRol} exact />  
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>
          </Layout> :

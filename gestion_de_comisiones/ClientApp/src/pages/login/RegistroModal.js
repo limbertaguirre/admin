@@ -190,6 +190,7 @@ const RegistroModal = ({ open, txtUsuario, onHandleClose, accion }) => {
                             type={'text'}
                             variant="outlined"
                             name="usuarioName"
+                            disabled
                             value={usuarioName}
                             onChange={_onChangeregistro}
                             className={style.TextFiel}

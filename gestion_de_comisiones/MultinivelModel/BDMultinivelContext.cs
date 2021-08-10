@@ -47,6 +47,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<GpTipoComision> GpTipoComisions { get; set; }
         public virtual DbSet<Incentivo> Incentivoes { get; set; }
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
+        public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
         public virtual DbSet<Modulo> Moduloes { get; set; }
         public virtual DbSet<Nivel> Nivels { get; set; }
         public virtual DbSet<Pagina> Paginas { get; set; }
@@ -61,10 +62,11 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
-        public virtual DbSet<UsuriosRole> UsuriosRoles { get; set; }
+        public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
+        public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -501,6 +503,10 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.Codigo)
                     .HasColumnName("codigo")
                     .HasComment("Es el codigo de empresa externo de guardian de gruposion");
+
+                entity.Property(e => e.CodigoCnx)
+                    .HasColumnName("codigo_cnx")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Estado)
                     .HasColumnName("estado")
@@ -1576,6 +1582,52 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Es el monto neto con el descuento inclido de una forma de producto.");
             });
 
+            modelBuilder.Entity<LogDetalleComisionEmpresaFail>(entity =>
+            {
+                entity.HasKey(e => e.IdDetalleComisioEmpresaFail)
+                    .HasName("PK__LOG_DETA__60ED7DCFA55D98CE");
+
+                entity.ToTable("LOG_DETALLE_COMISION_EMPRESA_FAIL");
+
+                entity.Property(e => e.IdDetalleComisioEmpresaFail)
+                    .HasColumnName("id_detalle_comisio_empresa_fail")
+                    .HasComment("Llave primaria de la tabla autoincremental.");
+
+                entity.Property(e => e.CodigoCliente)
+                    .HasColumnName("codigo_cliente")
+                    .HasComment("Es el codigo del contacto del guardian, es el cliente");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion")
+                    .HasComment("Es la descripcion del registro");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.IdCiclo)
+                    .HasColumnName("id_ciclo")
+                    .HasComment("El idciclo es la llave foranea de comision ciclo");
+
+                entity.Property(e => e.IdFicha)
+                    .HasColumnName("id_ficha")
+                    .HasComment("Es el id ficha de la tabla comisiones");
+
+                entity.Property(e => e.TotalMontoBruto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("total_monto_Bruto")
+                    .HasComment("Es el monto total bruto de la comision de freelancer");
+            });
+
             modelBuilder.Entity<Modulo>(entity =>
             {
                 entity.HasKey(e => e.IdModulo)
@@ -2150,6 +2202,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("corporativo")
                     .HasComment("Teléfono comporativo del usuario");
 
+                entity.Property(e => e.Estado)
+                    .IsRequired()
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
@@ -2202,12 +2259,12 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El usuario_id es el id del último usuario que modificó el registro.");
             });
 
-            modelBuilder.Entity<UsuriosRole>(entity =>
+            modelBuilder.Entity<UsuariosRole>(entity =>
             {
                 entity.HasKey(e => e.IdUsuariosRoles)
                     .HasName("PK__USURIOS___720F812BE54AB333");
 
-                entity.ToTable("USURIOS_ROLES");
+                entity.ToTable("USUARIOS_ROLES");
 
                 entity.HasIndex(e => e.IdUsuario, "UQ__USURIOS___4E3E04AC7702B449")
                     .IsUnique();
@@ -2449,6 +2506,63 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("ventas_personales");
             });
 
+            modelBuilder.Entity<VwObtenerFicha>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerFicha");
+
+                entity.Property(e => e.Avatar)
+                    .IsUnicode(false)
+                    .HasColumnName("avatar");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.Codigo)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("codigo");
+
+                entity.Property(e => e.CodigoBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("codigoBanco");
+
+                entity.Property(e => e.CuentaBancaria)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaBancaria");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
+                entity.Property(e => e.IdBanco).HasColumnName("idBanco");
+
+                entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.Nivel)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nivel");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreBanco");
+
+                entity.Property(e => e.NombreCompleto)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreCompleto");
+
+                entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tieneCuentaBancaria");
+            });
+
             modelBuilder.Entity<VwObtenercomisione>(entity =>
             {
                 entity.HasNoKey();
@@ -2495,6 +2609,10 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
 
                 entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.MontoAplicacion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_aplicacion");
 
                 entity.Property(e => e.MontoBruto)
                     .HasColumnType("decimal(18, 2)")
