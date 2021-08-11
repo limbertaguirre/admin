@@ -14,6 +14,9 @@ import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import GridAplicaciones from './Components/GridAplicaciones';
 
+import DetalleDescuentoModal from './Components/DetalleDescuentoModal';
+
+
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.grey[100],
@@ -54,7 +57,7 @@ const CargarAplicaciones = (props) => {
     handleOnGetCiclos();
   },[])
 
-  const handleOnGetCiclos=()=>{
+   const handleOnGetCiclos=()=>{
         const headers={usuarioLogin:userName};
         requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{             
             if(res.code === 0){                 
@@ -92,24 +95,34 @@ const CargarAplicaciones = (props) => {
   function handleClick(event) {
     event.preventDefault();
     console.info('You clicked a breadcrumb.');
-}
-
-const onChangeSelectCiclo= (e) => {
-  const texfiel = e.target.name;
-  const value = e.target.value;
-  if (texfiel === "idCiclo") {
-      setIdCiclo(value);
-      console.log(value);
   }
-  if (texfiel === "txtBusqueda") {
-       //setTxtBusqueda(value);
+
+  const onChangeSelectCiclo= (e) => {
+    const texfiel = e.target.name;
+    const value = e.target.value;
+    if (texfiel === "idCiclo") {
+        setIdCiclo(value);
+        console.log(value);
+    }
+    if (texfiel === "txtBusqueda") {
+        //setTxtBusqueda(value);
+    }
+  };
+
+  //detalle
+  const[openDetalle, setOpenDetalle] = useState(false);
+
+  const CerrarDetalleModal =()=> {
+    setOpenDetalle(false);
   }
-};
 
- const selecionarDetalleFrelances = (comisionDetalleId)=>{
-    console.log('iddetalle :', comisionDetalleId);
- }
+  //grid
+  const selecionarDetalleFrelances = (comisionDetalleId)=>{
+      console.log('iddetalle :', comisionDetalleId);
+      setOpenDetalle(true)
+  }
 
+  
   return (
     <>
            
@@ -208,9 +221,9 @@ const onChangeSelectCiclo= (e) => {
               </Grid>
          </Grid>
       </Card>
-
-      <GridAplicaciones aplicacionesList={listaComisionesCerrados}   />
-
+       <br />
+        <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
+        <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} />
     </>
   );
 };

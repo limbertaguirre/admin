@@ -66,12 +66,12 @@ import Paper from '@material-ui/core/Paper';
                         <TableHead>
                         <TableRow>
                             <TableCell align="center"><b>#</b></TableCell>
-                            <TableCell align="right"><b>Nombre completo</b></TableCell>
-                            <TableCell align="right"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="right"><b>Nro. Cuenta</b></TableCell>
-                            <TableCell align="right"><b>Banco</b></TableCell>
-                            <TableCell align="center"><b>Monto Total Bruto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Total Bruto - Retención ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Nombre completo</b></TableCell>
+                            <TableCell align="center"><b>Cédula identidad</b></TableCell>
+                            <TableCell align="center"><b>Nro. Cuenta</b></TableCell>
+                            <TableCell align="center"><b>Banco</b></TableCell>
+                            <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Retención ($us.)</b></TableCell>
                             <TableCell align="center"><b>Aplicaciones ($us.)</b></TableCell>
                             <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center"></TableCell>
@@ -81,25 +81,25 @@ import Paper from '@material-ui/core/Paper';
                         {aplicacionesList.map((row, index) => (
                             <TableRow key={index }>
                             <TableCell align="center"scope="row"> {index} </TableCell>
-                            <TableCell align="center">{row.nombre}</TableCell>
-                            <TableCell align="right">{row.ci}</TableCell>
-                            <TableCell align="right">{row.cuentaBancaria}</TableCell>
-                            <TableCell align="right">{row.nombreBanco}</TableCell>   
-                            <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}</TableCell>   
-                            <TableCell align="center"> {row.facturaDescuento == "True"?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
-                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                            <TableCell align="left">{row.nombre}</TableCell>
+                            <TableCell align="center">{row.ci}</TableCell>
+                            <TableCell align="center">{row.cuentaBancaria}</TableCell>
+                            <TableCell align="center">{row.nombreBanco}</TableCell>   
+                            <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
+                            <TableCell align="center">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
+                            <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>                              
+                            <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
-                                         <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={style.submitDetalle}
-                                            onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
-                                        >
-                                            Detalle
-                                        </Button>   
+                                    <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className={style.submitDetalle}
+                                    onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
+                                    >
+                                      Detalle
+                                    </Button>   
                             </TableCell>   
                             </TableRow>
                         ))}
