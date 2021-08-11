@@ -10,14 +10,9 @@ import * as permiso from '../../../routes/permiso';
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
 import {useSelector,useDispatch} from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import * as CargarAplicacionesAction from '../../../redux/actions/CargarAplicacionesAction';
 import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
-
-// import GridContainer from '../../../components/Grid/GridContainer';
-// import GridItem from '../../../components/Grid/GridItem';
-// import Card from '../../../components/Card/Card';
-//import Button from '../../../components/CustomButtons/Button'
+import GridAplicaciones from './Components/GridAplicaciones';
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -61,19 +56,31 @@ const CargarAplicaciones = (props) => {
 
   const handleOnGetCiclos=()=>{
         const headers={usuarioLogin:userName};
-        requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{ 
-            console.log('getCiclos response => ', res);
+        requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{             
             if(res.code === 0){                 
               setCiclos(res.data);                            
             }else{
-                dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
             }    
         })   
    };
 
    const handleOnGetAplicaciones=()=>{
     if(idCiclo && idCiclo != 0){       
-       dispatch(CargarAplicacionesAction.getAplicaciones(idCiclo));
+      const data={
+        usuarioLogin:userName,
+        idCiclo: idCiclo
+       };
+      requestPost('Aplicaciones/ObtenerAplicaciones',data,dispatch).then((res)=>{ 
+          console.log('getCiclos response => ', res);
+          if(res.code === 0){  
+              setListaComisionesCerrados(res.data);                          
+          }else{
+              dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+          }    
+      })   
+
+
     }else{
       setOpenSnackbar(true);
       setMensajeSnackbar('¡Debe Seleccionar un permiso!');
@@ -98,6 +105,10 @@ const onChangeSelectCiclo= (e) => {
        //setTxtBusqueda(value);
   }
 };
+
+ const selecionarDetalleFrelances = (comisionDetalleId)=>{
+    console.log('iddetalle :', comisionDetalleId);
+ }
 
   return (
     <>
@@ -198,7 +209,7 @@ const onChangeSelectCiclo= (e) => {
          </Grid>
       </Card>
 
-
+      <GridAplicaciones aplicacionesList={listaComisionesCerrados}   />
 
     </>
   );

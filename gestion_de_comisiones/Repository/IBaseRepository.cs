@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Repository
     public interface IBaseRepository
     {
         public object GetCiclos(string usuario, int idEstadoComision);
-        public object GetComisiones(string usuario, int idCiclo, int idEstadoComision);
+        public object GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo);
     }
 }

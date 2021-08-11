@@ -1158,7 +1158,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-CREATE VIEW [dbo].[vwObtenercomisiones]
+ALTER VIEW [dbo].[vwObtenercomisiones]
 AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
@@ -1187,6 +1187,7 @@ AS
 			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
 			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
 			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
+			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
 GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]

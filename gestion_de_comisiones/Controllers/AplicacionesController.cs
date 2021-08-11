@@ -51,29 +51,21 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
-        // POST: Aplicaciones/GetAplicacionesPendientes
-        //[HttpPost]
-        //public ActionResult Index([FromBody] ComisionesInputModel param)
-        //public ActionResult Index([FromBody] Dictionary<string, string> data)
-        
-        public ActionResult ObtenerAplicaciones([FromHeader] string usuarioLogin)
-        {
+        // POST: Aplicaciones/ObtenerAplicaciones
 
-            // dynamic data = JsonConvert.DeserializeObject<dynamic>(dataBody.ToString());
-            // var usuarioLogin = data.usuarioLogin;
-            //var idCiclo = "-1";
-            int idCiclo = 1; //int.Parse(data.idCiclo);
-          
+        [HttpPost]
+        public ActionResult ObtenerAplicaciones([FromBody] ComisionesInputModel param)
+        {
                 try
                 {               
-                    Logger.LogInformation($"usuario request : {usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{idCiclo}");
-                    var resulcliente = Service.GetAplicacionesPendientes(usuarioLogin, idCiclo);
-                    Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller AplicacionesController => Index()");
+                    Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+                    var resulcliente = Service.GetAplicacionesPendientes(param.usuarioLogin, param.idCiclo);
+                    Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
                     return Ok(resulcliente);
                 }
                 catch
                 {
-                    Logger.LogError($"usuario request: {usuarioLogin} error catch controller AplicacionesController()  => Index() ");
+                    Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller AplicacionesController()  => Index() ");
                     var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las aplicaciones pendientes" };
                     return Ok(Result);
                 }
