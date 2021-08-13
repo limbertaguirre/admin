@@ -65,6 +65,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
+        public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
@@ -120,6 +121,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("fecha_creacion")
                     .HasDefaultValueSql("(getdate())")
                     .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.IdBdqishur).HasColumnName("id_bdqishur");
 
                 entity.Property(e => e.IdComisionesDetalle)
                     .HasColumnName("id_comisiones_detalle")
@@ -2439,6 +2442,40 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<VwObtenerComisionesDetalleAplicacione>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerComisionesDetalleAplicaciones");
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.IdAplicacionDetalleProducto).HasColumnName("id_aplicacion_detalle_producto");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdProyecto).HasColumnName("id_proyecto");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto");
+
+                entity.Property(e => e.NombreEmpresa)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_empresa");
+
+                entity.Property(e => e.Subtotal)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("subtotal");
             });
 
             modelBuilder.Entity<VwObtenerComisionesDetalleEmpresa>(entity =>

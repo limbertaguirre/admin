@@ -1271,3 +1271,20 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 go
+
+CREATE VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
+AS
+	 select
+	       Ap.id_aplicacion_detalle_producto,
+		   GPDE.id_comision_detalle,
+	       AP.descripcion,
+		   AP.monto,
+		   AP.cantidad,
+		   AP.subtotal,
+		   Ap.id_proyecto,
+		   CASE WHEN EMP.id_empresa IS NULL THEN 0 ELSE EMP.id_empresa END as 'id_empresa',		   
+		   CASE WHEN EMP.nombre IS NULL THEN 'Sin definir' ELSE EMP.nombre END as 'nombre_empresa'
+     from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
+			inner join BDMultinivel.dbo.APLICACION_DETALLE_PRODUCTO AP on AP.id_comisiones_detalle=GPDE.id_comision_detalle
+			left join BDMultinivel.dbo.PROYECTO PRO on PRO.id_proyecto = AP.id_proyecto
+			left join BDMultinivel.dbo.PROYECTO EMP on EMP.id_proyecto = PRO.id_proyecto	

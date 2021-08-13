@@ -118,10 +118,35 @@ const CargarAplicaciones = (props) => {
 
   //grid
   const selecionarDetalleFrelances = (comisionDetalleId)=>{
-      console.log('iddetalle :', comisionDetalleId);
-      setOpenDetalle(true)
+      
+      CargarDetalleFrelancers(userName, comisionDetalleId )
+      
   }
+  const CargarDetalleFrelancers =(nombreUsuario,  idDetalleComision)=>{
+    if(idCiclo && idCiclo != 0){       
+      const data={
+        usuarioLogin:nombreUsuario,
+        idComisionDetalle: parseInt(idDetalleComision)
 
+       };
+       console.log('data : ',data);
+      requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{ 
+          if(res.code === 0){  
+             setOpenDetalle(true)
+             console.log('data : ', res);                         
+          }else{
+              dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+          }    
+      })   
+
+
+    }else{
+      setOpenSnackbar(true);
+      setMensajeSnackbar('¡Debe Seleccionar un permiso!');
+      settipTSnackbar('warning');
+    }
+    
+  }
   
   return (
     <>

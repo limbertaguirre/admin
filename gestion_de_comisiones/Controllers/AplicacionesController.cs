@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.AplicacionDetalleProducto;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Servicios.Interfaces;
@@ -69,6 +70,24 @@ namespace gestion_de_comisiones.Controllers
                     var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las aplicaciones pendientes" };
                     return Ok(Result);
                 }
+        }
+        //post Aplicaciones/ListarDetalleAplicacionesXFreelancer
+        [HttpPost]
+        public ActionResult ListarDetalleAplicacionesXFreelancer([FromBody] DetalleAplicacionesFichaInputModel param)
+        {
+            try
+            {
+                //Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+                var resulcliente = Service.obtenerDetalleAplicacionesXFreelancers(param);
+                Logger.LogInformation($"usuario : {33} Fin del controller AplicacionesController => Index()");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller AplicacionesController()  => Index() ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar el detalle de aplicaciones" };
+                return Ok(Result);
+            }
         }
     }
 }

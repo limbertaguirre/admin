@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {namePage, open, handleCloseCancel} = props;
+      const {open, handleCloseCancel} = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
 
@@ -233,7 +233,7 @@ const DetalleDescuentoModal = (props) => {
                         <br />
                         </Grid>
                     </Container>   
-                    <Container maxWidth="xl" className={classes.containerGrid} >
+                    {/* <Container maxWidth="xl" className={classes.containerGrid} > */}
 
                       {/*   <Grid  container item xs={12}  >
 
@@ -357,7 +357,7 @@ const DetalleDescuentoModal = (props) => {
                                     />
                         </Grid> */}
 
-                      </Container>       
+                      {/* </Container> */}       
                    
                   
             </Dialog>                        

@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.AplicacionDetalleProducto;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -59,5 +60,22 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de una factura", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object obtenerDetalleAplicacionesXFreelancers(DetalleAplicacionesFichaInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio obtenerListaComisionesDetalleEmpresa() ");
+                var detalleAplicaicones = Repository.ListarFreelancerYAplicacionesProductos(param);
+                return Respuesta.ReturnResultdo(0, "ok", detalleAplicaicones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch obtenerListaComisionesDetalleEmpresa() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener datos de detalle empresa", "");
+            }
+        }
+
+
     }
 }
