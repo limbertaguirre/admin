@@ -111,6 +111,8 @@ const CargarAplicaciones = (props) => {
 
   //detalle
   const[openDetalle, setOpenDetalle] = useState(false);
+  const[ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
+   const[listaDetalleAplicaciones, setListaDetalleAplicaciones]= useState([]);
 
   const CerrarDetalleModal =()=> {
     setOpenDetalle(false);
@@ -130,10 +132,12 @@ const CargarAplicaciones = (props) => {
 
        };
        console.log('data : ',data);
-      requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{ 
+      requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{         
+        console.log('data : ', res); 
           if(res.code === 0){  
-             setOpenDetalle(true)
-             console.log('data : ', res);                         
+             setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
+             setListaDetalleAplicaciones(res.data.listAplicaciones)
+             setOpenDetalle(true)                        
           }else{
               dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
           }    
@@ -150,7 +154,7 @@ const CargarAplicaciones = (props) => {
   
   return (
     <>
-           
+         <Container maxWidth="xl" >
       <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
@@ -247,8 +251,9 @@ const CargarAplicaciones = (props) => {
          </Grid>
       </Card>
        <br />
-        <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-        <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} />
+      <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
+      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} />
+      </Container>  
     </>
   );
 };

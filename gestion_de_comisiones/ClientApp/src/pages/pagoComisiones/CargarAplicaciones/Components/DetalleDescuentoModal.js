@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {open, handleCloseCancel} = props;
+      const {open, handleCloseCancel, ficha, listaAplicaciones} = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
 
@@ -180,9 +180,6 @@ const DetalleDescuentoModal = (props) => {
      };
 
   
-
-    
-
     return (
         <Fragment>
             <Dialog   fullScreen open={open}   TransitionComponent={Transition}  >
@@ -192,172 +189,90 @@ const DetalleDescuentoModal = (props) => {
                     <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                      DETALLE DE ADJUNTOS
+                      DETALLE DE APLICACIONES
                     </Typography>
                 </Toolbar>
             </AppBar>     
-               <Container maxWidth="md" className={classes.containerPrincipal} >                          
-                    <Grid  container item xs={12}  className={classes.gridContainer} >
-                        <Grid item xs={12} md={3} className={classes.containerPhoto}  >
-                           {/* <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {Ficha.nombreFicha !==""? Ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar> */}
-                        </Grid>
-                        <Grid container item xs={12} md={4}  >
-                             <Grid  item xs={12}   >
-                                    <Typography variant="h6" gutterBottom style={{ textTransform: 'uppercase'}}>
-                                        {/* {Ficha.nombreFicha} */}
-                                    </Typography>
-                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
-                                    <b>RANGO:</b> {/* {Ficha.rango} */}
-                                    </Typography>
-                                    <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
-                                    <b>CICLO:</b> {/*  {Ficha.ciclo} */}
-                                    </Typography>
+               <Container maxWidth="md" className={classes.containerPrincipal} >                                   
+                    <Grid  container item xs={12}  className={classes.gridContainer} >                       
+                            <Grid item xs={12} md={3} className={classes.containerPhoto}  >
+                                <Avatar alt="perfil"  className={classes.avatarNombre} > <h1> {ficha.nombreFicha !==""? ficha.nombreFicha.charAt(0).toUpperCase(): 'S'.charAt(0).toUpperCase() } </h1> </Avatar> 
                             </Grid>
-                            <Grid  item xs={12}  >
-                            <Button
-                                type="submit"                            
-                                variant="contained"
-                                color="primary"
-                                className={classes.submitCargar}
-                                /* onClick = {()=> verFicha()}   */                                       
-                                >
-                                VER
-                                </Button>   
+                            <Grid  item xs={12} md={9} >
+                              <Grid  item xs={12} md={12}  >
+                                  <Grid  item xs={12} >
+                                      <Typography variant="h6" gutterBottom style={{ textTransform: 'uppercase'}}>
+                                          {ficha.nombreFicha} 
+                                      </Typography>
+                                  </Grid>
+                              </Grid>
+                              <Grid  item xs={12} md={6}  >
+                                      <Grid  item xs={12}   >                                           
+                                          <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
+                                          <b>RANGO:</b>  {ficha.rango} 
+                                          </Typography>
+                                          <Typography variant="subtitle1" gutterBottom style={{ textTransform: 'uppercase'}} >
+                                          <b>CICLO:</b>  {ficha.ciclo} 
+                                          </Typography>
+                                      </Grid>
+                                      <Grid  item xs={12}  >
+                                          <Button
+                                              type="submit"                            
+                                              variant="contained"
+                                              color="primary"
+                                              className={classes.submitCargar}
+                                              /* onClick = {()=> verFicha()}   */                                       
+                                              >
+                                                VER
+                                          </Button>   
+                                      </Grid>
+                                </Grid>
+                                <Grid  item xs={12} md={6} >                              
+                                      {/*   <img src={imageFac} alt={'sion'} style={{width:'100%'}} /> */}                                  
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid container item xs={12} md={5} >
-                         {/*  {estadoComisionGlobalFacturado&&
-                            <img src={imageFac} alt={'sion'} style={{width:'100%'}} />
-                          } */}
-                        </Grid>
-                        <br />
-                        </Grid>
-                    </Container>   
-                    {/* <Container maxWidth="xl" className={classes.containerGrid} > */}
-
-                      {/*   <Grid  container item xs={12}  >
-
+                            <br />
+                      </Grid>
+                  </Container>   
+                   <Container maxWidth="xl" className={classes.containerGrid} > 
+                         <Grid  container item xs={12}  >
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table className={classes.table} size="medium"  aria-label="a dense table">
                                         <TableHead>
                                         <TableRow>                                          
                                             <TableCell align="center"><b>EMPRESAS</b></TableCell>
-                                            <TableCell align="center"><b>VENTAS PERSONALES</b></TableCell>
-                                            <TableCell align="center"><b>VENTAS GRUPALES</b></TableCell>
-                                            <TableCell align="center"><b>RESIDUAL</b></TableCell>
-                                            <TableCell align="right"><b>MONTO (USD)</b></TableCell>
-                                            <TableCell align="center"><b>RETENCIÓN</b></TableCell>
-                                            <TableCell align="center"><b>NETO (USD)</b></TableCell>
-                                            <TableCell align="center" ><b>ARCHIVO</b><PictureAsPdfIcon /><br /><br /><br />   </TableCell>                                          
-                                            <TableCell align="center"><b>FACTURADO</b><br />
-                                              {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
-                                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={estadoComisionGlobalFacturado? 'De seleccionar todos': 'Seleccionar todos'}>
-                                                      {estadoComisionGlobalFacturado? 
-                                                        <IconButton edge="start" color="inherit"   aria-label="close"  onClick={()=> DesChecTodo()}>
-                                                        <CheckBoxIcon style={{ color: green[500] }} />
-                                                        </IconButton>
-                                                      : 
-                                                        <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> AceptarTodo()}  >
-                                                        <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
-                                                        </IconButton>
-                                                        } 
-                                                    </Tooltip>
-                                                    :
-                                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                                                        {estadoComisionGlobalFacturado? 
-                                                          <IconButton edge="start" color="inherit"   aria-label="close" >
-                                                          <CheckBoxIcon color="disabled"  />
-                                                          </IconButton>
-                                                        : 
-                                                          <IconButton edge="start" color="inherit"  aria-label="close" >
-                                                          <CheckBoxOutlineBlankIcon color="disabled"  />
-                                                          </IconButton>
-                                                          } 
-                                                      </Tooltip>
-                                                } 
-                                            </TableCell>                                                                                
+                                            <TableCell align="center"><b>DESCRIPCION</b></TableCell>
+                                            <TableCell align="center"><b>MONTO ($us)</b></TableCell>
+                                            <TableCell align="center"><b>CANTIDAD</b></TableCell>
+                                            <TableCell align="right"><b>SUBTOTAL ($us)</b></TableCell>                                                                                                                                                                                       
                                             <TableCell align="right">   </TableCell>
                                         </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                        {listaDetalleEmpresa.map((row, index) => (
+                                          {listaAplicaciones.map((row, index) => (
                                             <TableRow key={index }>
-                                            <TableCell align="center"scope="row"> {row.empresa} </TableCell>
-                                            <TableCell align="right">{row.ventasPersonales.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            <TableCell align="right">{row.ventasGrupales.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            <TableCell align="right">{row.residual.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            
-                                            <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-
-                                            <TableCell align="right">{row.retencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-                                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
-
-                                            <TableCell align="center"> 
-                                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.respaldoPath === ""? 'Debe seleccionar un archivo (opcional)': 'Tiene archivo Cargado'}>
-                                             {row.respaldoPath !== ""?  <CheckCircleOutlineIcon style={{ color: green[500] }} /> :  <HighlightOffIcon color="secondary" /> } 
-                                             </Tooltip>
-                                             </TableCell>  
-                                            
-                                            
-                                             <TableCell align="center"> 
-                                               {validarPermiso(perfiles, namePage + permiso.ACTUALIZAR)?
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={row.siFacturo === ""? 'Debe seleccionar un archivo (opcional)': 'Tiene archivo Cargado'}>
-                                                  {row.siFacturo? 
-                                                    <IconButton edge="start" color="inherit"   aria-label="close" onClick={()=> cancelarFacturaEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
-                                                     <CheckBoxIcon style={{ color: green[500] }} />
-                                                    </IconButton>
-                                                  : 
-                                                    <IconButton edge="start" color="inherit"  aria-label="close" onClick={()=> checkdComisionDetalleEmpresa(`${row.idComisionDetalleEmpresa}`, `${row.siFacturo}`)} >
-                                                     <CheckBoxOutlineBlankIcon style={{ color: green[500] }} />
-                                                    </IconButton>
-                                                    } 
-                                                </Tooltip>
-                                                :
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin acceso'}>
-                                                {row.siFacturo? 
-                                                  <IconButton edge="start" color="inherit"   aria-label="close"  >
-                                                   <CheckBoxIcon color="disabled" />
-                                                  </IconButton>
-                                                : 
-                                                  <IconButton edge="start" color="inherit"  aria-label="close" >
-                                                   <CheckBoxOutlineBlankIcon color="disabled" />
-                                                  </IconButton>
-                                                  } 
-                                              </Tooltip>
-                                              }
-                                             </TableCell>  
-                                            
-                                            <TableCell align="center">
-                                              {!estadoComisionGlobalFacturado&&
-                                                 <>
-                                                  <label >
-                                                    <input style={{display: 'none' ,}} type="file" accept=".pdf" onChange= {(e)=> onChangeFilePDF(e, `${row.idComisionDetalleEmpresa}`)} />  
-                                                      <div className={classes.divCargar}>
-                                                      {'CARGAR ARCHIVO '} {' '}<CloudUploadIcon color="action"  style={{marginLeft:'5px'}} />        
-                                                      </div>                                                                                                                  
-                                                  </label>  
-                                                
-                                                  </> 
-                                              }
-
-                                            </TableCell>   
+                                                <TableCell align="center"scope="row"> {row.nombreEmpresa} </TableCell>
+                                                <TableCell align="center"scope="row"> {row.descripcion} </TableCell>
+                                                <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>                                                
+                                                <TableCell align="center"scope="row"> {row.cantidad} </TableCell>
+                                                <TableCell align="right">{row.subtotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
+                                                <TableCell align="center"scope="row">  </TableCell>                                                                                                                                                                   
                                             </TableRow>
-                                        ))}
+                                          ))}
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
                                 <TablePagination
                                     rowsPerPageOptions={[10,25,35]}
                                     component="div"
-                                    count={listaDetalleEmpresa.length}
+                                    count={listaAplicaciones.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onChangePage={handleChangePage}
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                     />
-                        </Grid> */}
-
-                      {/* </Container> */}       
+                        </Grid> 
+                      </Container>        
                    
                   
             </Dialog>                        
