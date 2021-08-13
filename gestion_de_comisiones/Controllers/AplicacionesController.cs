@@ -69,8 +69,6 @@ namespace gestion_de_comisiones.Controllers
                     var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las aplicaciones pendientes" };
                     return Ok(Result);
                 }
-            //} else
-              //  return Ok();
         }
     }
 }

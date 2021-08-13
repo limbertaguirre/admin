@@ -141,7 +141,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 const DetalleDescuentoModal = (props) => {
-     //tipoModal : info, error, warning, success
      const classes = useStyles();
      const dispatch = useDispatch();
       const {namePage, open, handleCloseCancel} = props;
@@ -162,10 +161,6 @@ const DetalleDescuentoModal = (props) => {
           setRowsPerPage(parseInt(event.target.value, 10));
           setPage(0);
       };
-
-
-      //-------------------------------------------------------------------------------------------------------------------
-   
      const [idDetalleEmpresaSelected,setIdDetalleEmpresaSelected ]= useState(0);
      const [idEmpresaSelected, setIdEmpresaSelected ]= useState(0);
  
