@@ -117,7 +117,7 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerDetalleAplicacionXId()  idComisionDetalle: {idComisionDetalle} ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idComisionDetalle:{idComisionDetalle} ");
-                var ListComisiones = contextMulti.VwObtenerComisionesDetalleAplicaciones.Where(x => x.IdComisionDetalle == idComisionDetalle ).Select(p => new WwObtenerComisionesDetalleAplicacionesModel(p.IdAplicacionDetalleProducto, p.IdComisionDetalle, p.Descripcion, p.Monto, p.Cantidad, p.Subtotal, p.IdProyecto, p.IdEmpresa, p.NombreEmpresa)).ToList();
+                var ListComisiones = contextMulti.VwObtenerComisionesDetalleAplicaciones.Where(x => x.IdComisionDetalle == idComisionDetalle ).Select(p => new WwObtenerComisionesDetalleAplicacionesModel(p.IdAplicacionDetalleProducto, p.IdComisionDetalle, p.Descripcion, p.Monto, p.Cantidad, p.Subtotal, p.IdProyecto, p.IdEmpresa, p.NombreEmpresa, p.CodigoProducto)).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)

@@ -16,5 +16,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdProyecto { get; set; }
         public int? IdEmpresa { get; set; }
         public string NombreEmpresa { get; set; }
+        public string CodigoProducto { get; set; }
     }
 }

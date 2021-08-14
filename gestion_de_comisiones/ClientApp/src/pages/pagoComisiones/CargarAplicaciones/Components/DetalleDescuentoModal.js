@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import {
-    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom
+    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
@@ -178,6 +178,8 @@ const DetalleDescuentoModal = (props) => {
        
 
      };
+     const[subTotal, setSubTotal]= useState(0);
+    
 
   
     return (
@@ -234,28 +236,26 @@ const DetalleDescuentoModal = (props) => {
                             <br />
                       </Grid>
                   </Container>   
-                   <Container maxWidth="xl" className={classes.containerGrid} > 
+                  <Container className={classes.containerGrid} > 
                          <Grid  container item xs={12}  >
                                 <TableContainer component={Paper}>
                                     <Table className={classes.table} size="medium"  aria-label="a dense table">
                                         <TableHead>
                                         <TableRow>                                          
-                                            <TableCell align="center"><b>EMPRESAS</b></TableCell>
+                                            <TableCell align="center"><b>EMPRESAS</b></TableCell> 
+                                            <TableCell align="center"><b>PRODUCTO</b></TableCell>
                                             <TableCell align="center"><b>DESCRIPCION</b></TableCell>
-                                            <TableCell align="center"><b>MONTO ($us)</b></TableCell>
-                                            <TableCell align="center"><b>CANTIDAD</b></TableCell>
-                                            <TableCell align="right"><b>SUBTOTAL ($us)</b></TableCell>                                                                                                                                                                                       
-                                            <TableCell align="right">   </TableCell>
+                                            <TableCell align="center"><b>MONTO ($us)</b></TableCell>                                                                                                                                                                                   
+                                            <TableCell align="center">   </TableCell>
                                         </TableRow>
                                         </TableHead>
                                         <TableBody>
                                           {listaAplicaciones.map((row, index) => (
                                             <TableRow key={index }>
                                                 <TableCell align="center"scope="row"> {row.nombreEmpresa} </TableCell>
+                                                <TableCell align="center"scope="row"> {row.codigoProducto} </TableCell>
                                                 <TableCell align="center"scope="row"> {row.descripcion} </TableCell>
-                                                <TableCell align="right">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>                                                
-                                                <TableCell align="center"scope="row"> {row.cantidad} </TableCell>
-                                                <TableCell align="right">{row.subtotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
+                                                <TableCell align="center">{row.monto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>                                                                                               
                                                 <TableCell align="center"scope="row">  </TableCell>                                                                                                                                                                   
                                             </TableRow>
                                           ))}
@@ -272,7 +272,19 @@ const DetalleDescuentoModal = (props) => {
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                     />
                         </Grid> 
-                      </Container>        
+                        <Grid  container item xs={12}  >
+                            <Grid  item xs={12} md={8} >
+                              
+                            </Grid>
+                            <Grid  item xs={12} md={4} >
+                                <Card >
+                                    <Typography variant="subtitle1" gutterBottom style={{paddingLeft:'10px', paddingTop:'10px' ,textTransform: 'uppercase'}} >
+                                              <b>TOTAL APLICACION ($us):{ ' '} {100} </b>  
+                                    </Typography>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                   </Container>        
                    
                   
             </Dialog>                        

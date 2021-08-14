@@ -7,7 +7,7 @@ namespace gestion_de_comisiones.Modelos.AplicacionDetalleProducto
 {
     public class WwObtenerComisionesDetalleAplicacionesModel
     {
-        public WwObtenerComisionesDetalleAplicacionesModel(int idAplicacionDetalleProducto, int idComisionDetalle, string descripcion, decimal monto, int cantidad, decimal subtotal, int idProyecto, int? idEmpresa, string nombreEmpresa)
+        public WwObtenerComisionesDetalleAplicacionesModel(int idAplicacionDetalleProducto, int idComisionDetalle, string descripcion, decimal monto, int cantidad, decimal subtotal, int idProyecto, int? idEmpresa, string nombreEmpresa, string codigoProducto)
         {
             IdAplicacionDetalleProducto = idAplicacionDetalleProducto;
             IdComisionDetalle = idComisionDetalle;
@@ -18,6 +18,7 @@ namespace gestion_de_comisiones.Modelos.AplicacionDetalleProducto
             IdProyecto = idProyecto;
             IdEmpresa = idEmpresa;
             NombreEmpresa = nombreEmpresa;
+            CodigoProducto = codigoProducto;
         }
 
         public int IdAplicacionDetalleProducto { get; set; }
@@ -28,6 +29,7 @@ namespace gestion_de_comisiones.Modelos.AplicacionDetalleProducto
         public decimal Subtotal { get; set; }
         public int IdProyecto { get; set; }
         public int? IdEmpresa { get; set; }
-        public string NombreEmpresa { get; set; }                
+        public string NombreEmpresa { get; set; }
+        public string CodigoProducto { get; set; }
     }
 }

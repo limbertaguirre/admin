@@ -2452,6 +2452,12 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
 
+                entity.Property(e => e.CodigoProducto)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("codigo_producto");
+
                 entity.Property(e => e.Descripcion)
                     .IsUnicode(false)
                     .HasColumnName("descripcion");

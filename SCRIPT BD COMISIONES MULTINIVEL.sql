@@ -1272,7 +1272,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 go
 
-CREATE VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
+create VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
 AS
 	 select
 	       Ap.id_aplicacion_detalle_producto,
@@ -1281,9 +1281,10 @@ AS
 		   AP.monto,
 		   AP.cantidad,
 		   AP.subtotal,
-		   Ap.id_proyecto,
+		   AP.id_proyecto,
 		   CASE WHEN EMP.id_empresa IS NULL THEN 0 ELSE EMP.id_empresa END as 'id_empresa',		   
-		   CASE WHEN EMP.nombre IS NULL THEN 'Sin definir' ELSE EMP.nombre END as 'nombre_empresa'
+		   CASE WHEN EMP.nombre IS NULL THEN '-' ELSE EMP.nombre END as 'nombre_empresa',
+		   CASE WHEN AP.codigo_producto='' THEN '-' ELSE AP.codigo_producto END as 'codigo_producto'	   
      from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
 			inner join BDMultinivel.dbo.APLICACION_DETALLE_PRODUCTO AP on AP.id_comisiones_detalle=GPDE.id_comision_detalle
 			left join BDMultinivel.dbo.PROYECTO PRO on PRO.id_proyecto = AP.id_proyecto
