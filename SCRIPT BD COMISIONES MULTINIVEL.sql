@@ -232,9 +232,9 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizaci
 go
 --add modulo antes estos hacen referencia a los id de los modulos hijos
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturacion','/facturacion','facIcon',1,1,3,1);
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cargar comisiones','/cargar/comisiones','facIcon',1,1,3,1);
-  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,3,1);
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga Aplicaciones','/cargar-aplicaciones','facIcon',2,1,3,1);  
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',3,1,3,1);
+  --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',4,1,3,1);
 
   --insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,4,1);  
 
@@ -1107,6 +1107,7 @@ CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   id_proyecto int not null,
   codigo_producto varchar(50) not null,
   id_comisiones_detalle int not null,
+  id_bdqishur int NOT NULL,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
@@ -1120,6 +1121,7 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea que hace referencia al codigo de un proyecto de grupo sion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_proyecto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo de un producto lote o kalomai  general de gruposion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'codigo_producto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranead de la tabla comision detalle donde se tiene toda la comision del cliente frilanzer.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_comisiones_detalle'
+	 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_bdqishur es el ide de la tabla que hace referencia al id primario de la tabla AplicacionesPagos de la bd bdqishur', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_bdqishur'
 
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'fecha_creacion'
@@ -1158,7 +1160,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-CREATE VIEW [dbo].[vwObtenercomisiones]
+ALTER VIEW [dbo].[vwObtenercomisiones]
 AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
@@ -1187,6 +1189,7 @@ AS
 			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
 			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
 			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
+			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
 GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
@@ -1268,3 +1271,21 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 go
+
+create VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
+AS
+	 select
+	       Ap.id_aplicacion_detalle_producto,
+		   GPDE.id_comision_detalle,
+	       AP.descripcion,
+		   AP.monto,
+		   AP.cantidad,
+		   AP.subtotal,
+		   AP.id_proyecto,
+		   CASE WHEN EMP.id_empresa IS NULL THEN 0 ELSE EMP.id_empresa END as 'id_empresa',		   
+		   CASE WHEN EMP.nombre IS NULL THEN '-' ELSE EMP.nombre END as 'nombre_empresa',
+		   CASE WHEN AP.codigo_producto='' THEN '-' ELSE AP.codigo_producto END as 'codigo_producto'	   
+     from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
+			inner join BDMultinivel.dbo.APLICACION_DETALLE_PRODUCTO AP on AP.id_comisiones_detalle=GPDE.id_comision_detalle
+			left join BDMultinivel.dbo.PROYECTO PRO on PRO.id_proyecto = AP.id_proyecto
+			left join BDMultinivel.dbo.PROYECTO EMP on EMP.id_proyecto = PRO.id_proyecto	

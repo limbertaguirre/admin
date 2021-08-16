@@ -9,7 +9,7 @@ import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles'
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
-import {Container, InputAdornment, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
+import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -19,6 +19,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+
 
   const useStyles = makeStyles((theme) => ({
 
@@ -30,6 +34,9 @@ import Paper from '@material-ui/core/Paper';
         background: "#1872b8", 
         boxShadow: '2px 4px 5px #1872b8',
         color:'white'
+    },
+    submitDetalleInactivo: {
+        height:'25px',
     },
     cardVacio: {
           height:'400px',
@@ -66,13 +73,13 @@ import Paper from '@material-ui/core/Paper';
                         <TableHead>
                         <TableRow>
                             <TableCell align="center"><b>#</b></TableCell>
-                            <TableCell align="right"><b>Nombre completo</b></TableCell>
-                            <TableCell align="right"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="right"><b>Nro. Cuenta</b></TableCell>
-                            <TableCell align="right"><b>Banco</b></TableCell>
-                            <TableCell align="center"><b>Monto Total Bruto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Total Bruto - Retención ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Aplicaciones ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Nombre completo</b></TableCell>
+                            <TableCell align="center"><b>Cédula identidad</b></TableCell>
+                            <TableCell align="center"><b>Nro. Cuenta</b></TableCell>
+                            <TableCell align="center"><b>Banco</b></TableCell>
+                            <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Retención ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell>
                             <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center"></TableCell>
                         </TableRow>
@@ -81,25 +88,46 @@ import Paper from '@material-ui/core/Paper';
                         {aplicacionesList.map((row, index) => (
                             <TableRow key={index }>
                             <TableCell align="center"scope="row"> {index} </TableCell>
-                            <TableCell align="center">{row.nombre}</TableCell>
-                            <TableCell align="right">{row.ci}</TableCell>
-                            <TableCell align="right">{row.cuentaBancaria}</TableCell>
-                            <TableCell align="right">{row.nombreBanco}</TableCell>   
-                            <TableCell align="right">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="right">{row.factura == "True"? <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" />}</TableCell>   
-                            <TableCell align="center"> {row.facturaDescuento == "True"?  <CheckBoxIcon color="primary" /> : <CheckBoxOutlineBlankIcon color="primary" /> } </TableCell>  
-                            <TableCell align="right">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                            <TableCell align="left">{row.nombre}</TableCell>
+                            <TableCell align="center">{row.ci}</TableCell>
+                            <TableCell align="center">{row.cuentaBancaria}</TableCell>
+                            <TableCell align="center">{row.nombreBanco}</TableCell>   
+                            <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
+                            <TableCell align="center">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
+                            <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>                              
+                            <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
-                                         <Button
+                                {row.montoAplicacion > 0? 
+                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver descuento detallado.'}>
+                                        {/* <Button
                                             type="submit"
                                             fullWidth
                                             variant="contained"
                                             color="primary"
                                             className={style.submitDetalle}
-                                            onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}                                         
-                                        >
-                                            Detalle
-                                        </Button>   
+                                                                                     
+                                            >
+                                             Detalle
+                                        </Button> */}  
+                                         <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)} >
+                                            <VisibilityIcon color="primary"  style={{ fontSize: 30 }} />
+                                         </IconButton>
+                                    </Tooltip>
+                                    :
+                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'No tiene descuentos.'}>
+                                        {/* <Button
+                                            type="submit"
+                                            variant="contained"   
+                                            className={style.submitDetalleInactivo}                                                                                                                 
+                                            >
+                                          Detalle
+                                        </Button>  */} 
+                                         <IconButton edge="start" color="inherit"   aria-label="close"   >
+                                            <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} />
+                                         </IconButton>
+                                    </Tooltip>
+                                  }
+
                             </TableCell>   
                             </TableRow>
                         ))}

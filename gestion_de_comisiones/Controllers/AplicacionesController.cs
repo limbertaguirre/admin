@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.AplicacionDetalleProducto;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Servicios.Interfaces;
@@ -51,32 +52,42 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
-        // POST: Aplicaciones/GetAplicacionesPendientes
-        //[HttpPost]
-        //public ActionResult Index([FromBody] ComisionesInputModel param)
-        //public ActionResult Index([FromBody] Dictionary<string, string> data)
-        
-        public ActionResult ObtenerAplicaciones([FromHeader] string usuarioLogin)
-        {
+        // POST: Aplicaciones/ObtenerAplicaciones
 
-        
-            int idCiclo = 1; 
-          
+        [HttpPost]
+        public ActionResult ObtenerAplicaciones([FromBody] ComisionesInputModel param)
+        {
                 try
                 {               
-                    Logger.LogInformation($"usuario request : {usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{idCiclo}");
-                    var resulcliente = Service.GetAplicacionesPendientes(usuarioLogin, idCiclo);
-                    Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller AplicacionesController => Index()");
+                    Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+                    var resulcliente = Service.GetAplicacionesPendientes(param.usuarioLogin, param.idCiclo);
+                    Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
                     return Ok(resulcliente);
                 }
                 catch
                 {
-                    Logger.LogError($"usuario request: {usuarioLogin} error catch controller AplicacionesController()  => Index() ");
+                    Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller AplicacionesController()  => Index() ");
                     var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las aplicaciones pendientes" };
                     return Ok(Result);
                 }
-            //} else
-              //  return Ok();
+        }
+        //post Aplicaciones/ListarDetalleAplicacionesXFreelancer
+        [HttpPost]
+        public ActionResult ListarDetalleAplicacionesXFreelancer([FromBody] DetalleAplicacionesFichaInputModel param)
+        {
+            try
+            {
+                //Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+                var resulcliente = Service.obtenerDetalleAplicacionesXFreelancers(param);
+                Logger.LogInformation($"usuario : {33} Fin del controller AplicacionesController => Index()");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller AplicacionesController()  => Index() ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar el detalle de aplicaciones" };
+                return Ok(Result);
+            }
         }
     }
 }

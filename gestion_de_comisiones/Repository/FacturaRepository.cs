@@ -24,7 +24,7 @@ namespace gestion_de_comisiones.Repository
             Logger = logger;
             EEnv = env;
         }
-        public object listCiclosPendientes(string usuario )
+        public List<CicloOutputModel> listCiclosPendientes(string usuario )
         {
             try
             {
@@ -60,7 +60,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {usuario} error catch listCiclos() mensaje : {ex}");
-                 List<Ciclo> lis = new List<Ciclo>();
+                List<CicloOutputModel> lis = new List<CicloOutputModel>();
                 return lis;
             }
         }

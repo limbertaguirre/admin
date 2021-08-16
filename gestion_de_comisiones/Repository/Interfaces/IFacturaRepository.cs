@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
 {
     public interface IFacturaRepository
     {
-        public object listCiclosPendientes(string usuario);
+        public List<CicloOutputModel> listCiclosPendientes(string usuario);
         public object obtenerComisiones(string usuario, int idCiclo, int idEstadoComision);
         public object BuscarComisiones(string usuario, int idCiclo, int idEstadoComision, string nombreCriterio);
         public List<VwObtenerComisionesDetalleEmpresaModel> obtenerDetalleEmpresa(string usuario, int idComisionDetalle);
