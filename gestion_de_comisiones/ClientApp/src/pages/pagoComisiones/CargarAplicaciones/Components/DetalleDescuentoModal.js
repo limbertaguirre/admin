@@ -190,13 +190,18 @@ const DetalleDescuentoModal = (props) => {
               }
      },[listaAplicaciones])
 
+     const cerrarModal=()=>{
+      setSubTotal(0);
+      handleCloseCancel();
+     }
+
   
     return (
         <Fragment>
             <Dialog   fullScreen open={open}   TransitionComponent={Transition}  >
             <AppBar className={classes.appBar}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleCloseCancel} aria-label="close">
+                    <IconButton edge="start" color="inherit" onClick={cerrarModal} aria-label="close">
                     <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
@@ -239,12 +244,30 @@ const DetalleDescuentoModal = (props) => {
                                       </Grid>
                                 </Grid>
                                 <Grid  item xs={12} md={6} >                              
-                                      {/*   <img src={imageFac} alt={'sion'} style={{width:'100%'}} /> */}                                  
+                                      {/*   <img src={imageFac} alt={'sion'} style={{width:'100%'}} /> */}                               
                                 </Grid>
-                            </Grid>
-                            <br />
-                      </Grid>
+                            </Grid>                                                     
+                      </Grid>                     
                   </Container>   
+                  <Container>
+                      <Grid  container xs={12} md={12} >
+                            <Grid item xs={12} md={10} >
+                            </Grid>
+                            <Grid item xs={12} md={2}>
+                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Desea agregar más descuentos.'}>
+                                    <Button
+                                        type="submit"                            
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submitCargar}                                   
+                                        >
+                                          NUEVO DESCUENTO
+                                    </Button>   
+                                </Tooltip>
+                            </Grid>
+                      </Grid>
+                  </Container>
+                  <br />
                   <Container className={classes.containerGrid} > 
                          <Grid  container item xs={12}  >
                                 <TableContainer component={Paper}>
