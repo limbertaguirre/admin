@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
     Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card
 } from "@material-ui/core";
@@ -180,6 +180,15 @@ const DetalleDescuentoModal = (props) => {
      };
      const[subTotal, setSubTotal]= useState(0);
     
+     useEffect(()=>{    
+              if(listaAplicaciones.length > 0){
+                  let monto = 0;
+                  listaAplicaciones.forEach(function (value) {
+                    monto = monto + value.monto;
+                  }); 
+                setSubTotal(monto);
+              }
+     },[listaAplicaciones])
 
   
     return (
@@ -242,7 +251,7 @@ const DetalleDescuentoModal = (props) => {
                                     <Table className={classes.table} size="medium"  aria-label="a dense table">
                                         <TableHead>
                                         <TableRow>                                          
-                                            <TableCell align="center"><b>EMPRESAS</b></TableCell> 
+                                            <TableCell align="center"><b>EMPRESA</b></TableCell> 
                                             <TableCell align="center"><b>PRODUCTO</b></TableCell>
                                             <TableCell align="center"><b>DESCRIPCION</b></TableCell>
                                             <TableCell align="center"><b>MONTO ($us)</b></TableCell>                                                                                                                                                                                   
@@ -262,7 +271,7 @@ const DetalleDescuentoModal = (props) => {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <TablePagination
+                               {/*  <TablePagination
                                     rowsPerPageOptions={[10,25,35]}
                                     component="div"
                                     count={listaAplicaciones.length}
@@ -270,8 +279,9 @@ const DetalleDescuentoModal = (props) => {
                                     page={page}
                                     onChangePage={handleChangePage}
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
-                                    />
+                                    /> */}
                         </Grid> 
+                        <br />
                         <Grid  container item xs={12}  >
                             <Grid  item xs={12} md={8} >
                               
@@ -279,7 +289,7 @@ const DetalleDescuentoModal = (props) => {
                             <Grid  item xs={12} md={4} >
                                 <Card >
                                     <Typography variant="subtitle1" gutterBottom style={{paddingLeft:'10px', paddingTop:'10px' ,textTransform: 'uppercase'}} >
-                                              <b>TOTAL APLICACION ($us):{ ' '} {100} </b>  
+                                              <b>TOTAL APLICACION ($us):{ ' '} {subTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b>  
                                     </Typography>
                                 </Card>
                             </Grid>

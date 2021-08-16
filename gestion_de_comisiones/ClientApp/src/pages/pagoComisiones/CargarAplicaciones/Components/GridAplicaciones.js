@@ -79,7 +79,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center"><b>Banco</b></TableCell>
                             <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
                             <TableCell align="center"><b>Retención ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Aplicaciones ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell>
                             <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center"></TableCell>
                         </TableRow>
