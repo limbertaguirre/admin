@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
-    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom
+    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card
 } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
@@ -168,14 +168,13 @@ const DetalleAdjuntoModal = (props) => {
       };
 
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        //var file = e.target.files[0];
+        //console.log('llego aceptar')
+        var file = e.target.files[0];
         const reader = new FileReader();
-        //var url = reader.readAsDataURL(file);
-        //console.log(URL.createObjectURL(file));
+        var url = reader.readAsDataURL(file);
+        console.log(URL.createObjectURL(file));
         reader.onloadend = function (e) {
-          procesarPdf(idDetalleEmpresa,reader.result);
-         // setAvatar(reader.result);
-        //  setNuevoAvatar(true);
+          procesarPdf(idDetalleEmpresa,reader.result);        
         }.bind(this);
       }
 
@@ -285,12 +284,56 @@ const DetalleAdjuntoModal = (props) => {
       setopenModalCancelDesCheck(false);
     }
 
+    
+    const[totalVentaPersonal, setTotalVentaPersonal]= useState(0);
+    const[totalVentaGrupal, setTotalVentaGrupal]= useState(0);
+    const[totalResidual, setTotalResidual]= useState(0);
+    const[totalMonto, setTotalMonto]= useState(0);
+    const[totalRetencion, setTotalRetencion]= useState(0);
+    const[totalNeto, setTotalNeto]= useState(0);
+    useEffect(()=>{    
+             if(listaDetalleEmpresa.length > 0){
+                 let ventasPersonales=0;
+                 let ventasGrupales= 0;
+                 let residual=0;
+                 let monto=0;
+                 let retencion=0;
+                 let montoNeto=0;
+
+                 listaDetalleEmpresa.forEach(function (value) {
+                  montoNeto = montoNeto + value.montoNeto;
+                  ventasPersonales = ventasPersonales + value.ventasPersonales;
+                  ventasGrupales= ventasGrupales + value.ventasGrupales;
+                  residual= residual + value.residual;
+                  monto= monto + value.monto;
+                  retencion = retencion + value.retencion;
+                 }); 
+                 
+                 setTotalVentaPersonal(ventasPersonales);
+                 setTotalVentaGrupal(ventasGrupales);
+                 setTotalResidual(residual);
+                 setTotalMonto(monto);
+                 setTotalRetencion(retencion);
+                 setTotalNeto(montoNeto);
+             }
+    },[listaDetalleEmpresa])
+    
+    const cerrarModalAdjunto =()=>{
+      setTotalVentaPersonal(0);
+      setTotalVentaGrupal(0);
+      setTotalResidual(0);
+      setTotalMonto(0);
+      setTotalRetencion(0);
+      setTotalNeto(0);
+      handleCloseCancel()
+    }
+
     return (
         <Fragment>
             <Dialog   fullScreen open={open}   TransitionComponent={Transition}  >
             <AppBar className={classes.appBar}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={handleCloseCancel} aria-label="close">
+                    <IconButton edge="start" color="inherit" onClick={cerrarModalAdjunto} aria-label="close">
                     <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
@@ -451,11 +494,22 @@ const DetalleAdjuntoModal = (props) => {
 
                                             </TableCell>   
                                             </TableRow>
-                                        ))}
+                                        ))}                                       
+                                          <TableRow key={100 }>
+                                            <TableCell align="right"scope="row"> <b>TOTAL :</b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b>{totalVentaPersonal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b>{totalVentaGrupal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b> {totalResidual.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b>{totalMonto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b>{totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
+                                            <TableCell align="right"scope="row"> <b>{totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></TableCell>
+                                            <TableCell align="center"scope="row"> {''} </TableCell>
+                                            <TableCell align="center"scope="row"> {''} </TableCell>
+                                            </TableRow>
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <TablePagination
+                               {/*  <TablePagination
                                     rowsPerPageOptions={[10,25,35]}
                                     component="div"
                                     count={listaDetalleEmpresa.length}
@@ -463,8 +517,10 @@ const DetalleAdjuntoModal = (props) => {
                                     page={page}
                                     onChangePage={handleChangePage}
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
-                                    />
+                                    /> */}
                         </Grid>
+                        <br />
+                       
 
                       </Container>       
                    
