@@ -77,17 +77,36 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                //Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+                Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller ListarDetalleAplicacionesXFreelancer => Index() parametro: idComisionDetalle:{param.idComisionDetalle}");
                 var resulcliente = Service.obtenerDetalleAplicacionesXFreelancers(param);
-                Logger.LogInformation($"usuario : {33} Fin del controller AplicacionesController => Index()");
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ListarDetalleAplicacionesXFreelancer => Index()");
                 return Ok(resulcliente);
             }
             catch
             {
-                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller AplicacionesController()  => Index() ");
-                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar el detalle de aplicaciones" };
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller ListarDetalleAplicacionesXFreelancer()  => Index() ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar ListarDetalleAplicacionesXFreelancers" };
                 return Ok(Result);
             }
         }
+        //post Aplicaciones/ObtenerProyectoPorProducto
+        [HttpPost]
+        public ActionResult ObtenerProyectoPorProducto([FromBody] GetProyectoImputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller ObtenerProyectoPorProducto => Index() parametro: idciclo:{param.producto}");
+                var resulcliente = Service.obtenerProyectoXproduto(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ObtenerProyectoPorProducto => Index()");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller ObtenerProyectoPorProducto()  => Index() ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener el proyecto por producto" };
+                return Ok(Result);
+            }
+        }
+
     }
 }

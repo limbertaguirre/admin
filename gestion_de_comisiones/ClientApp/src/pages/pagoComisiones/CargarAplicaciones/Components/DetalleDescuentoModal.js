@@ -32,13 +32,11 @@ import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { green } from '@material-ui/core/colors';
-//import EditIcon from '@material-ui/icons/Edit';
-//import DeleteIcon from '@material-ui/icons/Delete';
-//import DoneIcon from '@material-ui/icons/Done';
+
 
 import  imageFac from "../../../../../src/assets/img/facturado2.png";
-
-
+import NuevoDescuentoModal from './NuevoDescuentoModal';
+import * as ActionMensaje from '../../../../redux/actions/messageAction';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -143,9 +141,13 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {open, handleCloseCancel, ficha, listaAplicaciones} = props;
+      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected} = props;
       const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
+
+     const[ openNewDescuento,setOpenNewDescuento ] = useState(false);
+
+
 
     const verFicha = () => {
       
@@ -194,7 +196,106 @@ const DetalleDescuentoModal = (props) => {
       setSubTotal(0);
       handleCloseCancel();
      }
+  
+     //------------------------------------
+     // nuevo descuento
+     const[producto, setProducto]=useState('');
+     const[monto, setMonto]= useState(0);
+     const[cantidad, setCantidad]= useState(1);
+     const[descripcion, setDescripcion] = useState('');
+     const[proyectoNombre, setProyectoNombre]= useState('');
+     const[idProyecto, setIdProyecto]= useState(0);
+ 
+     const[errorProducto, setErrorProducto]=useState(false);
+     const[errorMonto, setErrorMonto]= useState(false);
+     const[errorCantidad, setErrorCantidad]= useState(false);
+     const[errorDescripcion, setErrorDescripcion] = useState(false);
 
+    const onChange= (e) => {
+            const texfiel = e.target.name;
+            const value = e.target.value;
+            if (texfiel === "producto") {
+                setProducto(value);
+                setErrorProducto(!isValidProducto());
+                if(idProyecto>0 && producto!=value ){
+                  setIdProyecto(0);
+                  setProyectoNombre('');
+                }
+            }
+            if (texfiel === "monto") {
+                setMonto(value);
+                setErrorMonto(!isValidMonto());
+            }
+            if (texfiel === "descripcion") {
+              setDescripcion(value);
+              setErrorDescripcion(!isValidDescripcion());
+            }
+            if (texfiel === "cantidad") {
+              setCantidad(value);
+              setErrorCantidad(!isValidCantidad());
+            }
+    };
+    
+    const isValidProducto=()=>{
+      return producto.length >3
+    }
+    const isValidMonto=()=>{
+      return monto > 0
+    }
+    const isValidCantidad =()=>{
+      return cantidad > 0
+    }
+    const isValidDescripcion=()=>{
+
+      return descripcion.length > 30;
+    }
+    const isValidForm =()=>{
+      return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
+    }
+    
+
+     const AbrirModalDescuentoNew = ()=>{
+      setOpenNewDescuento(true);
+     }
+     const CerrarModalDescuentoNew = ()=>{
+        setOpenNewDescuento(false);
+        setProducto('');
+        setMonto(0);
+        setIdProyecto(0);
+        setProyectoNombre('');
+        setDescripcion('');
+        setCantidad(1);
+     }
+
+     const buscarProducto =()=>{
+        if(producto.length > 0){
+              const data={
+                usuarioLogin:userName,
+                producto: producto        
+              };
+              console.log('data : ',data);
+              requestPost('Aplicaciones/ObtenerProyectoPorProducto',data,dispatch).then((res)=>{                        
+                  if(res.code === 0){  
+                    console.log('data : ', res);    
+                    setIdProyecto(res.data.idProyecto);
+                    setProyectoNombre(res.data.nombreProyecto);              
+                  }else{
+                      setIdProyecto(0);
+                      setProyectoNombre('');
+                      dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                  }    
+              })   
+    
+            console.log('llmar api buscar');
+        }else{ 
+            console.log('ingrese algun caracter');
+        }
+     }
+     const confirmarDecuento=()=>{
+       //parametros idComisionDetalleSelected
+       
+       alert('en proceso');
+     }
   
     return (
         <Fragment>
@@ -250,7 +351,7 @@ const DetalleDescuentoModal = (props) => {
                       </Grid>                     
                   </Container>   
                   <Container>
-                      <Grid  container xs={12} md={12} >
+                      <Grid  container >
                             <Grid item xs={12} md={10} >
                             </Grid>
                             <Grid item xs={12} md={2}>
@@ -259,6 +360,7 @@ const DetalleDescuentoModal = (props) => {
                                         type="submit"                            
                                         variant="contained"
                                         color="primary"
+                                        onClick={AbrirModalDescuentoNew}
                                         className={classes.submitCargar}                                   
                                         >
                                           NUEVO DESCUENTO
@@ -321,7 +423,7 @@ const DetalleDescuentoModal = (props) => {
                    
                   
             </Dialog>                        
-
+             <NuevoDescuentoModal open={openNewDescuento} closeHandelModal={CerrarModalDescuentoNew} confirmarDecuento={confirmarDecuento} buscarProducto={buscarProducto} onChange={onChange} producto={producto} monto={monto} descripcion={descripcion} cantidad={cantidad} idProyecto={idProyecto} proyectoNombre={proyectoNombre} errorProducto={errorProducto} errorMonto={errorMonto} errorCantidad={errorCantidad} errorDescripcion={errorDescripcion} isValidForm={isValidForm} />
 
         </Fragment>
     );

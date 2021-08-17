@@ -75,6 +75,28 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener datos de detalle empresa", "");
             }
         }
+        public object obtenerProyectoXproduto(GetProyectoImputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio obtenerProyectoXproduto() ");
+                var detalleAplicaicones = Repository.obtenerproyectoXProducto(param);
+                if(detalleAplicaicones != null)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", detalleAplicaicones);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No existe producto", detalleAplicaicones);
+                }               
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch obtenerProyectoXproduto() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener el proyecto", "");
+            }
+        }
+
 
 
     }
