@@ -124,6 +124,23 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al registrar el descuento." });
             }
         }
+        public ActionResult BuscarComisionCerradosXCarnet([FromBody] BuscarInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionCerradosXCarnet() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+                var resulcliente = Service.ListarComisionesCerradosPorCarnet(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarComisionCerradosXCarnet()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionCerradosXCarnet() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por CI" };
+                return Ok(Result);
+            }
+        }
+
 
 
     }

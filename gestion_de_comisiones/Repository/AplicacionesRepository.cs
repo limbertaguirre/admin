@@ -204,7 +204,23 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-
+        public object GetComisionesPorCarnet(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, string carnet)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository GetComisionesPorCarnet() ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(carnet.Trim())).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
 
     }
 

@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.AplicacionDetalleProducto;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -119,6 +120,24 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "Problemas al registrar el descuento", "");
             }
         }
+        public object ListarComisionesCerradosPorCarnet(BuscarInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio AplicacionesService => getAplicacionesPendientes() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                var ciclos = Repository.GetComisionesPorCarnet(param.usuarioLogin, param.idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, param.nombreCriterio);
+                return Respuesta.ReturnResultdo(0, "ok", ciclos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch AplicacionesService => getAplicacionesPendientes() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
 
 
 

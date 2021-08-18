@@ -148,9 +148,29 @@ const CargarAplicaciones = (props) => {
     
   }
 
-    const buscarFreelanzer=()=>{
-       console.log('enter', txtBusqueda);
-    }
+  const buscarFreelanzer=()=>{
+    console.log('enter', txtBusqueda);
+    if(txtBusqueda.length > 4){
+          if(idCiclo && idCiclo != 0){
+                  const data={
+                    usuarioLogin:userName,
+                    idCiclo: idCiclo,
+                    nombreCriterio:txtBusqueda
+
+                  };
+                  requestPost('Aplicaciones/BuscarComisionCerradosXCarnet',data,dispatch).then((res)=>{                 
+                      if(res.code === 0){  
+                          setListaComisionesCerrados(res.data);            
+                      }else{                        
+                          dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                      }    
+                  }) 
+            }else{
+
+            }  
+      }
+      
+  }
   
   return (
     <>

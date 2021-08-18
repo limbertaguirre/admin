@@ -14,6 +14,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public VistaObtenerProyectoxproductoModel obtenerproyectoXProducto(GetProyectoImputModel param);
         public bool RegistrarDecuentoComisionDetalle(RegistroDescuentoInputModel param);
         public ComisionDetalleModel ObtenerComisionDetalle(string usuarioNombre, int idDetalleComision);
-
+        public object GetComisionesPorCarnet(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, string carnet);
     }
 }
