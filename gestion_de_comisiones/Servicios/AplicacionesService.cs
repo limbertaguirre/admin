@@ -101,14 +101,16 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio obtenerProyectoXproduto() ");
-                var detalleAplicaicones = Repository.RegistrarDecuentoComisionDetalle(param);
-                if (detalleAplicaicones)
-                {
-                    return Respuesta.ReturnResultdo(0, "Se registro Exitosamente", detalleAplicaicones);
-                }
-                else
-                {
-                    return Respuesta.ReturnResultdo(1, "No se pudo registrar el descuento", detalleAplicaicones);
+                var detalle = Repository.ObtenerComisionDetalle(param.usuarioLogin, param.idComisionDetalle);
+                if(detalle != null && param.monto <= detalle.montoNeto) {                
+                    var detalleAplicaicones = Repository.RegistrarDecuentoComisionDetalle(param);
+                    if (detalleAplicaicones) {
+                        return Respuesta.ReturnResultdo(0, "Se registro Exitosamente", detalleAplicaicones);
+                    }else{
+                        return Respuesta.ReturnResultdo(1, "No se pudo registrar el descuento", detalleAplicaicones);
+                    }
+                } else {
+                    return Respuesta.ReturnResultdo(1, "El monto de descuento se excede al MONTO NETO.", "");
                 }
             }
             catch (Exception ex)

@@ -153,11 +153,29 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
-                      
+                        var objDetalle = context.GpComisionDetalles.Where(x => x.IdComisionDetalle == param.idComisionDetalle).FirstOrDefault();
+                        objDetalle.MontoAplicacion = objDetalle.MontoAplicacion + param.monto;
+                        objDetalle.MontoNeto = objDetalle.MontoNeto - param.monto;
+                        context.SaveChanges();
 
-                            dbcontextTransaction.Commit();
-                            Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
-                            return true;                      
+                        AplicacionDetalleProducto objApli = new AplicacionDetalleProducto();
+                        objApli.CodigoProducto = param.producto;
+                        objApli.Monto = param.monto;
+                        objApli.IdComisionesDetalle = param.idComisionDetalle;
+                        objApli.Descripcion = param.descripcion;
+                        objApli.Cantidad = param.cantidad;
+                        objApli.IdUsuario = param.usuarioId;
+                        objApli.Subtotal = param.monto;
+                        objApli.IdProyecto = param.idProyecto;
+                        objApli.IdBdqishur = 0;
+                        objApli.FechaActualizacion = DateTime.Now;
+                        objApli.FechaCreacion = DateTime.Now;
+                        context.AplicacionDetalleProductoes.Add(objApli);
+                        context.SaveChanges();
+                        Logger.LogInformation($" usuario: {param.usuarioLogin} -  se registro el descuento con el idAplicacionDetalleProducto = {objApli.IdAplicacionDetalleProducto}");
+                        dbcontextTransaction.Commit();
+                        Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
+                        return true;                      
                     }
                     catch (Exception ex)
                     {
@@ -168,6 +186,24 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
+        public ComisionDetalleModel ObtenerComisionDetalle( string usuarioNombre ,int idDetalleComision)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuarioNombre} inicio el repository obtenerComisionesPendientes() ");
+                Logger.LogWarning($" usuario: {usuarioNombre} parametros: iDetalleComision:{idDetalleComision}");
+                var objDetalle = contextMulti.GpComisionDetalles.Where(x => x.IdComisionDetalle == idDetalleComision).Select(p => new ComisionDetalleModel(p.IdComisionDetalle, p.MontoBruto, p.PorcentajeRetencion, p.MontoRetencion, p.MontoAplicacion, p.MontoNeto, p.IdComision, p.IdFicha, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();                
+                return objDetalle;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {usuarioNombre} error catch getComisiones() mensaje : {ex}");
+                ComisionDetalleModel obj = new ComisionDetalleModel();
+                return obj;
+            }
+        }
+
 
 
     }

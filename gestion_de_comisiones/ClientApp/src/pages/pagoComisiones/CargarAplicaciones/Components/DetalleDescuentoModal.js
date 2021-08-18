@@ -141,8 +141,8 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected} = props;
-      const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected, CargarDetalleFrelancers, handleOnGetAplicaciones} = props;
+      const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
 
      const[ openNewDescuento,setOpenNewDescuento ] = useState(false);
@@ -247,7 +247,7 @@ const DetalleDescuentoModal = (props) => {
     }
     const isValidDescripcion=()=>{
 
-      return descripcion.length > 20;
+      return descripcion.length > 5;
     }
     const isValidForm =()=>{
       return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
@@ -290,22 +290,22 @@ const DetalleDescuentoModal = (props) => {
             console.log('ingrese algun caracter');
         }
      }
-     const confirmarDecuento=()=>{
-       //parametros idComisionDetalleSelected
+     const confirmarDecuento=()=>{      
               const data={
                 usuarioLogin:userName,
+                usuarioId: idUsuario,
                 producto: producto,
                 monto:parseFloat(monto),
                 cantidad:cantidad,
                 descripcion:descripcion,
                 idProyecto:idProyecto,
-                idComisionDetalle:idComisionDetalleSelected        
-              };
-              console.log('data : ',data);
+                idComisionDetalle:parseInt(idComisionDetalleSelected)
+              };           
               requestPost('Aplicaciones/RegistrarDescuentoComision',data,dispatch).then((res)=>{                        
                   if(res.code === 0){  
-                    console.log('data : ', res);    
                     setOpenNewDescuento(false);   // cerrar modal, actualizar la lista
+                    CargarDetalleFrelancers(userName, parseInt(idComisionDetalleSelected));
+                    handleOnGetAplicaciones();
 
                   }else{                       
                       dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
@@ -361,7 +361,7 @@ const DetalleDescuentoModal = (props) => {
                                       </Grid>
                                 </Grid>
                                 <Grid  item xs={12} md={6} >                              
-                                      {/*   <img src={imageFac} alt={'sion'} style={{width:'100%'}} /> */}                               
+                                                              
                                 </Grid>
                             </Grid>                                                     
                       </Grid>                     
@@ -412,15 +412,7 @@ const DetalleDescuentoModal = (props) => {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                               {/*  <TablePagination
-                                    rowsPerPageOptions={[10,25,35]}
-                                    component="div"
-                                    count={listaAplicaciones.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onChangePage={handleChangePage}
-                                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                                    /> */}
+                            
                         </Grid> 
                         <br />
                         <Grid  container item xs={12}  >

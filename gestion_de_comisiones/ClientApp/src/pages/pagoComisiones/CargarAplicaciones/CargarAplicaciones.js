@@ -57,25 +57,24 @@ const CargarAplicaciones = (props) => {
     handleOnGetCiclos();
   },[])
 
-   const handleOnGetCiclos=()=>{
+   const handleOnGetCiclos=()=>{    
         const headers={usuarioLogin:userName};
         requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{             
             if(res.code === 0){                 
-              setCiclos(res.data);                            
+                 setCiclos(res.data);                            
             }else{
                 dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
             }    
         })   
    };
 
-   const handleOnGetAplicaciones=()=>{
+   const handleOnGetAplicaciones=()=>{    
     if(idCiclo && idCiclo != 0){       
       const data={
         usuarioLogin:userName,
         idCiclo: idCiclo
        };
-      requestPost('Aplicaciones/ObtenerAplicaciones',data,dispatch).then((res)=>{ 
-          console.log('getCiclos response => ', res);
+      requestPost('Aplicaciones/ObtenerAplicaciones',data,dispatch).then((res)=>{           
           if(res.code === 0){  
               setListaComisionesCerrados(res.data);                          
           }else{
@@ -93,16 +92,14 @@ const CargarAplicaciones = (props) => {
   }
 
   function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
+    event.preventDefault();    
   }
 
   const onChangeSelectCiclo= (e) => {
     const texfiel = e.target.name;
     const value = e.target.value;
     if (texfiel === "idCiclo") {
-        setIdCiclo(value);
-        console.log(value);
+        setIdCiclo(value);        
     }
     if (texfiel === "txtBusqueda") {
         //setTxtBusqueda(value);
@@ -131,9 +128,9 @@ const CargarAplicaciones = (props) => {
         idComisionDetalle: parseInt(idDetalleComision)
 
        };
-       console.log('data : ',data);
+  
       requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{         
-        console.log('data : ', res); 
+        
           if(res.code === 0){  
              setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
              setListaDetalleAplicaciones(res.data.listAplicaciones)
@@ -254,7 +251,7 @@ const CargarAplicaciones = (props) => {
       </Card>
        <br />
       <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} />
+      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} CargarDetalleFrelancers={CargarDetalleFrelancers} handleOnGetAplicaciones={handleOnGetAplicaciones} />
       </Container>  
     </>
   );

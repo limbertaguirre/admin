@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.Modelos.AplicacionDetalleProducto
     public class RegistroDescuentoInputModel
     {
         public string usuarioLogin { get; set; }
+        public int usuarioId { get; set; }
         public string producto { get; set; }
         public decimal monto { get; set; }
         public int cantidad { get; set; }

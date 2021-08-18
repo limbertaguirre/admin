@@ -13,6 +13,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object ListarFreelancerYAplicacionesProductos(DetalleAplicacionesFichaInputModel param);
         public VistaObtenerProyectoxproductoModel obtenerproyectoXProducto(GetProyectoImputModel param);
         public bool RegistrarDecuentoComisionDetalle(RegistroDescuentoInputModel param);
+        public ComisionDetalleModel ObtenerComisionDetalle(string usuarioNombre, int idDetalleComision);
 
     }
 }
