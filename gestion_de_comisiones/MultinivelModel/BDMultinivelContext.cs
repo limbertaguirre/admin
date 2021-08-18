@@ -68,6 +68,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
+        public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -2604,6 +2605,37 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("nombreCompleto");
 
                 entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tieneCuentaBancaria");
+            });
+
+            modelBuilder.Entity<VwObtenerProyectoxProducto>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerProyectoxProducto");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdProyecto).HasColumnName("id_proyecto");
+
+                entity.Property(e => e.NombreEmpresa)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreEmpresa");
+
+                entity.Property(e => e.NombreProyecto)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreProyecto");
+
+                entity.Property(e => e.Producto)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("producto")
+                    .IsFixedLength(true)
+                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             });
 
             modelBuilder.Entity<VwObtenercomisione>(entity =>

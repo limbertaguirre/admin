@@ -86,8 +86,8 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                         </TableHead>
                         <TableBody>
                         {aplicacionesList.map((row, index) => (
-                            <TableRow key={index }>
-                            <TableCell align="center"scope="row"> {index} </TableCell>
+                            <TableRow key={index +1 }>
+                            <TableCell align="center"scope="row"> {index +1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
@@ -98,31 +98,14 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
                             <TableCell align="center">
                                 {row.montoAplicacion > 0? 
-                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver descuento detallado.'}>
-                                        {/* <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={style.submitDetalle}
-                                                                                     
-                                            >
-                                             Detalle
-                                        </Button> */}  
+                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver descuento detallado.'}>                                        
                                          <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)} >
                                             <VisibilityIcon color="primary"  style={{ fontSize: 30 }} />
                                          </IconButton>
                                     </Tooltip>
                                     :
-                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'No tiene descuentos.'}>
-                                        {/* <Button
-                                            type="submit"
-                                            variant="contained"   
-                                            className={style.submitDetalleInactivo}                                                                                                                 
-                                            >
-                                          Detalle
-                                        </Button>  */} 
-                                         <IconButton edge="start" color="inherit"   aria-label="close"   >
+                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'No tiene descuentos.'}>                                       
+                                         <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}  >
                                             <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} />
                                          </IconButton>
                                     </Tooltip>

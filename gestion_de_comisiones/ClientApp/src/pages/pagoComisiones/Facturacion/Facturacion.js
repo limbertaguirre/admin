@@ -250,11 +250,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 
     const buscarClientepornombre=(ev)=>{
-     // console.log('enter');
-     // if(txtBusqueda === ""){
+    
         ApiBuscarPorNombre(userName, idCiclo,txtBusqueda)
-     // }
-      
     }
 
   const selecionarDetalleFrelances=(idDetalleComision, estadoFacturado)=>{
@@ -293,15 +290,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
 
    useEffect(()=>{
-     //console.log('ficha', Ficha);
-     //console.log('lisdetalle :', listaDetalleEmpresa);
-   //  console.log('global estado comision :', estadoComisionGlobalFacturado)
+     
    },[Ficha, listaDetalleEmpresa, estadoComisionGlobalFacturado]);
 
    const checkdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
-     //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-     //console.log('check id: ', idComisionDetalleEmpresa, ' facturo: ', isFacturo);
-
      const data={
       usuarioLogin:userName,
       idComisionDetalle:parseInt(idComsionDetalleSelected),
@@ -309,9 +301,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:(isFacturo === "false"),
       usuarioId:idUsuario
      };
-     //console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-    // console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
               
@@ -331,9 +321,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
    }
    
    const desCheckdComisionDetalleEmpresa =(idComisionDetalleEmpresa, isFacturo)=> {
-    //llamar api y listar empresas devuelta..
-    //console.log('cabezera  iddeta: ', idComsionDetalleSelected);
-   // console.log('se cancelara :',  idComisionDetalleEmpresa, ' facturo: ', isFacturo);
     ApiCambiarEstadoComisionDetalleEmpresa(userName, idComsionDetalleSelected, idComisionDetalleEmpresa, isFacturo, idUsuario );
 
    }
@@ -345,9 +332,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoDetalleEmpresa:pestadoDetalle,
       usuarioId:userId
      };
-    // console.log('parame estad detalle  : ', data);
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
-     //console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
             if(idCiclo != 0){
               if(pestadoDetalle == false){
@@ -411,7 +396,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       estadoFacturado:estadoFacturado,
       usuarioId:userId
      };
-    // console.log('parame detalle  : ', data);
+    
      requestPost('Factura/AplicarFacturaTodoEstado',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR COMI DETALL  : ', res);
           if(res.code === 0){                    
@@ -439,6 +424,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             dispatch(ActionMesaje.showMessage({ message: res.message, variant: "success" }));
             setListaComisionesPendientes([]);
             obtenerCiclos();
+            setListaHabilitada(false);
             
           }else{
             dispatch(ActionMesaje.showMessage({ message: res.message, variant: "error" }));

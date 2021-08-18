@@ -113,7 +113,7 @@ const CargarAplicaciones = (props) => {
   const[openDetalle, setOpenDetalle] = useState(false);
   const[ficha, setFicha]= useState({idFicla:0, nombreFicha:'', rango:'', ciclo:'',idCiclo:0,avatar:null  });
    const[listaDetalleAplicaciones, setListaDetalleAplicaciones]= useState([]);
-
+   const[idComisionDetalleSelected, setIidComisionDetalleSelected]= useState(0);
   const CerrarDetalleModal =()=> {
     setOpenDetalle(false);
   }
@@ -137,8 +137,10 @@ const CargarAplicaciones = (props) => {
           if(res.code === 0){  
              setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
              setListaDetalleAplicaciones(res.data.listAplicaciones)
-             setOpenDetalle(true)                        
+             setOpenDetalle(true)
+             setIidComisionDetalleSelected(idDetalleComision);                        
           }else{
+              setIidComisionDetalleSelected(0); 
               dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
           }    
       })   
@@ -252,7 +254,7 @@ const CargarAplicaciones = (props) => {
       </Card>
        <br />
       <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} />
+      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} />
       </Container>  
     </>
   );

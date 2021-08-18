@@ -1289,3 +1289,12 @@ AS
 			inner join BDMultinivel.dbo.APLICACION_DETALLE_PRODUCTO AP on AP.id_comisiones_detalle=GPDE.id_comision_detalle
 			left join BDMultinivel.dbo.PROYECTO PRO on PRO.id_proyecto = AP.id_proyecto
 			left join BDMultinivel.dbo.PROYECTO EMP on EMP.id_proyecto = PRO.id_proyecto	
+go
+
+CREATE VIEW [dbo].[vwObtenerProyectoxProducto]
+AS
+
+   select  PRO.id_proyecto, PRO.nombre as 'nombreProyecto',PRO.id_empresa, GRLOTE.LOTE as 'producto', EMP.nombre as 'nombreEmpresa' from BDComisiones.dbo.vwLOTES_GRL_DOCID GRLOTE
+                  inner join BDMultinivel.dbo.proyecto PRO on PRO.proyecto_conexion_id= GRLOTE.IDPROYECTO 
+				  inner join BDMultinivel.dbo.EMPRESA EMP on EMP.id_empresa= PRO.id_empresa
+ go

@@ -127,6 +127,22 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public VistaObtenerProyectoxproductoModel obtenerproyectoXProducto(GetProyectoImputModel param)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository obtenerproyectoXProducto() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros de busqueda: idproducto:{param.producto} ");
+                var ListComisiones = contextMulti.VwObtenerProyectoxProductoes.Where(x => x.Producto == param.producto).Select(p => new VistaObtenerProyectoxproductoModel(p.IdProyecto, p.IdEmpresa, p.Producto, p.NombreProyecto, p.NombreEmpresa)).FirstOrDefault();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch obtenerproyectoXProducto() mensaje : {ex}");
+                VistaObtenerProyectoxproductoModel obj = new VistaObtenerProyectoxproductoModel();
+                return obj;
+            }
+        }
 
     }
 

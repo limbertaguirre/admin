@@ -11,5 +11,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object GetCiclos(string usuario);
         public object GetAplicacionesPendientes(string usuario, int idCiclo);
         public object obtenerDetalleAplicacionesXFreelancers(DetalleAplicacionesFichaInputModel param);
+        public object obtenerProyectoXproduto(GetProyectoImputModel param);
     }
 }

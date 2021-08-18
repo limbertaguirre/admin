@@ -11,6 +11,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object GetCiclos(string usuario, int idEstadoComision);
         public object GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura);
         public object ListarFreelancerYAplicacionesProductos(DetalleAplicacionesFichaInputModel param);
-
+        public VistaObtenerProyectoxproductoModel obtenerproyectoXProducto(GetProyectoImputModel param);
     }
 }
