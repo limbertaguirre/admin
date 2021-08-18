@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import GridAplicaciones from './Components/GridAplicaciones';
-
+import SearchIcon from '@material-ui/icons/Search';
 import DetalleDescuentoModal from './Components/DetalleDescuentoModal';
 
 
@@ -49,10 +49,12 @@ const CargarAplicaciones = (props) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
   const [tipoSnackbar, settipTSnackbar] = useState(true);
+  const[ txtBusqueda, setTxtBusqueda]= useState('');
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
   const[listaComisionesCerrados, setListaComisionesCerrados]= useState([]);
+  const[statusBusqueda, setStatusBusqueda]= useState(false);
   useEffect(()=>{ 
     handleOnGetCiclos();
   },[])
@@ -76,7 +78,8 @@ const CargarAplicaciones = (props) => {
        };
       requestPost('Aplicaciones/ObtenerAplicaciones',data,dispatch).then((res)=>{           
           if(res.code === 0){  
-              setListaComisionesCerrados(res.data);                          
+              setListaComisionesCerrados(res.data);  
+              setStatusBusqueda(true);                        
           }else{
               dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
           }    
@@ -102,7 +105,7 @@ const CargarAplicaciones = (props) => {
         setIdCiclo(value);        
     }
     if (texfiel === "txtBusqueda") {
-        //setTxtBusqueda(value);
+        setTxtBusqueda(value);
     }
   };
 
@@ -117,9 +120,7 @@ const CargarAplicaciones = (props) => {
 
   //grid
   const selecionarDetalleFrelances = (comisionDetalleId)=>{
-      
       CargarDetalleFrelancers(userName, comisionDetalleId )
-      
   }
   const CargarDetalleFrelancers =(nombreUsuario,  idDetalleComision)=>{
     if(idCiclo && idCiclo != 0){       
@@ -128,9 +129,7 @@ const CargarAplicaciones = (props) => {
         idComisionDetalle: parseInt(idDetalleComision)
 
        };
-  
-      requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{         
-        
+      requestPost('Aplicaciones/ListarDetalleAplicacionesXFreelancer',data,dispatch).then((res)=>{                 
           if(res.code === 0){  
              setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
              setListaDetalleAplicaciones(res.data.listAplicaciones)
@@ -141,8 +140,6 @@ const CargarAplicaciones = (props) => {
               dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
           }    
       })   
-
-
     }else{
       setOpenSnackbar(true);
       setMensajeSnackbar('¡Debe Seleccionar un permiso!');
@@ -150,6 +147,10 @@ const CargarAplicaciones = (props) => {
     }
     
   }
+
+    const buscarFreelanzer=()=>{
+       console.log('enter', txtBusqueda);
+    }
   
   return (
     <>
@@ -189,19 +190,19 @@ const CargarAplicaciones = (props) => {
                           
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
-                 
-                       {/*  <TextField
+                    {statusBusqueda&&
+                        <TextField
                           label="Buscar freelancer"
                           type={'text'}
                           variant="outlined"
                           placeholder={'Buscar por carnet identidad'}
                           name="txtBusqueda"                    
                           value={txtBusqueda}
-                          onChange={onChange}
+                          onChange={onChangeSelectCiclo}
                           fullWidth
                           onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
-                              buscarClientepornombre();
+                              buscarFreelanzer();
                             }
                           }}                    
                           InputProps={{
@@ -211,8 +212,8 @@ const CargarAplicaciones = (props) => {
                               </InputAdornment>
                               ),
                           }}                    
-                        />       */}
-                      
+                        />       
+                     }
             </Grid>
 
             <Grid item xs={12} md={3} className={style.containerCiclo}>

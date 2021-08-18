@@ -50,8 +50,33 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
  const GridAplicaciones =(props)=> {
     let style= useStyles();
     const {aplicacionesList, selecionarDetalleFrelances, txtBusqueda} = props;
- 
-        //tabla
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = React.useState('calories');
+
+        function descendingComparator(a, b, orderBy) {
+            if (b[orderBy] < a[orderBy]) {
+            return -1;
+            }
+            if (b[orderBy] > a[orderBy]) {
+            return 1;
+            }
+            return 0;
+        }
+        function getComparator(order, orderBy) {
+            return order === 'desc'
+              ? (a, b) => descendingComparator(a, b, orderBy)
+              : (a, b) => -descendingComparator(a, b, orderBy);
+        }
+        function stableSort(array, comparator) {            
+            const stabilizedThis = array.map((el, index) => [el, index]);
+            stabilizedThis.sort((a, b) => {
+              const order = comparator(a[0], b[0]);
+              if (order !== 0) return order;
+              return a[1] - b[1];
+            });
+            return stabilizedThis.map((el) => el[0]);
+          }
+
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);
 
@@ -85,7 +110,8 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {aplicacionesList.map((row, index) => (
+                        { stableSort(aplicacionesList, getComparator(order, orderBy))
+                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index +1 }>
                             <TableCell align="center"scope="row"> {index +1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
