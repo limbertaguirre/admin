@@ -201,7 +201,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                         <TableRow>
                             <TableCell align="center"><b>Nro</b></TableCell>
                             <TableCell align="center"><b>Nombre completo</b></TableCell>
-                            <TableCell align="right"><b>Cedula identidad</b></TableCell>
+                            <TableCell align="right"><b>Cédula identidad</b></TableCell>
                             <TableCell align="right"><b>Cuenta bancaria </b></TableCell>
                             <TableCell align="center"><b>Banco</b></TableCell>
                             <TableCell align="center"><b>Rango</b></TableCell>

@@ -271,7 +271,7 @@ const  EditRol =(props)=>  {
           <br/>
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                    <div onClick={regresarPage}> <StyledBreadcrumb key={1}  component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />  </div>                        
+                    <div onClick={regresarPage}> <StyledBreadcrumb key={1}  component="a" label="Gestión de Roles"icon={<HomeIcon fontSize="small" />}  />  </div>                        
                     <div><StyledBreadcrumb key={2} component="a" label="Editar Rol "icon={<EditOutlinedIcon fontSize="small" />}  /></div>
               </Breadcrumbs>
            </div>

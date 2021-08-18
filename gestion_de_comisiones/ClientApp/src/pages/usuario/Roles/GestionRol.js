@@ -103,7 +103,7 @@ const  GestionRol =(props)=>  {
             <br/>
               <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
                 <Breadcrumbs aria-label="breadcrumb">
-                          <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />}  />              
+                          <StyledBreadcrumb key={1} component="a" label="Gestión de Roles"icon={<HomeIcon fontSize="small" />}  />              
                 </Breadcrumbs>
               </div>
             <br/>
@@ -111,7 +111,7 @@ const  GestionRol =(props)=>  {
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
                             <Typography variant="h6" gutterBottom>
-                                Gestion de Roles
+                              Gestión de Roles
                             </Typography>  
                             </Grid>
                         <Grid item xs={6} className={style.gridNewRol} >

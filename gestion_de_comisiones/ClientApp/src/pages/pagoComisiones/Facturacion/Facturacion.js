@@ -443,14 +443,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
       <Container maxWidth="xl" >
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                        <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                        <StyledBreadcrumb key={1} component="a" label="Gestión de pagos"icon={<HomeIcon fontSize="small" />}  />
                         <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
                         <StyledBreadcrumb key={3} label="Facturacion"  onClick={handleClick}/>
               </Breadcrumbs>
            </div>
            <br/>
            <Typography variant="h4" gutterBottom className={style.etiqueta} >
-             {'Facturacion'}
+             {'FACTURACIÓN'}
            </Typography>
            <Card> 
                 <Grid container className={style.gridContainer}> 

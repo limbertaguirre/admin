@@ -394,7 +394,7 @@ const DetalleDescuentoModal = (props) => {
                                         <TableRow>                                          
                                             <TableCell align="center"><b>EMPRESA</b></TableCell> 
                                             <TableCell align="center"><b>PRODUCTO</b></TableCell>
-                                            <TableCell align="center"><b>DESCRIPCION</b></TableCell>
+                                            <TableCell align="center"><b>DESCRIPCIÓN</b></TableCell>
                                             <TableCell align="center"><b>MONTO ($us)</b></TableCell>                                                                                                                                                                                   
                                             <TableCell align="center">   </TableCell>
                                         </TableRow>
@@ -422,7 +422,7 @@ const DetalleDescuentoModal = (props) => {
                             <Grid  item xs={12} md={4} >
                                 <Card >
                                     <Typography variant="subtitle1" gutterBottom style={{paddingLeft:'10px', paddingTop:'10px' ,textTransform: 'uppercase'}} >
-                                              <b>TOTAL APLICACION ($us):{ ' '} {subTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b>  
+                                              <b>TOTAL APLICACIÓN ($us):{ ' '} {subTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b>  
                                     </Typography>
                                 </Card>
                             </Grid>
