@@ -96,6 +96,27 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener el proyecto", "");
             }
         }
+        public object RegistrarDescuentoComisionDetalle(RegistroDescuentoInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio obtenerProyectoXproduto() ");
+                var detalleAplicaicones = Repository.RegistrarDecuentoComisionDetalle(param);
+                if (detalleAplicaicones)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se registro Exitosamente", detalleAplicaicones);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No se pudo registrar el descuento", detalleAplicaicones);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch obtenerProyectoXproduto() mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "Problemas al registrar el descuento", "");
+            }
+        }
 
 
 

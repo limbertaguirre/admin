@@ -144,6 +144,32 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public bool RegistrarDecuentoComisionDetalle(RegistroDescuentoInputModel param)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                      
+
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
+                            return true;                      
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError($" usuario: {param.usuarioLogin} -  hubo un error  RegistrarDecuentoComision() en repos mensaje : {ex.Message}");
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+
     }
 
 }

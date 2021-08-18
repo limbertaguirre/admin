@@ -132,7 +132,7 @@ const NuevoDescuentoModal = (props) => {
                                         onChange={onChange}
                                         error={errorDescripcion}
                                         helperText={ errorDescripcion &&
-                                        "La descripción debe tener como mínimo 30 caracteres."
+                                        "La descripción debe tener como mínimo 20 caracteres."
                                         }          
                                         multiline
                                         rows={4}                  

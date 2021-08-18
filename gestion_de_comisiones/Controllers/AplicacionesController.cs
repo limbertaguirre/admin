@@ -107,6 +107,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        //post Aplicaciones/RegistrarDescuentoComision
+        [HttpPost]
+        public ActionResult RegistrarDescuentoComision([FromBody] RegistroDescuentoInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller ObtenerProyectoPorProducto => Index() parametro: idciclo:{param.producto}");
+                var resulcliente = Service.RegistrarDescuentoComisionDetalle(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ObtenerProyectoPorProducto => Index()");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller RegistrarDescuentoComision()  => Index() ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al registrar el descuento." });
+            }
+        }
+
 
     }
 }

@@ -243,11 +243,11 @@ const DetalleDescuentoModal = (props) => {
       return monto > 0
     }
     const isValidCantidad =()=>{
-      return cantidad > 0
+      return cantidad >= 1
     }
     const isValidDescripcion=()=>{
 
-      return descripcion.length > 30;
+      return descripcion.length > 20;
     }
     const isValidForm =()=>{
       return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
@@ -273,7 +273,6 @@ const DetalleDescuentoModal = (props) => {
                 usuarioLogin:userName,
                 producto: producto        
               };
-              console.log('data : ',data);
               requestPost('Aplicaciones/ObtenerProyectoPorProducto',data,dispatch).then((res)=>{                        
                   if(res.code === 0){  
                     console.log('data : ', res);    
@@ -293,8 +292,25 @@ const DetalleDescuentoModal = (props) => {
      }
      const confirmarDecuento=()=>{
        //parametros idComisionDetalleSelected
-       
-       alert('en proceso');
+              const data={
+                usuarioLogin:userName,
+                producto: producto,
+                monto:parseFloat(monto),
+                cantidad:cantidad,
+                descripcion:descripcion,
+                idProyecto:idProyecto,
+                idComisionDetalle:idComisionDetalleSelected        
+              };
+              console.log('data : ',data);
+              requestPost('Aplicaciones/RegistrarDescuentoComision',data,dispatch).then((res)=>{                        
+                  if(res.code === 0){  
+                    console.log('data : ', res);    
+                    setOpenNewDescuento(false);   // cerrar modal, actualizar la lista
+
+                  }else{                       
+                      dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                  }    
+              })   
      }
   
     return (
