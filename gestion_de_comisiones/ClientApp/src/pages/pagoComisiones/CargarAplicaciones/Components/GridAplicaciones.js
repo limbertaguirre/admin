@@ -1,4 +1,4 @@
-import React, { useState}  from 'react';
+import React, { useEffect, useState}  from 'react';
 import { emphasize, makeStyles } from '@material-ui/core/styles';
 
 import * as permiso from '../../../../routes/permiso'; 
@@ -79,7 +79,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);
-
+        const [contadorPage, setContadorPage]= useState(0)
         const handleChangePage = (event, newPage) => {
             setPage(newPage);
         };    
@@ -87,6 +87,10 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
             setRowsPerPage(parseInt(event.target.value, 10));
             setPage(0);
         };
+        useEffect(()=>{     
+           setContadorPage( page * rowsPerPage);
+        },[page, rowsPerPage]);
+        
 
 
     return (
@@ -113,7 +117,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                         { stableSort(aplicacionesList, getComparator(order, orderBy))
                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index +1 }>
-                            <TableCell align="center"scope="row"> {index +1} </TableCell>
+                            <TableCell align="center"scope="row"> {contadorPage + index + 1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>

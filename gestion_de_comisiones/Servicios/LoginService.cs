@@ -13,6 +13,11 @@ using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Modelos.Modulo;
 using gestion_de_comisiones.Modelos.Pagina;
 using gestion_de_comisiones.Modelos.Rol.Perfiles;
+using Microsoft.Extensions.Configuration;
+using System.Text;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace gestion_de_comisiones.Servicios
 {
@@ -20,12 +25,36 @@ namespace gestion_de_comisiones.Servicios
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<LoginService> Logger;
-        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository)
+        private readonly IConfiguration Config;
+
+        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository, IConfiguration config)
         {
             Logger = logger;
             RolRepository = rolRepository;
+            Config = config;
         }
         public IRolRepository RolRepository { get; }
+
+        private string getToken(string usuario)
+        {
+            var secretKey = Config.GetValue<string>("SecretKey");
+            var key = Encoding.ASCII.GetBytes(secretKey);
+
+            var claims = new ClaimsIdentity();
+            claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claims,
+                Expires = DateTime.UtcNow.AddHours(4),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var createdToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            string bear_token = tokenHandler.WriteToken(createdToken);
+            return bear_token;
+        }
 
         public object VerificarUsuario(string usuario)
         {
@@ -43,6 +72,7 @@ namespace gestion_de_comisiones.Servicios
                         var nn = rol.nombre;
                         var listModulePadre = RolRepository.obtnerModulosPadres(usuario);
                         var perfil = this.cargarPerfilesModulos(rol.idRol, usuario, objetoo.IdUsuario, listModulePadre);
+                        var token = this.getToken(usuario);
 
                         var Result = Respuesta.ReturnResultdo(0, "roles obtenidos", perfil);
                         return Result;
