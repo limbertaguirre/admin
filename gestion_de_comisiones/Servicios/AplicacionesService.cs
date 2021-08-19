@@ -137,6 +137,26 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
             }
         }
+        //public object CerrarAplicacion(CerrarAplicacionInputModel param)
+        //{
+        //    try
+        //    {
+        //        Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio obtenerProyectoXproduto() ");
+        //        var detalleAplicaicones = Repository.CerrarAplicacionCiclo(param);
+        //        if (detalleAplicaicones) {
+        //            return Respuesta.ReturnResultdo(0, "Se cerro la aplicacion", detalleAplicaicones);
+        //        } else {
+        //            return Respuesta.ReturnResultdo(1, "problemas al cerrar el ciclo de aplicacion.", detalleAplicaicones);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.LogInformation($"usuario : {param.usuarioLogin} error catch AplicacionesService => getAplicacionesPendientes() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+        //        return Respuesta.ReturnResultdo(1, "problemas al cerrar la aplicacion.");
+        //    }
+
+        // }
+
 
 
 

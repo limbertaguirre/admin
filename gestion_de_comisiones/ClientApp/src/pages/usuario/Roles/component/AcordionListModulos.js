@@ -53,7 +53,7 @@ const  AcordionListModulos =(props)=>  {
             {listado.map((value,index) => {
                 return (
                     <ul key={index}>
-                        <li><b>Modulo :</b> {value.nombre}
+                        <li><b>Módulo :</b> {value.nombre}
                              <ul>
                                 {value.listmodulos.map((value1,index1) => {
                                     return (

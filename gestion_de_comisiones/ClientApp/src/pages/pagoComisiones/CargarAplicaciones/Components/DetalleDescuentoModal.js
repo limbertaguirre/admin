@@ -266,6 +266,14 @@ const DetalleDescuentoModal = (props) => {
         setDescripcion('');
         setCantidad(1);
      }
+     const limpiarCamposDescuento = ()=>{
+      setProducto('');
+      setMonto(0);
+      setIdProyecto(0);
+      setProyectoNombre('');
+      setDescripcion('');
+      setCantidad(1);
+     }
 
      const buscarProducto =()=>{
         if(producto.length > 0){
@@ -301,11 +309,13 @@ const DetalleDescuentoModal = (props) => {
                 idProyecto:idProyecto,
                 idComisionDetalle:parseInt(idComisionDetalleSelected)
               };           
+              console.log('data register descuento :', data);
               requestPost('Aplicaciones/RegistrarDescuentoComision',data,dispatch).then((res)=>{                        
                   if(res.code === 0){  
                     setOpenNewDescuento(false);   // cerrar modal, actualizar la lista
                     CargarDetalleFrelancers(userName, parseInt(idComisionDetalleSelected));
                     handleOnGetAplicaciones();
+                    limpiarCamposDescuento();
 
                   }else{                       
                       dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));

@@ -445,7 +445,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
               <Breadcrumbs aria-label="breadcrumb">
                         <StyledBreadcrumb key={1} component="a" label="Gestión de pagos"icon={<HomeIcon fontSize="small" />}  />
                         <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
-                        <StyledBreadcrumb key={3} label="Facturacion"  onClick={handleClick}/>
+                        <StyledBreadcrumb key={3} label="Facturación"  onClick={handleClick}/>
               </Breadcrumbs>
            </div>
            <br/>

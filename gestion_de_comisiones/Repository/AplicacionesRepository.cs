@@ -221,6 +221,30 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public bool CerrarAplicacionCiclo(CerrarAplicacionInputModel model)
+        {
+            Logger.LogInformation($" usuario: {model.usuarioLogin} -  inicio el SubirArchivo() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {                      
+                             Logger.LogWarning($" usuario: {model.usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa.");
+                            dbcontextTransaction.Commit();
+                            return false;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogWarning($" usuario: {model.usuarioLogin} -errror catch CerrarAplicacionCiclo. mensaje : {ex.Message}");
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
 
     }
 

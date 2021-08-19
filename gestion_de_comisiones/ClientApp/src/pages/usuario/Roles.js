@@ -538,7 +538,7 @@ const  Roles =()=>  {
                                       >
                                         <div >                                        
                                              <Typography className={style.heading} >
-                                                <b>{'Modulo : '}</b>
+                                                <b>{'Módulo : '}</b>
                                                 { value.nombre}
                                              </Typography>
                                         </div>
