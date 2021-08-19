@@ -1,8 +1,8 @@
 import React, {useEffect, useState}  from 'react';
 
-import {Container, Chip, InputAdornment, Dialog,Card, DialogContent, Button,
-   Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl,
-    InputLabel, Select, FormHelperText,MenuItem, Breadcrumbs } from "@material-ui/core";
+import {Container, Chip, InputAdornment,Card, Button,
+   Grid, TextField, Typography,FormControl,
+    InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HomeIcon from "@material-ui/icons/Home";
@@ -14,7 +14,10 @@ import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import GridAplicaciones from './Components/GridAplicaciones';
 import SearchIcon from '@material-ui/icons/Search';
+import SaveIcon from '@material-ui/icons/Save';
 import DetalleDescuentoModal from './Components/DetalleDescuentoModal';
+import MessageConfirm from "../../../components/mesageModal/MessageConfirm";
+import SnackbarSion from "../../../components/message/SnackbarSion";
 
 
 const StyledBreadcrumb = withStyles((theme) => ({
@@ -53,6 +56,8 @@ const CargarAplicaciones = (props) => {
 
   const[ciclos, setCiclos]= useState([]);
   const[idCiclo, setIdCiclo]= useState(0);
+  const[idCicloSelected, setIdCicloSelected]= useState(0);
+  const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
   const[listaComisionesCerrados, setListaComisionesCerrados]= useState([]);
   const[statusBusqueda, setStatusBusqueda]= useState(false);
   useEffect(()=>{ 
@@ -71,7 +76,8 @@ const CargarAplicaciones = (props) => {
    };
 
    const handleOnGetAplicaciones=()=>{    
-    if(idCiclo && idCiclo != 0){       
+    if(idCiclo && idCiclo != 0){  
+      setIdCicloSelected(idCiclo);     
       const data={
         usuarioLogin:userName,
         idCiclo: idCiclo
@@ -93,10 +99,19 @@ const CargarAplicaciones = (props) => {
     }
     
   }
+  const seleccionarNombreCombo = (nombre)=>{
+    setNameComboSeleccionado(nombre);
+  }
 
   function handleClick(event) {
     event.preventDefault();    
   }
+  const closeSnackbar= (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   const onChangeSelectCiclo= (e) => {
     const texfiel = e.target.name;
@@ -142,7 +157,7 @@ const CargarAplicaciones = (props) => {
       })   
     }else{
       setOpenSnackbar(true);
-      setMensajeSnackbar('¡Debe Seleccionar un permiso!');
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
       settipTSnackbar('warning');
     }
     
@@ -171,7 +186,30 @@ const CargarAplicaciones = (props) => {
       }
       
   }
-  
+    const[openConfirm, setOpenConfirm]= useState(false);
+
+    const  CerrarAplicacion =()=>{
+      if(idCicloSelected != 0){ 
+        setOpenConfirm(true);
+       }else{
+        setOpenSnackbar(true);
+        setMensajeSnackbar('¡Debe tener Seleccionado el ciclo para su cierre!');
+        settipTSnackbar('warning');
+
+       }
+
+
+    }
+    const CancelarConfirm=()=>{
+       setOpenConfirm(false);
+    } 
+    const AceptarConfirm=()=>{
+
+      setOpenConfirm(false);
+
+    }
+
+
   return (
     <>
          <Container maxWidth="xl" >
@@ -189,25 +227,25 @@ const CargarAplicaciones = (props) => {
       <Card>
          <Grid container className={style.gridContainer} >
            <Grid item xs={12} md={3} className={style.containerSave} >
-                     
-                     {/*   <>
-                       
-                           <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className={style.submitSAVE}
-                            onClick = {()=> CerrarFactura()}                                         
-                            >
-                             <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA
-                            </Button> 
-                            :
-                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                                <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FACTURA </Button> 
-                              </Tooltip>
-                            
-                        </> */}
+                   {statusBusqueda&&
+                      <>
+                        
+                          <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          className={style.submitSAVE}
+                          onClick = {()=> CerrarAplicacion()}                                         
+                          >
+                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN
+                          </Button> 
+                          {/* :
+                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                              <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN </Button> 
+                            </Tooltip> */}
                           
+                      </> 
+                   }   
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
                     {statusBusqueda&&
@@ -239,8 +277,7 @@ const CargarAplicaciones = (props) => {
             <Grid item xs={12} md={3} className={style.containerCiclo}>
                         <FormControl  variant="outlined"  
                         fullWidth                       
-                        className={style.TextFiel}
-                        >
+                        className={style.TextFiel}  >
                           <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
                           <Select
                               labelId="demo-simple-select-outlined-labelciclo"                              
@@ -252,7 +289,7 @@ const CargarAplicaciones = (props) => {
                               <MenuItem value={0}>
                                   <em>Seleccione un ciclo</em>
                               </MenuItem>
-                              {ciclos.map((value,index)=> ( <MenuItem key={index} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
+                              {ciclos.map((value,index)=> ( <MenuItem key={index} onClick={()=> seleccionarNombreCombo(`${value.nombre}`)} value={value.idCiclo}>{value.nombre}</MenuItem> ))}  
                           </Select>                               
                       </FormControl>
               </Grid>
@@ -271,8 +308,11 @@ const CargarAplicaciones = (props) => {
          </Grid>
       </Card>
        <br />
+       <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
       <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
       <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} CargarDetalleFrelancers={CargarDetalleFrelancers} handleOnGetAplicaciones={handleOnGetAplicaciones} />
+      <MessageConfirm open={openConfirm} titulo={'CERRAR APLICACIÓN'} subTituloModal={'¿Estás seguro de cerrar la Aplicacion del CICLO ' + nameComboSeleccionado.toUpperCase()+  '?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={AceptarConfirm} handleCloseCancel={CancelarConfirm}  />
+
       </Container>  
     </>
   );
