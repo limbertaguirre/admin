@@ -140,23 +140,22 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-        //[HttpPost]
-        //public async Task<IActionResult> CerrarAplicacion([FromBody] CerrarAplicacionInputModel param)
-        //{
-        //    //TODO:jaflores Register log
-        //    try
-        //    {
-        //        var responseApi = new ResponseApi<bool>(await usuarioService.SetRolByUsuario(model));
-
-        //        return Ok(responseApi);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Ok(new ResponseApi<bool>(ex.Message) { Data = false });
-        //    }
-        //}
-
-
+        [HttpPost]
+        public ActionResult CerrarAplicacion([FromBody] CerrarAplicacionInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarAplicacion() parametro: idciclo:{param.idCiclo}");
+                var resulcliente = Service.CerrarAplicacion(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller CerrarAplicacion()  ");
+                return Ok(resulcliente);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch, fin controller CerrarAplicacion() mensaje:{ex.Message}");
+                return Ok(new ResponseApi<bool>(ex.Message) { Data = false });
+            }
+        }
 
     }
 }

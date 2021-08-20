@@ -1312,10 +1312,6 @@ BEGIN TRY
          SELECT -1 AS 'No exite el ciclo en la tabla';
 	 END
   
-  --------------------------------------------------------------
-    select * from BDMultinivel.dbo.LOG_DETALLE_COMISION_EMPRESA_FAIL
-	SELECT * FROM OPENQUERY( [10.2.10.222], 'select * from rpt_neto_facturacion_ciclo where lciclo_id = 80')
-	select * from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA
  ----------------------------------------------------------------------------------------------------
 END TRY
 BEGIN CATCH

@@ -15,5 +15,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object obtenerProyectoXproduto(GetProyectoImputModel param);
         public object RegistrarDescuentoComisionDetalle(RegistroDescuentoInputModel param);
         public object ListarComisionesCerradosPorCarnet(BuscarInputModel param);
+        public object CerrarAplicacion(CerrarAplicacionInputModel param);
+
     }
 }

@@ -229,11 +229,47 @@ namespace gestion_de_comisiones.Repository
                 using (var dbcontextTransaction = context.Database.BeginTransaction())
                 {
                     try
-                    {                      
-                             Logger.LogWarning($" usuario: {model.usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa.");
+                    {
+                        int idEstadoComisionCerradoAplicacion = 5; //#variable
+                        var comisionEstado = context.GpComisions.Join(context.GpComisionEstadoComisionIs,
+                                                                     GpComision => GpComision.IdComision,
+                                                                     GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                                     (GpComision, GpComisionEstadoComisionI) => new
+                                                                     {
+                                                                         idCiclo = GpComision.IdCiclo,
+                                                                         idComision = GpComision.IdComision,
+                                                                         habilitado = GpComisionEstadoComisionI.Habilitado,
+                                                                         idEstadoComision = GpComisionEstadoComisionI.IdComisionEstadoComisionI
+                                                                     }).Where(x => x.idCiclo == model.idCiclo && x.habilitado == true).FirstOrDefault();
+                         if(comisionEstado != null)
+                        {
+                            Logger.LogWarning($" usuario: {model.usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa.");
+                            var estadoObj = context.GpComisionEstadoComisionIs.Where(x => x.IdComisionEstadoComisionI == comisionEstado.idEstadoComision).FirstOrDefault();
+                            estadoObj.Habilitado = false;
+                            context.SaveChanges();
+
+                            GpComisionEstadoComisionI newobj = new GpComisionEstadoComisionI();
+                            newobj.Habilitado = true;
+                            newobj.IdComision = comisionEstado.idComision;
+                            newobj.IdEstadoComision = idEstadoComisionCerradoAplicacion;
+                            newobj.IdUsuario = model.usuarioId;
+                            newobj.FechaActualizacion = DateTime.Now;
+                            newobj.FechaCreacion = DateTime.Now;
+                            context.GpComisionEstadoComisionIs.Add(newobj);
+                            context.SaveChanges();
+
                             dbcontextTransaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {model.usuarioLogin} - no existe la comision de ciclo con el estado en habilitado");
+                            dbcontextTransaction.Rollback();
                             return false;
 
+                        }
+
+                            
                     }
                     catch (Exception ex)
                     {

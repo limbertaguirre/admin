@@ -189,7 +189,7 @@ const CargarAplicaciones = (props) => {
     const[openConfirm, setOpenConfirm]= useState(false);
 
     const  CerrarAplicacion =()=>{
-      if(idCicloSelected != 0){ 
+      if(idCicloSelected != 0 && idCiclo != 0){ 
         setOpenConfirm(true);
        }else{
         setOpenSnackbar(true);
@@ -204,8 +204,28 @@ const CargarAplicaciones = (props) => {
        setOpenConfirm(false);
     } 
     const AceptarConfirm=()=>{
-
-      setOpenConfirm(false);
+      if(idCiclo && idCiclo != 0){ 
+        const data={
+          usuarioLogin:userName,
+          usuarioId: idUsuario,
+          idCiclo:idCiclo
+        };
+        requestPost('Aplicaciones/CerrarAplicacion',data,dispatch).then((res)=>{                 
+            if(res.code === 0){  
+                setOpenConfirm(false);  
+                setListaComisionesCerrados([]);
+                setCiclos([]);
+                setStatusBusqueda(false); 
+                handleOnGetCiclos();
+            }else{              
+                dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+            }    
+        })   
+      }else{
+        setOpenSnackbar(true);
+        setMensajeSnackbar('¡Debe tener Seleccionado el ciclo para el cierre de aplicación!');
+        settipTSnackbar('warning');
+      }
 
     }
 
