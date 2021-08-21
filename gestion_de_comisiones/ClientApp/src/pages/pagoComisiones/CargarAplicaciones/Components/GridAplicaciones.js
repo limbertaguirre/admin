@@ -90,6 +90,30 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
         useEffect(()=>{     
            setContadorPage( page * rowsPerPage);
         },[page, rowsPerPage]);
+
+        const[totalBruto, setTotalBruto]= useState(0);
+        const[totalRetencion, setTotalRetencion]= useState(0);
+        const[totalDescuento, setTotalDescuento]= useState(0);
+        const[totalNeto, setTotalNeto]= useState(0);
+        useEffect(()=>{    
+                 if(aplicacionesList.length > 0){
+                     let ptotalBruto=0;
+                     let ptotalRetencion= 0;
+                     let ptotalDescuento=0;
+                     let ptotalNeto=0;
+
+                     aplicacionesList.forEach(function (value) {
+                      ptotalBruto = ptotalBruto + value.montoBruto;
+                      ptotalRetencion= ptotalRetencion + value.montoRetencion;
+                      ptotalDescuento = ptotalDescuento + value.montoAplicacion;
+                      ptotalNeto= ptotalNeto + value.montoNeto;
+                     }); 
+                     setTotalBruto(ptotalBruto);
+                     setTotalRetencion(ptotalRetencion);
+                     setTotalDescuento(ptotalDescuento);
+                     setTotalNeto(ptotalNeto);
+                 }
+        },[aplicacionesList])
         
 
 
@@ -144,6 +168,19 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             </TableCell>   
                             </TableRow>
                         ))}
+
+                          <TableRow key={100000000000000}>
+                            <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="right"><b>TOTAL</b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b> {totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
+                              <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"><b> {totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"></TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

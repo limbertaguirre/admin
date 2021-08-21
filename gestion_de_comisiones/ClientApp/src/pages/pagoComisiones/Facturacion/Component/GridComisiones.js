@@ -81,6 +81,31 @@ import Paper from '@material-ui/core/Paper';
             setContadorPage( page * rowsPerPage);
          },[page, rowsPerPage]);
 
+         const[totalBruto, setTotalBruto]= useState(0);
+         const[totalDescuento, setTotalDescuento]= useState(0);
+         const[totalRetencion, setTotalRetencion]= useState(0);         
+         const[totalNeto, setTotalNeto]= useState(0);
+
+         useEffect(()=>{    
+                  if(listaComisionesPendientes.length > 0){
+                      let ptotalBruto=0;
+                      let ptotalRetencion= 0;
+                      let ptotalDescuento=0;
+                      let ptotalNeto=0;
+ 
+                      listaComisionesPendientes.forEach(function (value) {
+                        ptotalBruto = ptotalBruto + value.montoBruto;
+                        ptotalDescuento = ptotalDescuento + value.montoAplicacion;
+                        ptotalRetencion= ptotalRetencion + value.montoRetencion;                      
+                        ptotalNeto= ptotalNeto + value.montoNeto;
+                      }); 
+                      setTotalBruto(ptotalBruto);
+                      setTotalDescuento(ptotalDescuento);
+                      setTotalRetencion(ptotalRetencion);                      
+                      setTotalNeto(ptotalNeto);
+                  }
+         },[listaComisionesPendientes])
+
     return (
       <>
         {listaComisionesPendientes.length>0? 
@@ -133,6 +158,18 @@ import Paper from '@material-ui/core/Paper';
                             </TableCell>                               
                             </TableRow>
                         ))}
+                            <TableRow key={100000000000000 }>
+                                <TableCell align="center"scope="row"> {''} </TableCell>
+                                <TableCell align="left"> <b>{''}</b></TableCell>
+                                <TableCell align="center"><b>{'TOTAL'}</b></TableCell>
+                                <TableCell align="center">{''}</TableCell>   
+                                <TableCell align="right"><b>{totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</b></TableCell>                                   
+                                <TableCell align="right"><b>{totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</b></TableCell>
+                                <TableCell align="right"><b>{totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></TableCell>    
+                                <TableCell align="right"><b>{totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></TableCell> 
+                                <TableCell align="center"> {''}  </TableCell> 
+                                <TableCell align="center"> {''}  </TableCell> 
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
