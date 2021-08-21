@@ -11,7 +11,7 @@ const  ListSelectModules =({listaSelecionada})=>  {
             {listaSelecionada.map((value,index) => {
                 return (
                     <ul style={{listStyle:'none'}}>
-                        <li style={{listStyle:'none'}}> <ViewModuleIcon  fontSize="small" /> <b>Modulo :</b> {value.nombre}
+                        <li style={{listStyle:'none'}}> <ViewModuleIcon  fontSize="small" /> <b>Módulo :</b> {value.nombre}
                              <ul style={{listStyle:'none'}}>
                                 {value.listmodulos.map((value1,index) => {
                                     return (

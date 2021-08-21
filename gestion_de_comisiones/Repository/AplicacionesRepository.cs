@@ -144,6 +144,144 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public bool RegistrarDecuentoComisionDetalle(RegistroDescuentoInputModel param)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var objDetalle = context.GpComisionDetalles.Where(x => x.IdComisionDetalle == param.idComisionDetalle).FirstOrDefault();
+                        objDetalle.MontoAplicacion = objDetalle.MontoAplicacion + param.monto;
+                        objDetalle.MontoNeto = objDetalle.MontoNeto - param.monto;
+                        context.SaveChanges();
+
+                        AplicacionDetalleProducto objApli = new AplicacionDetalleProducto();
+                        objApli.CodigoProducto = param.producto;
+                        objApli.Monto = param.monto;
+                        objApli.IdComisionesDetalle = param.idComisionDetalle;
+                        objApli.Descripcion = param.descripcion;
+                        objApli.Cantidad = param.cantidad;
+                        objApli.IdUsuario = param.usuarioId;
+                        objApli.Subtotal = param.monto;
+                        objApli.IdProyecto = param.idProyecto;
+                        objApli.IdBdqishur = 0;
+                        objApli.FechaActualizacion = DateTime.Now;
+                        objApli.FechaCreacion = DateTime.Now;
+                        context.AplicacionDetalleProductoes.Add(objApli);
+                        context.SaveChanges();
+                        Logger.LogInformation($" usuario: {param.usuarioLogin} -  se registro el descuento con el idAplicacionDetalleProducto = {objApli.IdAplicacionDetalleProducto}");
+                        dbcontextTransaction.Commit();
+                        Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
+                        return true;                      
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError($" usuario: {param.usuarioLogin} -  hubo un error  RegistrarDecuentoComision() en repos mensaje : {ex.Message}");
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+        public ComisionDetalleModel ObtenerComisionDetalle( string usuarioNombre ,int idDetalleComision)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuarioNombre} inicio el repository obtenerComisionesPendientes() ");
+                Logger.LogWarning($" usuario: {usuarioNombre} parametros: iDetalleComision:{idDetalleComision}");
+                var objDetalle = contextMulti.GpComisionDetalles.Where(x => x.IdComisionDetalle == idDetalleComision).Select(p => new ComisionDetalleModel(p.IdComisionDetalle, p.MontoBruto, p.PorcentajeRetencion, p.MontoRetencion, p.MontoAplicacion, p.MontoNeto, p.IdComision, p.IdFicha, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();                
+                return objDetalle;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {usuarioNombre} error catch getComisiones() mensaje : {ex}");
+                ComisionDetalleModel obj = new ComisionDetalleModel();
+                return obj;
+            }
+        }
+
+        public object GetComisionesPorCarnet(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, string carnet)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository GetComisionesPorCarnet() ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = contextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(carnet.Trim())).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
+        public bool CerrarAplicacionCiclo(CerrarAplicacionInputModel model)
+        {
+            Logger.LogInformation($" usuario: {model.usuarioLogin} -  inicio el SubirArchivo() en repos");
+            using (BDMultinivelContext context = new BDMultinivelContext())
+            {
+                using (var dbcontextTransaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        int idEstadoComisionCerradoAplicacion = 5; //#variable
+                        var comisionEstado = context.GpComisions.Join(context.GpComisionEstadoComisionIs,
+                                                                     GpComision => GpComision.IdComision,
+                                                                     GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                                     (GpComision, GpComisionEstadoComisionI) => new
+                                                                     {
+                                                                         idCiclo = GpComision.IdCiclo,
+                                                                         idComision = GpComision.IdComision,
+                                                                         habilitado = GpComisionEstadoComisionI.Habilitado,
+                                                                         idEstadoComision = GpComisionEstadoComisionI.IdComisionEstadoComisionI
+                                                                     }).Where(x => x.idCiclo == model.idCiclo && x.habilitado == true).FirstOrDefault();
+                         if(comisionEstado != null)
+                        {
+                            Logger.LogWarning($" usuario: {model.usuarioLogin} - RETURN!! no se encontro la comision detalle para actualizar iddetalleempresa.");
+                            var estadoObj = context.GpComisionEstadoComisionIs.Where(x => x.IdComisionEstadoComisionI == comisionEstado.idEstadoComision).FirstOrDefault();
+                            estadoObj.Habilitado = false;
+                            context.SaveChanges();
+
+                            GpComisionEstadoComisionI newobj = new GpComisionEstadoComisionI();
+                            newobj.Habilitado = true;
+                            newobj.IdComision = comisionEstado.idComision;
+                            newobj.IdEstadoComision = idEstadoComisionCerradoAplicacion;
+                            newobj.IdUsuario = model.usuarioId;
+                            newobj.FechaActualizacion = DateTime.Now;
+                            newobj.FechaCreacion = DateTime.Now;
+                            context.GpComisionEstadoComisionIs.Add(newobj);
+                            context.SaveChanges();
+
+                            dbcontextTransaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            Logger.LogWarning($" usuario: {model.usuarioLogin} - no existe la comision de ciclo con el estado en habilitado");
+                            dbcontextTransaction.Rollback();
+                            return false;
+
+                        }
+
+                            
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogWarning($" usuario: {model.usuarioLogin} -errror catch CerrarAplicacionCiclo. mensaje : {ex.Message}");
+                        dbcontextTransaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+
     }
 
 }

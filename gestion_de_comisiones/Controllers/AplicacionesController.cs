@@ -107,6 +107,55 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        //post Aplicaciones/RegistrarDescuentoComision
+        [HttpPost]
+        public ActionResult RegistrarDescuentoComision([FromBody] RegistroDescuentoInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller ObtenerProyectoPorProducto => Index() parametro: idciclo:{param.producto}");
+                var resulcliente = Service.RegistrarDescuentoComisionDetalle(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller ObtenerProyectoPorProducto => Index()");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller RegistrarDescuentoComision()  => Index() ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al registrar el descuento." });
+            }
+        }
+        public ActionResult BuscarComisionCerradosXCarnet([FromBody] BuscarInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionCerradosXCarnet() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+                var resulcliente = Service.ListarComisionesCerradosPorCarnet(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller BuscarComisionCerradosXCarnet()  ");
+                return Ok(resulcliente);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionCerradosXCarnet() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por CI" };
+                return Ok(Result);
+            }
+        }
+        [HttpPost]
+        public ActionResult CerrarAplicacion([FromBody] CerrarAplicacionInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarAplicacion() parametro: idciclo:{param.idCiclo}");
+                var resulcliente = Service.CerrarAplicacion(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller CerrarAplicacion()  ");
+                return Ok(resulcliente);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch, fin controller CerrarAplicacion() mensaje:{ex.Message}");
+                return Ok(new ResponseApi<bool>(ex.Message) { Data = false });
+            }
+        }
 
     }
 }

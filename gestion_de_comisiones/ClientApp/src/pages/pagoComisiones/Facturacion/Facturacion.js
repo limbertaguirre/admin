@@ -443,14 +443,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
       <Container maxWidth="xl" >
            <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                        <StyledBreadcrumb key={1} component="a" label="Gestion de pagos"icon={<HomeIcon fontSize="small" />}  />
+                        <StyledBreadcrumb key={1} component="a" label="Gestión de pagos"icon={<HomeIcon fontSize="small" />}  />
                         <StyledBreadcrumb key={2} component="a" label="Pago de comisiones"  />
-                        <StyledBreadcrumb key={3} label="Facturacion"  onClick={handleClick}/>
+                        <StyledBreadcrumb key={3} label="Facturación"  onClick={handleClick}/>
               </Breadcrumbs>
            </div>
            <br/>
            <Typography variant="h4" gutterBottom className={style.etiqueta} >
-             {'Facturacion'}
+             {'FACTURACIÓN'}
            </Typography>
            <Card> 
                 <Grid container className={style.gridContainer}> 
@@ -540,7 +540,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridComisiones listaComisionesPendientes={listaComisionesPendientes} selecionarDetalleFrelances={selecionarDetalleFrelances} />
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar} txtBusqueda={txtBusqueda} />   
             <DetalleAdjuntoModal namePage={namePage} open={open} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel} Ficha={Ficha} listaDetalleEmpresa={listaDetalleEmpresa} estadoComisionGlobalFacturado={estadoComisionGlobalFacturado} checkdComisionDetalleEmpresa={checkdComisionDetalleEmpresa} desCheckdComisionDetalleEmpresa={desCheckdComisionDetalleEmpresa} procesarPdf={procesarPdf} cancelarTodo={cancelarTodo} AceptarTodo={AceptarTodo} />
-            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACION'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ' + nameComboSeleccionado.toUpperCase()+ '?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
+            <MessageConfirm open={openModalConfiCerrarFactura} titulo={'CERRAR FACTURACIÓN'} subTituloModal={'¿Estás seguro de cerrar la facturación del CICLO ' + nameComboSeleccionado.toUpperCase()+ '?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={condirmarCierreFacturar} handleCloseCancel={cerrarModalCierre}  />
       </Container>    
       </>
     );

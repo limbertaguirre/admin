@@ -758,7 +758,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                 <MenuItem value={0}>
                                     <em>Seleccione un Nivel</em>
                                 </MenuItem>
-                                {listNiveles.map((value,index)=> ( <MenuItem key={index} value={value.idNivel}>{value.nombre}</MenuItem> ))}  
+                                {listNiveles.map((value,index)=> ( <MenuItem key={index} value={value.idNivel}>{value.nombre.toUpperCase()}</MenuItem> ))}  
                             </Select>
                            {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
                         </FormControl>

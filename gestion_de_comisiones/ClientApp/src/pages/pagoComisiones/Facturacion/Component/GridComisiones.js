@@ -1,7 +1,5 @@
-import React, { useState}  from 'react';
+import React, { useState, useEffect}  from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-// import * as permiso from '../../../../routes/permiso'; 
-// import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles'; 
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -40,8 +38,37 @@ import Paper from '@material-ui/core/Paper';
     let style= useStyles();
     const {listaComisionesPendientes, selecionarDetalleFrelances, txtBusqueda} = props;
 
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = React.useState('calories');
+
+        function descendingComparator(a, b, orderBy) {
+            if (b[orderBy] < a[orderBy]) {
+            return -1;
+            }
+            if (b[orderBy] > a[orderBy]) {
+            return 1;
+            }
+            return 0;
+        }
+        function getComparator(order, orderBy) {
+            return order === 'desc'
+              ? (a, b) => descendingComparator(a, b, orderBy)
+              : (a, b) => -descendingComparator(a, b, orderBy);
+        }
+        function stableSort(array, comparator) {            
+            const stabilizedThis = array.map((el, index) => [el, index]);
+            stabilizedThis.sort((a, b) => {
+              const order = comparator(a[0], b[0]);
+              if (order !== 0) return order;
+              return a[1] - b[1];
+            });
+            return stabilizedThis.map((el) => el[0]);
+          }
+
+
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);
+        const [contadorPage, setContadorPage]= useState(0)
 
         const handleChangePage = (event, newPage) => {
             setPage(newPage);
@@ -50,7 +77,34 @@ import Paper from '@material-ui/core/Paper';
             setRowsPerPage(parseInt(event.target.value, 10));
             setPage(0);
         };
+        useEffect(()=>{     
+            setContadorPage( page * rowsPerPage);
+         },[page, rowsPerPage]);
 
+         const[totalBruto, setTotalBruto]= useState(0);
+         const[totalDescuento, setTotalDescuento]= useState(0);
+         const[totalRetencion, setTotalRetencion]= useState(0);         
+         const[totalNeto, setTotalNeto]= useState(0);
+
+         useEffect(()=>{    
+                  if(listaComisionesPendientes.length > 0){
+                      let ptotalBruto=0;
+                      let ptotalRetencion= 0;
+                      let ptotalDescuento=0;
+                      let ptotalNeto=0;
+ 
+                      listaComisionesPendientes.forEach(function (value) {
+                        ptotalBruto = ptotalBruto + value.montoBruto;
+                        ptotalDescuento = ptotalDescuento + value.montoAplicacion;
+                        ptotalRetencion= ptotalRetencion + value.montoRetencion;                      
+                        ptotalNeto= ptotalNeto + value.montoNeto;
+                      }); 
+                      setTotalBruto(ptotalBruto);
+                      setTotalDescuento(ptotalDescuento);
+                      setTotalRetencion(ptotalRetencion);                      
+                      setTotalNeto(ptotalNeto);
+                  }
+         },[listaComisionesPendientes])
 
     return (
       <>
@@ -73,9 +127,10 @@ import Paper from '@material-ui/core/Paper';
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {listaComisionesPendientes.map((row, index) => (
+                        {stableSort(listaComisionesPendientes, getComparator(order, orderBy))
+                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index + 1 }>
-                            <TableCell align="center"scope="row"> {index +1} </TableCell>
+                            <TableCell align="center"scope="row"> {contadorPage + index +1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.factura === "True"? <CheckBoxIcon color="disabled" /> : <CheckBoxOutlineBlankIcon color="disabled"/>}</TableCell>   
@@ -103,6 +158,18 @@ import Paper from '@material-ui/core/Paper';
                             </TableCell>                               
                             </TableRow>
                         ))}
+                            <TableRow key={100000000000000 }>
+                                <TableCell align="center"scope="row"> {''} </TableCell>
+                                <TableCell align="left"> <b>{''}</b></TableCell>
+                                <TableCell align="center"><b>{'TOTAL'}</b></TableCell>
+                                <TableCell align="center">{''}</TableCell>   
+                                <TableCell align="right"><b>{totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</b></TableCell>                                   
+                                <TableCell align="right"><b>{totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</b></TableCell>
+                                <TableCell align="right"><b>{totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></TableCell>    
+                                <TableCell align="right"><b>{totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></TableCell> 
+                                <TableCell align="center"> {''}  </TableCell> 
+                                <TableCell align="center"> {''}  </TableCell> 
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

@@ -1,5 +1,5 @@
 
-ALTER PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
+CREATE PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
    @id_Ciclo     int
 AS
 
@@ -72,7 +72,12 @@ BEGIN TRY
 											);
 									update BDMultinivel.dbo.COMISION_DETALLE_EMPRESA set si_facturo=@ESTADO_NOFACTURA where id_comision_detalle=@IDCOMISIONDETALLEItem
 								END
-						END									    
+						END	
+						  ELSE
+						BEGIN
+						  --aqui como presento factura su retencion lo ponemos en cero, 
+						  update BDMultinivel.dbo.GP_COMISION_DETALLE  set monto_retencion= 0 where id_comision_detalle= @IDCOMISIONDETALLEItem
+						END
 				END
 				ELSE
 				BEGIN

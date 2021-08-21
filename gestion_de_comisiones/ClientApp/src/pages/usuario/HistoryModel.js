@@ -75,7 +75,7 @@ const  HistoryModel =(props)=>  {
             {listHisotrico.map((value,index) => {
                 return (
                     <ul>
-                        <li><b>Modulo :</b> {value.nombreModulo}
+                        <li><b>Módulo :</b> {value.nombreModulo}
                             <ul>
                                 {value.paginas.map((value1,index) => {
                                     return (

@@ -147,7 +147,7 @@ const useStyles2 = makeStyles((theme) => ({
         <Header
           absolute
           color="transparent"
-          brand="Gestion de calidad"
+          brand="Gestión de calidad"
           rightLinks={<HeaderLinks />}
           {...rest}
         />

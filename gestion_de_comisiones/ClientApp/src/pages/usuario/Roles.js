@@ -432,7 +432,7 @@ const  Roles =()=>  {
          <>   
             <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}> 
               <Breadcrumbs aria-label="breadcrumb">
-                       <div onClick={()=> history.goBack()}>  <StyledBreadcrumb key={1} component="a" label="Gestion de Roles"icon={<HomeIcon fontSize="small" />} /> </div>
+                       <div onClick={()=> history.goBack()}>  <StyledBreadcrumb key={1} component="a" label="Gestión de Roles"icon={<HomeIcon fontSize="small" />} /> </div>
                       <div> <StyledBreadcrumb key={2} component="a" label="Nuevo Rol" icon={<AddCircleOutlineIcon fontSize="small" />} /> </div>   
               </Breadcrumbs>
            </div>     
@@ -464,7 +464,7 @@ const  Roles =()=>  {
            </Grid>
            <Grid item xs={12} className={style.contentTitle} >
                          <TextField                            
-                            label="Descripcion"
+                            label="Descripción"
                             type={'text'}
                             variant="outlined"
                             name="rolDescripcion"
@@ -538,7 +538,7 @@ const  Roles =()=>  {
                                       >
                                         <div >                                        
                                              <Typography className={style.heading} >
-                                                <b>{'Modulo : '}</b>
+                                                <b>{'Módulo : '}</b>
                                                 { value.nombre}
                                              </Typography>
                                         </div>

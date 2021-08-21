@@ -141,8 +141,8 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected} = props;
-      const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
+      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected, CargarDetalleFrelancers, handleOnGetAplicaciones} = props;
+      const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
 
      const[ openNewDescuento,setOpenNewDescuento ] = useState(false);
@@ -243,11 +243,11 @@ const DetalleDescuentoModal = (props) => {
       return monto > 0
     }
     const isValidCantidad =()=>{
-      return cantidad > 0
+      return cantidad >= 1
     }
     const isValidDescripcion=()=>{
 
-      return descripcion.length > 30;
+      return descripcion.length > 5;
     }
     const isValidForm =()=>{
       return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
@@ -266,6 +266,14 @@ const DetalleDescuentoModal = (props) => {
         setDescripcion('');
         setCantidad(1);
      }
+     const limpiarCamposDescuento = ()=>{
+      setProducto('');
+      setMonto(0);
+      setIdProyecto(0);
+      setProyectoNombre('');
+      setDescripcion('');
+      setCantidad(1);
+     }
 
      const buscarProducto =()=>{
         if(producto.length > 0){
@@ -273,7 +281,6 @@ const DetalleDescuentoModal = (props) => {
                 usuarioLogin:userName,
                 producto: producto        
               };
-              console.log('data : ',data);
               requestPost('Aplicaciones/ObtenerProyectoPorProducto',data,dispatch).then((res)=>{                        
                   if(res.code === 0){  
                     console.log('data : ', res);    
@@ -291,10 +298,29 @@ const DetalleDescuentoModal = (props) => {
             console.log('ingrese algun caracter');
         }
      }
-     const confirmarDecuento=()=>{
-       //parametros idComisionDetalleSelected
-       
-       alert('en proceso');
+     const confirmarDecuento=()=>{      
+              const data={
+                usuarioLogin:userName,
+                usuarioId: idUsuario,
+                producto: producto,
+                monto:parseFloat(monto),
+                cantidad:cantidad,
+                descripcion:descripcion,
+                idProyecto:idProyecto,
+                idComisionDetalle:parseInt(idComisionDetalleSelected)
+              };           
+              console.log('data register descuento :', data);
+              requestPost('Aplicaciones/RegistrarDescuentoComision',data,dispatch).then((res)=>{                        
+                  if(res.code === 0){  
+                    setOpenNewDescuento(false);   // cerrar modal, actualizar la lista
+                    CargarDetalleFrelancers(userName, parseInt(idComisionDetalleSelected));
+                    handleOnGetAplicaciones();
+                    limpiarCamposDescuento();
+
+                  }else{                       
+                      dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                  }    
+              })   
      }
   
     return (
@@ -345,7 +371,7 @@ const DetalleDescuentoModal = (props) => {
                                       </Grid>
                                 </Grid>
                                 <Grid  item xs={12} md={6} >                              
-                                      {/*   <img src={imageFac} alt={'sion'} style={{width:'100%'}} /> */}                               
+                                                              
                                 </Grid>
                             </Grid>                                                     
                       </Grid>                     
@@ -378,7 +404,7 @@ const DetalleDescuentoModal = (props) => {
                                         <TableRow>                                          
                                             <TableCell align="center"><b>EMPRESA</b></TableCell> 
                                             <TableCell align="center"><b>PRODUCTO</b></TableCell>
-                                            <TableCell align="center"><b>DESCRIPCION</b></TableCell>
+                                            <TableCell align="center"><b>DESCRIPCIÓN</b></TableCell>
                                             <TableCell align="center"><b>MONTO ($us)</b></TableCell>                                                                                                                                                                                   
                                             <TableCell align="center">   </TableCell>
                                         </TableRow>
@@ -396,15 +422,7 @@ const DetalleDescuentoModal = (props) => {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                               {/*  <TablePagination
-                                    rowsPerPageOptions={[10,25,35]}
-                                    component="div"
-                                    count={listaAplicaciones.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onChangePage={handleChangePage}
-                                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                                    /> */}
+                            
                         </Grid> 
                         <br />
                         <Grid  container item xs={12}  >
@@ -414,7 +432,7 @@ const DetalleDescuentoModal = (props) => {
                             <Grid  item xs={12} md={4} >
                                 <Card >
                                     <Typography variant="subtitle1" gutterBottom style={{paddingLeft:'10px', paddingTop:'10px' ,textTransform: 'uppercase'}} >
-                                              <b>TOTAL APLICACION ($us):{ ' '} {subTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b>  
+                                              <b>TOTAL APLICACIÓN ($us):{ ' '} {subTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b>  
                                     </Typography>
                                 </Card>
                             </Grid>

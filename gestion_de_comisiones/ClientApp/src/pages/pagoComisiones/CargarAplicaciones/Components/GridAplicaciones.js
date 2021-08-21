@@ -1,4 +1,4 @@
-import React, { useState}  from 'react';
+import React, { useEffect, useState}  from 'react';
 import { emphasize, makeStyles } from '@material-ui/core/styles';
 
 import * as permiso from '../../../../routes/permiso'; 
@@ -50,11 +50,36 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
  const GridAplicaciones =(props)=> {
     let style= useStyles();
     const {aplicacionesList, selecionarDetalleFrelances, txtBusqueda} = props;
- 
-        //tabla
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = React.useState('calories');
+
+        function descendingComparator(a, b, orderBy) {
+            if (b[orderBy] < a[orderBy]) {
+            return -1;
+            }
+            if (b[orderBy] > a[orderBy]) {
+            return 1;
+            }
+            return 0;
+        }
+        function getComparator(order, orderBy) {
+            return order === 'desc'
+              ? (a, b) => descendingComparator(a, b, orderBy)
+              : (a, b) => -descendingComparator(a, b, orderBy);
+        }
+        function stableSort(array, comparator) {            
+            const stabilizedThis = array.map((el, index) => [el, index]);
+            stabilizedThis.sort((a, b) => {
+              const order = comparator(a[0], b[0]);
+              if (order !== 0) return order;
+              return a[1] - b[1];
+            });
+            return stabilizedThis.map((el) => el[0]);
+          }
+
         const [rowsPerPage, setRowsPerPage] = useState(30);
         const [page, setPage] = useState(0);
-
+        const [contadorPage, setContadorPage]= useState(0)
         const handleChangePage = (event, newPage) => {
             setPage(newPage);
         };    
@@ -62,6 +87,34 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
             setRowsPerPage(parseInt(event.target.value, 10));
             setPage(0);
         };
+        useEffect(()=>{     
+           setContadorPage( page * rowsPerPage);
+        },[page, rowsPerPage]);
+
+        const[totalBruto, setTotalBruto]= useState(0);
+        const[totalRetencion, setTotalRetencion]= useState(0);
+        const[totalDescuento, setTotalDescuento]= useState(0);
+        const[totalNeto, setTotalNeto]= useState(0);
+        useEffect(()=>{    
+                 if(aplicacionesList.length > 0){
+                     let ptotalBruto=0;
+                     let ptotalRetencion= 0;
+                     let ptotalDescuento=0;
+                     let ptotalNeto=0;
+
+                     aplicacionesList.forEach(function (value) {
+                      ptotalBruto = ptotalBruto + value.montoBruto;
+                      ptotalRetencion= ptotalRetencion + value.montoRetencion;
+                      ptotalDescuento = ptotalDescuento + value.montoAplicacion;
+                      ptotalNeto= ptotalNeto + value.montoNeto;
+                     }); 
+                     setTotalBruto(ptotalBruto);
+                     setTotalRetencion(ptotalRetencion);
+                     setTotalDescuento(ptotalDescuento);
+                     setTotalNeto(ptotalNeto);
+                 }
+        },[aplicacionesList])
+        
 
 
     return (
@@ -85,9 +138,10 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {aplicacionesList.map((row, index) => (
+                        { stableSort(aplicacionesList, getComparator(order, orderBy))
+                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
                             <TableRow key={index +1 }>
-                            <TableCell align="center"scope="row"> {index +1} </TableCell>
+                            <TableCell align="center"scope="row"> {contadorPage + index + 1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
@@ -114,6 +168,19 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             </TableCell>   
                             </TableRow>
                         ))}
+
+                          <TableRow key={100000000000000}>
+                            <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="right"><b>TOTAL</b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b> {totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
+                              <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"><b> {totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"></TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

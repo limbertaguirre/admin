@@ -41,7 +41,7 @@ const CargarComisiones = (props) => {
               <StyledBreadcrumb
                 key={1}
                 component="a"
-                label="Gestion de pagos"
+                label="Gestión de pagos"
                 icon={<HomeIcon fontSize="small" />}
               />
               <StyledBreadcrumb key={2} component="a" label="Pago de comisiones" />

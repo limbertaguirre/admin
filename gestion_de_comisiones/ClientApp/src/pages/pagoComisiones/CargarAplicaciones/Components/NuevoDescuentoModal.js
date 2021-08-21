@@ -1,15 +1,22 @@
 import React from 'react';
 import {
-    Button, Dialog, DialogContent, Typography,Grid, MenuItem, InputLabel, FormControl, Select, TextField
+    Button, Dialog, DialogContent, Typography,Grid, TextField
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
       width: '100%',
       '& > * + *': {
-        //marginTop: theme.spacing(2),
+        marginTop: theme.spacing(2),
       },
+      display:'flex',
+      alignItems:'center',
+      justifyContent:'center',
+      backgroundColor:'#E3F2F7',
+      borderRadius: "3px",    
+      marginBottom: theme.spacing(1)
     },
     botones:{
         background: "#1872b8", 
@@ -23,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
     TextFiel: {
         marginBottom: theme.spacing(1),
         marginTop: theme.spacing(1),
+        marginRight:theme.spacing(1),
+        paddingRight:theme.spacing(1),
+        paddingLeft:theme.spacing(1),
+        //width:'98%'
+    },
+    Titulo: {
+        marginBottom: theme.spacing(2),
+        marginTop: theme.spacing(2),
         marginRight:theme.spacing(1),
         paddingRight:theme.spacing(1),
         paddingLeft:theme.spacing(1),
@@ -44,16 +59,21 @@ const NuevoDescuentoModal = (props) => {
             aria-labelledby="customized-dialog-title"            
         >            
             <DialogContent>
-                        <div className={classes.root}>                        
-                            <Typography variant="subtitle1" className={classes.TextFiel} gutterBottom>
-                                <b>NUEVO DESCUENTO </b>
-                            </Typography>    
-                            <br />                                                                    
-                        </div>   
+                        <div className={classes.root}>    
+                            {/* <Alert icon={false} severity="info"> */}
+                               
+                                <Typography variant="subtitle1" className={classes.Titulo} gutterBottom>
+                                    <b>NUEVO DESCUENTO </b>
+                                </Typography>
+                              
+                           {/*  </Alert>   */}                                                                                                
+                        </div> 
+                      
+                        <br />   
                         <Grid  container  >
                             <Grid item xs={6}>
                                      <TextField                            
-                                        label=" Producto"
+                                        label=" Nombre Producto"
                                         type={'text'}
                                         variant="outlined"                                      
                                         name="producto"
@@ -132,7 +152,7 @@ const NuevoDescuentoModal = (props) => {
                                         onChange={onChange}
                                         error={errorDescripcion}
                                         helperText={ errorDescripcion &&
-                                        "La descripción debe tener como mínimo 30 caracteres."
+                                        "La descripción debe tener como mínimo 20 caracteres."
                                         }          
                                         multiline
                                         rows={4}                  
