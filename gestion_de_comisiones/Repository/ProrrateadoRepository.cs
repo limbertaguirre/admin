@@ -40,7 +40,23 @@ namespace gestion_de_comisiones.Repository
                 return lis;
             }
         }
-
+        public object GetComisionesPendienteAplicaciones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        {
+            try
+            {
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
+                Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = multinivelDbContext.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex}");
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
 
     }
 }

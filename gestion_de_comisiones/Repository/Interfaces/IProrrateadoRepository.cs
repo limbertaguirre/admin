@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
     public interface IProrrateadoRepository
     {
         public object GetCiclos(string usuario, int idEstadoComision);
+        public object GetComisionesPendienteAplicaciones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura);
 
     }
 }

@@ -9,11 +9,14 @@ import * as permiso from '../../../routes/permiso';
 import {requestGet, requestPost} from '../../../service/request';
 import { useHistory } from 'react-router-dom';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
+import GridAplicacionesPendientes from './Components/GridAplicacionesPendientes';
+import SnackbarSion from "../../../components/message/SnackbarSion";
 
 import SearchIcon from '@material-ui/icons/Search';
 import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import HomeIcon from '@material-ui/icons/Home';
+
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -102,14 +105,27 @@ const Prorrateo =(props)=> {
       },[]);
       const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
       const dispatch = useDispatch();
+      const [openSnackbar, setOpenSnackbar] = useState(false);
+      const [mensajeSnackbar, setMensajeSnackbar] = useState("");
+      const [tipoSnackbar, settipTSnackbar] = useState(true);
+
       const[ txtBusqueda, setTxtBusqueda]= useState('');
 
       const[ciclos, setCiclos]= useState([]);
       const[idCiclo, setIdCiclo]= useState(0);
+      const[idCicloSelected, setIdCicloSelected]= useState(0);
       const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
 
       const[listaComisionesProrrateo, setListaComisionesProrrateo]= useState([]);
       const[statusBusqueda, setStatusBusqueda]= useState(false);
+
+      const closeSnackbar= (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSnackbar(false);
+      };
+
       useEffect(()=>{ 
         handleOnGetCiclos();
       },[]);
@@ -139,6 +155,62 @@ const Prorrateo =(props)=> {
       const seleccionarNombreCombo = (nombre)=>{
             setNameComboSeleccionado(nombre);
       }
+      const buscarFreelanzer=()=>{
+        console.log('enter', txtBusqueda);
+        if(txtBusqueda.length >= 4){
+              if(idCiclo && idCiclo !== 0){
+                      const data={
+                        usuarioLogin:userName,
+                        idCiclo: idCiclo,
+                        nombreCriterio:txtBusqueda
+    
+                      };
+                      requestPost('Prorrateado/BuscarComisionPendientesAplicacionXCarnet',data,dispatch).then((res)=>{                 
+                          if(res.code === 0){  
+                              setListaComisionesProrrateo(res.data);            
+                          }else{                        
+                              dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+                          }    
+                      }) 
+                }else{
+    
+                }  
+          }
+          
+      }
+
+
+      const handleOnGetAplicacionesPendientes=()=>{    
+        if(idCiclo && idCiclo !== 0){  
+          setIdCicloSelected(idCiclo);     
+          const data={
+            usuarioLogin:userName,
+            idCiclo: idCiclo
+           };
+          requestPost('Prorrateado/ObtenerAplicacionesPendintes',data,dispatch).then((res)=>{       
+            console.log('resp: ', res)    
+              if(res.code === 0){  
+                setListaComisionesProrrateo(res.data);  
+                  setStatusBusqueda(true);                        
+              }else{
+                  dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+              }    
+          })   
+    
+    
+        }else{
+          setOpenSnackbar(true);
+          setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
+          settipTSnackbar('warning');
+        }
+        
+      }
+      const selecionarDetalleFrelances = (comisionDetalleId)=>{
+        //CargarDetalleFrelancers(userName, comisionDetalleId )
+    };
+ 
+
+
 
     return (
      <>
@@ -166,7 +238,7 @@ const Prorrateo =(props)=> {
                               className={style.submitSAVE}
                              // onClick = {()=> CerrarAplicacion()}                                         
                               >
-                                <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN
+                                <SaveIcon style={{marginRight:'5px'}} /> CERRAR PRORRATEO
                               </Button> 
                               :
                                 <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
@@ -185,11 +257,11 @@ const Prorrateo =(props)=> {
                               placeholder={'Buscar por carnet identidad'}
                               name="txtBusqueda"                    
                               value={txtBusqueda}
-                             // onChange={onChangeSelectCiclo}
+                              onChange={onChangeSelectCiclo}
                               fullWidth
                               onKeyPress={(ev) => {
                                 if (ev.key === 'Enter') {
-                                 // buscarFreelanzer();
+                                  buscarFreelanzer();
                                 }
                               }}                    
                               InputProps={{
@@ -229,13 +301,15 @@ const Prorrateo =(props)=> {
                               variant="contained"
                               color="primary"
                               className={style.submitCargar}
-                             // onClick = {()=> handleOnGetAplicaciones()}                                         
+                              onClick = {()=> handleOnGetAplicacionesPendientes()}                                         
                               > 
                                 {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
                               </Button>   
                         </Grid>
             </Grid>
           </Card>
+          <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
+          <GridAplicacionesPendientes aplicacionesList={listaComisionesProrrateo} selecionarDetalleFrelances={selecionarDetalleFrelances} />
        <br />
       </>
     );
