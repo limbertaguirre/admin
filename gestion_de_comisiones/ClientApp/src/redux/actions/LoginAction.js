@@ -13,8 +13,7 @@ export const iniciarSesion= (userName,password)=>{
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{  
-            //console.log("perfiles : ", res);        
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{        
             if(res.code === 0){
                 dispatch({
                     type: TypesHome.MENU_PAGE,
@@ -26,6 +25,8 @@ export const iniciarSesion= (userName,password)=>{
                     type: Types.LOAD_LOGIN,
                     userName:userName,
                     idUsuario:res.data.idUsuario,
+                    nombre:res.data.nombre,
+                    apellido:res.data.apellido
                 })   
             }else if(res.code === 1){ 
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));

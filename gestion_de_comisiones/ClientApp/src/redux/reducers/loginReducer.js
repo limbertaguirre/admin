@@ -8,6 +8,8 @@ const defaultState={
     listAreas: [],  
     listSucursales:[],
     idUsuario:0,
+    nombre:'',
+    apellido:''
 };
 
 export default function reducer(state = defaultState, action){
@@ -18,6 +20,8 @@ export default function reducer(state = defaultState, action){
               load:true,              
               userName:action.userName,
               idUsuario:action.idUsuario,
+              nombre:action.nombre,
+              apellido:action.apellido
             };
         case Type.LOAD_LOGIN_ERROR:
             return {
@@ -27,6 +31,8 @@ export default function reducer(state = defaultState, action){
                 userName:'',
                 loadFail:true,
                 idUsuario:0,
+                nombre:'',
+                apellido:''                
             };
         case Type.CLOSE_SESION:
             return {

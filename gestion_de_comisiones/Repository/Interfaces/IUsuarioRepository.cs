@@ -12,5 +12,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         Task<List<UsuarioSelectModel>> GetUsuariosForSelect(UsuariosSelectInputModel model);
         Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario);
         Task<bool> DeleteUsuarioRol(DeleteUserRolInputModel model);
+        public UsuarioModel ObtenerUsuarioPorUsuario(string usuario);
     }
 }
