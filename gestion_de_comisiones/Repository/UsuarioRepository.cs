@@ -207,6 +207,20 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public UsuarioModel ObtenerUsuarioPorUsuario(string usuario)
+        {
+            try
+            {
+                var objUsuario = contextMulti.Usuarios.Where(x => x.Usuario1 == usuario).Select(p => new UsuarioModel(p.IdUsuario, p.Usuario1, p.Nombres, p.Apellidos, p.Telefono, p.Corporativo, p.FechaNacimiento, p.IdRol, p.IdSucursal, p.IdArea, p.UsuarioId, p.FechaCreacion, p.FechaActualizacion)).SingleOrDefault();
+                return objUsuario;
+            }
+            catch (Exception ex)
+            {
+                UsuarioModel obj = new UsuarioModel();
+                return obj;
+            }
+        }
+
 
     }
 }

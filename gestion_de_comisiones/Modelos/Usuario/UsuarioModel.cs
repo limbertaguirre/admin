@@ -7,6 +7,10 @@ namespace gestion_de_comisiones.Modelos.Usuario
 {
     public class UsuarioModel
     {
+        public UsuarioModel()
+        {
+        }
+
         public UsuarioModel(int idUsuario, string usuario1, string nombres, string apellidos, string telefono, string corporativo, DateTime? fechaNacimiento, int? idRol, int? idSucursal, int? idArea, int? usuarioId, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdUsuario = idUsuario;

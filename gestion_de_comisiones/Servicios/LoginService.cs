@@ -27,13 +27,15 @@ namespace gestion_de_comisiones.Servicios
         private readonly ILogger<LoginService> Logger;
         private readonly IConfiguration Config;
 
-        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository, IConfiguration config)
+        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository, IConfiguration config, IUsuarioRepository usuarioRepository)
         {
             Logger = logger;
             RolRepository = rolRepository;
             Config = config;
+            UsuarioRepository = usuarioRepository;
         }
         public IRolRepository RolRepository { get; }
+        private IUsuarioRepository UsuarioRepository { get; }
 
         private string getToken(string usuario)
         {
@@ -110,7 +112,8 @@ namespace gestion_de_comisiones.Servicios
                     PerfilModel objPerfil = new PerfilModel();
                     List<PerfilHash> listaHash = new List<PerfilHash>();
                     List<MenuModel> ListMenu = new List<MenuModel>();
-                    foreach(var item in moduloPadres.OrderBy(mp=>mp.Orden))
+                    var objUser = UsuarioRepository.ObtenerUsuarioPorUsuario(usuario);
+                    foreach (var item in moduloPadres.OrderBy(mp=>mp.Orden))
                     {
                     var listModulohijo = RolRepository.obtnerSubModulosXIdPadre(usuario, item.IdModulo);
                     List<SubMenuModel> ListSubMenu = new List<SubMenuModel>();
@@ -165,7 +168,17 @@ namespace gestion_de_comisiones.Servicios
                     objPerfil.listaHash = listaHash;
                     objPerfil.usuario = usuario;
                     objPerfil.idUsuario = idUsurio;
-                    
+                    if(objUser != null)
+                    {
+                        objPerfil.nombre = objUser.Nombres;
+                        objPerfil.Apellido = objUser.Apellidos;
+                    }
+                    else
+                    {
+                        objPerfil.nombre = "";
+                        objPerfil.Apellido = "";
+                    }
+
                     return objPerfil;
             }
             catch (Exception ex)
