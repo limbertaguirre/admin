@@ -128,7 +128,7 @@ const Prorrateo =(props)=> {
 
       const handleOnGetCiclos=()=>{    
             const headers={usuarioLogin:userName};
-            requestGet('Aplicaciones/GetCiclos',headers,dispatch).then((res)=>{             
+            requestGet('Prorrateado/GetCiclos',headers,dispatch).then((res)=>{             
                 if(res.code === 0){                 
                     setCiclos(res.data);                            
                 }else{
