@@ -38,9 +38,9 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
   }));
 
 
- const GridAplicaciones =(props)=> {
+ const GridAplicacionesPendientes = (props) => {
     let style= useStyles();
-    const {aplicacionesList, selecionarDetalleFrelances, txtBusqueda} = props;
+    const {aplicacionesList, selecionarDetalleFrelances } = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -192,4 +192,4 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
       </>
     );
 }
-export default GridAplicaciones;
+export default GridAplicacionesPendientes;

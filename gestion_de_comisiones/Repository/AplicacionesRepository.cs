@@ -230,7 +230,7 @@ namespace gestion_de_comisiones.Repository
                 {
                     try
                     {
-                        int idEstadoComisionCerradoAplicacion = 5; //#variable
+                        int idEstadoComisionPendienteAplicacion = 4; //#variable
                         var comisionEstado = context.GpComisions.Join(context.GpComisionEstadoComisionIs,
                                                                      GpComision => GpComision.IdComision,
                                                                      GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
@@ -251,7 +251,7 @@ namespace gestion_de_comisiones.Repository
                             GpComisionEstadoComisionI newobj = new GpComisionEstadoComisionI();
                             newobj.Habilitado = true;
                             newobj.IdComision = comisionEstado.idComision;
-                            newobj.IdEstadoComision = idEstadoComisionCerradoAplicacion;
+                            newobj.IdEstadoComision = idEstadoComisionPendienteAplicacion;
                             newobj.IdUsuario = model.usuarioId;
                             newobj.FechaActualizacion = DateTime.Now;
                             newobj.FechaCreacion = DateTime.Now;

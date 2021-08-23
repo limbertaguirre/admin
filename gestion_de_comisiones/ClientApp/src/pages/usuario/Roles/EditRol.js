@@ -146,13 +146,13 @@ const  EditRol =(props)=>  {
                       
                   }else{
                        
-                        let objpaginaBK = objmodulo[0].listmodulos.filter(x => x.id_pagina != parseInt(pagina.id_pagina));//pagina backup----------------------
+                        let objpaginaBK = objmodulo[0].listmodulos.filter(x => x.id_pagina !== parseInt(pagina.id_pagina));//pagina backup----------------------
                         let objpagina = objmodulo[0].listmodulos.filter(x => x.id_pagina == parseInt(pagina.id_pagina));
                         const paBK= [...objpaginaBK];
                        
                         if(objpagina.length > 0){ 
                             //verificamos permiso
-                            let objPermisoBK= objpagina[0].permisos.filter(x => x.id_permiso != parseInt(permiso.id_permiso));//--------------------
+                            let objPermisoBK= objpagina[0].permisos.filter(x => x.id_permiso !== parseInt(permiso.id_permiso));//--------------------
                             let objPermiso= objpagina[0].permisos.filter(x => x.id_permiso == parseInt(permiso.id_permiso));
                             const peBK= [...objPermisoBK];
         
@@ -202,7 +202,7 @@ const  EditRol =(props)=>  {
                         }
                       }
                       //crear pagina y add permisos
-                      if(newListPermisos.length != 0){//addPagina
+                      if(newListPermisos.length !== 0){//addPagina
                         const newObjPagina={
                           id_pagina: objPagina.id_pagina,
                           nombre: objPagina.nombre,
@@ -213,7 +213,7 @@ const  EditRol =(props)=>  {
                       }
                   
               }
-              if(newLisPaginas.length != 0){//addModulo
+              if(newLisPaginas.length !== 0){//addModulo
                 const newobjModelo={
                   idModulo: objModulo.idModulo,
                   nombre: objModulo.nombre,
@@ -234,7 +234,7 @@ const  EditRol =(props)=>  {
      
       const modulos= recargarModulos(allModules);
       //console.log('all :', modulos)
-      if(modulos.length != 0){
+      if(modulos.length !== 0){
         setListaSelecionada(modulos);
         setOpen(true);
       }else{

@@ -1,6 +1,6 @@
 import React, {useEffect, useState}  from 'react';
 
-import {Container, Chip, InputAdornment,Card, Button,
+import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
    Grid, TextField, Typography,FormControl,
     InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
 import { emphasize, withStyles, makeStyles } from '@material-ui/core/styles';
@@ -42,8 +42,9 @@ const CargarAplicaciones = (props) => {
   let style= useStyles();
 
   const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-
+  const [namePage, setNamePage] = useState(""); 
   useEffect(()=>{  try{   
+      setNamePage(props.location.state.namePagina);
       verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
       }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[]);
@@ -76,7 +77,7 @@ const CargarAplicaciones = (props) => {
    };
 
    const handleOnGetAplicaciones=()=>{    
-    if(idCiclo && idCiclo != 0){  
+    if(idCiclo && idCiclo !== 0){  
       setIdCicloSelected(idCiclo);     
       const data={
         usuarioLogin:userName,
@@ -94,7 +95,7 @@ const CargarAplicaciones = (props) => {
 
     }else{
       setOpenSnackbar(true);
-      setMensajeSnackbar('¡Debe Seleccionar un permiso!');
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
       settipTSnackbar('warning');
     }
     
@@ -138,7 +139,7 @@ const CargarAplicaciones = (props) => {
       CargarDetalleFrelancers(userName, comisionDetalleId )
   }
   const CargarDetalleFrelancers =(nombreUsuario,  idDetalleComision)=>{
-    if(idCiclo && idCiclo != 0){       
+    if(idCiclo && idCiclo !== 0){       
       const data={
         usuarioLogin:nombreUsuario,
         idComisionDetalle: parseInt(idDetalleComision)
@@ -166,7 +167,7 @@ const CargarAplicaciones = (props) => {
   const buscarFreelanzer=()=>{
     console.log('enter', txtBusqueda);
     if(txtBusqueda.length > 4){
-          if(idCiclo && idCiclo != 0){
+          if(idCiclo && idCiclo !== 0){
                   const data={
                     usuarioLogin:userName,
                     idCiclo: idCiclo,
@@ -189,7 +190,7 @@ const CargarAplicaciones = (props) => {
     const[openConfirm, setOpenConfirm]= useState(false);
 
     const  CerrarAplicacion =()=>{
-      if(idCicloSelected != 0 && idCiclo != 0){ 
+      if(idCicloSelected !== 0 && idCiclo !== 0){ 
         setOpenConfirm(true);
        }else{
         setOpenSnackbar(true);
@@ -204,7 +205,7 @@ const CargarAplicaciones = (props) => {
        setOpenConfirm(false);
     } 
     const AceptarConfirm=()=>{
-      if(idCiclo && idCiclo != 0){ 
+      if(idCiclo && idCiclo !== 0){ 
         const data={
           usuarioLogin:userName,
           usuarioId: idUsuario,
@@ -249,7 +250,7 @@ const CargarAplicaciones = (props) => {
            <Grid item xs={12} md={3} className={style.containerSave} >
                    {statusBusqueda&&
                       <>
-                        
+                        {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
                           <Button
                           type="submit"
                           variant="contained"
@@ -259,11 +260,11 @@ const CargarAplicaciones = (props) => {
                           >
                             <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN
                           </Button> 
-                          {/* :
+                          :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
                               <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN </Button> 
-                            </Tooltip> */}
-                          
+                            </Tooltip> 
+                         }
                       </> 
                    }   
                   </Grid>
@@ -330,7 +331,7 @@ const CargarAplicaciones = (props) => {
        <br />
        <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
       <GridAplicaciones aplicacionesList={listaComisionesCerrados} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-      <DetalleDescuentoModal open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} CargarDetalleFrelancers={CargarDetalleFrelancers} handleOnGetAplicaciones={handleOnGetAplicaciones} />
+      <DetalleDescuentoModal  namePage={namePage} open={openDetalle} handleCloseCancel={CerrarDetalleModal} ficha={ficha} listaAplicaciones={listaDetalleAplicaciones} idComisionDetalleSelected={idComisionDetalleSelected} CargarDetalleFrelancers={CargarDetalleFrelancers} handleOnGetAplicaciones={handleOnGetAplicaciones} />
       <MessageConfirm open={openConfirm} titulo={'CERRAR APLICACIÓN'} subTituloModal={'¿Estás seguro de cerrar la Aplicacion del CICLO ' + nameComboSeleccionado.toUpperCase()+  '?'} tipoModal={'success'} mensaje={'Una vez cerrado el ciclo de facturación no podrá editar.'} handleCloseConfirm={AceptarConfirm} handleCloseCancel={CancelarConfirm}  />
 
       </Container>  

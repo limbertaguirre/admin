@@ -1,34 +1,19 @@
-import React, { Fragment,useEffect,useState } from "react";
-import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
-import { Alert, AlertTitle } from '@material-ui/lab';
+import React, { Fragment,useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import {useSelector, useDispatch} from 'react-redux';
-import { requestPost, requestGet } from "../../../service/request";
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import {Container, 
-    InputAdornment,
-    Tooltip ,
-    Zoom, 
+import {
     Dialog,
     DialogTitle,
-    DialogContent,
-    DialogContentText,
+    DialogContent,    
     DialogActions,
-    Card, 
-    Button, 
-    Grid, 
-    TextField, 
-    Typography,
+    Button,
     FormControl, 
     InputLabel, 
     Select,
     MenuItem,
-    sMenuItem,
-    Chip } from "@material-ui/core";
+     } from "@material-ui/core";
     
 
 const useStyles = makeStyles((theme) => ({
@@ -46,11 +31,15 @@ const useStyles = makeStyles((theme) => ({
         marginTop:theme.spacing(1),
         marginRight:theme.spacing(1),
         marginLeft:theme.spacing(1),
+    },
+    formControl: {
+        marginBottom: theme.spacing(1),
     }
   }));
 
 const AsignarRolesLookupDetailView = (props) => {
      //tipoModal : info, error, warning, success
+     const style= useStyles(); 
      const { 
         open, 
         idUserSelected,
@@ -63,8 +52,6 @@ const AsignarRolesLookupDetailView = (props) => {
         handleRol,
         handleUser
     } =props;
-    const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
-    
     const [rolError,setRolError] = useState(false);
     const TITLE_OPERATION=operation===0?'Nueva asignación de rol':'Editar asignación de rol ';
 
@@ -75,21 +62,8 @@ const AsignarRolesLookupDetailView = (props) => {
     const handleCancelModal=()=>{
         handleCloseCancelParent();
     }
-
-    const useStyles = makeStyles((theme) => ({
-        root: {
-          flexGrow: 1,
-        },
-        gridContainer: {
-          padding: theme.spacing(2),
-        },
-        formControl: {
-            marginBottom: theme.spacing(1),
-        }
-      }));
       
-    const style= useStyles();
-    const dispatch = useDispatch();
+       
 
     const isFormValid =()=>{
         return (idRolSelected >0 && idUserSelected >0)
@@ -160,7 +134,5 @@ const AsignarRolesLookupDetailView = (props) => {
             </Dialog>
         </Fragment>
     );
-
 };
-
 export default AsignarRolesLookupDetailView;
