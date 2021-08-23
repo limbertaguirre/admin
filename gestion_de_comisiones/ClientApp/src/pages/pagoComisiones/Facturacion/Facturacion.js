@@ -159,7 +159,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   };
 
     const cargarComisiones=()=>{
-      if(idCiclo != 0){
+      if(idCiclo !== 0){
          setIdCicloSelected(idCiclo);
          obtenerComisiones(userName, idCiclo);
       }else{
@@ -229,7 +229,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      }
      const [openModalConfiCerrarFactura,setOpenModalConfiCerrarFactura]= useState(false);
      const CerrarFactura=()=>{
-        if(idCicloSelected != 0){            
+        if(idCicloSelected !== 0){            
           setOpenModalConfiCerrarFactura(true); 
         }else{
             setOpenSnackbar(true);
@@ -277,7 +277,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      console.log('ACTUALIZAR COMI DETALL  : ', res);
           if(res.code === 0){         
             setOpen(false);
-            if(idCiclo != 0){
+            if(idCiclo !== 0){
               obtenerComisiones(userName, idCiclo);
             }
             
@@ -303,7 +303,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      };
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
           if(res.code === 0){     
-            if(idCiclo != 0){
+            if(idCiclo !== 0){
               
               setEstadoComisionGlobalFacturado(false);            
               obtenerComisiones(userName, idCiclo);
@@ -334,7 +334,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      };
      requestPost('Factura/ActualizarDetalleEmpresaEstado',data,dispatch).then((res)=>{ 
           if(res.code === 0){     
-            if(idCiclo != 0){
+            if(idCiclo !== 0){
               if(pestadoDetalle == false){
                 setEstadoComisionGlobalFacturado(false);
               }              
@@ -364,7 +364,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      requestPost('Factura/SubirArchivoFacturaPdfEmpresa',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR estado : ', res);
           if(res.code === 0){     
-              if(idCiclo != 0){              
+              if(idCiclo !== 0){              
                 ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); 
               }               
           }else{
@@ -400,7 +400,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      requestPost('Factura/AplicarFacturaTodoEstado',data,dispatch).then((res)=>{ 
      console.log('ACTUALIZAR COMI DETALL  : ', res);
           if(res.code === 0){                    
-            if(idCiclo != 0){
+            if(idCiclo !== 0){
               
               obtenerComisiones(userName, idCiclo);
               ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected );

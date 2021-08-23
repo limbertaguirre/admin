@@ -1,7 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import {
-    Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card
-} from "@material-ui/core";
+import { Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
 import { requestPost } from "../../../../service/request";
 import * as permiso from '../../../../routes/permiso'; 
@@ -14,27 +12,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import Avatar from '@material-ui/core/Avatar';
 import { blue  } from '@material-ui/core/colors';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
-
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { green } from '@material-ui/core/colors';
-
-
-import  imageFac from "../../../../../src/assets/img/facturado2.png";
 import NuevoDescuentoModal from './NuevoDescuentoModal';
 import * as ActionMensaje from '../../../../redux/actions/messageAction';
 
@@ -141,47 +125,12 @@ const useStyles = makeStyles((theme) => ({
 const DetalleDescuentoModal = (props) => {
      const classes = useStyles();
      const dispatch = useDispatch();
-      const {open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected, CargarDetalleFrelancers, handleOnGetAplicaciones} = props;
+      const {namePage, open, handleCloseCancel, ficha, listaAplicaciones, idComisionDetalleSelected, CargarDetalleFrelancers, handleOnGetAplicaciones} = props;
       const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
       const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});     
 
      const[ openNewDescuento,setOpenNewDescuento ] = useState(false);
-
-
-
-    const verFicha = () => {
-      
-    };
-
-      //tabla
-      const [rowsPerPage, setRowsPerPage] = useState(10);
-      const [page, setPage] = useState(0);
-      const handleChangePage = (event, newPage) => {
-          setPage(newPage);
-      };    
-      const handleChangeRowsPerPage = (event) => {
-          setRowsPerPage(parseInt(event.target.value, 10));
-          setPage(0);
-      };
-     const [idDetalleEmpresaSelected,setIdDetalleEmpresaSelected ]= useState(0);
-     const [idEmpresaSelected, setIdEmpresaSelected ]= useState(0);
- 
-
-     const [idComiDetallEmpreSelected, setIdComiDetallEmpreSelected]= useState(0);
-     const [siFacturoSelected, setSiFacturoSelected]= useState(false);
-
-
-     const onChangeregistroEdit= (e)=> {
-        const texfiel = e.target.name;
-        const value = e.target.value;
-        if (texfiel === "idEmpresaSelected") {
-          setIdEmpresaSelected(value);
-        }
-       
-
-     };
-     const[subTotal, setSubTotal]= useState(0);
-    
+     const[subTotal, setSubTotal]= useState(0);    
      useEffect(()=>{    
               if(listaAplicaciones.length > 0){
                   let monto = 0;
@@ -197,15 +146,12 @@ const DetalleDescuentoModal = (props) => {
       handleCloseCancel();
      }
   
-     //------------------------------------
-     // nuevo descuento
      const[producto, setProducto]=useState('');
      const[monto, setMonto]= useState(0);
      const[cantidad, setCantidad]= useState(1);
      const[descripcion, setDescripcion] = useState('');
      const[proyectoNombre, setProyectoNombre]= useState('');
-     const[idProyecto, setIdProyecto]= useState(0);
- 
+     const[idProyecto, setIdProyecto]= useState(0); 
      const[errorProducto, setErrorProducto]=useState(false);
      const[errorMonto, setErrorMonto]= useState(false);
      const[errorCantidad, setErrorCantidad]= useState(false);
@@ -217,7 +163,7 @@ const DetalleDescuentoModal = (props) => {
             if (texfiel === "producto") {
                 setProducto(value);
                 setErrorProducto(!isValidProducto());
-                if(idProyecto>0 && producto!=value ){
+                if(idProyecto>0 && producto!== value ){
                   setIdProyecto(0);
                   setProyectoNombre('');
                 }
@@ -381,6 +327,7 @@ const DetalleDescuentoModal = (props) => {
                             <Grid item xs={12} md={10} >
                             </Grid>
                             <Grid item xs={12} md={2}>
+                              {validarPermiso(perfiles, namePage + permiso.CREAR)?
                                 <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Desea agregar más descuentos.'}>
                                     <Button
                                         type="submit"                            
@@ -392,6 +339,17 @@ const DetalleDescuentoModal = (props) => {
                                           NUEVO DESCUENTO
                                     </Button>   
                                 </Tooltip>
+                                :
+                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                    <Button
+                                        type="submit"                            
+                                        variant="contained"
+                                        color="inherit"                                                                        
+                                        >
+                                          NUEVO DESCUENTO
+                                    </Button>   
+                                 </Tooltip>
+                              }
                             </Grid>
                       </Grid>
                   </Container>

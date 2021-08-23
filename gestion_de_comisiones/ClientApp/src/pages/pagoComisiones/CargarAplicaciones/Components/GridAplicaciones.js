@@ -1,16 +1,7 @@
 import React, { useEffect, useState}  from 'react';
-import { emphasize, makeStyles } from '@material-ui/core/styles';
-
-import * as permiso from '../../../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../../../lib/accesosPerfiles';
-
-
-
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import {  makeStyles } from '@material-ui/core/styles';
 import ErrorIcon from '@material-ui/icons/Error';
-import {Container, InputAdornment,Tooltip ,Zoom, Dialog,Card, DialogContent, Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select, FormHelperText,MenuItem } from "@material-ui/core";
-
+import { Tooltip ,Zoom, Card, Grid } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';

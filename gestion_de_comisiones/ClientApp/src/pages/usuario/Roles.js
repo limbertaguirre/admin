@@ -229,7 +229,7 @@ const  Roles =()=>  {
     const addCalculoHisotorico =(permiso, idModulo,nombreModulo, idPagina, nombrePagina)=>{
        const backupHistory = [...listHisotrico];
       // console.log('inicia con : ', backupHistory);
-        let objmoduloBk = listHisotrico.filter(x => x.idModulo != parseInt(idModulo));//--------------
+        let objmoduloBk = listHisotrico.filter(x => x.idModulo !== parseInt(idModulo));//--------------
         let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
         const moBK = [...objmoduloBk];
 
@@ -257,13 +257,13 @@ const  Roles =()=>  {
             setListHisotrico(moBK);
         }else  {
          // console.log('existe modulo hisotico',objmodulo);
-          let objpaginaBK = objmodulo[0].paginas.filter(x => x.idPagina != parseInt(idPagina));//pagina backup----------------------
+          let objpaginaBK = objmodulo[0].paginas.filter(x => x.idPagina !== parseInt(idPagina));//pagina backup----------------------
           let objpagina = objmodulo[0].paginas.filter(x => x.idPagina == parseInt(idPagina));
           const paBK= [...objpaginaBK];
         //  console.log('pagina backups', objpaginaBK  );
         //  console.log('pagina select', objpagina);
            if(objpagina.length > 0){ 
-                let objPermisoBK= objpagina[0].permisos.filter(x => x.idPermiso != parseInt(permiso.id_permiso));//--------------------
+                let objPermisoBK= objpagina[0].permisos.filter(x => x.idPermiso !== parseInt(permiso.id_permiso));//--------------------
                 let objPermiso= objpagina[0].permisos.filter(x => x.idPermiso == parseInt(permiso.id_permiso));
                 const peBK= [...objPermisoBK];
              //   console.log('permiso tiene', objPermisoBK);
