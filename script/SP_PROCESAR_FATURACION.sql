@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
+ALTER PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
    @id_Ciclo     int
 AS
 
@@ -8,12 +8,13 @@ BEGIN TRY
    DECLARE @IMPBODY   VARCHAR (500);
    DECLARE @IMPSUBJECT   VARCHAR (500);
  ------------------------------------------------------------------ 
-  DECLARE @TABLE_COMISIONES as table(id_comision_detalle int,factura_habilitado bit, id_estado_comision_detalle int );
+  DECLARE @TABLE_COMISIONES as table(id_comision_detalle int,factura_habilitado bit, id_estado_comision_detalle int, contacto_codigo_guardian int );
   DECLARE @idCiclo int;
   DECLARE @idComision int;
   DECLARE @IDCOMISIONDETALLEItem int;
   DECLARE @ESTADODETALLEItem int;
   DECLARE @FACTURAHABILITADOItem bit
+  DECLARE @IDCONTACTOGUARDIANItem int
 
   DECLARE @USUARIO_DEFAULT int;
   DECLARE @NOFACTURO int;
@@ -39,15 +40,15 @@ BEGIN TRY
 	IF(@idComision > 0)
 	 BEGIN
 	       INSERT INTO @TABLE_COMISIONES   select CD.id_comision_detalle,
-		               F.factura_habilitado, CDE.id_estado_comision_detalle
+		               F.factura_habilitado, CDE.id_estado_comision_detalle, F.codigo as 'contacto_codigo_guardian'
 		   from BDMultinivel.dbo.GP_COMISION_DETALLE CD
 		   inner join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I CDE on CDE.id_comision_detalle= CD.id_comision_detalle 
 		   inner join BDMultinivel.dbo.FICHA F on F.id_ficha= CD.id_ficha where CD.id_comision=@idComision AND CDE.habilitado = 'true' AND (CDE.id_estado_comision_detalle = 1 or CDE.id_estado_comision_detalle =2 )
 
 		   DECLARE COMISIONDETALLE_CURSOR CURSOR FOR 
-			Select id_comision_detalle, id_estado_comision_detalle, factura_habilitado from @TABLE_COMISIONES
+			Select id_comision_detalle, id_estado_comision_detalle, factura_habilitado, contacto_codigo_guardian from @TABLE_COMISIONES
 			OPEN COMISIONDETALLE_CURSOR
-			FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem
+			FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem, @IDCONTACTOGUARDIANItem
 				WHILE @@FETCH_STATUS = 0  
 				BEGIN 
 			-------------
@@ -99,7 +100,7 @@ BEGIN TRY
 				END
 				
 			-------------
-				FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem
+				FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem, @IDCONTACTOGUARDIANItem
 				END
 			DELETE from @TABLE_COMISIONES
 			CLOSE COMISIONDETALLE_CURSOR
