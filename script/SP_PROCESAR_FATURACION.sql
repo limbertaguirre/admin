@@ -1,6 +1,8 @@
 
 ALTER PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
-   @id_Ciclo     int
+     @id_Ciclo     int,
+     @habilitado_facturar_guardian bit,
+     @usuario VARCHAR(100)
 AS
 
 BEGIN TRANSACTION;
@@ -77,7 +79,35 @@ BEGIN TRY
 						  ELSE
 						BEGIN
 						  --aqui como presento factura su retencion lo ponemos en cero, 
-						  update BDMultinivel.dbo.GP_COMISION_DETALLE  set monto_retencion= 0 where id_comision_detalle= @IDCOMISIONDETALLEItem
+								  update BDMultinivel.dbo.GP_COMISION_DETALLE  set monto_retencion= 0 where id_comision_detalle= @IDCOMISIONDETALLEItem
+								  IF(@habilitado_facturar_guardian = 'true')
+								  BEGIN
+										BEGIN TRY  
+											-- obtener la semana
+											 DECLARE @ID_SEMANA INT;
+											 SET @ID_SEMANA=0;
+											 DECLARE @IDGENERICO INT
+											 SET @IDGENERICO=0;
+
+											 SELECT top(1) @ID_SEMANA= lsemana_id FROM OPENQUERY( [10.2.10.222], 'select * from grdsion.administracionsemanaciclo') where lciclo_id= @id_Ciclo
+											  IF(@ID_SEMANA > 0)
+											  BEGIN
+												   SELECT top(1) @IDGENERICO = lciclopresentafactura_id FROM OPENQUERY( [10.2.10.222], 'select * from grdsion.administracionciclopresentafactura order by dtfechaadd desc')  where lciclo_id= @id_Ciclo 
+												   IF(@IDGENERICO > 0)
+												   BEGIN
+															SET  @IDGENERICO = @IDGENERICO + 1
+													        --INSERT OPENQUERY ([10.2.10.222], 'select susuarioadd, dtfechaadd, susuariomod,  dtfechamod,lciclopresentafactura_id, lciclo_id, lcontacto_id, lsemana_id  from grdsion.administracionciclopresentafactura')  
+															--VALUES (@Usuario, GETDATE(), @Usuario, GETDATE(),@IDGENERICO,@id_Ciclo, @IDCONTACTOGUARDIANItem, @ID_SEMANA); 
+												   END
+									   
+											 END								 							
+										END TRY  
+										BEGIN CATCH  								       
+										     insert into BDMultinivel.dbo.LOG_DETALLE_COMISION_EMPRESA_FAIL(id_ciclo,id_ficha, codigo_cliente, total_monto_bruto, descripcion )
+											 values(@id_Ciclo,0, @IDCONTACTOGUARDIANItem,0,'no se pudo registrar la facturacion en el Guardian ');
+										END CATCH  
+								  END
+
 						END
 				END
 				ELSE
