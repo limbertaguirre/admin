@@ -58,6 +58,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<RolPaginaI> RolPaginaIs { get; set; }
         public virtual DbSet<RolPaginaPermisoI> RolPaginaPermisoIs { get; set; }
         public virtual DbSet<Sucursal> Sucursals { get; set; }
+        public virtual DbSet<TipoAplicacione> TipoAplicaciones { get; set; }
         public virtual DbSet<TipoBaja> TipoBajas { get; set; }
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
@@ -132,6 +133,10 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdProyecto)
                     .HasColumnName("id_proyecto")
                     .HasComment("llave foranea que hace referencia al codigo de un proyecto de grupo sion.");
+
+                entity.Property(e => e.IdTipoAplicaciones)
+                    .HasColumnName("id_tipo_aplicaciones")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
@@ -2065,6 +2070,50 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nombre")
                     .HasComment("Nombre de la sucursal. Ej. Ambassador, Cañoto, Kalomai, etc.");
+            });
+
+            modelBuilder.Entity<TipoAplicacione>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoAplicaciones)
+                    .HasName("PK__TIPO_APL__D56E6A9C0C3B7752");
+
+                entity.ToTable("TIPO_APLICACIONES");
+
+                entity.Property(e => e.IdTipoAplicaciones)
+                    .HasColumnName("id_tipo_aplicaciones")
+                    .HasComment("Es el id de la tabla es auto incremental.");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion")
+                    .HasComment("Es el nombre o descripcion del tipo  de descuento");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.GuardianIdCicloDescuentoTipo)
+                    .HasColumnName("guardian_id_ciclo_descuento_tipo")
+                    .HasComment("Es el codigo tipo que hace referencia al ID de la tabla administraciondescuentociclotipo que esta en el guardian base de datos : grdsion, dato por defecto cero si no pertenece al guardian. ");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("El id_usuario es el id del ultimo usuario que modifico el registro.");
+
+                entity.Property(e => e.ValidoGuardian)
+                    .IsRequired()
+                    .HasColumnName("valido_guardian")
+                    .HasDefaultValueSql("('false')")
+                    .HasComment("Este campo hace referencia si la descripcion es valido solo para guardian = true, false si es diferente a lo de guardian");
             });
 
             modelBuilder.Entity<TipoBaja>(entity =>

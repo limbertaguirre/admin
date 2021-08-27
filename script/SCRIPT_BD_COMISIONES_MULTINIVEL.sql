@@ -1098,6 +1098,31 @@ go
 --insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('LA ARBOLEA DEL ESTE', 3,100,1);
 
 go
+CREATE TABLE TIPO_APLICACIONES(
+  id_tipo_aplicaciones int NOT NULL PRIMARY KEY identity,
+  guardian_id_ciclo_descuento_tipo int not null default 0,
+  descripcion varchar(60),
+  valido_guardian bit not null default 'false',
+  id_usuario int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla es auto incremental.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'id_tipo_aplicaciones'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo tipo que hace referencia al ID de la tabla administraciondescuentociclotipo que esta en el guardian base de datos : grdsion, dato por defecto cero si no pertenece al guardian. ', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'guardian_id_ciclo_descuento_tipo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nombre o descripcion del tipo  de descuento', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'descripcion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Este campo hace referencia si la descripcion es valido solo para guardian = true, false si es diferente a lo de guardian', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'valido_guardian'
+
+    EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_actualizacion'
+go
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
+
+go
 CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   id_aplicacion_detalle_producto int NOT NULL PRIMARY KEY identity,
   cantidad int not null,
@@ -1108,6 +1133,7 @@ CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   codigo_producto varchar(50) not null,
   id_comisiones_detalle int not null,
   id_bdqishur int NOT NULL,
+  id_tipo_aplicaciones int NOT NULL default 1,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
@@ -1121,7 +1147,8 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea que hace referencia al codigo de un proyecto de grupo sion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_proyecto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo de un producto lote o kalomai  general de gruposion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'codigo_producto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranead de la tabla comision detalle donde se tiene toda la comision del cliente frilanzer.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_comisiones_detalle'
-	 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_bdqishur es el ide de la tabla que hace referencia al id primario de la tabla AplicacionesPagos de la bd bdqishur', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_bdqishur'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_bdqishur es el ide de la tabla que hace referencia al id primario de la tabla AplicacionesPagos de la bd bdqishur', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_bdqishur'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea de la tabla tipo aplicaciones, dato por defaul 1 sin definir o sin tipo. se agregar un tipo x cuando sea un descuento nuevo', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_aplicacion_detalle_producto'
 
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'fecha_creacion'

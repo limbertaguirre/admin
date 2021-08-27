@@ -1,9 +1,12 @@
 import React from 'react';
 import {
-    Button, Dialog, DialogContent, Typography,Grid, TextField
+    Button, Dialog, DialogContent, Typography,Grid, TextField,  FormControlLabel ,FormControl, Select, InputLabel, FormHelperText
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,11 +46,12 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft:theme.spacing(1),
         //width:'98%'
     },
+    
   }));
 
 
 const NuevoDescuentoModal = (props) => {
-   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm }= props;
+   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm, idTipoDescuento, errorIdTipoDescuento }= props;
    const classes = useStyles();
 
 
@@ -71,6 +75,33 @@ const NuevoDescuentoModal = (props) => {
                       
                         <br />   
                         <Grid  container  >
+                            <Grid item xs={12} >
+                                <FormControl  variant="outlined"  
+                                fullWidth  
+                                //error={CiudadError} 
+                                className={classes.TextFiel}
+                                >
+                                   
+                                    <Select
+                                        labelId="tipodescuento"                                        
+                                        value={idTipoDescuento}
+                                        name="idTipoDescuento"
+                                        error={errorIdTipoDescuento}
+                                        onChange={onChange}
+                                        label="tipo"
+                                        >
+                                        <MenuItem value={0}>
+                                            <em>Seleccione un tipo de descuento</em>
+                                        </MenuItem>
+                                        <MenuItem key={1} value={1}>{'Cuota'}</MenuItem>
+                                        <MenuItem key={2} value={2}>{'A cuenta'}</MenuItem>
+                                        <MenuItem key={3} value={3}>{'Otros'}</MenuItem>
+                                       {/*  {listNiveles.map((value,index)=> ( <MenuItem key={index} value={value.idNivel}>{value.nombre.toUpperCase()}</MenuItem> ))}  */} 
+                                    </Select>
+                                <FormHelperText>{!errorIdTipoDescuento&&'Seleccione un tipo'}</FormHelperText> 
+                                </FormControl>
+                            </Grid> 
+
                             <Grid item xs={6}>
                                      <TextField                            
                                         label=" Nombre Producto"

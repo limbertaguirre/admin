@@ -157,6 +157,9 @@ const DetalleDescuentoModal = (props) => {
      const[errorCantidad, setErrorCantidad]= useState(false);
      const[errorDescripcion, setErrorDescripcion] = useState(false);
 
+     const[idTipoDescuento, setIdTipoDescuento]= useState(0);
+     const[errorIdTipoDescuento, setErrorIdTipoDescuento]= useState(false);
+
     const onChange= (e) => {
             const texfiel = e.target.name;
             const value = e.target.value;
@@ -180,6 +183,12 @@ const DetalleDescuentoModal = (props) => {
               setCantidad(value);
               setErrorCantidad(!isValidCantidad());
             }
+            if (texfiel === "idTipoDescuento") {
+              console.log('tipo :', value);
+              setIdTipoDescuento(value);
+              setErrorIdTipoDescuento(!isValidTipoDescuento());
+            }
+
     };
     
     const isValidProducto=()=>{
@@ -195,6 +204,10 @@ const DetalleDescuentoModal = (props) => {
 
       return descripcion.length > 5;
     }
+    const isValidTipoDescuento =()=>{
+      return idTipoDescuento > 0
+    }
+
     const isValidForm =()=>{
       return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
     }
@@ -399,7 +412,7 @@ const DetalleDescuentoModal = (props) => {
                    
                   
             </Dialog>                        
-             <NuevoDescuentoModal open={openNewDescuento} closeHandelModal={CerrarModalDescuentoNew} confirmarDecuento={confirmarDecuento} buscarProducto={buscarProducto} onChange={onChange} producto={producto} monto={monto} descripcion={descripcion} cantidad={cantidad} idProyecto={idProyecto} proyectoNombre={proyectoNombre} errorProducto={errorProducto} errorMonto={errorMonto} errorCantidad={errorCantidad} errorDescripcion={errorDescripcion} isValidForm={isValidForm} />
+             <NuevoDescuentoModal open={openNewDescuento} closeHandelModal={CerrarModalDescuentoNew} confirmarDecuento={confirmarDecuento} buscarProducto={buscarProducto} onChange={onChange} producto={producto} monto={monto} descripcion={descripcion} cantidad={cantidad} idProyecto={idProyecto} proyectoNombre={proyectoNombre} errorProducto={errorProducto} errorMonto={errorMonto} errorCantidad={errorCantidad} errorDescripcion={errorDescripcion} isValidForm={isValidForm} idTipoDescuento={idTipoDescuento} errorIdTipoDescuento={errorIdTipoDescuento} />
 
         </Fragment>
     );
