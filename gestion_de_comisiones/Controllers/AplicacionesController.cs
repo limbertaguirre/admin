@@ -157,5 +157,25 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        // GET: AplicacionesController/ObtenerTipoDescuentosGuardian
+        public ActionResult ObtenerTipoDescuentosGuardian([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller ObtenerTipoDescuentosGuardian()  ");
+                var ciclos = Service.ObtenerTipoDescuentosGuardian(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ObtenerTipoDescuentosGuardian()  ");
+                //return Ok(_mapper.Map<IReadOnlyList<VwObtenerCiclo>, IReadOnlyList<CicloDto>>((IReadOnlyList<VwObtenerCiclo>)ciclos));
+                return Ok(ciclos);
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  ObtenerTipoDescuentosGuardian() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener las bajas" };
+                return Ok(Result);
+            }
+        }
+
+
     }
 }

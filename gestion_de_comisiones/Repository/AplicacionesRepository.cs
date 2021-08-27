@@ -170,6 +170,7 @@ namespace gestion_de_comisiones.Repository
                         objApli.IdBdqishur = 0;
                         objApli.FechaActualizacion = DateTime.Now;
                         objApli.FechaCreacion = DateTime.Now;
+                        objApli.IdTipoAplicaciones = param.idTipoDescuento;
                         context.AplicacionDetalleProductoes.Add(objApli);
                         context.SaveChanges();
                         Logger.LogInformation($" usuario: {param.usuarioLogin} -  se registro el descuento con el idAplicacionDetalleProducto = {objApli.IdAplicacionDetalleProducto}");
@@ -278,6 +279,22 @@ namespace gestion_de_comisiones.Repository
                         return false;
                     }
                 }
+            }
+        }
+
+        public object ObtenerTipoDescuentosGuardian(string usuario )
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario}, => AplicacionesRepository|getCiclos");
+                var ciclosR = contextMulti.TipoAplicaciones.Where(x => x.ValidoGuardian == true).ToList();               
+                return ciclosR;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch getCiclos() mensaje : {ex}");
+                List<TipoAplicacione> lis = new List<TipoAplicacione>();
+                return lis;
             }
         }
 

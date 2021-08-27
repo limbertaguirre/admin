@@ -159,6 +159,21 @@ namespace gestion_de_comisiones.Servicios
             }
 
         }
+        public object ObtenerTipoDescuentosGuardian(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio listar ObtenerTipoDescuentosGuardian()");
+                var ciclos = Repository.ObtenerTipoDescuentosGuardian(usuario);        
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);              
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoDescuentosGuardian() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista los tipos de descuentos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
 
 
 

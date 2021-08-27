@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const NuevoDescuentoModal = (props) => {
-   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm, idTipoDescuento, errorIdTipoDescuento }= props;
+   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm, idTipoDescuento, errorIdTipoDescuento, listTipoDescuento }= props;
    const classes = useStyles();
 
 
@@ -64,44 +64,33 @@ const NuevoDescuentoModal = (props) => {
         >            
             <DialogContent>
                         <div className={classes.root}>    
-                            {/* <Alert icon={false} severity="info"> */}
-                               
                                 <Typography variant="subtitle1" className={classes.Titulo} gutterBottom>
                                     <b>NUEVO DESCUENTO </b>
-                                </Typography>
-                              
-                           {/*  </Alert>   */}                                                                                                
-                        </div> 
-                      
+                                </Typography>                                                                                              
+                        </div>                       
                         <br />   
                         <Grid  container  >
                             <Grid item xs={12} >
                                 <FormControl  variant="outlined"  
-                                fullWidth  
-                                //error={CiudadError} 
+                                fullWidth 
                                 className={classes.TextFiel}
-                                >
-                                   
+                                >                                   
                                     <Select
                                         labelId="tipodescuento"                                        
                                         value={idTipoDescuento}
                                         name="idTipoDescuento"
-                                        error={errorIdTipoDescuento}
+                                        //error={errorIdTipoDescuento}
                                         onChange={onChange}
                                         label="tipo"
                                         >
                                         <MenuItem value={0}>
                                             <em>Seleccione un tipo de descuento</em>
                                         </MenuItem>
-                                        <MenuItem key={1} value={1}>{'Cuota'}</MenuItem>
-                                        <MenuItem key={2} value={2}>{'A cuenta'}</MenuItem>
-                                        <MenuItem key={3} value={3}>{'Otros'}</MenuItem>
-                                       {/*  {listNiveles.map((value,index)=> ( <MenuItem key={index} value={value.idNivel}>{value.nombre.toUpperCase()}</MenuItem> ))}  */} 
+                                        {listTipoDescuento.map((value,index)=> ( <MenuItem key={index + 1} value={value.idTipoAplicaciones}>{value.descripcion.toUpperCase()}</MenuItem> ))}  
                                     </Select>
-                                <FormHelperText>{!errorIdTipoDescuento&&'Seleccione un tipo'}</FormHelperText> 
+                               {/*  <FormHelperText>{!errorIdTipoDescuento&&'Seleccione un tipo'}</FormHelperText>  */}
                                 </FormControl>
                             </Grid> 
-
                             <Grid item xs={6}>
                                      <TextField                            
                                         label=" Nombre Producto"

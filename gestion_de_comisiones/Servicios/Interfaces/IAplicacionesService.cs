@@ -16,6 +16,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object RegistrarDescuentoComisionDetalle(RegistroDescuentoInputModel param);
         public object ListarComisionesCerradosPorCarnet(BuscarInputModel param);
         public object CerrarAplicacion(CerrarAplicacionInputModel param);
-
+        public object ObtenerTipoDescuentosGuardian(string usuario);
     }
 }
