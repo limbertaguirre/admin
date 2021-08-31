@@ -1868,6 +1868,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_proyecto")
                     .HasComment("Llave primaria de la tabla.");
 
+                entity.Property(e => e.ComplejoidGuardian).HasColumnName("complejoid_guardian");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")

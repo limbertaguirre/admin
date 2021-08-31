@@ -1077,6 +1077,7 @@ CREATE TABLE PROYECTO(
   nombre varchar(100) not null,
   id_empresa int not null,
   proyecto_conexion_id int not null,
+  complejoid_guardian int not null default 0,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,

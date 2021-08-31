@@ -3,6 +3,13 @@
 
 Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel 
 
+## guardian
+Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=grdsion; SslMode = none;Command Timeout=3000" MySql.EntityFrameworkCore -OutputDir GuardianModels -Tables administraciondescuentociclo, administraciondescuentociclodetalle, administracionciclopresentafactura 
+
+
+## actualizar guardian
+Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=grdsion; SslMode = none;Command Timeout=3000" MySql.EntityFrameworkCore -OutputDir GuardianModels -Tables administraciondescuentociclo, administraciondescuentociclodetalle, administracionciclopresentafactura -F
+
 ## base de datos Actualizar modelo
 
 Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
