@@ -17,9 +17,12 @@ namespace gestion_de_comisiones.GuardianModels
         {
         }
 
+        public virtual DbSet<Administracionciclo> Administracioncicloes { get; set; }
         public virtual DbSet<Administracionciclopresentafactura> Administracionciclopresentafacturas { get; set; }
         public virtual DbSet<Administraciondescuentociclo> Administraciondescuentocicloes { get; set; }
         public virtual DbSet<Administraciondescuentociclodetalle> Administraciondescuentociclodetalles { get; set; }
+        public virtual DbSet<EmpresaComplejo> EmpresaComplejoes { get; set; }
+        public virtual DbSet<ProyectoConexionSufijo> ProyectoConexionSufijoes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,6 +35,62 @@ namespace gestion_de_comisiones.GuardianModels
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Administracionciclo>(entity =>
+            {
+                entity.HasKey(e => e.LcicloId)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("administracionciclo");
+
+                entity.HasIndex(e => e.LcicloId, "lc");
+
+                entity.Property(e => e.LcicloId)
+                    .HasColumnType("bigint(20)")
+                    .HasColumnName("lciclo_id");
+
+                entity.Property(e => e.Cverenweb)
+                    .HasMaxLength(1)
+                    .HasColumnName("cverenweb")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.Dtfechaadd).HasColumnName("dtfechaadd");
+
+                entity.Property(e => e.Dtfechacierre).HasColumnName("dtfechacierre");
+
+                entity.Property(e => e.Dtfechafin).HasColumnName("dtfechafin");
+
+                entity.Property(e => e.Dtfechainicio).HasColumnName("dtfechainicio");
+
+                entity.Property(e => e.Dtfechamod).HasColumnName("dtfechamod");
+
+                entity.Property(e => e.Dtfechaprecierre1).HasColumnName("dtfechaprecierre1");
+
+                entity.Property(e => e.Dtfechaprecierre2).HasColumnName("dtfechaprecierre2");
+
+                entity.Property(e => e.Estadogestor)
+                    .HasMaxLength(1)
+                    .HasColumnName("estadogestor")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.Lestado)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("lestado");
+
+                entity.Property(e => e.Snombre)
+                    .HasMaxLength(100)
+                    .HasColumnName("snombre");
+
+                entity.Property(e => e.Susuarioadd)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("susuarioadd");
+
+                entity.Property(e => e.Susuariomod)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("susuariomod");
+            });
+
             modelBuilder.Entity<Administracionciclopresentafactura>(entity =>
             {
                 entity.HasKey(e => e.LciclopresentafacturaId)
@@ -120,6 +179,11 @@ namespace gestion_de_comisiones.GuardianModels
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("susuariomod");
+
+                entity.HasOne(d => d.Lciclo)
+                    .WithMany(p => p.Administraciondescuentocicloes)
+                    .HasForeignKey(d => d.LcicloId)
+                    .HasConstraintName("fk_administraciondescuentociclo_lciclo_id");
             });
 
             modelBuilder.Entity<Administraciondescuentociclodetalle>(entity =>
@@ -190,6 +254,82 @@ namespace gestion_de_comisiones.GuardianModels
                     .HasForeignKey(d => d.LdescuentocicloId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fk_administraciondescuentociclodetalle_ldescuentociclo_id");
+            });
+
+            modelBuilder.Entity<EmpresaComplejo>(entity =>
+            {
+                entity.HasKey(e => new { e.IdEmpresaComplejo, e.EmpresaId, e.ComplejoId })
+                    .HasName("PRIMARY");
+
+                entity.ToTable("empresa_complejo");
+
+                entity.HasIndex(e => e.ComplejoId, "fk_provision_complejo_id");
+
+                entity.HasIndex(e => e.EmpresaId, "fk_provision_empresa_id");
+
+                entity.Property(e => e.IdEmpresaComplejo)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id_empresa_complejo");
+
+                entity.Property(e => e.EmpresaId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("empresa_id");
+
+                entity.Property(e => e.ComplejoId)
+                    .HasColumnType("bigint(20)")
+                    .HasColumnName("complejo_id");
+
+                entity.Property(e => e.Estado)
+                    .HasColumnType("bit(1)")
+                    .HasColumnName("estado");
+
+                entity.Property(e => e.FechaActualizacion).HasColumnName("fecha_actualizacion");
+
+                entity.Property(e => e.FechaCreacion).HasColumnName("fecha_creacion");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id_usuario");
+            });
+
+            modelBuilder.Entity<ProyectoConexionSufijo>(entity =>
+            {
+                entity.HasKey(e => e.IdProyectoConexionSufijo)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("proyecto_conexion_sufijo");
+
+                entity.Property(e => e.IdProyectoConexionSufijo)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id_proyecto_conexion_sufijo");
+
+                entity.Property(e => e.Estado)
+                    .IsRequired()
+                    .HasColumnType("bit(1)")
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("b'1'");
+
+                entity.Property(e => e.FechaActualizacion).HasColumnName("fecha_actualizacion");
+
+                entity.Property(e => e.FechaCreacion).HasColumnName("fecha_creacion");
+
+                entity.Property(e => e.IdEmpresaComplejo)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id_empresa_complejo");
+
+                entity.Property(e => e.IdProyectoCnx)
+                    .HasColumnType("bigint(20)")
+                    .HasColumnName("id_proyecto_cnx");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id_usuario");
+
+                entity.Property(e => e.Sufijo)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("sufijo");
             });
 
             OnModelCreatingPartial(modelBuilder);

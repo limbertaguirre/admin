@@ -23,6 +23,7 @@ namespace gestion_de_comisiones.GuardianModels
         public string Sdetalles { get; set; }
         public long? LsemanaId { get; set; }
 
+        public virtual Administracionciclo Lciclo { get; set; }
         public virtual ICollection<Administraciondescuentociclodetalle> Administraciondescuentociclodetalles { get; set; }
     }
 }

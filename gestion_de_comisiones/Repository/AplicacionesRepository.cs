@@ -165,10 +165,11 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");
+                int tipoOtrosGuardianId = Config.GetValue<int>("idTipoDescuentoOtrosGuardian");
                 int idDescuentoguardianGenerico = 0; 
                 if (param.idProyecto == 0)
                 {
-                    param.idProyecto = Config.GetValue<int>("IdComplejoDeEmpresaAsumidoraDescuentoOtros");
+                    param.idProyecto = Config.GetValue<int>("IdProyectoGestorDeEmpresaAsumidoraDescuentoOtros");
                     Logger.LogWarning($" usuario: {param.usuarioLogin} el tipo de pago es otros y se asignara una empresa que asumira el pago idcomplejo  :{ param.idProyecto} ");
                 }
                 if (aplicarDescuentoGuardian)
@@ -198,9 +199,13 @@ namespace gestion_de_comisiones.Repository
                     var descuento = contextGuardian.Administraciondescuentocicloes.Where(x => x.LcicloId == comisionCiclo.idCiclo && x.LcontactoId == long.Parse(comisionCiclo.contactoId)).FirstOrDefault();
                     if (descuento != null)
                     {
-                        Logger.LogInformation($" usuario: {param.usuarioLogin}-  se aplicara el registro en guardian, ls tabla de descuento");
-                        int ultimoId = this.obtenerIdDetalleDescuento();
+                        Logger.LogInformation($" usuario: {param.usuarioLogin}-  se aplicara el registro en guardian, la tabla de descuento");
+                        int ultimoId = this.obtenerIdDetalleDescuentoNuevo();
 
+                        if(idTipodescuentoGuardian.GuardianIdCicloDescuentoTipo != tipoOtrosGuardianId) //agregar condision id otros idtipodescuentoGuardian otros
+                        {
+                            int complejoGuardi = this.ObtenerComplejoGuardian(param.usuarioLogin,param.producto, proyecto.ProyectoConexionId);
+                        //------
                         descuento.Dtotal = descuento.Dtotal + param.monto;
                         descuento.Dtfechamod = DateTime.Now;
                         contextGuardian.SaveChanges();
@@ -212,7 +217,7 @@ namespace gestion_de_comisiones.Repository
                         newdesc.Dtfechamod = DateTime.Now;
                         newdesc.LdescuentocicloId = descuento.LdescuentocicloId;
                         newdesc.LdescuentociclotipoId = idTipodescuentoGuardian.GuardianIdCicloDescuentoTipo;
-                        newdesc.LcomplejoId = 1; // proyecto.ComplejoidGuardian; //quemado que la tabla proyecto tenga equivalencia con el proyectoid guardian ya que ahora estan con cero.
+                        newdesc.LcomplejoId = complejoGuardi; // //quemado que la tabla proyecto tenga equivalencia con el proyectoid guardian ya que ahora estan con cero.
                         newdesc.Smanzano = "";
                         newdesc.Slote = "";
                         newdesc.Suv = param.producto;
@@ -220,6 +225,30 @@ namespace gestion_de_comisiones.Repository
                         newdesc.Sobservacion = param.descripcion;
                         contextGuardian.Administraciondescuentociclodetalles.Add(newdesc);
                         contextGuardian.SaveChanges();
+                            //-------
+                        }
+                        else
+                        {   //se agrega un complejo por default
+                            descuento.Dtotal = descuento.Dtotal + param.monto;
+                            descuento.Dtfechamod = DateTime.Now;
+                            contextGuardian.SaveChanges();
+                            Administraciondescuentociclodetalle newdesc = new Administraciondescuentociclodetalle();
+                            newdesc.LdescuentociclodetalleId = ultimoId;
+                            newdesc.Susuarioadd = param.usuarioLogin;
+                            newdesc.Susuariomod = param.usuarioLogin;
+                            newdesc.Dtfechaadd = DateTime.Now;
+                            newdesc.Dtfechamod = DateTime.Now;
+                            newdesc.LdescuentocicloId = descuento.LdescuentocicloId;
+                            newdesc.LdescuentociclotipoId = idTipodescuentoGuardian.GuardianIdCicloDescuentoTipo;
+                            newdesc.LcomplejoId = Config.GetValue<int>("idComplejoAvdelDetaultParaDescuentoTipoOtrosGuardianID"); 
+                            newdesc.Smanzano = "";
+                            newdesc.Slote = "";
+                            newdesc.Suv = param.producto;
+                            newdesc.Dmonto = param.monto;
+                            newdesc.Sobservacion = param.descripcion;
+                            contextGuardian.Administraciondescuentociclodetalles.Add(newdesc);
+                            contextGuardian.SaveChanges();
+                        }
                         idDescuentoguardianGenerico = (int)ultimoId;
 
                     }
@@ -369,7 +398,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        private int obtenerIdDetalleDescuento()
+        private int obtenerIdDetalleDescuentoNuevo()
         {
             int ultimoId = (int)contextGuardian.Administraciondescuentociclodetalles.Max(x => x.LdescuentociclodetalleId) + 1;
             while (contextGuardian.Administraciondescuentociclodetalles.Any(x => x.LdescuentociclodetalleId == ultimoId))
@@ -379,6 +408,53 @@ namespace gestion_de_comisiones.Repository
             }
             return ultimoId;
         }
+        private int ObtenerComplejoGuardian(string usuarioLogin, string producto, int proyectoCnx)
+        {
+            Logger.LogError($" usuario: {usuarioLogin} -  incio ObtenerComplejoGuardian con el producto:{producto} - idproyectoCNX :{proyectoCnx} ");
+
+            var proyect = contextGuardian.ProyectoConexionSufijoes.Where(x => x.IdProyectoCnx == proyectoCnx && x.Estado == true).ToList();
+            var proyectosG = contextGuardian.ProyectoConexionSufijoes.Join(contextGuardian.EmpresaComplejoes,
+                                                                         ProyectoConexionSufijo => ProyectoConexionSufijo.IdEmpresaComplejo,
+                                                                         EmpresaComplejo =>EmpresaComplejo.IdEmpresaComplejo,
+                                                                         (ProyectoConexionSufijo, EmpresaComplejo) => new
+                                                                         {
+                                                                             iddetalle= ProyectoConexionSufijo.IdProyectoConexionSufijo,                                                                             
+                                                                             idProyectoCnx = ProyectoConexionSufijo.IdProyectoCnx,
+                                                                             idComplejo = EmpresaComplejo.ComplejoId,
+                                                                             estado = ProyectoConexionSufijo.Estado,
+                                                                             sufijo= ProyectoConexionSufijo.Sufijo
+                                                                         }
+                                                                 ).Where(x => x.idProyectoCnx == proyectoCnx && x.estado == true).ToList();
+            int proyectoSeleccionado = 0;
+            if(proyectosG.Count > 0)
+            {
+                int idproyectoDefaultVacio = 0;
+                int idproyectoSeleccionado = 0;
+                foreach (var item in proyectosG )
+                {
+                    idproyectoDefaultVacio = (int)(item.sufijo == "" ? item.idComplejo : 0);
+                    if (producto.Contains(item.sufijo) && item.sufijo != "")
+                    {
+                        idproyectoSeleccionado = (int)item.idComplejo;
+                    }
+
+                }
+                if(idproyectoSeleccionado > 0)
+                {
+                    return idproyectoSeleccionado;
+                }else if(idproyectoDefaultVacio > 0)
+                {
+                    return idproyectoDefaultVacio;
+                } else {
+                    return Config.GetValue<int>("idComplejoAvdelDetaultParaDescuentoTipoOtrosGuardianID");
+                }                
+
+            } else {
+                 return  Config.GetValue<int>("idComplejoAvdelDetaultParaDescuentoTipoOtrosGuardianID");
+            }
+
+        }
+
 
 
     }
