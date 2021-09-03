@@ -165,7 +165,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");
-                int idDescuentoguardianGenerico = 0; // administraciondescuentociclodetalle
+                int idDescuentoguardianGenerico = 0; 
                 if (param.idProyecto == 0)
                 {
                     param.idProyecto = Config.GetValue<int>("IdComplejoDeEmpresaAsumidoraDescuentoOtros");
@@ -198,12 +198,9 @@ namespace gestion_de_comisiones.Repository
                     var descuento = contextGuardian.Administraciondescuentocicloes.Where(x => x.LcicloId == comisionCiclo.idCiclo && x.LcontactoId == long.Parse(comisionCiclo.contactoId)).FirstOrDefault();
                     if (descuento != null)
                     {
-                        var ultimoId = contextGuardian.Administraciondescuentociclodetalles.Max(x => x.LdescuentociclodetalleId) + 1;
-                        while (contextGuardian.Administraciondescuentociclodetalles.Any(x => x.LdescuentociclodetalleId == ultimoId))
-                        {
-                            ultimoId++;
+                        Logger.LogInformation($" usuario: {param.usuarioLogin}-  se aplicara el registro en guardian, ls tabla de descuento");
+                        int ultimoId = this.obtenerIdDetalleDescuento();
 
-                        }
                         descuento.Dtotal = descuento.Dtotal + param.monto;
                         descuento.Dtfechamod = DateTime.Now;
                         contextGuardian.SaveChanges();
@@ -370,6 +367,17 @@ namespace gestion_de_comisiones.Repository
                 List<TipoAplicacione> lis = new List<TipoAplicacione>();
                 return lis;
             }
+        }
+
+        private int obtenerIdDetalleDescuento()
+        {
+            int ultimoId = (int)contextGuardian.Administraciondescuentociclodetalles.Max(x => x.LdescuentociclodetalleId) + 1;
+            while (contextGuardian.Administraciondescuentociclodetalles.Any(x => x.LdescuentociclodetalleId == ultimoId))
+            {
+                ultimoId++;
+
+            }
+            return ultimoId;
         }
 
 
