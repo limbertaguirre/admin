@@ -371,11 +371,12 @@ go
 go
 create table CICLO
 (
-    id_ciclo int not null primary key IDENTITY,
+    id_ciclo int not null primary key,
     nombre varchar(255),
     descripcion varchar(255),
     fecha_inicio datetime,
     fecha_fin datetime,
+	estado bit,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -850,6 +851,7 @@ CREATE TABLE EMPRESA(
   codigo int not null,
   codigo_cnx int not null,
   nombre varchar(100) not null,
+  nombre_bd varchar(100) not null,
   estado int not null, --1 o cero 
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
@@ -1078,6 +1080,7 @@ CREATE TABLE PROYECTO(
   id_empresa int not null,
   proyecto_conexion_id int not null,
   complejoid_guardian int not null default 0,
+  estado bit not null,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,

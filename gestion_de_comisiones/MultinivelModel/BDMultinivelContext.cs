@@ -330,51 +330,45 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ciclo>(entity =>
             {
                 entity.HasKey(e => e.IdCiclo)
-                    .HasName("PK__CICLO__A78E2FA339064D30");
+                    .HasName("PK__CICLO__A78E2FA306351304");
 
                 entity.ToTable("CICLO");
 
                 entity.Property(e => e.IdCiclo)
-                    .HasColumnName("id_ciclo")
-                    .HasComment("Llave primaria incremental de la tabla CICLO.");
+                    .ValueGeneratedNever()
+                    .HasColumnName("id_ciclo");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("descripcion")
-                    .HasComment("Muestra una descripción breve del ciclo.");
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualización del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creación del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaFin)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_fin")
-                    .HasComment("Es la fecha que culmina el ciclo.");
+                    .HasColumnName("fecha_fin");
 
                 entity.Property(e => e.FechaInicio)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_inicio")
-                    .HasComment("Es la fecha de inicio del ciclo.");
+                    .HasColumnName("fecha_inicio");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("nombre")
-                    .HasComment("Nombre del ciclo. Ej.: Ciclo Marzo 2021, Ciclo Abril 2021, etc.");
+                    .HasColumnName("nombre");
             });
 
             modelBuilder.Entity<Ciudad>(entity =>
