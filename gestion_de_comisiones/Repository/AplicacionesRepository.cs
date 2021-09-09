@@ -196,7 +196,7 @@ namespace gestion_de_comisiones.Repository
                     var proyecto = ContextMulti.Proyectoes.Where(x => x.IdProyecto == param.idProyecto).FirstOrDefault();
                     var idTipodescuentoGuardian = ContextMulti.TipoAplicaciones.Where(x => x.IdTipoAplicaciones == param.idTipoDescuento).FirstOrDefault();
 
-                    var descuento = contextGuardian.Administraciondescuentocicloes.Where(x => x.LcicloId == comisionCiclo.idCiclo && x.LcontactoId == long.Parse(comisionCiclo.contactoId)).FirstOrDefault();
+                    var descuento = contextGuardian.Administraciondescuentocicloes.Where(x => x.LcicloId == comisionCiclo.idCiclo && x.LcontactoId == (comisionCiclo.contactoId)).FirstOrDefault();
                     if (descuento != null)
                     {
                         Logger.LogInformation($" usuario: {param.usuarioLogin}-  se aplicara el registro en guardian, la tabla de descuento");

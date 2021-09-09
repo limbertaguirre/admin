@@ -490,7 +490,7 @@ go
 create table FICHA
 (
     id_ficha int not null primary key IDENTITY,
-    codigo varchar(255) not null,
+    codigo int not null,
 	codigo_cnx varchar(255)not null,
     nombres varchar(255)not null,
     apellidos varchar(255)not null,
@@ -558,7 +558,7 @@ create table GP_CLIENTE_VENDEDOR_I(
     id_usuario int not null,
     fecha_creacion datetime,
     fecha_actualizacion datetime,
-	primary key(id,id_cliente, id_vendedor)
+	primary key(id,id_cliente)
 )
 
 go

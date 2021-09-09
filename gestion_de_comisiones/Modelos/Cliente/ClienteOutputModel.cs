@@ -12,7 +12,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         {
         }
 
-        public ClienteOutputModel(int idFicha, string codigo, string nombreCompleto, string ci, bool tieneCuentaBancaria, int idBanco, string nombreBanco, string codigoBanco, string cuentaBancaria, int estado, string avatar, string nivel)
+        public ClienteOutputModel(int idFicha, int codigo, string nombreCompleto, string ci, bool tieneCuentaBancaria, int idBanco, string nombreBanco, string codigoBanco, string cuentaBancaria, int estado, string avatar, string nivel)
         {
             this.idFicha = idFicha;
             this.codigo = codigo;
@@ -29,7 +29,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         }
 
         public int idFicha { get; set; }     
-        public string codigo { get; set; }        
+        public int codigo { get; set; }        
         public string nombreCompleto { get; set; }         
         public string ci { get; set; }
         public bool? tieneCuentaBancaria { get; set; }

@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.MultinivelModel
     public partial class Ficha
     {
         public int IdFicha { get; set; }
-        public string Codigo { get; set; }
+        public int Codigo { get; set; }
         public string CodigoCnx { get; set; }
         public string Nombres { get; set; }
         public string Apellidos { get; set; }

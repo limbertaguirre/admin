@@ -167,21 +167,21 @@ namespace gestion_de_comisiones.Repository
                     //--------------------------------------------------
                     var patrocinad = contextMulti.GpClienteVendedorIs.Join(contextMulti.Fichas,
                                                    GpClienteVendedorI => GpClienteVendedorI.IdVendedor,
-                                                  Ficha => Ficha.IdFicha,
+                                                  Ficha => Ficha.Codigo,
                                                    (GpClienteVendedorI, Ficha) => new 
                                                    {
                                                        idVendedor = Ficha.IdFicha,
                                                        idcliente= GpClienteVendedorI.IdCliente,
                                                        nombreVendedor = Ficha.Nombres+ " " + Ficha.Apellidos,
                                                        codigoVendedor= Ficha.Codigo,
-                                                   }).Where(x =>  x.idcliente == objCli.IdFicha).FirstOrDefault();
+                                                   }).Where(x =>  x.idcliente == objCli.Codigo).FirstOrDefault();
                     if(patrocinad != null)
                     {
                         objCliente.codigoPatrocinador = patrocinad.codigoVendedor;
                         objCliente.nombrePatrocinador = patrocinad.nombreVendedor;
                     }else
                     {
-                        objCliente.codigoPatrocinador = "";
+                        objCliente.codigoPatrocinador = 0;
                         objCliente.nombrePatrocinador = "";
                     }
                     //----------------------------------------------------------------------------------
@@ -464,7 +464,7 @@ namespace gestion_de_comisiones.Repository
                                                        nombreVendedor = Ficha.Nombres + Ficha.Apellidos,
                                                        codigoVendedor = Ficha.Codigo,
                                                    }).Where(x => x.idcliente == ficha.idFicha).FirstOrDefault();
-                            if (patrocinador != null && ficha.codigoPatrocinador != "")
+                            if (patrocinador != null && ficha.codigoPatrocinador != 0)
                             {
                                 if (patrocinador.codigoVendedor != ficha.codigoPatrocinador)
                                 {
@@ -486,7 +486,7 @@ namespace gestion_de_comisiones.Repository
                             }
                             else
                             {
-                                if (patrocinador == null && ficha.codigoPatrocinador != "")
+                                if (patrocinador == null && ficha.codigoPatrocinador != 0)
                                 {
                                     var newPatrocinador = contextMulti.Fichas.Where(x => x.Codigo == ficha.codigoPatrocinador).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
                                     if (newPatrocinador != null)
@@ -587,6 +587,7 @@ namespace gestion_de_comisiones.Repository
                     }
                     catch (Exception ex)
                     {
+                        Logger.LogWarning($" usuario: {ficha.usuarioNameLogueado} -catch al actualizar el cliente  {ex.Message}");
                         dbcontextTransaction.Rollback();
                         return false;
                     }

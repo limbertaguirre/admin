@@ -571,7 +571,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ficha>(entity =>
             {
                 entity.HasKey(e => e.IdFicha)
-                    .HasName("PK__FICHA__427B0F8A554F2E36");
+                    .HasName("PK__FICHA__427B0F8A13F3FB8F");
 
                 entity.ToTable("FICHA");
 
@@ -593,11 +593,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ci");
 
-                entity.Property(e => e.Codigo)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("codigo");
+                entity.Property(e => e.Codigo).HasColumnName("codigo");
 
                 entity.Property(e => e.CodigoCnx)
                     .IsRequired()
@@ -824,8 +820,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
             modelBuilder.Entity<GpClienteVendedorI>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.IdCliente, e.IdVendedor })
-                    .HasName("PK__GP_CLIEN__7D6488B34F70EC1E");
+                entity.HasKey(e => new { e.Id, e.IdCliente })
+                    .HasName("PK__GP_CLIEN__74641BB0E68C5BD8");
 
                 entity.ToTable("GP_CLIENTE_VENDEDOR_I");
 
@@ -834,8 +830,6 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id");
 
                 entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
-
-                entity.Property(e => e.IdVendedor).HasColumnName("id_vendedor");
 
                 entity.Property(e => e.Activo).HasColumnName("activo");
 
@@ -856,6 +850,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("fecha_desactivacion");
 
                 entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdVendedor).HasColumnName("id_vendedor");
             });
 
             modelBuilder.Entity<GpComision>(entity =>
@@ -2575,11 +2571,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ci");
 
-                entity.Property(e => e.Codigo)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("codigo");
+                entity.Property(e => e.Codigo).HasColumnName("codigo");
 
                 entity.Property(e => e.CodigoBanco)
                     .HasMaxLength(255)

@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.MultinivelModel
     public partial class VwObtenerFicha
     {
         public int IdFicha { get; set; }
-        public string Codigo { get; set; }
+        public int Codigo { get; set; }
         public string NombreCompleto { get; set; }
         public string Ci { get; set; }
         public bool TieneCuentaBancaria { get; set; }
