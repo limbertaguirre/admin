@@ -78,21 +78,18 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SANTA CRUZ',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('LA PAZ',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('COCHABANBA',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('TARIJA',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('BENI',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('PANDO',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('ORURO',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('POTOSI',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SUCRE',1,100)
+  ----id coinciden con bdcomisionesciudad
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SANTA CRUZ',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('BENI',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('PANDO',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('COCHABANBA',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SUCRE',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('TARIJA',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('LA PAZ',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('ORURO',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('POTOSI',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('EXTRANJERO',1,1)
 
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('sao paulo',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('rio de janeiro',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('pananbi',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('mato groso do sul',2,100)
-  
 go
 create table SUCURSAL
 (
@@ -493,7 +490,8 @@ go
 create table FICHA
 (
     id_ficha int not null primary key IDENTITY,
-    codigo varchar(255)not null,
+    codigo varchar(255) not null,
+	codigo_cnx varchar(255)not null,
     nombres varchar(255)not null,
     apellidos varchar(255)not null,
     ci varchar(255) not null,
@@ -551,7 +549,7 @@ go
     id_vendedor hace referencia al id ficha del vendedor
 */
 create table GP_CLIENTE_VENDEDOR_I(
-    id int not null primary key IDENTITY(1,1),
+    id int not null IDENTITY(1,1),
     id_cliente int not null,
     id_vendedor int not null,
     fecha_activacion datetime,
@@ -559,7 +557,8 @@ create table GP_CLIENTE_VENDEDOR_I(
     activo bit,
     id_usuario int not null,
     fecha_creacion datetime,
-    fecha_actualizacion datetime
+    fecha_actualizacion datetime,
+	primary key(id,id_cliente, id_vendedor)
 )
 
 go
@@ -580,9 +579,11 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_actualizacion'
 go
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','es por ...', 1);
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'sabotaje','es por ...', 1);
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'incumplimiento','es por ...', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
+
 go
 create table FICHA_TIPO_BAJA_I
 (
@@ -596,7 +597,6 @@ create table FICHA_TIPO_BAJA_I
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
 );
-
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla FICHA_TIPO_BAJA_I.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'id_ficha_tipo_baja_i'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Descripción del motivo de baja que pueda llegar a tener un Asesor.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'motivo'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha en la cuál el Asesor fue dado de baja.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'fecha_baja'
@@ -623,9 +623,21 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_actualizacion'
 go
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(1,'plata 1', 'es el prueba primer rango', 1);
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(2,'oro 2', 'es el prueba segundo rango', 1);
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(3,'platinun 3', 'es el prueba tercer rango', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(0,'Freelance', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(1,'Asesor Comercial', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(2,'LEADER', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(3,'SENIOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(4,'SAPPHIRE', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(5,'RUBY', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(6,'EMERALD', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(7,'DIAMOND', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(8,'REGIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(9,'NATIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(10,'INTERNATIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(11,'INTERCONTINENTAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(12,'AMBASSADOR ROYAL', '', 1);
+
+
 go
 create table FICHA_NIVEL_I
 (

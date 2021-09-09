@@ -202,7 +202,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-            if(res.code === 0){  
+        console.log('clien',res);
+            if(res.code === 0){              
                let data= res.data;
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
@@ -236,7 +237,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          
                setRazonSocial(data.razonSocial === null? "": data.razonSocial);
                setNit(data.nit === null? "" : data.nit);
-               setCheckTieneFactura(data.nit !== null && data.nit !== "");
+               setCheckTieneFactura(data.tieneCuentaBancaria);
                
                setIdBanco(data.idBanco);
                setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );

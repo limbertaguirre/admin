@@ -9,6 +9,7 @@ namespace gestion_de_comisiones.MultinivelModel
     {
         public int IdFicha { get; set; }
         public string Codigo { get; set; }
+        public string CodigoCnx { get; set; }
         public string Nombres { get; set; }
         public string Apellidos { get; set; }
         public string Ci { get; set; }
@@ -28,10 +29,10 @@ namespace gestion_de_comisiones.MultinivelModel
         public bool FacturaHabilitado { get; set; }
         public string RazonSocial { get; set; }
         public string Nit { get; set; }
+        public int IdCiudad { get; set; }
         public int Estado { get; set; }
         public int IdUsuario { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
-        public int IdCiudad { get; set; }
     }
 }
