@@ -1,6 +1,8 @@
 
-CREATE PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
-   @id_Ciclo     int
+ALTER PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
+     @id_Ciclo     int,
+     @habilitado_facturar_guardian bit,
+     @usuario VARCHAR(100)
 AS
 
 BEGIN TRANSACTION;
@@ -8,12 +10,13 @@ BEGIN TRY
    DECLARE @IMPBODY   VARCHAR (500);
    DECLARE @IMPSUBJECT   VARCHAR (500);
  ------------------------------------------------------------------ 
-  DECLARE @TABLE_COMISIONES as table(id_comision_detalle int,factura_habilitado bit, id_estado_comision_detalle int );
+  DECLARE @TABLE_COMISIONES as table(id_comision_detalle int,factura_habilitado bit, id_estado_comision_detalle int, contacto_codigo_guardian int );
   DECLARE @idCiclo int;
   DECLARE @idComision int;
   DECLARE @IDCOMISIONDETALLEItem int;
   DECLARE @ESTADODETALLEItem int;
   DECLARE @FACTURAHABILITADOItem bit
+  DECLARE @IDCONTACTOGUARDIANItem int
 
   DECLARE @USUARIO_DEFAULT int;
   DECLARE @NOFACTURO int;
@@ -39,15 +42,15 @@ BEGIN TRY
 	IF(@idComision > 0)
 	 BEGIN
 	       INSERT INTO @TABLE_COMISIONES   select CD.id_comision_detalle,
-		               F.factura_habilitado, CDE.id_estado_comision_detalle
+		               F.factura_habilitado, CDE.id_estado_comision_detalle, F.codigo as 'contacto_codigo_guardian'
 		   from BDMultinivel.dbo.GP_COMISION_DETALLE CD
 		   inner join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I CDE on CDE.id_comision_detalle= CD.id_comision_detalle 
 		   inner join BDMultinivel.dbo.FICHA F on F.id_ficha= CD.id_ficha where CD.id_comision=@idComision AND CDE.habilitado = 'true' AND (CDE.id_estado_comision_detalle = 1 or CDE.id_estado_comision_detalle =2 )
 
 		   DECLARE COMISIONDETALLE_CURSOR CURSOR FOR 
-			Select id_comision_detalle, id_estado_comision_detalle, factura_habilitado from @TABLE_COMISIONES
+			Select id_comision_detalle, id_estado_comision_detalle, factura_habilitado, contacto_codigo_guardian from @TABLE_COMISIONES
 			OPEN COMISIONDETALLE_CURSOR
-			FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem
+			FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem, @IDCONTACTOGUARDIANItem
 				WHILE @@FETCH_STATUS = 0  
 				BEGIN 
 			-------------
@@ -76,7 +79,35 @@ BEGIN TRY
 						  ELSE
 						BEGIN
 						  --aqui como presento factura su retencion lo ponemos en cero, 
-						  update BDMultinivel.dbo.GP_COMISION_DETALLE  set monto_retencion= 0 where id_comision_detalle= @IDCOMISIONDETALLEItem
+								  update BDMultinivel.dbo.GP_COMISION_DETALLE  set monto_retencion= 0 where id_comision_detalle= @IDCOMISIONDETALLEItem
+								  IF(@habilitado_facturar_guardian = 'true')
+								  BEGIN
+										BEGIN TRY  
+											-- obtener la semana
+											 DECLARE @ID_SEMANA INT;
+											 SET @ID_SEMANA=0;
+											 DECLARE @IDGENERICO INT
+											 SET @IDGENERICO=0;
+
+											 SELECT top(1) @ID_SEMANA= lsemana_id FROM OPENQUERY( [10.2.10.222], 'select * from grdsion.administracionsemanaciclo') where lciclo_id= @id_Ciclo
+											  IF(@ID_SEMANA > 0)
+											  BEGIN
+												   SELECT top(1) @IDGENERICO = lciclopresentafactura_id FROM OPENQUERY( [10.2.10.222], 'select * from grdsion.administracionciclopresentafactura order by dtfechaadd desc')  where lciclo_id= @id_Ciclo 
+												   IF(@IDGENERICO > 0)
+												   BEGIN
+															SET  @IDGENERICO = @IDGENERICO + 1
+													        --INSERT OPENQUERY ([10.2.10.222], 'select susuarioadd, dtfechaadd, susuariomod,  dtfechamod,lciclopresentafactura_id, lciclo_id, lcontacto_id, lsemana_id  from grdsion.administracionciclopresentafactura')  
+															--VALUES (@Usuario, GETDATE(), @Usuario, GETDATE(),@IDGENERICO,@id_Ciclo, @IDCONTACTOGUARDIANItem, @ID_SEMANA); 
+												   END
+									   
+											 END								 							
+										END TRY  
+										BEGIN CATCH  								       
+										     insert into BDMultinivel.dbo.LOG_DETALLE_COMISION_EMPRESA_FAIL(id_ciclo,id_ficha, codigo_cliente, total_monto_bruto, descripcion )
+											 values(@id_Ciclo,0, @IDCONTACTOGUARDIANItem,0,'no se pudo registrar la facturacion en el Guardian ');
+										END CATCH  
+								  END
+
 						END
 				END
 				ELSE
@@ -99,7 +130,7 @@ BEGIN TRY
 				END
 				
 			-------------
-				FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem
+				FETCH NEXT FROM COMISIONDETALLE_CURSOR INTO @IDCOMISIONDETALLEItem, @ESTADODETALLEItem, @FACTURAHABILITADOItem, @IDCONTACTOGUARDIANItem
 				END
 			DELETE from @TABLE_COMISIONES
 			CLOSE COMISIONDETALLE_CURSOR

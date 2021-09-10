@@ -552,6 +552,8 @@ namespace gestion_de_comisiones.Repository
                         int idSiFacturo = 2;  // no facturo #VARIABLE 
                         int idResagado = 5; //  resagado por no presentar factura #VARIABLE 
                         int idNoPresentaFactura = 6; // no presenta Factura VARIABLE
+                        bool habilitadofacturarGuardian = true; //VARIABLE entorno
+
                         var objComisionPendiente = context.GpComisions.Join(context.GpComisionEstadoComisionIs, 
                                                                           GpComision => GpComision.IdComision, GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
                                                                          (GpComision, GpComisionEstadoComisionI) => new {
@@ -575,13 +577,25 @@ namespace gestion_de_comisiones.Repository
                                             SqlDbType = System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Output,
                                 },
-                               new SqlParameter() {
+                                new SqlParameter() {
                                             ParameterName = "@id_ciclo",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = idCiclo
+                              },
+                                 new SqlParameter() {
+                                            ParameterName = "@habilitado_facturar_guardian",
+                                            SqlDbType =  System.Data.SqlDbType.Bit,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = habilitadofacturarGuardian
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@usuario",
+                                            SqlDbType =  System.Data.SqlDbType.VarChar,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioLogin
                               }};
-                            var result = context.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES] @id_ciclo  ", parameterReturn);
+                            var result = context.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES] @id_ciclo, @habilitado_facturar_guardian,  @usuario  ", parameterReturn);
                             var returnValue = parameterReturn;
                             if(result > 0)
                             {

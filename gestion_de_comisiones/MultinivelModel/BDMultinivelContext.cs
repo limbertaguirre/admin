@@ -58,6 +58,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<RolPaginaI> RolPaginaIs { get; set; }
         public virtual DbSet<RolPaginaPermisoI> RolPaginaPermisoIs { get; set; }
         public virtual DbSet<Sucursal> Sucursals { get; set; }
+        public virtual DbSet<TipoAplicacione> TipoAplicaciones { get; set; }
         public virtual DbSet<TipoBaja> TipoBajas { get; set; }
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
@@ -132,6 +133,10 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdProyecto)
                     .HasColumnName("id_proyecto")
                     .HasComment("llave foranea que hace referencia al codigo de un proyecto de grupo sion.");
+
+                entity.Property(e => e.IdTipoAplicaciones)
+                    .HasColumnName("id_tipo_aplicaciones")
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
@@ -325,51 +330,45 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ciclo>(entity =>
             {
                 entity.HasKey(e => e.IdCiclo)
-                    .HasName("PK__CICLO__A78E2FA339064D30");
+                    .HasName("PK__CICLO__A78E2FA306351304");
 
                 entity.ToTable("CICLO");
 
                 entity.Property(e => e.IdCiclo)
-                    .HasColumnName("id_ciclo")
-                    .HasComment("Llave primaria incremental de la tabla CICLO.");
+                    .ValueGeneratedNever()
+                    .HasColumnName("id_ciclo");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("descripcion")
-                    .HasComment("Muestra una descripción breve del ciclo.");
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualización del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creación del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaFin)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_fin")
-                    .HasComment("Es la fecha que culmina el ciclo.");
+                    .HasColumnName("fecha_fin");
 
                 entity.Property(e => e.FechaInicio)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_inicio")
-                    .HasComment("Es la fecha de inicio del ciclo.");
+                    .HasColumnName("fecha_inicio");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("nombre")
-                    .HasComment("Nombre del ciclo. Ej.: Ciclo Marzo 2021, Ciclo Abril 2021, etc.");
+                    .HasColumnName("nombre");
             });
 
             modelBuilder.Entity<Ciudad>(entity =>
@@ -496,48 +495,41 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Empresa>(entity =>
             {
                 entity.HasKey(e => e.IdEmpresa)
-                    .HasName("PK__EMPRESA__4A0B7E2C55C99582");
+                    .HasName("PK__EMPRESA__4A0B7E2CFB006100");
 
                 entity.ToTable("EMPRESA");
 
-                entity.Property(e => e.IdEmpresa)
-                    .HasColumnName("id_empresa")
-                    .HasComment("Es la llave primaria y id de la empresa local ");
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
-                entity.Property(e => e.Codigo)
-                    .HasColumnName("codigo")
-                    .HasComment("Es el codigo de empresa externo de guardian de gruposion");
+                entity.Property(e => e.Codigo).HasColumnName("codigo");
 
-                entity.Property(e => e.CodigoCnx)
-                    .HasColumnName("codigo_cnx")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.CodigoCnx).HasColumnName("codigo_cnx");
 
-                entity.Property(e => e.Estado)
-                    .HasColumnName("estado")
-                    .HasComment("Estado de la empresa activo o inactivo 1 true , 0  false");
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualizacion del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creacion del registro");
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del ultimo usuario que modifico el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false)
-                    .HasColumnName("nombre")
-                    .HasComment("Es el nombre de la empresa e inmoboliaria");
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NombreBd)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_bd");
             });
 
             modelBuilder.Entity<EstadoDetalleListadoFormaPago>(entity =>
@@ -579,149 +571,120 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ficha>(entity =>
             {
                 entity.HasKey(e => e.IdFicha)
-                    .HasName("PK__FICHA__427B0F8AE90548B5");
+                    .HasName("PK__FICHA__427B0F8A13F3FB8F");
 
                 entity.ToTable("FICHA");
 
-                entity.Property(e => e.IdFicha)
-                    .HasColumnName("id_ficha")
-                    .HasComment("Llave primaria incremental de la tabla FICHA.");
+                entity.Property(e => e.IdFicha).HasColumnName("id_ficha");
 
                 entity.Property(e => e.Apellidos)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("apellidos")
-                    .HasComment("Apellido completo del asesor");
+                    .HasColumnName("apellidos");
 
                 entity.Property(e => e.Avatar)
                     .IsUnicode(false)
-                    .HasColumnName("avatar")
-                    .HasComment("El avatar es el path de ubicación de la foto del asesor.");
+                    .HasColumnName("avatar");
 
                 entity.Property(e => e.Ci)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("ci")
-                    .HasComment("El carnet de identidad del asesor");
+                    .HasColumnName("ci");
 
-                entity.Property(e => e.Codigo)
+                entity.Property(e => e.Codigo).HasColumnName("codigo");
+
+                entity.Property(e => e.CodigoCnx)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("codigo")
-                    .HasComment("El código es un identificador que identifica al Asesor y que es generado y asignado por la empresa.");
+                    .HasColumnName("codigo_cnx");
 
                 entity.Property(e => e.Comentario)
                     .IsUnicode(false)
-                    .HasColumnName("comentario")
-                    .HasComment("Un breve comentario sobre el asesor.");
+                    .HasColumnName("comentario");
 
                 entity.Property(e => e.Contrasena)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("contrasena")
-                    .HasComment("La contraseña que el sistema de comisiones le asigna al asesor.");
+                    .HasColumnName("contrasena");
 
                 entity.Property(e => e.CorreoElectronico)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("correo_electronico")
-                    .HasComment("El correo electrónico del asesor");
+                    .HasColumnName("correo_electronico");
 
                 entity.Property(e => e.CuentaBancaria)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("cuenta_bancaria")
-                    .HasComment("Cuenta bancaria del asesor, si no tiene cuenta el valor es null.");
+                    .HasColumnName("cuenta_bancaria");
 
                 entity.Property(e => e.Direccion)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("direccion")
-                    .HasComment("La dirección del asesor.");
+                    .HasColumnName("direccion");
 
-                entity.Property(e => e.Estado)
-                    .HasColumnName("estado")
-                    .HasComment("Es el estado de la tabla 1 es activo , 0 es inactivo.");
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
-                entity.Property(e => e.FacturaHabilitado)
-                    .HasColumnName("factura_habilitado")
-                    .HasComment("Valor de bit, si es 1 el asesor factura, de lo contrario si es 0 el asesor no factura.");
+                entity.Property(e => e.FacturaHabilitado).HasColumnName("factura_habilitado");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualización del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creación del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaNacimiento)
                     .HasColumnType("date")
-                    .HasColumnName("fecha_nacimiento")
-                    .HasComment("La fecha de nacimiento del asesor.");
+                    .HasColumnName("fecha_nacimiento");
 
                 entity.Property(e => e.FechaRegistro)
                     .HasColumnType("date")
-                    .HasColumnName("fecha_registro")
-                    .HasComment("La fecha que la empresa registró al asesor.");
+                    .HasColumnName("fecha_registro");
 
-                entity.Property(e => e.IdBanco)
-                    .HasColumnName("id_banco")
-                    .HasComment("El id_banco es un identificador que hace referencia al campo id_banco de la tabla BANCO.");
+                entity.Property(e => e.IdBanco).HasColumnName("id_banco");
 
                 entity.Property(e => e.IdCiudad).HasColumnName("id_ciudad");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nit)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("nit")
-                    .HasComment("Nit del Asesor, si no tiene el valor es null.");
+                    .HasColumnName("nit");
 
                 entity.Property(e => e.Nombres)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("nombres")
-                    .HasComment("Nombre completo del asesor");
+                    .HasColumnName("nombres");
 
                 entity.Property(e => e.RazonSocial)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("razon_social")
-                    .HasComment("Razón social del Asesor, si no tiene el valor es null.");
+                    .HasColumnName("razon_social");
 
                 entity.Property(e => e.TelFijo)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("tel_fijo")
-                    .HasComment("El teléfono fijo del asesor.");
+                    .HasColumnName("tel_fijo");
 
                 entity.Property(e => e.TelMovil)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("tel_movil")
-                    .HasComment("El teléfono móvil del asesor.");
+                    .HasColumnName("tel_movil");
 
                 entity.Property(e => e.TelOficina)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("tel_oficina")
-                    .HasComment("El teléfono de oficina del asesor.");
+                    .HasColumnName("tel_oficina");
 
-                entity.Property(e => e.TieneCuentaBancaria)
-                    .HasColumnName("tiene_cuenta_bancaria")
-                    .HasComment("Valor de bit, si es 1 el asesor tiene cuenta bancaria, de lo contrario si es 0 no tiene cuenta bancaria.");
+                entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tiene_cuenta_bancaria");
             });
 
             modelBuilder.Entity<FichaIncentivo>(entity =>
@@ -857,9 +820,16 @@ namespace gestion_de_comisiones.MultinivelModel
 
             modelBuilder.Entity<GpClienteVendedorI>(entity =>
             {
+                entity.HasKey(e => new { e.Id, e.IdCliente })
+                    .HasName("PK__GP_CLIEN__74641BB0E68C5BD8");
+
                 entity.ToTable("GP_CLIENTE_VENDEDOR_I");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
 
                 entity.Property(e => e.Activo).HasColumnName("activo");
 
@@ -878,8 +848,6 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.FechaDesactivacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_desactivacion");
-
-                entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
 
                 entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
@@ -1855,44 +1823,37 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Proyecto>(entity =>
             {
                 entity.HasKey(e => e.IdProyecto)
-                    .HasName("PK__PROYECTO__F38AD81DDB8DABAC");
+                    .HasName("PK__PROYECTO__F38AD81D0F538037");
 
                 entity.ToTable("PROYECTO");
 
-                entity.Property(e => e.IdProyecto)
-                    .HasColumnName("id_proyecto")
-                    .HasComment("Llave primaria de la tabla.");
+                entity.Property(e => e.IdProyecto).HasColumnName("id_proyecto");
+
+                entity.Property(e => e.ComplejoidGuardian).HasColumnName("complejoid_guardian");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualizacion del registro");
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creacion del registro");
+                    .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdEmpresa)
-                    .HasColumnName("id_empresa")
-                    .HasComment("llave foranea que  hace referencia a la empresa .");
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del ultimo usuario que modifico el registro.");
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false)
-                    .HasColumnName("nombre")
-                    .HasComment("Es el nombre del proyecto o producto.");
+                    .HasColumnName("nombre");
 
-                entity.Property(e => e.ProyectoConexionId)
-                    .HasColumnName("proyecto_conexion_id")
-                    .HasComment("Es el codigo de proyecto en conexion.");
+                entity.Property(e => e.ProyectoConexionId).HasColumnName("proyecto_conexion_id");
             });
 
             modelBuilder.Entity<Rol>(entity =>
@@ -2065,6 +2026,50 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nombre")
                     .HasComment("Nombre de la sucursal. Ej. Ambassador, Cañoto, Kalomai, etc.");
+            });
+
+            modelBuilder.Entity<TipoAplicacione>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoAplicaciones)
+                    .HasName("PK__TIPO_APL__D56E6A9C0C3B7752");
+
+                entity.ToTable("TIPO_APLICACIONES");
+
+                entity.Property(e => e.IdTipoAplicaciones)
+                    .HasColumnName("id_tipo_aplicaciones")
+                    .HasComment("Es el id de la tabla es auto incremental.");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion")
+                    .HasComment("Es el nombre o descripcion del tipo  de descuento");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.GuardianIdCicloDescuentoTipo)
+                    .HasColumnName("guardian_id_ciclo_descuento_tipo")
+                    .HasComment("Es el codigo tipo que hace referencia al ID de la tabla administraciondescuentociclotipo que esta en el guardian base de datos : grdsion, dato por defecto cero si no pertenece al guardian. ");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("El id_usuario es el id del ultimo usuario que modifico el registro.");
+
+                entity.Property(e => e.ValidoGuardian)
+                    .IsRequired()
+                    .HasColumnName("valido_guardian")
+                    .HasDefaultValueSql("('false')")
+                    .HasComment("Este campo hace referencia si la descripcion es valido solo para guardian = true, false si es diferente a lo de guardian");
             });
 
             modelBuilder.Entity<TipoBaja>(entity =>
@@ -2566,11 +2571,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ci");
 
-                entity.Property(e => e.Codigo)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("codigo");
+                entity.Property(e => e.Codigo).HasColumnName("codigo");
 
                 entity.Property(e => e.CodigoBanco)
                     .HasMaxLength(255)

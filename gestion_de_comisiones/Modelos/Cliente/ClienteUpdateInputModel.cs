@@ -14,7 +14,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public string avatar { get; set; }
 
         public int idFicha { get; set; }
-        public string codigo { get; set; }
+        public int codigo { get; set; }
         public string nombre { get; set; }
         public string apellido { get; set; }
         public string ci { get; set; }
@@ -27,7 +27,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public int idPais { get; set; }
         public string correoElectronico { get; set; }
         public string fechaNacimiento { get; set; }
-        public string codigoPatrocinador { get; set; }
+        public int codigoPatrocinador { get; set; }
         public string nombrePatrocinador { get; set; }
         public int idNivel { get; set; }
         public int idNivelDetalle { get; set; }

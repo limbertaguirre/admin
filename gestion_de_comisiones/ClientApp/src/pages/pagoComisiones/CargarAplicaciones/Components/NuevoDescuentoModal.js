@@ -1,9 +1,12 @@
 import React from 'react';
 import {
-    Button, Dialog, DialogContent, Typography,Grid, TextField
+    Button, Dialog, DialogContent, Typography,Grid, TextField,  FormControlLabel ,FormControl, Select, InputLabel, FormHelperText
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -43,11 +46,12 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft:theme.spacing(1),
         //width:'98%'
     },
+    
   }));
 
 
 const NuevoDescuentoModal = (props) => {
-   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm }= props;
+   const { open , closeHandelModal,confirmarDecuento, buscarProducto, onChange, producto, monto, descripcion, cantidad, idProyecto, proyectoNombre,errorProducto, errorMonto,errorCantidad,  errorDescripcion, isValidForm, idTipoDescuento, errorIdTipoDescuento, listTipoDescuento }= props;
    const classes = useStyles();
 
 
@@ -60,17 +64,33 @@ const NuevoDescuentoModal = (props) => {
         >            
             <DialogContent>
                         <div className={classes.root}>    
-                            {/* <Alert icon={false} severity="info"> */}
-                               
                                 <Typography variant="subtitle1" className={classes.Titulo} gutterBottom>
                                     <b>NUEVO DESCUENTO </b>
-                                </Typography>
-                              
-                           {/*  </Alert>   */}                                                                                                
-                        </div> 
-                      
+                                </Typography>                                                                                              
+                        </div>                       
                         <br />   
                         <Grid  container  >
+                            <Grid item xs={12} >
+                                <FormControl  variant="outlined"  
+                                fullWidth 
+                                className={classes.TextFiel}
+                                >                                   
+                                    <Select
+                                        labelId="tipodescuento"                                        
+                                        value={idTipoDescuento}
+                                        name="idTipoDescuento"
+                                        //error={errorIdTipoDescuento}
+                                        onChange={onChange}
+                                        label="tipo"
+                                        >
+                                        <MenuItem value={0}>
+                                            <em>Seleccione un tipo de descuento</em>
+                                        </MenuItem>
+                                        {listTipoDescuento.map((value,index)=> ( <MenuItem key={index + 1} value={value.idTipoAplicaciones}>{value.descripcion.toUpperCase()}</MenuItem> ))}  
+                                    </Select>
+                               {/*  <FormHelperText>{!errorIdTipoDescuento&&'Seleccione un tipo'}</FormHelperText>  */}
+                                </FormControl>
+                            </Grid> 
                             <Grid item xs={6}>
                                      <TextField                            
                                         label=" Nombre Producto"

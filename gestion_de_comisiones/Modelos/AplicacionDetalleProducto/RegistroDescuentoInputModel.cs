@@ -15,6 +15,8 @@ namespace gestion_de_comisiones.Modelos.AplicacionDetalleProducto
         public string descripcion { get; set; }
         public int  idProyecto { get; set; }
         public int idComisionDetalle { get; set; }
+        public int idTipoDescuento { get; set; }
+
 
     }
 }

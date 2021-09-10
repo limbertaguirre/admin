@@ -151,7 +151,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const[nuevoAvatar, setNuevoAvatar]= useState(false);
 
     const[idFicha, setIdFicha]= useState(0);
-    const [codigo, setCodigo]= useState("");
+    const [codigo, setCodigo]= useState(0);
     const [fechaRegistro, setFechaRegistro]= useState(moment().format("YYYY/MM/DD"));
     const [nombre, setNombre]= useState("");
     const [apellido, setApellido]= useState("");
@@ -164,7 +164,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [idPais, setIdPais]= useState(0);
     const [correoElectronico, setCorreoElectronico]= useState("");
     const [fechaNacimiento, setFechaNacimiento] = useState(moment().format("YYYY/MM/DD"))
-    const [codigoPatrocinador, setCodigoPatrocinador] = useState("");
+    const [codigoPatrocinador, setCodigoPatrocinador] = useState(0);
     const [nombrePatrocinador, setNombrePatrocinador]= useState("");
     const [nivel, setNivel]= useState("");
     const [idNivel, setIdNivel]= useState(0);
@@ -202,7 +202,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-            if(res.code === 0){  
+        console.log('clien',res);
+            if(res.code === 0){              
                let data= res.data;
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
@@ -236,7 +237,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
          
                setRazonSocial(data.razonSocial === null? "": data.razonSocial);
                setNit(data.nit === null? "" : data.nit);
-               setCheckTieneFactura(data.nit !== null && data.nit !== "");
+               setCheckTieneFactura(data.tieneCuentaBancaria);
                
                setIdBanco(data.idBanco);
                setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );

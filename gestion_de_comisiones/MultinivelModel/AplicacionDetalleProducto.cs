@@ -19,5 +19,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
         public int IdBdqishur { get; set; }
+        public int IdTipoAplicaciones { get; set; }
     }
 }

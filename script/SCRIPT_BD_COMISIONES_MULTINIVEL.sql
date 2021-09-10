@@ -78,21 +78,18 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SANTA CRUZ',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('LA PAZ',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('COCHABANBA',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('TARIJA',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('BENI',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('PANDO',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('ORURO',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('POTOSI',1,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SUCRE',1,100)
+  ----id coinciden con bdcomisionesciudad
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SANTA CRUZ',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('BENI',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('PANDO',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('COCHABANBA',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('SUCRE',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('TARIJA',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('LA PAZ',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('ORURO',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('POTOSI',1,1)
+  --insert into CIUDAD (nombre, id_pais, id_usuario) values('EXTRANJERO',1,1)
 
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('sao paulo',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('rio de janeiro',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('pananbi',2,100)
-  --insert into CIUDAD (nombre, id_pais, id_usuario) values('mato groso do sul',2,100)
-  
 go
 create table SUCURSAL
 (
@@ -371,11 +368,12 @@ go
 go
 create table CICLO
 (
-    id_ciclo int not null primary key IDENTITY,
+    id_ciclo int not null primary key,
     nombre varchar(255),
     descripcion varchar(255),
     fecha_inicio datetime,
     fecha_fin datetime,
+	estado bit,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -492,7 +490,8 @@ go
 create table FICHA
 (
     id_ficha int not null primary key IDENTITY,
-    codigo varchar(255)not null,
+    codigo int not null,
+	codigo_cnx varchar(255)not null,
     nombres varchar(255)not null,
     apellidos varchar(255)not null,
     ci varchar(255) not null,
@@ -550,7 +549,7 @@ go
     id_vendedor hace referencia al id ficha del vendedor
 */
 create table GP_CLIENTE_VENDEDOR_I(
-    id int not null primary key IDENTITY(1,1),
+    id int not null IDENTITY(1,1),
     id_cliente int not null,
     id_vendedor int not null,
     fecha_activacion datetime,
@@ -558,7 +557,8 @@ create table GP_CLIENTE_VENDEDOR_I(
     activo bit,
     id_usuario int not null,
     fecha_creacion datetime,
-    fecha_actualizacion datetime
+    fecha_actualizacion datetime,
+	primary key(id,id_cliente)
 )
 
 go
@@ -579,9 +579,11 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_actualizacion'
 go
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','es por ...', 1);
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'sabotaje','es por ...', 1);
---insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'incumplimiento','es por ...', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
+
 go
 create table FICHA_TIPO_BAJA_I
 (
@@ -595,7 +597,6 @@ create table FICHA_TIPO_BAJA_I
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
 );
-
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla FICHA_TIPO_BAJA_I.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'id_ficha_tipo_baja_i'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Descripción del motivo de baja que pueda llegar a tener un Asesor.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'motivo'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha en la cuál el Asesor fue dado de baja.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA_TIPO_BAJA_I', N'COLUMN', N'fecha_baja'
@@ -622,9 +623,21 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'NIVEL', N'COLUMN', N'fecha_actualizacion'
 go
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(1,'plata 1', 'es el prueba primer rango', 1);
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(2,'oro 2', 'es el prueba segundo rango', 1);
---insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(3,'platinun 3', 'es el prueba tercer rango', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(0,'Freelance', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(1,'Asesor Comercial', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(2,'LEADER', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(3,'SENIOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(4,'SAPPHIRE', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(5,'RUBY', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(6,'EMERALD', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(7,'DIAMOND', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(8,'REGIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(9,'NATIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(10,'INTERNATIONAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(11,'INTERCONTINENTAL AMBASSADOR', '', 1);
+--insert into  BDMultinivel.dbo.NIVEL(id_nivel ,nombre,descripcion, id_usuario) values(12,'AMBASSADOR ROYAL', '', 1);
+
+
 go
 create table FICHA_NIVEL_I
 (
@@ -850,6 +863,7 @@ CREATE TABLE EMPRESA(
   codigo int not null,
   codigo_cnx int not null,
   nombre varchar(100) not null,
+  nombre_bd varchar(100) not null,
   estado int not null, --1 o cero 
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
@@ -1077,6 +1091,8 @@ CREATE TABLE PROYECTO(
   nombre varchar(100) not null,
   id_empresa int not null,
   proyecto_conexion_id int not null,
+  complejoid_guardian int not null default 0,
+  estado bit not null,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
@@ -1098,6 +1114,32 @@ go
 --insert into BDMultinivel.dbo.PROYECTO(nombre,id_empresa,proyecto_conexion_id, id_usuario)values('LA ARBOLEA DEL ESTE', 3,100,1);
 
 go
+CREATE TABLE TIPO_APLICACIONES(
+  id_tipo_aplicaciones int NOT NULL PRIMARY KEY identity,
+  guardian_id_ciclo_descuento_tipo int not null default 0,
+  descripcion varchar(60),
+  valido_guardian bit not null default 'false',
+  id_usuario int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla es auto incremental.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'id_tipo_aplicaciones'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo tipo que hace referencia al ID de la tabla administraciondescuentociclotipo que esta en el guardian base de datos : grdsion, dato por defecto cero si no pertenece al guardian. ', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'guardian_id_ciclo_descuento_tipo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nombre o descripcion del tipo  de descuento', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'descripcion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Este campo hace referencia si la descripcion es valido solo para guardian = true, false si es diferente a lo de guardian', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'valido_guardian'
+
+    EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_actualizacion'
+go
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(4,'Expensas', 'true', 1);
+  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
+
+go
 CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   id_aplicacion_detalle_producto int NOT NULL PRIMARY KEY identity,
   cantidad int not null,
@@ -1108,6 +1150,7 @@ CREATE TABLE APLICACION_DETALLE_PRODUCTO(
   codigo_producto varchar(50) not null,
   id_comisiones_detalle int not null,
   id_bdqishur int NOT NULL,
+  id_tipo_aplicaciones int NOT NULL default 1,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
@@ -1121,7 +1164,8 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea que hace referencia al codigo de un proyecto de grupo sion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_proyecto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el codigo de un producto lote o kalomai  general de gruposion.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'codigo_producto'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranead de la tabla comision detalle donde se tiene toda la comision del cliente frilanzer.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_comisiones_detalle'
-	 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_bdqishur es el ide de la tabla que hace referencia al id primario de la tabla AplicacionesPagos de la bd bdqishur', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_bdqishur'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_bdqishur es el ide de la tabla que hace referencia al id primario de la tabla AplicacionesPagos de la bd bdqishur', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_bdqishur'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea de la tabla tipo aplicaciones, dato por defaul 1 sin definir o sin tipo. se agregar un tipo x cuando sea un descuento nuevo', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_aplicacion_detalle_producto'
 
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'APLICACION_DETALLE_PRODUCTO', N'COLUMN', N'fecha_creacion'

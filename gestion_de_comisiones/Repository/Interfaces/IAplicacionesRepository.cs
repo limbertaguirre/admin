@@ -16,6 +16,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public ComisionDetalleModel ObtenerComisionDetalle(string usuarioNombre, int idDetalleComision);
         public object GetComisionesPorCarnet(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, string carnet);
         public bool CerrarAplicacionCiclo(CerrarAplicacionInputModel model);
+        public object ObtenerTipoDescuentosGuardian(string usuario);
 
     }
 }

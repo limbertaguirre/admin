@@ -1,3 +1,4 @@
+using gestion_de_comisiones.GuardianModels;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
@@ -75,6 +76,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IProrrateadoRepository, ProrrateadoRepository>();
 
             services.AddScoped<BDMultinivelContext>();
+            services.AddScoped<grdsionContext>();
 
 
             // In production, the React files will be served from this directory

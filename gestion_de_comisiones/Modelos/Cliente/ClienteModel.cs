@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
 {
     public class ClienteModel
     {
-        public ClienteModel(int idFicha, string codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado,int idCiudad, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
+        public ClienteModel(int idFicha, int codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado,int idCiudad, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdFicha = idFicha;
             Codigo = codigo;
@@ -41,7 +41,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         [JsonPropertyName("idFicha")]
         public int IdFicha { get; set; }
         [JsonPropertyName("codigo")]
-        public string Codigo { get; set; }
+        public int Codigo { get; set; }
         [JsonPropertyName("Nombres")]
         public string Nombres { get; set; }
         [JsonPropertyName("apellidos")]

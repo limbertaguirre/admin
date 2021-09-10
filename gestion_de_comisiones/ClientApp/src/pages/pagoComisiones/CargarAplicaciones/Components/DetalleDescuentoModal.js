@@ -1,8 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Button, Dialog, Typography,Grid, Container, Tooltip ,Zoom, Card } from "@material-ui/core";
 import {useSelector,useDispatch} from 'react-redux';
-import { requestPost } from "../../../../service/request";
+import { requestPost, requestGet } from "../../../../service/request";
 import * as permiso from '../../../../routes/permiso'; 
+import * as utilidad from '../../../../lib/utility'; 
 import {  validarPermiso} from '../../../../lib/accesosPerfiles';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -20,6 +21,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import NuevoDescuentoModal from './NuevoDescuentoModal';
+import SnackbarSion from "../../../../components/message/SnackbarSion";
 import * as ActionMensaje from '../../../../redux/actions/messageAction';
 
 const useStyles = makeStyles((theme) => ({
@@ -145,7 +147,11 @@ const DetalleDescuentoModal = (props) => {
       setSubTotal(0);
       handleCloseCancel();
      }
-  
+     const[listTipoDescuento, setListTipoDescuento]=useState([]);;
+     const [openSnackbar, setOpenSnackbar] = useState(false);
+     const [mensajeSnackbar, setMensajeSnackbar] = useState("");
+     const [tipoSnackbar, settipTSnackbar] = useState(true);
+
      const[producto, setProducto]=useState('');
      const[monto, setMonto]= useState(0);
      const[cantidad, setCantidad]= useState(1);
@@ -156,6 +162,9 @@ const DetalleDescuentoModal = (props) => {
      const[errorMonto, setErrorMonto]= useState(false);
      const[errorCantidad, setErrorCantidad]= useState(false);
      const[errorDescripcion, setErrorDescripcion] = useState(false);
+
+     const[idTipoDescuento, setIdTipoDescuento]= useState(0);
+     const[errorIdTipoDescuento, setErrorIdTipoDescuento]= useState(false);
 
     const onChange= (e) => {
             const texfiel = e.target.name;
@@ -180,6 +189,12 @@ const DetalleDescuentoModal = (props) => {
               setCantidad(value);
               setErrorCantidad(!isValidCantidad());
             }
+            if (texfiel === "idTipoDescuento") {
+              console.log('tipo :', value);
+              setIdTipoDescuento(value);
+              setErrorIdTipoDescuento(!isValidTipoDescuento());
+            }
+
     };
     
     const isValidProducto=()=>{
@@ -195,13 +210,19 @@ const DetalleDescuentoModal = (props) => {
 
       return descripcion.length > 5;
     }
+    const isValidTipoDescuento =()=>{
+      return idTipoDescuento > 0
+    }
+
     const isValidForm =()=>{
       return  isValidProducto() === true && isValidMonto() === true  && isValidCantidad() === true  && isValidDescripcion() === true 
     }
     
 
      const AbrirModalDescuentoNew = ()=>{
+      listarDescuentos(userName);
       setOpenNewDescuento(true);
+      
      }
      const CerrarModalDescuentoNew = ()=>{
         setOpenNewDescuento(false);
@@ -228,8 +249,7 @@ const DetalleDescuentoModal = (props) => {
                 producto: producto        
               };
               requestPost('Aplicaciones/ObtenerProyectoPorProducto',data,dispatch).then((res)=>{                        
-                  if(res.code === 0){  
-                    console.log('data : ', res);    
+                  if(res.code === 0){                    
                     setIdProyecto(res.data.idProyecto);
                     setProyectoNombre(res.data.nombreProyecto);              
                   }else{
@@ -237,14 +257,12 @@ const DetalleDescuentoModal = (props) => {
                       setProyectoNombre('');
                       dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
                   }    
-              })   
-    
-            console.log('llmar api buscar');
-        }else{ 
-            console.log('ingrese algun caracter');
+              })       
         }
+
      }
-     const confirmarDecuento=()=>{      
+     const confirmarDecuento=()=>{  
+       if((idTipoDescuento == utilidad.TIPO_APLICACION_OTROS_ID && idProyecto == 0) || (idTipoDescuento != utilidad.TIPO_APLICACION_OTROS_ID && idProyecto > 0)  ){  
               const data={
                 usuarioLogin:userName,
                 usuarioId: idUsuario,
@@ -253,9 +271,9 @@ const DetalleDescuentoModal = (props) => {
                 cantidad:cantidad,
                 descripcion:descripcion,
                 idProyecto:idProyecto,
-                idComisionDetalle:parseInt(idComisionDetalleSelected)
-              };           
-              console.log('data register descuento :', data);
+                idComisionDetalle:parseInt(idComisionDetalleSelected),
+                idTipoDescuento:parseInt(idTipoDescuento)
+              };              
               requestPost('Aplicaciones/RegistrarDescuentoComision',data,dispatch).then((res)=>{                        
                   if(res.code === 0){  
                     setOpenNewDescuento(false);   // cerrar modal, actualizar la lista
@@ -266,8 +284,37 @@ const DetalleDescuentoModal = (props) => {
                   }else{                       
                       dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
                   }    
-              })   
+              })
+              
+            }else{
+                //aqui no se ejecuto
+                setOpenSnackbar(true);
+                setMensajeSnackbar('¡Debe ingresar un producto valido para una Cuota');
+                settipTSnackbar('warning');
+            }
+
+
+
+              
      }
+
+     const listarDescuentos = (usuario) => {
+        const headers={usuarioLogin:usuario};
+        requestGet('Aplicaciones/ObtenerTipoDescuentosGuardian',headers,dispatch).then((res)=>{  
+          console.log('descuentos : ', res.data);           
+            if(res.code === 0){                 
+                setListTipoDescuento(res.data);                            
+            }else{
+                setListTipoDescuento([])                
+            }    
+        })   
+     };
+     const closeSnackbar= (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenSnackbar(false);
+    };
   
     return (
         <Fragment>
@@ -399,8 +446,8 @@ const DetalleDescuentoModal = (props) => {
                    
                   
             </Dialog>                        
-             <NuevoDescuentoModal open={openNewDescuento} closeHandelModal={CerrarModalDescuentoNew} confirmarDecuento={confirmarDecuento} buscarProducto={buscarProducto} onChange={onChange} producto={producto} monto={monto} descripcion={descripcion} cantidad={cantidad} idProyecto={idProyecto} proyectoNombre={proyectoNombre} errorProducto={errorProducto} errorMonto={errorMonto} errorCantidad={errorCantidad} errorDescripcion={errorDescripcion} isValidForm={isValidForm} />
-
+             <NuevoDescuentoModal open={openNewDescuento} closeHandelModal={CerrarModalDescuentoNew} confirmarDecuento={confirmarDecuento} buscarProducto={buscarProducto} onChange={onChange} producto={producto} monto={monto} descripcion={descripcion} cantidad={cantidad} idProyecto={idProyecto} proyectoNombre={proyectoNombre} errorProducto={errorProducto} errorMonto={errorMonto} errorCantidad={errorCantidad} errorDescripcion={errorDescripcion} isValidForm={isValidForm} idTipoDescuento={idTipoDescuento} errorIdTipoDescuento={errorIdTipoDescuento} listTipoDescuento={listTipoDescuento} />
+             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
         </Fragment>
     );
 
