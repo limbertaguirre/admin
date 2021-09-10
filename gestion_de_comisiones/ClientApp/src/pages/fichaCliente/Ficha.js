@@ -151,7 +151,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const[nuevoAvatar, setNuevoAvatar]= useState(false);
 
     const[idFicha, setIdFicha]= useState(0);
-    const [codigo, setCodigo]= useState("");
+    const [codigo, setCodigo]= useState(0);
     const [fechaRegistro, setFechaRegistro]= useState(moment().format("YYYY/MM/DD"));
     const [nombre, setNombre]= useState("");
     const [apellido, setApellido]= useState("");
@@ -164,7 +164,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [idPais, setIdPais]= useState(0);
     const [correoElectronico, setCorreoElectronico]= useState("");
     const [fechaNacimiento, setFechaNacimiento] = useState(moment().format("YYYY/MM/DD"))
-    const [codigoPatrocinador, setCodigoPatrocinador] = useState("");
+    const [codigoPatrocinador, setCodigoPatrocinador] = useState(0);
     const [nombrePatrocinador, setNombrePatrocinador]= useState("");
     const [nivel, setNivel]= useState("");
     const [idNivel, setIdNivel]= useState(0);
