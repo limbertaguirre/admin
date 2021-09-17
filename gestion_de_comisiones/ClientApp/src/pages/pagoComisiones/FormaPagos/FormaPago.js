@@ -119,7 +119,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   
      const handleOnGetCiclos=()=>{    
           const headers={usuarioLogin:userName};
-          requestGet('FormasDePagos/GetCiclos',headers,dispatch).then((res)=>{             
+          requestGet('Pagos/GetCiclos',headers,dispatch).then((res)=>{             
               if(res.code === 0){                 
                    setCiclos(res.data);                            
               }else{
@@ -149,7 +149,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             usuarioLogin:userName,
             idCiclo: idCiclo
           };
-          requestPost('FormasDePagos/ObtenerAplicaciones',data,dispatch).then((res)=>{           
+          requestPost('Pagos/ObtenerAplicaciones',data,dispatch).then((res)=>{           
               if(res.code === 0){  
                   setListaComisionesAPagar(res.data);  
                   setStatusBusqueda(true);                        

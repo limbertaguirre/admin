@@ -1,5 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Factura;
+using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,29 +11,37 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
-    public class FormasDePagosController : Controller
+    public class PagosController : Controller
     {
-        private readonly ILogger<FormasDePagosController> Logger;
-        public FormasDePagosController(ILogger<FormasDePagosController> logger)
+        private readonly ILogger<PagosController> Logger;
+        public PagosController(ILogger<PagosController> logger, IFormaPagoService service )
         {
             Logger = logger;
-          //  Service = service;
+            Service = service;
         }
+        public IFormaPagoService Service { get; set; }
 
-        public IActionResult Index()
+        // GET: PagosController
+        public ActionResult Index()
         {
             return View();
         }
-        // GET: AplicacionesController/ObtenerCiclos
+
+        // GET: PagosController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // GET: Pagos/ObtenerAplicaciones
         public ActionResult GetCiclos([FromHeader] string usuarioLogin)
         {
             try
             {
                 Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerCiclos()  ");
-                //var ciclos = Service.GetCiclos(usuarioLogin);
-                //Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerCiclos()  ");
-
-                return Ok(new GenericDataJson<string> { Code = 1, Message = "Estamos trabajando" });
+                var ciclos = Service.GetCiclos(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerCiclos()  ");
+                return Ok(ciclos);
             }
             catch
             {
@@ -40,7 +50,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-        // POST: Aplicaciones/ObtenerAplicaciones
+        // POST: Pagos/ObtenerAplicaciones
 
         [HttpPost]
         public ActionResult ObtenerAplicaciones([FromBody] ComisionesInputModel param)
@@ -59,6 +69,11 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+
+
+
+
+
 
 
 
