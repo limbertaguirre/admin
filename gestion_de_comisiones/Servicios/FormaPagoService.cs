@@ -46,6 +46,25 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object GetAplicacionesPendientes(string usuario, int idCiclo)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio AplicacionesService => getAplicacionesPendientes() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                var ciclos = Repository.GetComisiones(usuario, idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                return Respuesta.ReturnResultdo(0, "ok", ciclos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch AplicacionesService => getAplicacionesPendientes() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+
 
 
     }

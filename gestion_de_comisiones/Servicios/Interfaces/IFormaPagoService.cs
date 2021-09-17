@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     public interface IFormaPagoService
     {
         public object GetCiclos(string usuario);
-
+        public object GetAplicacionesPendientes(string usuario, int idCiclo);
     }
 }

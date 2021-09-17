@@ -58,9 +58,9 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
-                //var resulcliente = Service.GetAplicacionesPendientes(param.usuarioLogin, param.idCiclo);
-                //Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
-                return Ok(new GenericDataJson<string> { Code = 1, Message = "Estamos construyendo la lista forma de pagos." });
+                var resulcliente = Service.GetAplicacionesPendientes(param.usuarioLogin, param.idCiclo);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
+                return Ok(resulcliente);
             }
             catch
             {
