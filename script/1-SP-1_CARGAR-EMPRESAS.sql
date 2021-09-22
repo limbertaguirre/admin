@@ -1,5 +1,5 @@
 
-Create PROCEDURE [dbo].[SP_EXEC_CARGAR_EMPRESAS]
+ALTER PROCEDURE [dbo].[SP_EXEC_CARGAR_EMPRESAS]
  
 AS
 
@@ -37,13 +37,18 @@ BEGIN TRANSACTION;
 			select top(1) @IDEMPRESA_SELECCIONADO = id_empresa  FROM BDMultinivel.dbo.EMPRESA where codigo_cnx= @IDEMPRESAitem
 			IF @IDEMPRESA_SELECCIONADO = 0
 			BEGIN
-				select @IDEMPRESAitem as 'nuevo'
+				--select @IDEMPRESAitem as 'nuevo'
+				DECLARE @EMPRESA_GUARDIAN INT;
+				SET @EMPRESA_GUARDIAN=0;
+
+				SELECT top(1) @EMPRESA_GUARDIAN=empresa_id FROM OPENQUERY( [10.2.10.222], 'select * from empresa_conexion ') WHERE id_bd= @IDEMPRESAitem
+
 				insert into   BDMultinivel.dbo.EMPRESA (codigo, codigo_cnx, nombre,nombre_bd, estado, id_usuario)
 				values(
-						0,--codigo
-						@IDEMPRESAitem,
-						@NOMBREEMPRESAitem,
-						@NOMBREBDitem,
+						@EMPRESA_GUARDIAN,--codigo
+						@IDEMPRESAitem,--codigo_cnx
+						@NOMBREEMPRESAitem,--nombre
+						@NOMBREBDitem,--nombre_bd
 						1,--estado true
 						@USUARIO_DEFAULT
 				);

@@ -46,7 +46,7 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object GetAplicacionesPendientes(string usuario, int idCiclo)
+        public object GetFormasPagosPendientes(string usuario, int idCiclo)
         {
             try
             {

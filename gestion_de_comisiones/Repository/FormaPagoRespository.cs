@@ -27,7 +27,7 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                //Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos");
+                Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos");
                 var ciclosR = ContextMulti.VwObtenerCiclos.Where(x => x.IdEstadoComision == idEstadoComision).ToList();
                 List<CicloDto> ciclos = new List<CicloDto>();
                 foreach (var c in ciclosR)
@@ -39,7 +39,7 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {usuario} error catch getCiclos() mensaje : {ex}");
+                Logger.LogWarning($" usuario: {usuario} error catch getCiclos() mensaje : {ex.Message}");
                 List<Ciclo> lis = new List<Ciclo>();
                 return lis;
             }
@@ -52,12 +52,12 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision && x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisiones.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision || ( x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex}");
+                Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex.Message}");
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 return list;
             }

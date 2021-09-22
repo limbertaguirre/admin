@@ -881,11 +881,11 @@ go
 
 go
 
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(10,'ZURIEL',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(11,'AVDEL',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(12,'CCNORTE',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(13,'JAYIL',1, 1);
 
+--empresas temporale q se ejecutaran manualmente para la pruebas ya que estas empresas no exiten apartir del ciclo 88
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(6,0,'SHOFAR S.R.L','',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(15,0,'NEYZAN / JAYIL SRL','',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(18,0,'MENORAH S.R.L','',1, 1);
 go
 --------------------------------
 --------------------------------
