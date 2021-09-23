@@ -1344,3 +1344,41 @@ AS
                   inner join BDMultinivel.dbo.proyecto PRO on PRO.proyecto_conexion_id= GRLOTE.IDPROYECTO 
 				  inner join BDMultinivel.dbo.EMPRESA EMP on EMP.id_empresa= PRO.id_empresa
  go
+
+ ALTER VIEW [dbo].[vwObtenercomisionesFormaPago]
+ AS
+     select 
+	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
+	        GPCOMI.id_comision AS 'idComision', 
+			GPDETA.id_ficha AS 'idFicha',
+			FIC.nombres +' '+ FIC.apellidos as 'nombre',
+			FIC.ci,
+			FIC.cuenta_bancaria AS 'cuentaBancaria',
+			FIC.id_banco,
+			BA.nombre AS 'nombreBanco',
+			GPDETA.monto_bruto AS 'montoBruto' ,
+		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+			GPDETA.monto_neto AS 'montoNeto',
+			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
+			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
+			GPCOMI.id_ciclo,
+			CI.nombre AS 'ciclo',
+			GPESTA.id_estado_comision,
+			GPDETA.monto_retencion,
+			GPDETA.monto_aplicacion,
+			CASE WHEN LISTFO.id_lista_formas_pago IS NULL THEN 0 ELSE LISTFO.id_lista_formas_pago END As 'id_lista_formas_pago',
+			CASE WHEN LISTFO.id_tipo_pago IS NULL THEN 0 ELSE LISTFO.id_tipo_pago END As 'id_tipo_pago',			
+			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion'
+	        from BDMultinivel.dbo.GP_COMISION GPCOMI
+	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
+			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
+			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
+			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
+			left join BDMultinivel.dbo.LISTADO_FORMAS_PAGO LISTFO ON  LISTFO.id_comisiones_detalle = GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago= LISTFO.id_tipo_pago
+			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
+go
+

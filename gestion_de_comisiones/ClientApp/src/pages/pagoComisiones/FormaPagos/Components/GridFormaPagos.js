@@ -113,7 +113,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
         {listaComisionesAPagar.length>0? 
                <Grid>
                <TableContainer component={Paper}>
-                    <Table className={style.table} size="medium" aria-label="a dense table">
+                    <Table className={style.table} size="small" aria-label="a dense table">
                         <TableHead>
                         <TableRow>
                             <TableCell align="center"><b>#</b></TableCell>
@@ -125,6 +125,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center"><b>Retención ($us.)</b></TableCell>
                             <TableCell align="center"><b>Descuento ($us.)</b></TableCell>
                             <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Forma Pago</b></TableCell>
                             <TableCell align="center"></TableCell>
                         </TableRow>
                         </TableHead>
@@ -140,9 +141,10 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="center">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>                              
-                            <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>    
+                            <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
+                            <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
                             <TableCell align="center">
-                                {row.montoAplicacion > 0? 
+                                {row.idListaFormasPago > 0? 
                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver descuento detallado.'}>                                        
                                          <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)} >
                                             <VisibilityIcon color="primary"  style={{ fontSize: 30 }} />

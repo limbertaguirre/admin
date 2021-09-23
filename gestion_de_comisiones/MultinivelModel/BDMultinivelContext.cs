@@ -71,6 +71,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
+        public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -2712,6 +2713,90 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("nombreBanco");
+            });
+
+            modelBuilder.Entity<VwObtenercomisionesFormaPago>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenercomisionesFormaPago");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.Ciclo)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ciclo");
+
+                entity.Property(e => e.CuentaBancaria)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaBancaria");
+
+                entity.Property(e => e.EstadoDetalleFacturaNombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("estadoDetalleFacturaNombre");
+
+                entity.Property(e => e.EstadoFacturoId).HasColumnName("estadoFacturoId");
+
+                entity.Property(e => e.Factura)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("factura");
+
+                entity.Property(e => e.IdBanco).HasColumnName("id_banco");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("idComision");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("idComisionDetalle");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
+                entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
+
+                entity.Property(e => e.MontoAplicacion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_aplicacion");
+
+                entity.Property(e => e.MontoBruto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoBruto");
+
+                entity.Property(e => e.MontoNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoNeto");
+
+                entity.Property(e => e.MontoRetencion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_retencion");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreBanco");
+
+                entity.Property(e => e.TipoPagoDescripcion)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("tipo_pago_descripcion");
             });
 
             OnModelCreatingPartial(modelBuilder);
