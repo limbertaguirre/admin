@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using gestion_de_comisiones.Servicios.Interfaces;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Repository.Interfaces;
+using gestion_de_comisiones.Modelos.FormaPago;
 
 namespace gestion_de_comisiones.Servicios
 {
@@ -63,6 +64,21 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object ListarFormasPagos(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} inicio el servicio ListarFormasPagos()");
+                var listado = (List<TipoPagoInputmodel>)Repository.ListarFormaPagos(usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", listado);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ListarFormasPagos() al obtener lista  Forma de pagos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de tipos de pagos", "");
+            }
+        }
+
 
 
 

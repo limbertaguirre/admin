@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -59,6 +60,21 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex.Message}");
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                return list;
+            }
+        }
+        public List<TipoPagoInputmodel> ListarFormaPagos(string usuario)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuario} inicio el repository ListarFormaPagos() ");
+                var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre)).ToList();
+                return tipopagos;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch ListarFormaPagos() mensaje : {ex.Message}");
+                List<TipoPagoInputmodel> list = new List<TipoPagoInputmodel>();
                 return list;
             }
         }

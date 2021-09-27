@@ -121,9 +121,9 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center"><b>Cédula identidad</b></TableCell>
                             <TableCell align="center"><b>Nro. Cuenta</b></TableCell>
                             <TableCell align="center"><b>Banco</b></TableCell>
-                            <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
+                            {/* <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
                             <TableCell align="center"><b>Retención ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell>
+                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell> */}
                             <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center"><b>Forma Pago</b></TableCell>
                             <TableCell align="center"></TableCell>
@@ -138,22 +138,24 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
                             <TableCell align="center">{row.nombreBanco}</TableCell>   
-                            <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
+                           {/*  <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
                             <TableCell align="center">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>                              
+                            <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>  */}                             
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
                             <TableCell align="center">
                                 {row.idListaFormasPago > 0? 
-                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Ver descuento detallado.'}>                                        
+                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
                                          <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)} >
-                                            <VisibilityIcon color="primary"  style={{ fontSize: 30 }} />
+                                            {/* <VisibilityIcon color="primary"  style={{ fontSize: 30 }} /> */}
+                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago1.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                     :
-                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'No tiene descuentos.'}>                                       
+                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
                                          <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`)}  >
-                                            <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} />
+                                            {/* <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} /> */}
+                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago2.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                   }

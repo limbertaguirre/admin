@@ -2165,6 +2165,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("descripcion")
                     .HasComment("Es la descripcion mas detallada del nombre de la tabla");
 
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")

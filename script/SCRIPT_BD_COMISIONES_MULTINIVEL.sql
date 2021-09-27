@@ -840,6 +840,7 @@ CREATE TABLE TIPO_PAGO(
   nombre varchar(100) not null,
   descripcion varchar(max),
   id_usuario int not null,
+  estado bit NOT NULL default 1,--true
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
 )

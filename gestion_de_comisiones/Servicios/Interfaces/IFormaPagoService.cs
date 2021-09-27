@@ -9,5 +9,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     {
         public object GetCiclos(string usuario);
         public object GetFormasPagosPendientes(string usuario, int idCiclo);
+        public object ListarFormasPagos(string usuario);
+
     }
 }

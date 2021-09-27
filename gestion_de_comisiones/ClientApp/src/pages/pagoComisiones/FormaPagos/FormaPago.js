@@ -13,6 +13,8 @@ import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import GridFormaPagos from './Components/GridFormaPagos';
+import TipoPagosModal from './Components/TipoPagosModal'
+import * as Actions from '../../../redux/actions/FormaPagosAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -171,10 +173,36 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setOpenSnackbar(false);
     };
 
-    const selecionarDetalleFrelances = (comisionDetalleId)=>{
-    //  CargarDetalleFrelancers(userName, comisionDetalleId )
+    const [openTipoPago, setTipoPago]= useState(false);
+    const [listTipoPagos, setListTipoPagos] = useState([]);
+    const [idcomisionDetalleSelect, setIdcomisionDetalleSelect]= useState(0);
+    const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
+
+    const selecionarDetalleFrelances = (comisionDetalleId)=>{        
+        listarTiposPagos();
+        setIdcomisionDetalleSelect(comisionDetalleId)
+    }
+    const cerrarModalTipoPagoModal =()=>{
+      setTipoPago(false);
+      setIdtipoPagoSelect("0");
     }
 
+    async function listarTiposPagos(){      
+      let respuesta = await Actions.listarFormaPagos(userName , dispatch);
+      if(respuesta && respuesta.code == 0)
+        setListTipoPagos(respuesta.data);
+        setTipoPago(true);
+    }
+
+    useEffect(()=>{
+      console.log('lista :', listTipoPagos)
+    },[listTipoPagos, idcomisionDetalleSelect]);
+    
+
+    const handleChangeRadio = (event) => {
+        console.log(event.target.value);
+        setIdtipoPagoSelect(event.target.value);
+    };
 
     return (
       <>
@@ -275,7 +303,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-
+             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
       </>
     );
 

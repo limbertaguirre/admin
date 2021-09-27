@@ -71,12 +71,28 @@ namespace gestion_de_comisiones.Controllers
 			}
 		}
 
-		//TODO: LIMBERT PENDIENTE CREAR UNA VARIABLE 
+        public ActionResult GetListarFormaPagos([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller GetListarFormaPagos()  ");
+                var ciclos = Service.ListarFormasPagos(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller GetListarFormaPagos()  ");
+                return Ok(ciclos);
+            }
+
+            catch
+            {
+                Logger.LogError($"usuario : {usuarioLogin} error catch  GetListarFormaPagos() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener los tipos de pagos" };
+                return Ok(Result);
+            }
+        }
 
 
 
 
 
 
-	}
+    }
 }
