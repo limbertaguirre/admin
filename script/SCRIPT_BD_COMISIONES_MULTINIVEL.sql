@@ -840,8 +840,10 @@ CREATE TABLE TIPO_PAGO(
   nombre varchar(100) not null,
   descripcion varchar(max),
   id_usuario int not null,
+  estado bit NOT NULL default 1,--true
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+  icono varchar(50) NOT NULL,
 )
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'id_tipo_pago'
@@ -853,10 +855,10 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'fecha_actualizacion'
 
 go
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(1, 'Sion pay','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(2, 'Transferencia','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(3, 'Cheque','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(4, 'Ninguno','es una billetera movil',0)
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',0,'transfer')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',0,'sionpay')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(3, 'Cheque','es una billetera movil',0,'cheque')
+   
 go
 CREATE TABLE EMPRESA(
   id_empresa int NOT NULL PRIMARY KEY identity,
@@ -881,11 +883,11 @@ go
 
 go
 
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(10,'ZURIEL',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(11,'AVDEL',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(12,'CCNORTE',1, 1);
---insert into BDMultinivel.dbo.EMPRESA(codigo, nombre, estado,id_usuario)values(13,'JAYIL',1, 1);
 
+--empresas temporale q se ejecutaran manualmente para la pruebas ya que estas empresas no exiten apartir del ciclo 88
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(6,0,'SHOFAR S.R.L','',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(15,0,'NEYZAN / JAYIL SRL','',1, 1);
+--insert into BDMultinivel.dbo.EMPRESA(codigo,codigo_cnx, nombre,nombre_bd, estado,id_usuario)values(18,0,'MENORAH S.R.L','',1, 1);
 go
 --------------------------------
 --------------------------------
@@ -1344,3 +1346,53 @@ AS
                   inner join BDMultinivel.dbo.proyecto PRO on PRO.proyecto_conexion_id= GRLOTE.IDPROYECTO 
 				  inner join BDMultinivel.dbo.EMPRESA EMP on EMP.id_empresa= PRO.id_empresa
  go
+
+ ALTER VIEW [dbo].[vwObtenercomisionesFormaPago]
+ AS
+     select 
+	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
+	        GPCOMI.id_comision AS 'idComision', 
+			GPDETA.id_ficha AS 'idFicha',
+			FIC.nombres +' '+ FIC.apellidos as 'nombre',
+			FIC.ci,
+			FIC.cuenta_bancaria AS 'cuentaBancaria',
+			FIC.id_banco,
+			BA.nombre AS 'nombreBanco',
+			GPDETA.monto_bruto AS 'montoBruto' ,
+		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
+			GPDETA.monto_neto AS 'montoNeto',
+			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
+			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
+			GPCOMI.id_ciclo,
+			CI.nombre AS 'ciclo',
+			GPESTA.id_estado_comision,
+			GPDETA.monto_retencion,
+			GPDETA.monto_aplicacion,
+			CASE WHEN LISTFO.id_lista_formas_pago IS NULL THEN 0 ELSE LISTFO.id_lista_formas_pago END As 'id_lista_formas_pago',
+			CASE WHEN LISTFO.id_tipo_pago IS NULL THEN 0 ELSE LISTFO.id_tipo_pago END As 'id_tipo_pago',			
+			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion'
+	        from BDMultinivel.dbo.GP_COMISION GPCOMI
+	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
+			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
+			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
+			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
+			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
+			left join BDMultinivel.dbo.LISTADO_FORMAS_PAGO LISTFO ON  LISTFO.id_comisiones_detalle = GPDETA.id_comision_detalle
+			left join BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago= LISTFO.id_tipo_pago
+			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
+go
+
+ALTER VIEW [dbo].[vwVerificarCuentasUsuario]
+ AS
+	select
+	       f.ci,
+	       f.nombres,
+           f.tiene_cuenta_bancaria, 
+		   CASE WHEN u.id_usuario IS NULL THEN 'False' ELSE 'True' END As 'sionPay',
+		   CASE WHEN u.id_estado_usuario IS NULL THEN 0 ELSE u.id_estado_usuario  END As 'estadoSionPay'
+from  BDMultinivel.dbo.ficha f
+left join BDPuntosCash.dbo.USUARIO u on   u.id_usuario COLLATE Latin1_General_CI_AS =   f.ci COLLATE Latin1_General_CI_AS
+
+go

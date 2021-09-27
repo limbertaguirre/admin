@@ -5,7 +5,7 @@ import DetalleAdjunto from '../pages/pagoComisiones/Facturacion/DetalleAdjunto'
 import  Prorrateo  from '../pages/pagoComisiones/Prorrateo/Prorrateo';
 import  CargarComisiones  from '../pages/pagoComisiones/CargarComisiones';
 import  CargarAplicaciones  from '../pages/pagoComisiones/CargarAplicaciones/CargarAplicaciones';
-import FormaPago from '../pages/pagoComisiones/FormaPago';
+import FormaPago from '../pages/pagoComisiones/FormaPagos/FormaPago';
 import NotFoundLoad from '../components/notfound/NotFoundLoad';
 import SinAcceso from '../components/notfound/SinAcceso';
 import Roles from '../pages/usuario/Roles';
