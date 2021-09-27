@@ -843,6 +843,7 @@ CREATE TABLE TIPO_PAGO(
   estado bit NOT NULL default 1,--true
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+  icono varchar(50) NOT NULL,
 )
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'id_tipo_pago'
@@ -854,10 +855,10 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'fecha_actualizacion'
 
 go
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(1, 'Sion pay','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(2, 'Transferencia','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(3, 'Cheque','es una billetera movil',0)
-   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario) values(4, 'Ninguno','es una billetera movil',0)
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',0,'transfer')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',0,'sionpay')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,id_usuario,icono) values(3, 'Cheque','es una billetera movil',0,'cheque')
+   
 go
 CREATE TABLE EMPRESA(
   id_empresa int NOT NULL PRIMARY KEY identity,
@@ -1383,3 +1384,15 @@ AS
 			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
 go
 
+ALTER VIEW [dbo].[vwVerificarCuentasUsuario]
+ AS
+	select
+	       f.ci,
+	       f.nombres,
+           f.tiene_cuenta_bancaria, 
+		   CASE WHEN u.id_usuario IS NULL THEN 'False' ELSE 'True' END As 'sionPay',
+		   CASE WHEN u.id_estado_usuario IS NULL THEN 0 ELSE u.id_estado_usuario  END As 'estadoSionPay'
+from  BDMultinivel.dbo.ficha f
+left join BDPuntosCash.dbo.USUARIO u on   u.id_usuario COLLATE Latin1_General_CI_AS =   f.ci COLLATE Latin1_General_CI_AS
+
+go

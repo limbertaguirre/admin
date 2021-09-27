@@ -63,17 +63,28 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-        public List<TipoPagoInputmodel> ListarFormaPagos(string usuario)
+        public List<TipoPagoInputmodel> ListarFormaPagos(ParamFormaPagosOutputModel param)
         {
             try
             {
-                Logger.LogWarning($" usuario: {usuario} inicio el repository ListarFormaPagos() ");
-                var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre)).ToList();
-                return tipopagos;
+                List<TipoPagoInputmodel> newList = new List<TipoPagoInputmodel>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ListarFormaPagos() ");
+                var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre, p.Icono)).ToList();
+                foreach (var list in tipopagos)
+                {
+                    TipoPagoInputmodel obj = new TipoPagoInputmodel();
+                    obj.idTipoPago = list.idTipoPago;
+                    obj.nombre = list.nombre;
+                    obj.icono = list.icono;
+                    obj.estado = true;
+                    obj.descripcion = "esta bloqueado";
+                    newList.Add(obj);
+                }
+                return newList;
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {usuario} error catch ListarFormaPagos() mensaje : {ex.Message}");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ListarFormaPagos() mensaje : {ex.Message}");
                 List<TipoPagoInputmodel> list = new List<TipoPagoInputmodel>();
                 return list;
             }

@@ -100,14 +100,20 @@ const TipoPagosModal = (props) => {
                                     className={classes.group}
                                     value={idtipoPagoSelect}
                                     onChange={handleChangeRadio}
+                                    
                                 >
                                   {listTipoPagos.map((valu, index) => (
+                                    <>
                                     <FormControlLabel
-                                         key={valu.idTipoPago} 
+                                        key={valu.idTipoPago} 
                                         value={valu.idTipoPago.toString()}
                                         control={<Radio color="primary" />}
-                                        label={valu.nombre}                                        
+                                        disabled={!valu.estado}
+                                        label={valu.nombre}    
+                                        fullWidth                                    
                                     />
+                                      {!valu.estado &&   <Typography variant="caption" display="block" gutterBottom>{valu.descripcion}</Typography>}
+                                    </>
                                     ))}                           
                                 </RadioGroup>
                                 </FormControl>                     

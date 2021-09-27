@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Factura;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -71,19 +72,19 @@ namespace gestion_de_comisiones.Controllers
 			}
 		}
 
-        public ActionResult GetListarFormaPagos([FromHeader] string usuarioLogin)
+        public ActionResult GetListarFormaPagos([FromBody] ParamFormaPagosOutputModel param)
         {
             try
             {
-                Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller GetListarFormaPagos()  ");
-                var ciclos = Service.ListarFormasPagos(usuarioLogin);
-                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller GetListarFormaPagos()  ");
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller GetListarFormaPagos()  ");
+                var ciclos = Service.ListarFormasPagos(param);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller GetListarFormaPagos()  ");
                 return Ok(ciclos);
             }
 
             catch
             {
-                Logger.LogError($"usuario : {usuarioLogin} error catch  GetListarFormaPagos() controller ");
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  GetListarFormaPagos() controller ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al obtener los tipos de pagos" };
                 return Ok(Result);
             }

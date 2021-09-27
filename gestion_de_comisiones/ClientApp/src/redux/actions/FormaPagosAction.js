@@ -23,13 +23,13 @@ const listaPagos= {
         }
     ]
 }
-export async function listarFormaPagos(userName, dispatch) {
+export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
     return new Promise(resolve =>{
         const data={
-            usuarioLogin:userName
-          };
-      //  resolve(listaPagos)
-      requestGet('pagos/GetListarFormaPagos', data, dispatch )
+            usuarioLogin:userName,
+            carnet:ciSeleccionado
+          };      
+      requestPost('pagos/GetListarFormaPagos', data, dispatch )
         .then(response =>{
             console.log('respuesta api :', response);
           resolve(response);  

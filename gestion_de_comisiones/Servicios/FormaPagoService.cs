@@ -64,17 +64,16 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
             }
         }
-        public object ListarFormasPagos(string usuario)
+        public object ListarFormasPagos(ParamFormaPagosOutputModel param)
         {
             try
             {
-                Logger.LogInformation($"usuario : {usuario} inicio el servicio ListarFormasPagos()");
-                var listado = (List<TipoPagoInputmodel>)Repository.ListarFormaPagos(usuario);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", listado);
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarFormasPagos()");              
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", (List<TipoPagoInputmodel>)Repository.ListarFormaPagos(param));
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {usuario} error catch ListarFormasPagos() al obtener lista  Forma de pagos ,error mensaje: {ex.Message}");
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarFormasPagos() al obtener lista  Forma de pagos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de tipos de pagos", "");
             }
         }

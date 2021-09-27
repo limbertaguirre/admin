@@ -178,8 +178,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [idcomisionDetalleSelect, setIdcomisionDetalleSelect]= useState(0);
     const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
 
-    const selecionarDetalleFrelances = (comisionDetalleId)=>{        
-        listarTiposPagos();
+    const selecionarDetalleFrelances = (comisionDetalleId, ciSeleccionado)=>{        
+        listarTiposPagos(ciSeleccionado);
         setIdcomisionDetalleSelect(comisionDetalleId)
     }
     const cerrarModalTipoPagoModal =()=>{
@@ -187,8 +187,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setIdtipoPagoSelect("0");
     }
 
-    async function listarTiposPagos(){      
-      let respuesta = await Actions.listarFormaPagos(userName , dispatch);
+    async function listarTiposPagos(ciSeleccionado){      
+      let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado , dispatch);
       if(respuesta && respuesta.code == 0)
         setListTipoPagos(respuesta.data);
         setTipoPago(true);

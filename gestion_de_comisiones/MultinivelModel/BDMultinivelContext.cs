@@ -72,6 +72,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
+        public virtual DbSet<VwVerificarCuentasUsuario> VwVerificarCuentasUsuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -2179,6 +2180,13 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasDefaultValueSql("(getdate())")
                     .HasComment("Es el timestamp de creacion del registro");
 
+                entity.Property(e => e.Icono)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("icono")
+                    .HasDefaultValueSql("('')");
+
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
                     .HasComment("El id_usuario es el id del ultimo usuario que modifico el registro.");
@@ -2799,6 +2807,35 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("tipo_pago_descripcion");
+            });
+
+            modelBuilder.Entity<VwVerificarCuentasUsuario>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwVerificarCuentasUsuario");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.EstadoSionPay).HasColumnName("estadoSionPay");
+
+                entity.Property(e => e.Nombres)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombres");
+
+                entity.Property(e => e.SionPay)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("sionPay");
+
+                entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tiene_cuenta_bancaria");
             });
 
             OnModelCreatingPartial(modelBuilder);
