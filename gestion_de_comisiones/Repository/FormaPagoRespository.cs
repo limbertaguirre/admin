@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
@@ -70,15 +71,36 @@ namespace gestion_de_comisiones.Repository
                 List<TipoPagoInputmodel> newList = new List<TipoPagoInputmodel>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ListarFormaPagos() ");
                 var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre, p.Icono)).ToList();
+                var verifi = ContextMulti.VwVerificarCuentasUsuarios.Where(x => x.Ci == param.carnet).FirstOrDefault();
                 foreach (var list in tipopagos)
                 {
                     TipoPagoInputmodel obj = new TipoPagoInputmodel();
                     obj.idTipoPago = list.idTipoPago;
                     obj.nombre = list.nombre;
-                    obj.icono = list.icono;
-                    obj.estado = true;
-                    obj.descripcion = "esta bloqueado";
+                    obj.icono = list.icono;                   
+                    if(list.idTipoPago == 1) //tiposion pay
+                    {
+                        obj.estado = bool.Parse(verifi.SionPay);
+                        if(bool.Parse(verifi.SionPay) == false)
+                        {
+                            obj.descripcion = "El frelanzer no tiene SION PAY";
+                        } else {
+                            obj.descripcion = "";
+                        }
+                    } else if(list.idTipoPago == 2)
+                    {
+                        obj.estado = verifi.TieneCuentaBancaria;
+                        if(verifi.TieneCuentaBancaria == false)
+                        {
+                            obj.descripcion = "El frelanzer no tiene cuenta habilitada";
+                        } else {
+                            obj.descripcion = "";
+                        }
+                    } else {
+                        obj.estado = true;
+                    }                                      
                     newList.Add(obj);
+
                 }
                 return newList;
             }
@@ -89,6 +111,65 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+
+        public bool AplicarFormaPago(AplicarMetodoOutput param)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+
+            try
+            {
+                bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");             
+                var objDetalle = ContextMulti.ListadoFormasPagoes.Where(x => x.IdComisionesDetalle == param.idComisionDetalle).FirstOrDefault();
+                if(objDetalle != null)
+                {
+                    objDetalle.IdTipoPago = param.idTipoPago;
+                    objDetalle.FechaActualizacion = DateTime.Now;
+                    ContextMulti.SaveChanges();
+                }
+                else{
+                    var deta = ContextMulti.GpComisionDetalles.Where(x => x.IdComisionDetalle == param.idComisionDetalle).FirstOrDefault();
+                    ListadoFormasPago objL = new ListadoFormasPago();
+                    objL.IdTipoPago = param.idTipoPago;
+                    objL.IdComisionesDetalle = param.idComisionDetalle;
+                    objL.IdUsuario = param.idUsuario;
+                    objL.MontoNeto = (decimal)deta.MontoNeto;
+                    objL.FechaCreacion = DateTime.Now;
+                    objL.FechaActualizacion = DateTime.Now;
+                    ContextMulti.ListadoFormasPagoes.Add(objL);
+                    ContextMulti.SaveChanges();
+                }
+                dbcontextTransaction.Commit();
+                Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {param.usuarioLogin} -  hubo un error  RegistrarDecuentoComision() en repos mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return false;
+            }
+
+
+        }
+        public object GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(param.nombreCriterio.Trim()) ).ToList();               
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                return list;
+            }
+        }
+
 
 
 

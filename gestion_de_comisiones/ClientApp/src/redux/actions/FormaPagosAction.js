@@ -37,3 +37,34 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
        
     });
   }
+
+  export async function aplicarFormaPago(userName, idComisionDetalle,idtipoPagoSelect, idUsuario, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+            usuarioLogin:userName,
+            idComisionDetalle:parseInt(idComisionDetalle),
+            idtipoPago:parseInt(idtipoPagoSelect),
+            idUsuario:idUsuario
+          };     
+      requestPost('pagos/aplicarMetodoPagoComision', data, dispatch )
+        .then(response =>{
+          resolve(response);  
+        })
+       
+    });
+  }
+  export async function buscarPorCarnetFormaPago(userName, idCiclo,criterio, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idCiclo:parseInt(idCiclo),
+                nombreCriterio:criterio
+          }; 
+          console.log('llego a', data);    
+      requestPost('pagos/BuscarComisionCarnetFormaPago', data, dispatch )
+        .then(response =>{
+           resolve(response);  
+        })
+       
+    });
+  }

@@ -119,7 +119,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center"><b>#</b></TableCell>
                             <TableCell align="center"><b>Nombre completo</b></TableCell>
                             <TableCell align="center"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="center"><b>Nro. Cuenta</b></TableCell>
+                            <TableCell align="center"><b>Cuenta Banco</b></TableCell>
                             <TableCell align="center"><b>Banco</b></TableCell>
                             {/* <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
                             <TableCell align="center"><b>Retención ($us.)</b></TableCell>
@@ -146,14 +146,14 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">
                                 {row.idListaFormasPago > 0? 
                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
-                                         <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`)} >
+                                         <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}> 
                                             {/* <VisibilityIcon color="primary"  style={{ fontSize: 30 }} /> */}
                                             <img width="32" height="32" src={require('../../../../assets/icons/tipopago1.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                     :
                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
-                                         <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`)}  >
+                                         <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>
                                             {/* <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} /> */}
                                             <img width="32" height="32" src={require('../../../../assets/icons/tipopago2.png')} /> 
                                          </IconButton>

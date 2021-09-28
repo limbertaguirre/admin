@@ -25,6 +25,7 @@ namespace gestion_de_comisiones.Modelos.FormaPago
             this.estado = estado;
             this.descripcion = descripcion;
             this.icono = icono;
+           
         }
 
         public int idTipoPago { get; set; }
@@ -32,5 +33,6 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         public bool estado { get; set; }
         public string descripcion { get; set; }
         public string icono { get; set; }
+       
     }
 }
