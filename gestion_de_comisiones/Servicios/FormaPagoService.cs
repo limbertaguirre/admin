@@ -77,8 +77,25 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de tipos de pagos", "");
             }
         }
-
-
+        public object AplicarMetodoPago(AplicarMetodoOutput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio AplicarMetodoPago()");
+                var apli = Repository.AplicarFormaPago(param);
+                if (apli) {
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", apli);
+                } else {
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "ok", "");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch AplicarMetodoPago() ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener aplicar un metodo de pago", "");
+            }
+        }
 
 
 

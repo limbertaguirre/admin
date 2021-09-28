@@ -90,10 +90,30 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+		[HttpPost]
+		public ActionResult aplicarMetodoPagoComision([FromBody] AplicarMetodoOutput param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller aplicarMetodoPagoComision()  ");
+				var ciclos = Service.AplicarMetodoPago(param);
+				Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller aplicarMetodoPagoComision()  ");
+				return Ok(ciclos);
+			}
+
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  aplicarMetodoPagoComision() controller ");
+				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al aplicar un tipo de pago" };
+				return Ok(Result);
+			}
+		}
 
 
 
 
 
-    }
+
+
+	}
 }

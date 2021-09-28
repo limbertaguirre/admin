@@ -203,6 +203,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
         console.log(event.target.value);
         setIdtipoPagoSelect(event.target.value);
     };
+    const confirmarTipoPago= ()=>{
+
+      setTipoPago(false);
+      setIdtipoPagoSelect("0");
+      funcionConfirmarTipoPago();
+    }
+
+    async function funcionConfirmarTipoPago(){
+      //consumir api
+     if (idcomisionDetalleSelect != 0){     
+          let aplicarTipoPAgo= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario, dispatch)      
+         
+      }
+    }
 
     return (
       <>
@@ -303,7 +317,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} />
-             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
+            <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
       </>
     );
 

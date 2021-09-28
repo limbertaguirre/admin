@@ -37,3 +37,21 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
        
     });
   }
+
+  export async function aplicarFormaPago(userName, idComisionDetalle,idtipoPagoSelect, idUsuario, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+            usuarioLogin:userName,
+            idComisionDetalle:parseInt(idComisionDetalle),
+            idtipoPago:parseInt(idtipoPagoSelect),
+            idUsuario:idUsuario
+          };   
+    console.log('parametros :', data);   
+      requestPost('pagos/aplicarMetodoPagoComision', data, dispatch )
+        .then(response =>{
+            console.log('respuesta api :', response);
+          resolve(response);  
+        })
+       
+    });
+  }

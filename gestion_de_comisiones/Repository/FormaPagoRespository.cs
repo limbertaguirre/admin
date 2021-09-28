@@ -111,6 +111,47 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public bool AplicarFormaPago(AplicarMetodoOutput param)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+
+            try
+            {
+                bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");             
+                var objDetalle = ContextMulti.ListadoFormasPagoes.Where(x => x.IdComisionesDetalle == param.idComisionDetalle).FirstOrDefault();
+                if(objDetalle != null)
+                {
+                    objDetalle.IdTipoPago = param.idTipoPago;
+                    objDetalle.FechaActualizacion = DateTime.Now;
+                    ContextMulti.SaveChanges();
+                }
+                else{
+                    var deta = ContextMulti.GpComisionDetalles.Where(x => x.IdComisionDetalle == param.idComisionDetalle).FirstOrDefault();
+                    ListadoFormasPago objL = new ListadoFormasPago();
+                    objL.IdTipoPago = param.idTipoPago;
+                    objL.IdComisionesDetalle = param.idComisionDetalle;
+                    objL.IdUsuario = param.idUsuario;
+                    objL.MontoNeto = (decimal)deta.MontoNeto;
+                    objL.FechaCreacion = DateTime.Now;
+                    objL.FechaActualizacion = DateTime.Now;
+                    ContextMulti.ListadoFormasPagoes.Add(objL);
+                    ContextMulti.SaveChanges();
+                }
+                dbcontextTransaction.Commit();
+                Logger.LogInformation($" usuario: {param.usuarioLogin}-  SE REGISTRO EXITOSAMENTE ");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {param.usuarioLogin} -  hubo un error  RegistrarDecuentoComision() en repos mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return false;
+            }
+
+
+        }
+
 
 
     }

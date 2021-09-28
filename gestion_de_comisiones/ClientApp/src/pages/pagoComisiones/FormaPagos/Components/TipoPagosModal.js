@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const TipoPagosModal = (props) => {
-   const { open , closeHandelModal, listTipoPagos, idtipoPagoSelect, handleChangeRadio }= props;
+   const { open , closeHandelModal,confirmarTipoPago, listTipoPagos, idtipoPagoSelect, handleChangeRadio }= props;
    const classes = useStyles();
 
   return (
@@ -129,7 +129,7 @@ const TipoPagosModal = (props) => {
                         <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botones}  >
                             Cancelar
                         </Button>
-                        <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botones} >
+                        <Button  onClick={confirmarTipoPago} variant="contained" color="primary" className={classes.botones} >
                             OK
                         </Button>
                     </Grid>
