@@ -119,7 +119,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center"><b>#</b></TableCell>
                             <TableCell align="center"><b>Nombre completo</b></TableCell>
                             <TableCell align="center"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="center"><b>Nro. Cuenta</b></TableCell>
+                            <TableCell align="center"><b>Cuenta Banco</b></TableCell>
                             <TableCell align="center"><b>Banco</b></TableCell>
                             {/* <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
                             <TableCell align="center"><b>Retención ($us.)</b></TableCell>

@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-    Button, Dialog, DialogContent, Typography,Grid, TextField,FormLabel,  FormControlLabel ,FormControl, Radio, RadioGroup, FormHelperText
+    Button, Dialog, DialogContent, Typography,Grid, TextField,FormLabel,  FormControlLabel ,FormControl, Radio, RadioGroup, FormHelperText, Tooltip ,Zoom,
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-
+//import LogoSion from '../../../../assets/icons/LogoSION.sgv'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -61,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft:theme.spacing(1),
         //width:'98%'
     },
+    titleDescripcion:{
+      color:'red',  
+  },
     
   }));
 
@@ -68,13 +71,6 @@ const useStyles = makeStyles((theme) => ({
 const TipoPagosModal = (props) => {
    const { open , closeHandelModal, listTipoPagos, idtipoPagoSelect, handleChangeRadio }= props;
    const classes = useStyles();
-
-  /* const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
-
-  const handleChangeRadio = (event) => {
-      console.log(event.target.value);
-      setIdtipoPagoSelect(event.target.value);
-  }; */
 
   return (
     <>
@@ -103,17 +99,27 @@ const TipoPagosModal = (props) => {
                                     
                                 >
                                   {listTipoPagos.map((valu, index) => (
-                                    <>
-                                    <FormControlLabel
-                                        key={valu.idTipoPago} 
-                                        value={valu.idTipoPago.toString()}
-                                        control={<Radio color="primary" />}
-                                        disabled={!valu.estado}
-                                        label={valu.nombre}    
-                                        fullWidth                                    
-                                    />
-                                      {!valu.estado &&   <Typography variant="caption" display="block" gutterBottom>{valu.descripcion}</Typography>}
-                                    </>
+                                    <div key={index}>
+                                    <Grid container spacing={1}>
+                                      <Grid item xs={8}> 
+                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={!valu.estado? valu.descripcion:''}>
+                                        <FormControlLabel
+                                            key={valu.idTipoPago} 
+                                            value={valu.idTipoPago.toString()}
+                                            control={<Radio color="primary" />}
+                                            disabled={!valu.estado}
+                                            label={valu.nombre}                                                                                    
+                                        />
+                                        </Tooltip>
+                                       {/*  {!valu.estado &&   <Typography variant="caption" className={classes.titleDescripcion} display="block" gutterBottom>{valu.descripcion}</Typography>} */}                                   
+                                      </Grid>
+                                      <Grid item xs={4}>
+                                          {valu.idTipoPago ===1 &&  <img  height="31" src={require('../../../../assets/icons/sionpay_large.png')} /> }
+                                          {valu.idTipoPago ===2 &&  <img  height="45" src={require('../../../../assets/icons/tranfer.png')} /> }
+                                          {valu.idTipoPago ===3 &&  <img  height="45" src={require('../../../../assets/icons/cheque.png')} /> }
+                                        </Grid>
+                                     </Grid>
+                                     </div>
                                     ))}                           
                                 </RadioGroup>
                                 </FormControl>                     

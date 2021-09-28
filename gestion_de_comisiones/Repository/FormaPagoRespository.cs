@@ -70,15 +70,36 @@ namespace gestion_de_comisiones.Repository
                 List<TipoPagoInputmodel> newList = new List<TipoPagoInputmodel>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ListarFormaPagos() ");
                 var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre, p.Icono)).ToList();
+                var verifi = ContextMulti.VwVerificarCuentasUsuarios.Where(x => x.Ci == param.carnet).FirstOrDefault();
                 foreach (var list in tipopagos)
                 {
                     TipoPagoInputmodel obj = new TipoPagoInputmodel();
                     obj.idTipoPago = list.idTipoPago;
                     obj.nombre = list.nombre;
-                    obj.icono = list.icono;
-                    obj.estado = true;
-                    obj.descripcion = "esta bloqueado";
+                    obj.icono = list.icono;                   
+                    if(list.idTipoPago == 1) //tiposion pay
+                    {
+                        obj.estado = bool.Parse(verifi.SionPay);
+                        if(bool.Parse(verifi.SionPay) == false)
+                        {
+                            obj.descripcion = "El frelanzer no tiene SION PAY";
+                        } else {
+                            obj.descripcion = "";
+                        }
+                    } else if(list.idTipoPago == 2)
+                    {
+                        obj.estado = verifi.TieneCuentaBancaria;
+                        if(verifi.TieneCuentaBancaria == false)
+                        {
+                            obj.descripcion = "El frelanzer no tiene cuenta habilitada";
+                        } else {
+                            obj.descripcion = "";
+                        }
+                    } else {
+                        obj.estado = true;
+                    }                                      
                     newList.Add(obj);
+
                 }
                 return newList;
             }
