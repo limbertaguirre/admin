@@ -7,6 +7,7 @@ using gestion_de_comisiones.Servicios.Interfaces;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Modelos.FormaPago;
+using gestion_de_comisiones.Modelos.Factura;
 
 namespace gestion_de_comisiones.Servicios
 {
@@ -94,6 +95,22 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} error catch AplicarMetodoPago() ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener aplicar un metodo de pago", "");
+            }
+        }
+        public object ListarComisionesFormaPagoPorCarnet(BuscarInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;               
+                return Respuesta.ReturnResultdo(0, "ok", Repository.GetComisionesPorCarnetListFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
 

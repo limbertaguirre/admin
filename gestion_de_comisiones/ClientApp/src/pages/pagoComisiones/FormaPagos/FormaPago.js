@@ -4,6 +4,7 @@ import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
   Grid, TextField, Typography,FormControl,
    InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
+import SearchIcon from '@material-ui/icons/Search';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
@@ -144,7 +145,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         }
     };
 
-    const handleOnGetAplicaciones=()=>{    
+    const handleOnGetAplicaciones=()=>{         
       if(idCiclo && idCiclo !== 0){  
           setIdCicloSelected(idCiclo);     
           const data={
@@ -178,7 +179,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [idcomisionDetalleSelect, setIdcomisionDetalleSelect]= useState(0);
     const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
 
-    const selecionarDetalleFrelances = (comisionDetalleId, ciSeleccionado)=>{        
+    const selecionarDetalleFrelances = (comisionDetalleId, ciSeleccionado,idTipoPago)=>{     
+      setIdtipoPagoSelect(String(idTipoPago));   
         listarTiposPagos(ciSeleccionado);
         setIdcomisionDetalleSelect(comisionDetalleId)
     }
@@ -189,34 +191,48 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     async function listarTiposPagos(ciSeleccionado){      
       let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado , dispatch);
-      if(respuesta && respuesta.code == 0)
+      if(respuesta && respuesta.code == 0){ 
         setListTipoPagos(respuesta.data);
         setTipoPago(true);
+      }
     }
 
     useEffect(()=>{
-      console.log('lista :', listTipoPagos)
-    },[listTipoPagos, idcomisionDetalleSelect]);
+
+    },[listTipoPagos, idcomisionDetalleSelect, listaComisionesAPagar]);
     
 
-    const handleChangeRadio = (event) => {
-        console.log(event.target.value);
+    const handleChangeRadio = (event) => {     
         setIdtipoPagoSelect(event.target.value);
     };
-    const confirmarTipoPago= ()=>{
-
-      setTipoPago(false);
-      setIdtipoPagoSelect("0");
+    const confirmarTipoPago= ()=>{      
       funcionConfirmarTipoPago();
     }
 
     async function funcionConfirmarTipoPago(){
-      //consumir api
      if (idcomisionDetalleSelect != 0){     
-          let aplicarTipoPAgo= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario, dispatch)      
-         
+          let response= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario, dispatch)             
+          if(response && response.code == 0){
+              setTipoPago(false);
+              setIdtipoPagoSelect("0");
+              handleOnGetAplicaciones();
+          }
       }
     }
+
+    const buscarFreelanzer=()=>{
+     console.log('texto q se :',txtBusqueda);
+     buscarFrelancerPorCi();
+    }
+
+    async function buscarFrelancerPorCi(){         
+           let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)   
+           console.log('busqueda por nombre',response)          
+           if(response && response.code == 0){
+               setListaComisionesAPagar(response.data);  
+               // setStatusBusqueda(true);    
+           }       
+     }
 
     return (
       <>
@@ -255,7 +271,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                    }    */}
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
-                  {/*   {statusBusqueda&&
+                    {statusBusqueda&&
                         <TextField
                           label="Buscar freelancer"
                           type={'text'}
@@ -278,7 +294,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                               ),
                           }}                    
                         />       
-                     } */}
+                     }
                   </Grid>
 
                   <Grid item xs={12} md={3} className={style.containerCiclo}>
