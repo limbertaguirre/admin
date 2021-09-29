@@ -1,0 +1,8 @@
+{
+    "tipoPago" : {
+        "sionPay" : 1,
+        "transferencia" : 2,
+        "cheque":3,
+        "ninguno_defaul" : 0
+    }
+}

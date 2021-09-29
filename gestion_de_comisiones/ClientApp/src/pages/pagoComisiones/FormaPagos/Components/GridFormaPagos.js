@@ -1,6 +1,6 @@
 import React, { useEffect, useState}  from 'react';
 import {  makeStyles } from '@material-ui/core/styles';
-import ErrorIcon from '@material-ui/icons/Error';
+import ErrorIcon from '@material-ui/icons/Error';  
 import { Tooltip ,Zoom, Card, Grid } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,12 +13,13 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-
+import configEstadoTable from  "../../../../lib/configEstadoTable.json";
 
   const useStyles = makeStyles((theme) => ({
 
     table: {
-      minWidth: 650,
+    // minWidth: 650,
+     maxWidth: "100%",
     },
     submitDetalle: {
         height:'25px',
@@ -35,6 +36,32 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
           alignItems:'center',
           justifyContent:'center', 
       },
+    headerTable: {
+     
+        background: "#1872b8", 
+        boxShadow: '2px 1px 5px #1872b8',
+    },
+    headerRow: {     
+      color:'white',
+      paddingBottom:'13px', 
+      paddingTop:'13px',
+  },
+    backgroundSionPay: {    
+      //  background: '#ACE1FB'
+    },
+    backgroundTransferencia: {
+    // background: "#8FB8CD"
+    },
+    backgroundCheque: {
+      background: "#EBF0AE"
+    },
+    backgroundNinguno: {
+      background: "#EFF3F5"
+    },
+    altoCeldas :{
+      paddingBottom:'2px', 
+      paddingTop:'2px'
+    }
   }));
 
 
@@ -106,36 +133,51 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                  }
         },[listaComisionesAPagar])
         
+    function verificarTipo(tipo){
+        if(parseInt(tipo) === configEstadoTable.tipoPago.sionPay){        
+          return style.backgroundSionPay
+        }else if(parseInt(tipo) === configEstadoTable.tipoPago.transferencia){        
+          return style.backgroundTransferencia
+        }else if(parseInt(tipo) === configEstadoTable.tipoPago.cheque){        
+          return style.backgroundCheque
+        }else{
+          return style.backgroundNinguno
+        }
+    }
 
-
+    const [filtroTipoPago, setFiltroTipoPago] = useState("*");
+    const [statusFiltroTipoPago, setEstatusFiltroTipoPago] = useState(false);
+    const buscarFiltro=()=>{
+      alert("en proceso")
+    }
     return (
       <>
         {listaComisionesAPagar.length>0? 
                <Grid>
                <TableContainer component={Paper}>
                     <Table className={style.table} size="small" aria-label="a dense table">
-                        <TableHead>
+                        <TableHead className={style.headerTable}>
                         <TableRow>
-                            <TableCell align="center"><b>#</b></TableCell>
-                            <TableCell align="center"><b>Nombre completo</b></TableCell>
-                            <TableCell align="center"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="center"><b>Cuenta Banco</b></TableCell>
-                            <TableCell align="center"><b>Banco</b></TableCell>
-                            {/* <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Retención ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell> */}
-                            <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Forma Pago</b></TableCell>
-                            <TableCell align="center"></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>#</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Nombre completo</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Cédula identidad</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Cuenta Banco</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Banco</b></TableCell>
+                            {/* <TableCell align="center className={style.headerRow}"><b>Monto Bruto ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Retención ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow} ><b>Descuento ($us.)</b></TableCell> */}
+                            <TableCell align="center" className={style.headerRow}><b>Monto Total Neto ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow} onClick={() =>buscarFiltro()} ><b>Forma Pago</b> <ErrorIcon /></TableCell>
+                            <TableCell align="center" className={style.headerRow}></TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
                         { stableSort(listaComisionesAPagar, getComparator(order, orderBy))
                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                            <TableRow key={index +1 }>
+                            <TableRow key={index +1 } className={verificarTipo(`${row.idTipoPago}`)} >
                             <TableCell align="center"scope="row"> {contadorPage + index + 1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
-                            <TableCell align="center">{row.ci}</TableCell>
+                            <TableCell align="center" >{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
                             <TableCell align="center">{row.nombreBanco}</TableCell>   
                            {/*  <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
@@ -146,16 +188,14 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">
                                 {row.idListaFormasPago > 0? 
                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
-                                         <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}> 
-                                            {/* <VisibilityIcon color="primary"  style={{ fontSize: 30 }} /> */}
-                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago1.png')} /> 
+                                         <IconButton className={style.altoCeldas} edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                            
+                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago1.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                     :
                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
-                                         <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>
-                                            {/* <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} /> */}
-                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago2.png')} /> 
+                                         <IconButton className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                          
+                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago2.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                   }
@@ -167,9 +207,9 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                           <TableRow key={100000000000000}>
                             <TableCell align="center"><b></b></TableCell>
                               <TableCell align="right"><b>TOTAL</b></TableCell>
+                              {/* <TableCell align="center"><b></b></TableCell>
                               <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell> */}
                               <TableCell align="center"><b> {totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
                               <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
                               <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
