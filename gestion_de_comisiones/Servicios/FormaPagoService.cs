@@ -113,6 +113,23 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object getFormaPagosDisponibles(FormaPagosDisponiblesInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio getFormaPagosDisponibles() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                return Respuesta.ReturnResultdo(0, "ok", Repository.GetComisionesPorFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch getFormaPagosDisponibles(), error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de filtro de forma de pago", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
 
 
 

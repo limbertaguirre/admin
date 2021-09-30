@@ -234,6 +234,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
            }       
      }
 
+    const seleccionarTipoFiltroBusqueda=(idTipoFormaPago)=>{
+      console.log("listo tipo :", idTipoFormaPago)
+      filtrarComisionPorFormaPago(idTipoFormaPago)
+    }
+    async function filtrarComisionPorFormaPago(idTipoFormaPago){         
+      let response= await Actions.ListarComisionFormaPagoFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
+      console.log('busqueda por nombre',response)          
+      if(response && response.code == 0){
+          //setListaComisionesAPagar(response.data);  
+      }       
+}
+
     return (
       <>
           <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
@@ -332,7 +344,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             </Card>
 
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
-            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} />
+            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
       </>
     );

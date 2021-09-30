@@ -1,7 +1,7 @@
 import React, { useEffect, useState}  from 'react';
-import {  makeStyles } from '@material-ui/core/styles';
+import {  makeStyles, withStyles, emphasize } from '@material-ui/core/styles';
 import ErrorIcon from '@material-ui/icons/Error';  
-import { Tooltip ,Zoom, Card, Grid } from "@material-ui/core";
+import { Tooltip ,Zoom, Card, Grid, Button   } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,9 +14,64 @@ import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import configEstadoTable from  "../../../../lib/configEstadoTable.json";
+import FilterListIcon from '@material-ui/icons/FilterList'; 
+import {useSelector,useDispatch} from 'react-redux';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import Fade from '@material-ui/core/Fade';
+import * as Actions from '../../../../redux/actions/FormaPagosAction';
+import PaymentIcon from '@material-ui/icons/Payment';
+
+    const StyledMenu = withStyles({
+      paper: {
+        border: '1px solid #d3d4d5',
+      },
+    })((props) => (
+      <Menu
+        elevation={0}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        {...props}
+      />
+    ));
+
+    const StyledMenuItem = withStyles((theme) => ({
+      root: {
+        '&:focus': {
+          backgroundColor: theme.palette.primary.main,
+          '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+            color: theme.palette.common.white,
+          },
+        },
+      },
+    }))(MenuItem);
 
   const useStyles = makeStyles((theme) => ({
-
+    root: {
+      backgroundColor: theme.palette.grey[100],
+      height: theme.spacing(3),
+      color: theme.palette.grey[800],
+      fontWeight: theme.typography.fontWeightRegular,
+      '&:hover, &:focus': {
+        backgroundColor: theme.palette.grey[300],
+      },
+      '&:active': {
+        boxShadow: theme.shadows[1],
+        backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+      },
+    },
     table: {
     // minWidth: 650,
      maxWidth: "100%",
@@ -67,7 +122,9 @@ import configEstadoTable from  "../../../../lib/configEstadoTable.json";
 
  const GridFormaPagos =(props)=> {
     let style= useStyles();
-    const {listaComisionesAPagar, selecionarDetalleFrelances, txtBusqueda} = props;
+    const dispatch=useDispatch();
+    const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
+    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -148,12 +205,114 @@ import configEstadoTable from  "../../../../lib/configEstadoTable.json";
     const [filtroTipoPago, setFiltroTipoPago] = useState("*");
     const [statusFiltroTipoPago, setEstatusFiltroTipoPago] = useState(false);
     const buscarFiltro=()=>{
-      alert("en proceso")
+      setAnchorEl(true);
     }
+
+    const [anchorEl, setAnchorEl] = React.useState(false);
+    const open = Boolean(anchorEl);
+    const [listFormaPago, setListFormaPago]= useState([]);
+
+    const handleClick = (event) => {
+       listarTiposPagos(event.currentTarget);
+    };
+
+    async function listarTiposPagos(event){      
+      let respuesta = await Actions.getFormaPagoDisponibles(userName, idCiclo, dispatch);      
+      if(respuesta && respuesta.code == 0){ 
+        setListFormaPago(respuesta.data);
+        setAnchorEl(event);
+      }    
+      
+    }
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+    const seleccionadarTipo = (idtipo) => {
+      
+      seleccionarTipoFiltroBusqueda(idtipo);
+      setAnchorEl(null);
+    };
+
     return (
       <>
+        <br />
+         <Grid container >
+                  <Grid item xs>
+
+                  </Grid>
+                   <Grid item  >   
+                        <div className={style.root}>                
+                          <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Seleccione una forma de pago.'}>                                       
+                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleClick}>                                          
+                                  Filtro  <FilterListIcon />
+                                </IconButton>
+                          </Tooltip>                                   
+                            {/* <Menu
+                              id="fade-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={open}
+                              onClose={handleClose}
+                              TransitionComponent={Fade}
+                            >
+                              {listFormaPago.map((row, index) => ( 
+                                 <MenuItem onClick={() => seleccionadarTipo(`${row.idTipoPago}`)}>{row.nombre} {' - '} {row.cantidad}</MenuItem>
+                              ))}                             
+                            </Menu>   */}
+                            
+                            <StyledMenu
+                              id="customized-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={open}
+                              onClose={handleClose}
+                            >
+                                 {listFormaPago.map((row, index) => (                                
+                                 <StyledMenuItem onClick={() => seleccionadarTipo(`${row.idTipoPago}`)} >
+                                 <ListItemIcon>
+                                   <PaymentIcon fontSize="small" />
+                                 </ListItemIcon>
+                                 <ListItemText >
+                                    {row.nombre} {' - '} {'('+row.cantidad +')'}
+                                 </ListItemText>
+                               </StyledMenuItem>
+                              ))}                                    
+                            </StyledMenu>
+
+                      </div>
+                      <br />
+                  </Grid>
+          </Grid>
+         
         {listaComisionesAPagar.length>0? 
-               <Grid>
+               <Grid container >
+                 {/*  <Grid item xs>
+
+                  </Grid>
+                   <Grid item  >   
+                        <div className={style.root}>                
+                          <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Seleccione una forma de pago.'}>                                       
+                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleClick}>                                          
+                                  Filtro  <FilterListIcon />
+                                </IconButton>
+                          </Tooltip>                                   
+                            <Menu
+                              id="fade-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={open}
+                              onClose={handleClose}
+                              TransitionComponent={Fade}
+                            >
+                              <MenuItem onClick={() => seleccionadarTipo(`${1}`)}>Profile</MenuItem>
+                              <MenuItem onClick={() =>seleccionadarTipo(`${2}`)}>My account sds sd sd sd sd</MenuItem>
+                              <MenuItem onClick={() => seleccionadarTipo(`${3}`)}>Logout</MenuItem>
+
+                            </Menu>                         
+                      </div>
+                  </Grid> */}
+                  <Grid item xs={12}>
                <TableContainer component={Paper}>
                     <Table className={style.table} size="small" aria-label="a dense table">
                         <TableHead className={style.headerTable}>
@@ -167,7 +326,7 @@ import configEstadoTable from  "../../../../lib/configEstadoTable.json";
                             <TableCell align="center" className={style.headerRow}><b>Retención ($us.)</b></TableCell>
                             <TableCell align="center" className={style.headerRow} ><b>Descuento ($us.)</b></TableCell> */}
                             <TableCell align="center" className={style.headerRow}><b>Monto Total Neto ($us.)</b></TableCell>
-                            <TableCell align="center" className={style.headerRow} onClick={() =>buscarFiltro()} ><b>Forma Pago</b> <ErrorIcon /></TableCell>
+                            <TableCell align="center" className={style.headerRow} ><b>Forma Pago</b> </TableCell>
                             <TableCell align="center" className={style.headerRow}></TableCell>
                         </TableRow>
                         </TableHead>
@@ -229,10 +388,14 @@ import configEstadoTable from  "../../../../lib/configEstadoTable.json";
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                     />
                </Grid>
+               </Grid>
                :<Card className={style.cardVacio}>                    
                   <ErrorIcon /> {' '} {' No hay qué mostrar, selecione y cargue un ciclo'}
                </Card> 
             }
+
+           
+
       </>
     );
 }

@@ -2,24 +2,32 @@
 import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
-const listaPagos= {
-    status:0,
+const formaPagos= {
+    code:0,
     data:[
         {
             idTipoPago:1,
-            nombre:"SION Pay"
+            nombre:"SION PAY",
+            icono:'sionpay',
+            cantidad:12
         },
         {
-            idTipoPago:2,
-            nombre:"TRANSFERENCIA"
+          idTipoPago:2,
+            nombre:"TRANSFERENCIA",
+            icono:'sionpay',
+            cantidad:50
         },
         {
-            idTipoPago:3,
-            nombre:"CHEQUE"
+          idTipoPago:3,
+            nombre:"CHEQUE",
+            icono:'sionpay',
+            cantidad:12
         },
         {
-            idTipoPago:4,
-            nombre:"NINGUNO"
+          idTipoPago:4,
+            nombre:"NINGUNO",
+            icono:'sionpay',
+            cantidad:550
         }
     ]
 }
@@ -65,6 +73,38 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
         .then(response =>{
            resolve(response);  
         })
+       
+    });
+  }
+  export async function getFormaPagoDisponibles(userName,idCiclo, dispatch) {
+    return new Promise(resolve =>{
+          const data={
+            usuarioLogin:userName,
+            idCiclo:idCiclo
+          };    
+          console.log('parametros : ', data);
+         requestPost('pagos/GetFormaPagosDisponibles', data, dispatch )
+        .then(response =>{
+            console.log('respuesta api :', response);
+            resolve(response);  
+        }) 
+       // resolve(formaPagos)  
+    });
+  }
+
+  export async function ListarComisionFormaPagoFiltrada(userName,idCiclo,idTipoPago, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+            usuarioLogin:userName,
+            idCiclo:idCiclo,
+            idTipoPago
+          };    
+          resolve(null)  
+      /* requestPost('pagos/getListarComisionFormaPagoFiltrada', data, dispatch )
+        .then(response =>{
+            console.log('respuesta api :', response);
+          resolve(response);  
+        }) */
        
     });
   }
