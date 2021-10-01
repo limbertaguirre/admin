@@ -81,30 +81,27 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
           const data={
             usuarioLogin:userName,
             idCiclo:idCiclo
-          };    
-          console.log('parametros : ', data);
+          };              
          requestPost('pagos/GetFormaPagosDisponibles', data, dispatch )
         .then(response =>{
             console.log('respuesta api :', response);
             resolve(response);  
         }) 
-       // resolve(formaPagos)  
     });
   }
 
   export async function ListarComisionFormaPagoFiltrada(userName,idCiclo,idTipoPago, dispatch) {
     return new Promise(resolve =>{
         const data={
-            usuarioLogin:userName,
-            idCiclo:idCiclo,
-            idTipoPago
+              usuarioLogin:userName,
+              idCiclo:idCiclo,
+              idTipoPago:parseInt(idTipoPago)
           };    
-          resolve(null)  
-      /* requestPost('pagos/getListarComisionFormaPagoFiltrada', data, dispatch )
-        .then(response =>{
-            console.log('respuesta api :', response);
-          resolve(response);  
-        }) */
+       console.log('data : ', data);
+       requestPost('pagos/FiltrarComisionPagoPorTipoPago', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
        
     });
   }

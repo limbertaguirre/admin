@@ -14,6 +14,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ListarFormasPagos(ParamFormaPagosOutputModel param);
         public object AplicarMetodoPago(AplicarMetodoOutput param);
         public object ListarComisionesFormaPagoPorCarnet(BuscarInputModel param);
-        public object getFormaPagosDisponibles(FormaPagosDisponiblesInputModel param);
+        public object GetFormaPagosDisponibles(FormaPagosDisponiblesInputModel param);
+        public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInputModel param);
     }
 }

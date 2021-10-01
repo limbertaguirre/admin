@@ -27,6 +27,8 @@ import Fade from '@material-ui/core/Fade';
 import * as Actions from '../../../../redux/actions/FormaPagosAction';
 import PaymentIcon from '@material-ui/icons/Payment';
 
+import ImageIconPagos from "../../../../components/ImageIconPagos";
+
     const StyledMenu = withStyles({
       paper: {
         border: '1px solid #d3d4d5',
@@ -202,21 +204,16 @@ import PaymentIcon from '@material-ui/icons/Payment';
         }
     }
 
-    const [filtroTipoPago, setFiltroTipoPago] = useState("*");
-    const [statusFiltroTipoPago, setEstatusFiltroTipoPago] = useState(false);
-    const buscarFiltro=()=>{
-      setAnchorEl(true);
-    }
 
     const [anchorEl, setAnchorEl] = React.useState(false);
     const open = Boolean(anchorEl);
     const [listFormaPago, setListFormaPago]= useState([]);
 
-    const handleClick = (event) => {
-       listarTiposPagos(event.currentTarget);
+    const handleOpenFilter = (event) => {
+      ApiListarTiposPagos(event.currentTarget);
     };
 
-    async function listarTiposPagos(event){      
+    async function ApiListarTiposPagos(event){      
       let respuesta = await Actions.getFormaPagoDisponibles(userName, idCiclo, dispatch);      
       if(respuesta && respuesta.code == 0){ 
         setListFormaPago(respuesta.data);
@@ -225,26 +222,26 @@ import PaymentIcon from '@material-ui/icons/Payment';
       
     }
   
-    const handleClose = () => {
+    const handleCloseFilter = () => {
       setAnchorEl(null);
     };
-    const seleccionadarTipo = (idtipo) => {
-      
+    const seleccionarTipo = (idtipo) => {      
       seleccionarTipoFiltroBusqueda(idtipo);
       setAnchorEl(null);
     };
 
     return (
       <>
-        <br />
-         <Grid container >
+        <br />                 
+        {listaComisionesAPagar.length>0? 
+             <>
+              <Grid container >
                   <Grid item xs>
-
                   </Grid>
-                   <Grid item  >   
+                  <Grid item  >   
                         <div className={style.root}>                
                           <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Seleccione una forma de pago.'}>                                       
-                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleClick}>                                          
+                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleOpenFilter}>                                          
                                   Filtro  <FilterListIcon />
                                 </IconButton>
                           </Tooltip>                                   
@@ -253,11 +250,11 @@ import PaymentIcon from '@material-ui/icons/Payment';
                               anchorEl={anchorEl}
                               keepMounted
                               open={open}
-                              onClose={handleClose}
+                              onClose={handleCloseFilter}
                               TransitionComponent={Fade}
                             >
                               {listFormaPago.map((row, index) => ( 
-                                 <MenuItem onClick={() => seleccionadarTipo(`${row.idTipoPago}`)}>{row.nombre} {' - '} {row.cantidad}</MenuItem>
+                                 <MenuItem onClick={() => seleccionarTipo(`${row.idTipoPago}`)}>{row.nombre} {' - '} {row.cantidad}</MenuItem>
                               ))}                             
                             </Menu>   */}
                             
@@ -266,54 +263,29 @@ import PaymentIcon from '@material-ui/icons/Payment';
                               anchorEl={anchorEl}
                               keepMounted
                               open={open}
-                              onClose={handleClose}
+                              onClose={handleCloseFilter}
                             >
-                                 {listFormaPago.map((row, index) => (                                
-                                 <StyledMenuItem onClick={() => seleccionadarTipo(`${row.idTipoPago}`)} >
+                              {listFormaPago.map((row, index) => (                                
+                                <StyledMenuItem key={index} onClick={() => seleccionarTipo(`${row.idTipoPago}`)} >
                                  <ListItemIcon>
-                                   <PaymentIcon fontSize="small" />
+                                  {/* <PaymentIcon fontSize="small" /> */}
+                                   <ImageIconPagos name={row.icono} /> 
                                  </ListItemIcon>
                                  <ListItemText >
                                     {row.nombre} {' - '} {'('+row.cantidad +')'}
                                  </ListItemText>
-                               </StyledMenuItem>
+                                </StyledMenuItem>
                               ))}                                    
                             </StyledMenu>
-
                       </div>
                       <br />
-                  </Grid>
-          </Grid>
-         
-        {listaComisionesAPagar.length>0? 
+                </Grid>
+              </Grid>
+
                <Grid container >
-                 {/*  <Grid item xs>
-
-                  </Grid>
-                   <Grid item  >   
-                        <div className={style.root}>                
-                          <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Seleccione una forma de pago.'}>                                       
-                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleClick}>                                          
-                                  Filtro  <FilterListIcon />
-                                </IconButton>
-                          </Tooltip>                                   
-                            <Menu
-                              id="fade-menu"
-                              anchorEl={anchorEl}
-                              keepMounted
-                              open={open}
-                              onClose={handleClose}
-                              TransitionComponent={Fade}
-                            >
-                              <MenuItem onClick={() => seleccionadarTipo(`${1}`)}>Profile</MenuItem>
-                              <MenuItem onClick={() =>seleccionadarTipo(`${2}`)}>My account sds sd sd sd sd</MenuItem>
-                              <MenuItem onClick={() => seleccionadarTipo(`${3}`)}>Logout</MenuItem>
-
-                            </Menu>                         
-                      </div>
-                  </Grid> */}
-                  <Grid item xs={12}>
-               <TableContainer component={Paper}>
+              
+                <Grid item xs={12}>
+                  <TableContainer component={Paper}>
                     <Table className={style.table} size="small" aria-label="a dense table">
                         <TableHead className={style.headerTable}>
                         <TableRow>
@@ -389,13 +361,11 @@ import PaymentIcon from '@material-ui/icons/Payment';
                     />
                </Grid>
                </Grid>
+               </>
                :<Card className={style.cardVacio}>                    
                   <ErrorIcon /> {' '} {' No hay qué mostrar, selecione y cargue un ciclo'}
                </Card> 
-            }
-
-           
-
+            }          
       </>
     );
 }

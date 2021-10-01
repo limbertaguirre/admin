@@ -130,7 +130,7 @@ namespace gestion_de_comisiones.Controllers
 			try
 			{
 				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller getFormaPagosDisponibles()  ");
-				var ciclos = Service.getFormaPagosDisponibles(param);
+				var ciclos = Service.GetFormaPagosDisponibles(param);
 				Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller getFormaPagosDisponibles()  ");
 				return Ok(ciclos);
 			}
@@ -142,6 +142,22 @@ namespace gestion_de_comisiones.Controllers
 			}
 		}
 
+		// POST: Pagos/BuscarComisionCarnetFormaPago
+		[HttpPost]
+		public ActionResult FiltrarComisionPagoPorTipoPago([FromBody] FiltroComisionTipoPagoInputModel param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+				return Ok(Service.FiltrarComisionesPorTipoPago(param));
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+				return Ok(Result);
+			}
+		}
 
 
 
