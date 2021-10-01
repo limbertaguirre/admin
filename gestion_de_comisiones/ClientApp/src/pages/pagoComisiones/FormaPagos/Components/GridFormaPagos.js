@@ -1,7 +1,7 @@
 import React, { useEffect, useState}  from 'react';
-import {  makeStyles } from '@material-ui/core/styles';
-import ErrorIcon from '@material-ui/icons/Error';
-import { Tooltip ,Zoom, Card, Grid } from "@material-ui/core";
+import {  makeStyles, withStyles, emphasize } from '@material-ui/core/styles';
+import ErrorIcon from '@material-ui/icons/Error';  
+import { Tooltip ,Zoom, Card, Grid, Button   } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,12 +13,70 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import configEstadoTable from  "../../../../lib/configEstadoTable.json";
+import FilterListIcon from '@material-ui/icons/FilterList'; 
+import {useSelector,useDispatch} from 'react-redux';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import Fade from '@material-ui/core/Fade';
+import * as Actions from '../../../../redux/actions/FormaPagosAction';
+import PaymentIcon from '@material-ui/icons/Payment';
 
+import ImageIconPagos from "../../../../components/ImageIconPagos";
+
+    const StyledMenu = withStyles({
+      paper: {
+        border: '1px solid #d3d4d5',
+      },
+    })((props) => (
+      <Menu
+        elevation={0}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        {...props}
+      />
+    ));
+
+    const StyledMenuItem = withStyles((theme) => ({
+      root: {
+        '&:focus': {
+          backgroundColor: theme.palette.primary.main,
+          '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+            color: theme.palette.common.white,
+          },
+        },
+      },
+    }))(MenuItem);
 
   const useStyles = makeStyles((theme) => ({
-
+    root: {
+      backgroundColor: theme.palette.grey[100],
+      height: theme.spacing(3),
+      color: theme.palette.grey[800],
+      fontWeight: theme.typography.fontWeightRegular,
+      '&:hover, &:focus': {
+        backgroundColor: theme.palette.grey[300],
+      },
+      '&:active': {
+        boxShadow: theme.shadows[1],
+        backgroundColor: emphasize(theme.palette.grey[300], 0.12),
+      },
+    },
     table: {
-      minWidth: 650,
+    // minWidth: 650,
+     maxWidth: "100%",
     },
     submitDetalle: {
         height:'25px',
@@ -35,12 +93,40 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
           alignItems:'center',
           justifyContent:'center', 
       },
+    headerTable: {
+     
+        background: "#1872b8", 
+        boxShadow: '2px 1px 5px #1872b8',
+    },
+    headerRow: {     
+      color:'white',
+      paddingBottom:'13px', 
+      paddingTop:'13px',
+  },
+    backgroundSionPay: {    
+      //  background: '#ACE1FB'
+    },
+    backgroundTransferencia: {
+    // background: "#8FB8CD"
+    },
+    backgroundCheque: {
+      background: "#EBF0AE"
+    },
+    backgroundNinguno: {
+      background: "#EFF3F5"
+    },
+    altoCeldas :{
+      paddingBottom:'2px', 
+      paddingTop:'2px'
+    }
   }));
 
 
  const GridFormaPagos =(props)=> {
     let style= useStyles();
-    const {listaComisionesAPagar, selecionarDetalleFrelances, txtBusqueda} = props;
+    const dispatch=useDispatch();
+    const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
+    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -106,36 +192,123 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                  }
         },[listaComisionesAPagar])
         
+    function verificarTipo(tipo){
+        if(parseInt(tipo) === configEstadoTable.tipoPago.sionPay){        
+          return style.backgroundSionPay
+        }else if(parseInt(tipo) === configEstadoTable.tipoPago.transferencia){        
+          return style.backgroundTransferencia
+        }else if(parseInt(tipo) === configEstadoTable.tipoPago.cheque){        
+          return style.backgroundCheque
+        }else{
+          return style.backgroundNinguno
+        }
+    }
 
+
+    const [anchorEl, setAnchorEl] = React.useState(false);
+    const open = Boolean(anchorEl);
+    const [listFormaPago, setListFormaPago]= useState([]);
+
+    const handleOpenFilter = (event) => {
+      ApiListarTiposPagos(event.currentTarget);
+    };
+
+    async function ApiListarTiposPagos(event){      
+      let respuesta = await Actions.getFormaPagoDisponibles(userName, idCiclo, dispatch);      
+      if(respuesta && respuesta.code == 0){ 
+        setListFormaPago(respuesta.data);
+        setAnchorEl(event);
+      }    
+      
+    }
+  
+    const handleCloseFilter = () => {
+      setAnchorEl(null);
+    };
+    const seleccionarTipo = (idtipo) => {      
+      seleccionarTipoFiltroBusqueda(idtipo);
+      setAnchorEl(null);
+    };
 
     return (
       <>
+        <br />                 
         {listaComisionesAPagar.length>0? 
-               <Grid>
-               <TableContainer component={Paper}>
+             <>
+              <Grid container >
+                  <Grid item xs>
+                  </Grid>
+                  <Grid item  >   
+                        <div className={style.root}>                
+                          <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Seleccione una forma de pago.'}>                                       
+                                <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleOpenFilter}>                                          
+                                  Filtro  <FilterListIcon />
+                                </IconButton>
+                          </Tooltip>                                   
+                            {/* <Menu
+                              id="fade-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={open}
+                              onClose={handleCloseFilter}
+                              TransitionComponent={Fade}
+                            >
+                              {listFormaPago.map((row, index) => ( 
+                                 <MenuItem onClick={() => seleccionarTipo(`${row.idTipoPago}`)}>{row.nombre} {' - '} {row.cantidad}</MenuItem>
+                              ))}                             
+                            </Menu>   */}
+                            
+                            <StyledMenu
+                              id="customized-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={open}
+                              onClose={handleCloseFilter}
+                            >
+                              {listFormaPago.map((row, index) => (                                
+                                <StyledMenuItem key={index} onClick={() => seleccionarTipo(`${row.idTipoPago}`)} >
+                                 <ListItemIcon>
+                                  {/* <PaymentIcon fontSize="small" /> */}
+                                   <ImageIconPagos name={row.icono} /> 
+                                 </ListItemIcon>
+                                 <ListItemText >
+                                    {row.nombre} {' - '} {'('+row.cantidad +')'}
+                                 </ListItemText>
+                                </StyledMenuItem>
+                              ))}                                    
+                            </StyledMenu>
+                      </div>
+                      <br />
+                </Grid>
+              </Grid>
+
+               <Grid container >
+              
+                <Grid item xs={12}>
+                  <TableContainer component={Paper}>
                     <Table className={style.table} size="small" aria-label="a dense table">
-                        <TableHead>
+                        <TableHead className={style.headerTable}>
                         <TableRow>
-                            <TableCell align="center"><b>#</b></TableCell>
-                            <TableCell align="center"><b>Nombre completo</b></TableCell>
-                            <TableCell align="center"><b>Cédula identidad</b></TableCell>
-                            <TableCell align="center"><b>Cuenta Banco</b></TableCell>
-                            <TableCell align="center"><b>Banco</b></TableCell>
-                            {/* <TableCell align="center"><b>Monto Bruto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Retención ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Descuento ($us.)</b></TableCell> */}
-                            <TableCell align="center"><b>Monto Total Neto ($us.)</b></TableCell>
-                            <TableCell align="center"><b>Forma Pago</b></TableCell>
-                            <TableCell align="center"></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>#</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Nombre completo</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Cédula identidad</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Cuenta Banco</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Banco</b></TableCell>
+                            {/* <TableCell align="center className={style.headerRow}"><b>Monto Bruto ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow}><b>Retención ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow} ><b>Descuento ($us.)</b></TableCell> */}
+                            <TableCell align="center" className={style.headerRow}><b>Monto Total Neto ($us.)</b></TableCell>
+                            <TableCell align="center" className={style.headerRow} ><b>Forma Pago</b> </TableCell>
+                            <TableCell align="center" className={style.headerRow}></TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
                         { stableSort(listaComisionesAPagar, getComparator(order, orderBy))
                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                            <TableRow key={index +1 }>
+                            <TableRow key={index +1 } className={verificarTipo(`${row.idTipoPago}`)} >
                             <TableCell align="center"scope="row"> {contadorPage + index + 1} </TableCell>
                             <TableCell align="left">{row.nombre}</TableCell>
-                            <TableCell align="center">{row.ci}</TableCell>
+                            <TableCell align="center" >{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
                             <TableCell align="center">{row.nombreBanco}</TableCell>   
                            {/*  <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
@@ -146,16 +319,14 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                             <TableCell align="center">
                                 {row.idListaFormasPago > 0? 
                                      <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
-                                         <IconButton edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}> 
-                                            {/* <VisibilityIcon color="primary"  style={{ fontSize: 30 }} /> */}
-                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago1.png')} /> 
+                                         <IconButton className={style.altoCeldas} edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                            
+                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago1.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                     :
                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
-                                         <IconButton edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>
-                                            {/* <VisibilityOffIcon color="disabled" style={{ fontSize: 30 }} /> */}
-                                            <img width="32" height="32" src={require('../../../../assets/icons/tipopago2.png')} /> 
+                                         <IconButton className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                          
+                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago2.png')} /> 
                                          </IconButton>
                                     </Tooltip>
                                   }
@@ -167,9 +338,9 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                           <TableRow key={100000000000000}>
                             <TableCell align="center"><b></b></TableCell>
                               <TableCell align="right"><b>TOTAL</b></TableCell>
+                              {/* <TableCell align="center"><b></b></TableCell>
                               <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="center"><b></b></TableCell>
+                              <TableCell align="center"><b></b></TableCell> */}
                               <TableCell align="center"><b> {totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
                               <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
                               <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
@@ -189,10 +360,12 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                     />
                </Grid>
+               </Grid>
+               </>
                :<Card className={style.cardVacio}>                    
                   <ErrorIcon /> {' '} {' No hay qué mostrar, selecione y cargue un ciclo'}
                </Card> 
-            }
+            }          
       </>
     );
 }

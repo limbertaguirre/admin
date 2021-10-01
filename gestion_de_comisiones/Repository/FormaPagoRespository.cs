@@ -170,6 +170,60 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public object GetComisionesPorFormaPago(FormaPagosDisponiblesInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        {
+            try
+            {
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select( p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion,p.IdUsuario,p.FechaCreacion,p.FechaActualizacion,p.Estado,p.Icono)).ToList();
+                FormaPagoModel nuevoNinguno = new FormaPagoModel(){ IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
+                LisFormaPagos.Add(nuevoNinguno);
+                foreach (var item in LisFormaPagos)
+                {
+                    if(ListComisiones != null)
+                    {
+                        FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
+                        obj.idTipoPago = item.IdTipoPago;
+                        obj.nombre = item.Nombre;
+                        obj.icono = item.Icono;
+                        int canti = ListComisiones.Where(x => x.IdTipoPago == item.IdTipoPago).Count();
+                        obj.cantidad = canti;
+                        list.Add(obj);
+                    }
+                }
+
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                return list;
+            }
+        }
+        public object FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository FiltrarComisionPagoPorTipoPago() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.IdTipoPago== param.idTipoPago ).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch FiltrarComisionPagoPorTipoPago() mensaje : {ex}");
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                return list;
+            }
+        }
+
+
+
 
 
 

@@ -114,7 +114,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [tipoSnackbar, settipTSnackbar] = useState(true);
     const[ txtBusqueda, setTxtBusqueda]= useState('');
 
-
+    const mensajeGenericoCiclo =()=>{
+      setOpenSnackbar(true);
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
+      settipTSnackbar('warning');
+    }
 
     useEffect(()=>{ 
       handleOnGetCiclos();
@@ -229,10 +233,26 @@ const StyledBreadcrumb = withStyles((theme) => ({
            let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)   
            console.log('busqueda por nombre',response)          
            if(response && response.code == 0){
-               setListaComisionesAPagar(response.data);  
-               // setStatusBusqueda(true);    
+               setListaComisionesAPagar(response.data);                 
            }       
      }
+
+    const seleccionarTipoFiltroBusqueda=(idTipoFormaPago)=>{
+      console.log("listo tipo :", idTipoFormaPago)
+      filtrarComisionPorFormaPago(idTipoFormaPago)
+    }
+    async function filtrarComisionPorFormaPago(idTipoFormaPago){
+      if(idCiclo && idCiclo !== 0){  
+          let response= await Actions.ListarComisionFormaPagoFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
+          console.log('busqueda por filtro',response)          
+          if(response && response.code == 0){
+              setListaComisionesAPagar(response.data);  
+          }       
+      }else{
+          mensajeGenericoCiclo();
+      }    
+   }
+    
 
     return (
       <>
@@ -332,7 +352,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             </Card>
 
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
-            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} />
+            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
       </>
     );

@@ -14,5 +14,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public List<TipoPagoInputmodel> ListarFormaPagos(ParamFormaPagosOutputModel param);
         public bool AplicarFormaPago(AplicarMetodoOutput param);
         public object GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura);
+        public object GetComisionesPorFormaPago(FormaPagosDisponiblesInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura);
+        public object FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura);
     }
 }
