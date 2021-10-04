@@ -1396,3 +1396,88 @@ from  BDMultinivel.dbo.ficha f
 left join BDPuntosCash.dbo.USUARIO u on   u.id_usuario COLLATE Latin1_General_CI_AS =   f.ci COLLATE Latin1_General_CI_AS
 
 go
+
+CREATE TABLE TIPO_AUTORIZACION(
+  id_tipo_autorizacion int NOT NULL PRIMARY KEY identity,
+  nombre varchar(50) not null,
+  cantidad int not null,
+  id_usuario_modificacion int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla tipo autorizacion', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'id_tipo_autorizacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el breve nombre o descripcion del tipo de autorizacion ', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'nombre'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es es la cantidad de usuarios que podran autorizar por tipo de autorizacion.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'cantidad'
+
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'id_usuario_modificacion'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
+go
+CREATE TABLE AUTORIZACIONES_AREA(
+  id_autorizaciones_area int NOT NULL PRIMARY KEY identity,
+  id_area int not null,
+  id_tipo_autorizacion int NOT NULL,
+  cantidad int not null,
+  id_usuario_modificacion int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP
+)
+go
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es es la llave primaria de la tabla autoincremental.', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'id_autorizaciones_area'  
+	EXECUTE sp_addextendedproperty 'MS_Description', 'LLave foranea que hace referencia al id de la tabla area en de trabajo.', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'id_area'  
+	EXECUTE sp_addextendedproperty 'MS_Description', 'LLave foranea que hace referencia al id de la tabla tipo autorizacion', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'id_tipo_autorizacion'  
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la cantidad minima o igual que se puede tener para una autorizacion por tipo.', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'cantidad'  
+
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'id_usuario_modificacion'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'fecha_actualizacion'
+go
+CREATE TABLE USUARIO_AUTORIZACION(
+  id_usuario_autorizacion int NOT NULL PRIMARY KEY identity,
+  id_usuario int not null,
+  id_tipo_autorizacion int NOT NULL,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP
+)
+go
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave generica de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'id_usuario_autorizacion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el usuario que se le asigno a un tipo de autorizacion', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave foranea de la tabla tipo de auntorizacin', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'id_tipo_autorizacion'
+
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
+go
+CREATE TABLE ESTADO_AUTORIZACION_COMISION(
+  id_estado_autorizacion_comision int NOT NULL,
+  nombre varchar(50) not null,
+  id_usuario int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP
+)
+go
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es la llave primaria de la tablas', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'id_estado_autorizacion_comision'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es el estado de una comision autorizada', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'nombre'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el i usuario que creo o modifico el registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'id_usuario'
+
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'
+go
+
+CREATE TABLE AUTORIZACION_COMISION(
+  id_autorizacion_comision int NOT NULL PRIMARY KEY identity,
+  id_comision int not null,
+  id_usuario_autorizacion int NOT NULL,
+  id_estado_autorizacion_comision int not null,
+  id_usuario_modificacion int not null,
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP
+)
+go
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'id_autorizacion_comision'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es la llave foranea de la comision', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'id_comision'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es la llave foranea de la tabla id autorizacion usuario.', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'id_usuario_autorizacion'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el i usuario que creo o modifico el registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'id_usuario_modificacion'
+
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'

@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE [dbo].[SP_8EXEC_CARGAR_FORMA_PAGO_COMISIONES]
+ALTER PROCEDURE [dbo].[SP_8EXEC_CARGAR_FORMA_PAGO_COMISIONES]
   @id_Ciclo     int
 AS
 
@@ -37,7 +37,7 @@ BEGIN TRY
    SET @NO_FACTURO= 0;
 
    DECLARE @CICLO_SELEC int 
-   SET @CICLO_SELEC=85;
+   SET @CICLO_SELEC=@id_Ciclo;
 
 	select TOP(1) @IDCICLO_SELECCIONADO = id_ciclo from BDMultinivel.dbo.CICLO
 	IF @IDCICLO_SELECCIONADO > 0
@@ -115,7 +115,7 @@ BEGIN TRY
 				 select TOP(1) @IDFICHA_SELECCIONADO = id_ficha from BDMultinivel.dbo.FICHA where codigo= @CONTACTOITitem
 				 IF @IDFICHA_SELECCIONADO >0
 				 BEGIN
-					  select 'existe el cliente'
+					  --select 'existe el cliente'
 					        DECLARE @COMISION_DETALLE_ID_GENERADO INT;
 							DECLARE @ESTADO_COMISION_DETALLE_DINAMICO DECIMAL(18,2);
 							DECLARE @TOTAL_DESCUENTO_FREELANCER DECIMAL(18,2);
@@ -193,7 +193,7 @@ BEGIN TRY
 											@item_total,--monto
 											@ESTADO_COMISION_DETALLE_PROCESADO, --estado pendiente 2
 											'', --path-respaldo vacio
-											@item_facturaId, --nro autirizacion
+											CAST(@item_facturaId as varchar(10)), --nro autirizacion
 											@item_total, --montoa facturar
 											@item_total, --monto total a facturar
 											@COMISION_DETALLE_ID_GENERADO, --idcomisiondetalle
@@ -219,7 +219,7 @@ BEGIN TRY
                 END
 				  ELSE
 				BEGIN
-							 select 'no existe el cliente'
+							-- select 'no existe el cliente'
 							insert into BDMultinivel.dbo.LOG_DETALLE_COMISION_EMPRESA_FAIL(id_ciclo,id_ficha, codigo_cliente, total_monto_bruto, descripcion )
 							values(@CICLO_SELEC,0, @CONTACTOITitem,@TOTAL_PAGARitem,'no se creo la comision del cliente, porque el contacto id no existe en fica');
 							
@@ -234,22 +234,23 @@ BEGIN TRY
 				CLOSE CLIENTE_CURSOR
 				DEALLOCATE CLIENTE_CURSOR	
     
-
-	      --COMMIT TRANSACTION;
+	    --  select 1 as 'exito'
+	      COMMIT TRANSACTION;
 		END
 		 ELSE
 		BEGIN
-		  select -2 as 'la comision ciclo  existe'
+		--  select -2 as 'la comision ciclo  existe'
+		  ROLLBACK TRANSACTION;
 		END
 	END
 	  ELSE
 	BEGIN
 	 -- NO EXISTE EL CICLO
-		SELECT -1 AS 'NO EXISTE EL CICLO'
+	--	SELECT -1 AS 'NO EXISTE EL CICLO'
+		ROLLBACK TRANSACTION;
 	END
 	-----------------------------------------------	 
-	 select * from  BDMultinivel.dbo.GP_COMISION
-	 SELECT * FROM OPENQUERY( [10.2.10.222], 'select * from comision_forma_pago_view ') WHERE ciclo_id=@id_Ciclo order by lcontacto_id asc 
+
 	--------------------------------------------
 END TRY
 BEGIN CATCH
