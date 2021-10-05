@@ -43,6 +43,8 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'AREA', N'COLUMN', N'fecha_actualizacion'
 go
     --insert into AREA (nombre,descripcion, habilitado, id_usuario) values('Unidad Tecnologica','Es el departamento de area de desarrolo e imnovacion',1,100);
+	 --insert into AREA (nombre,descripcion, habilitado, id_usuario) values('calidad','en cargado de ',1,100);
+	 --insert into AREA (nombre,descripcion, habilitado, id_usuario) values('contabilidad','en cargado de ',1,100);
 go
 create table PAIS
 (
@@ -1398,9 +1400,10 @@ left join BDPuntosCash.dbo.USUARIO u on   u.id_usuario COLLATE Latin1_General_CI
 go
 
 CREATE TABLE TIPO_AUTORIZACION(
-  id_tipo_autorizacion int NOT NULL PRIMARY KEY identity,
+  id_tipo_autorizacion int NOT NULL PRIMARY KEY,
   nombre varchar(50) not null,
   cantidad int not null,
+  estado bit not null default 1,--true
   id_usuario_modificacion int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP
@@ -1409,10 +1412,15 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla tipo autorizacion', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'id_tipo_autorizacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el breve nombre o descripcion del tipo de autorizacion ', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'nombre'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es es la cantidad de usuarios que podran autorizar por tipo de autorizacion.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'cantidad'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla booleano true o false', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'estado'
 
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'id_usuario_modificacion'   
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
+go
+    insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
+	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
+	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
 go
 CREATE TABLE AUTORIZACIONES_AREA(
   id_autorizaciones_area int NOT NULL PRIMARY KEY identity,
@@ -1433,10 +1441,15 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACIONES_AREA', N'COLUMN', N'fecha_actualizacion'
 go
+    --insert into BDMultinivel.dbo.AUTORIZACIONES_AREA(id_area,id_tipo_autorizacion,cantidad,id_usuario_modificacion)values(1,3,1,1);
+
+go
 CREATE TABLE USUARIO_AUTORIZACION(
   id_usuario_autorizacion int NOT NULL PRIMARY KEY identity,
   id_usuario int not null,
   id_tipo_autorizacion int NOT NULL,
+  estado bit not null default 1,--true
+  id_usuario_modificacion int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP
 )
@@ -1463,12 +1476,16 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'
 go
+   --insert into BDMultinivel.dbo.ESTADO_AUTORIZACION_COMISION(id_estado_autorizacion_comision, nombre, id_usuario)values(0,'Aprobado', 1);
+   --insert into BDMultinivel.dbo.ESTADO_AUTORIZACION_COMISION(id_estado_autorizacion_comision, nombre, id_usuario)values(1,'Rechazado', 1);
+go
 
 CREATE TABLE AUTORIZACION_COMISION(
   id_autorizacion_comision int NOT NULL PRIMARY KEY identity,
   id_comision int not null,
   id_usuario_autorizacion int NOT NULL,
   id_estado_autorizacion_comision int not null,
+  descripcion varchar(max) not null,
   id_usuario_modificacion int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP
@@ -1481,3 +1498,18 @@ go
 
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'
+go
+    CREATE VIEW [dbo].VW_LISTAR_AUTORIZACIONES_TIPO
+     AS
+       select USUA.id_usuario_autorizacion,AREA.id_area,AREA.nombre AS 'descripcion_area', USUA.estado, U.id_usuario, U.nombres, U.apellidos, U.usuario,TA.id_tipo_autorizacion,TA.nombre AS 'nombre_tipo_autorizacion',  USUA.fecha_creacion  FROM BDMultinivel.dbo.USUARIO_AUTORIZACION USUA 
+		    INNER JOIN BDMultinivel.dbo.USUARIO U ON USUA.id_usuario= U.id_usuario
+			INNER JOIN BDMultinivel.dbo.TIPO_AUTORIZACION TA ON TA.id_tipo_autorizacion= USUA.id_tipo_autorizacion
+			INNER JOIN BDMultinivel.dbo.AREA AREA ON AREA.id_area = U.id_area
+			where TA.estado='True'
+go
+
+ CREATE VIEW [dbo].VW_TIPO_AUTORIZACION
+    AS
+ select TP.id_tipo_autorizacion,tp.nombre, TP.cantidad as 'cantidad_limite',AA.cantidad as 'cantidad_aprobacion_minima_area'  from BDMultinivel.dbo.TIPO_AUTORIZACION TP
+			 inner join  BDMultinivel.dbo.AUTORIZACIONES_AREA AA on AA.id_tipo_autorizacion = TP.id_tipo_autorizacion
+			 where TP.estado='True'
