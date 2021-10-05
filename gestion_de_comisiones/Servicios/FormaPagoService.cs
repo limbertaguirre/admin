@@ -145,6 +145,23 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarAutorizadorPorComision() ");
+                        //int idEstadoComisionSiFacturo = 2; //VARIABLE
+                        //int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                        //int idEstadoDetalleNoPresentaFactura = 6;
+                return Respuesta.ReturnResultdo(0, "ok", Repository.VerificarAutorizadorPorComision(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarAutorizadorPorComision(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas");
+            }
+        }
+
 
 
 

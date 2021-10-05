@@ -221,6 +221,44 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param )
+        {
+            try
+            {
+                int idTipoAutorizacionFormaPago = 3;
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarAutorizadorPorComision() ");
+                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago).FirstOrDefault();
+                if (autoriza != null)
+                {
+                    var confirmacionAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == autoriza.IdUsuarioAutorizacion && x.IdCiclo == param.idCiclo).FirstOrDefault();
+                    if (confirmacionAutorizacion != null)
+                    {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = true;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision = (int)confirmacionAutorizacion.IdComision;
+                     } else {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = false;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision =0;//no existe relacion
+                    }
+                } else {
+                    obj.autorizador = false;
+                    obj.comisionAutorizada = false;
+                    obj.idciclo = param.idCiclo;
+                    obj.idComision = 0; //no existe relacion
+                }
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarAutorizadorPorComision() mensaje : {ex}");
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                return obj;
+            }
+        }
 
 
 

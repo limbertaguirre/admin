@@ -1513,3 +1513,19 @@ go
  select TP.id_tipo_autorizacion,tp.nombre, TP.cantidad as 'cantidad_limite',AA.cantidad as 'cantidad_aprobacion_minima_area'  from BDMultinivel.dbo.TIPO_AUTORIZACION TP
 			 inner join  BDMultinivel.dbo.AUTORIZACIONES_AREA AA on AA.id_tipo_autorizacion = TP.id_tipo_autorizacion
 			 where TP.estado='True'
+
+go
+
+CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
+  AS
+	select  UA.id_usuario_autorizacion,
+			UA.id_usuario,
+			CASE WHEN AUC.id_autorizacion_comision IS NULL THEN 0 ELSE AUC.id_autorizacion_comision  END As 'id_autorizacion_comision',
+			CASE WHEN CO.id_ciclo IS NULL THEN 0 ELSE CO.id_ciclo  END As 'id_ciclo',
+			CASE WHEN CO.id_comision IS NULL THEN 0 ELSE CO.id_comision  END As 'id_comision',
+			AUC.id_estado_autorizacion_comision,
+			AUC.descripcion
+	from BDMultinivel.dbo.USUARIO_AUTORIZACION UA
+	LEFT JOIN BDMultinivel.dbo.AUTORIZACION_COMISION AUC on AUC.id_usuario_autorizacion=UA.id_usuario_autorizacion
+	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
+	where UA.estado='True' 

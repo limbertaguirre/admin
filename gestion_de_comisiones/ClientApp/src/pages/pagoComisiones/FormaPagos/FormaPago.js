@@ -156,10 +156,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
             usuarioLogin:userName,
             idCiclo: idCiclo
           };
-          requestPost('Pagos/ObtenerAplicaciones',data,dispatch).then((res)=>{           
+          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{           
               if(res.code === 0){  
                   setListaComisionesAPagar(res.data);  
-                  setStatusBusqueda(true);                        
+                  setStatusBusqueda(true);    
+                  ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch);               
               }else{
                   dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
               }    
@@ -252,6 +253,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
           mensajeGenericoCiclo();
       }    
    }
+
+   async function ApiVerificarAutorizador(user,cicloId, idUser, dispatch){      
+    let respuesta = await Actions.VerificarAutorizadorComision(user, cicloId,idUser, dispatch);      
+    if(respuesta && respuesta.code == 0){ 
+
+    }    
+    
+  }
     
 
     return (

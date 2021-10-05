@@ -79,6 +79,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
         public virtual DbSet<VwTipoAutorizacion> VwTipoAutorizacions { get; set; }
+        public virtual DbSet<VwVerificarAutorizacionComision> VwVerificarAutorizacionComisions { get; set; }
         public virtual DbSet<VwVerificarCuentasUsuario> VwVerificarCuentasUsuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -3055,6 +3056,29 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<VwVerificarAutorizacionComision>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwVerificarAutorizacionComision");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.IdAutorizacionComision).HasColumnName("id_autorizacion_comision");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
+                entity.Property(e => e.IdEstadoAutorizacionComision).HasColumnName("id_estado_autorizacion_comision");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdUsuarioAutorizacion).HasColumnName("id_usuario_autorizacion");
             });
 
             modelBuilder.Entity<VwVerificarCuentasUsuario>(entity =>
