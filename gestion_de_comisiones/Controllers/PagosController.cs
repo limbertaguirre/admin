@@ -170,7 +170,6 @@ namespace gestion_de_comisiones.Controllers
 			catch
 			{
 				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarAutorizadorPorComision() controller ");
-				//var Result = new GenericDataJson<string> { Code = 1, Message = "Error al verificar el autorizador de pagos" };
 				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar el autorizador de pagos" });
 			}
 		}

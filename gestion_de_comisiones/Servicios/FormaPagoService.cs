@@ -150,9 +150,6 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarAutorizadorPorComision() ");
-                        //int idEstadoComisionSiFacturo = 2; //VARIABLE
-                        //int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
-                        //int idEstadoDetalleNoPresentaFactura = 6;
                 return Respuesta.ReturnResultdo(0, "ok", Repository.VerificarAutorizadorPorComision(param));
             }
             catch (Exception ex)

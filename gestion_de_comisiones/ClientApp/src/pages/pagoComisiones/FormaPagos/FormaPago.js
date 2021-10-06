@@ -16,6 +16,8 @@ import SnackbarSion from "../../../components/message/SnackbarSion";
 import GridFormaPagos from './Components/GridFormaPagos';
 import TipoPagosModal from './Components/TipoPagosModal'
 import * as Actions from '../../../redux/actions/FormaPagosAction';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -43,6 +45,16 @@ const StyledBreadcrumb = withStyles((theme) => ({
      },
      submitCargar: {                 
       background: "#1872b8", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',
+     },
+     submitPendiente: {                 
+      background: "#E29020", 
+      boxShadow: '2px 4px 5px #1872b8',
+      color:'white',
+     },
+     submitAprobado: {                 
+      background: "#197608", 
       boxShadow: '2px 4px 5px #1872b8',
       color:'white',
      },
@@ -254,14 +266,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
       }    
    }
 
+    const [autorizadorObjeto, setAutorizadorObjeto ]=useState({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0 })
    async function ApiVerificarAutorizador(user,cicloId, idUser, dispatch){      
     let respuesta = await Actions.VerificarAutorizadorComision(user, cicloId,idUser, dispatch);      
     if(respuesta && respuesta.code == 0){ 
-
+      setAutorizadorObjeto(respuesta.data);
+    }else{
+      setAutorizadorObjeto({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0 });
     }    
     
   }
-    
+  
+  useEffect(()=>{
+    console.log('state autorizador : ',autorizadorObjeto);
+  },[autorizadorObjeto])
 
     return (
       <>
@@ -275,7 +293,39 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <br/>
            <Typography variant="h4" gutterBottom  >
              {'Forma de pagos'}
-           </Typography>        
+           </Typography>    
+            {autorizadorObjeto.autorizador&&
+           <Card>             
+              <Grid container className={style.gridContainer} >         
+                  <Grid item  xs={12} md={2}  className={style.containerCargar} >
+                    {autorizadorObjeto.comisionAutorizada?
+                          <Button
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                         // color="primary"
+                          className={style.submitAprobado}
+                         // onClick = {()=> handleOnGetAplicaciones()}                                         
+                          > 
+                            <>{'PAGO APROBADO '}<CheckCircleOutlineIcon /> </>
+                          </Button> 
+                    : 
+                        <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        //color="primary"
+                        className={style.submitPendiente}
+                      // onClick = {()=> handleOnGetAplicaciones()}                                         
+                        > 
+                         <>{'PENDIENTE APROBACION '}<HelpOutlineIcon /> </>
+                        </Button> 
+                    } 
+                    </Grid>
+                </Grid>
+            </Card>
+            }
+
            <Card>
            <Grid container className={style.gridContainer} >
            <Grid item xs={12} md={3} className={style.containerSave} >
