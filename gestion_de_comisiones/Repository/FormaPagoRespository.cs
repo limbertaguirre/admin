@@ -256,6 +256,7 @@ namespace gestion_de_comisiones.Repository
                         obj.comisionAutorizada = true;
                         obj.idciclo = param.idCiclo;
                         obj.idComision = (int)confirmacionAutorizacion.IdComision;
+                        obj.idAutorizacionComision = (int)confirmacionAutorizacion.IdAutorizacionComision;
                         //agregamos de ultimo al autorizador
                         addObjAutorizador.aprobado = true;
                         autorizados.Add(addObjAutorizador);
@@ -265,6 +266,7 @@ namespace gestion_de_comisiones.Repository
                         obj.comisionAutorizada = false;
                         obj.idciclo = param.idCiclo;
                         obj.idComision = 0;//no existe relacion
+                        obj.idAutorizacionComision = 0;
                         //agregamos de ultimo al autorizador
                         addObjAutorizador.aprobado = false;
                         autorizados.Add(addObjAutorizador);
@@ -277,6 +279,7 @@ namespace gestion_de_comisiones.Repository
                     obj.comisionAutorizada = false;
                     obj.idciclo = param.idCiclo;
                     obj.idComision = 0; //no existe relacion
+                    obj.idAutorizacionComision = 0;
                     obj.autorizadores = autorizados;
                 }
                 return obj;

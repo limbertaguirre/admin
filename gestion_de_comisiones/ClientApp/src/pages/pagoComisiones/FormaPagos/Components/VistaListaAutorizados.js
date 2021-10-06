@@ -1,4 +1,4 @@
-import React, { useDebugValue } from 'react';
+import React, { useDebugValue, useState } from 'react';
 import {
     Button, Dialog, DialogContent, Typography,Grid, TextField,FormLabel,  FormControlLabel ,FormControl, Radio, RadioGroup, FormHelperText, Tooltip ,Zoom,
 } from "@material-ui/core";
@@ -18,6 +18,8 @@ import WorkIcon from '@material-ui/icons/Work';
 import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+
+import MessageConfirm from '../../../../components/mesageModal/MessageConfirm';
 
 const useStyles = makeStyles((theme) => ({
     rootTituloConfir: {
@@ -97,10 +99,26 @@ const useStyles = makeStyles((theme) => ({
 
 
 const VistaListaAutorizados = (props) => {
-   const { open , closeHandelModal, objList, nameComboSeleccionado }= props;
+   const { open , closeHandelModal, objList, nameComboSeleccionado, confirmarModalAutorizacion }= props;
    const classes = useStyles();
    console.log('lista ',objList);
 
+    const [openModalConfirm, setOpenModalConfirm] = useState(false);
+    const [tituloModal, setTituloModal]=useState('esta Seguro');
+    const [subTituloModal, setSubTituloModal]=useState('esta seguro con aprobar pago');  
+    const [tipoModal, setTipoModal]=useState('warning');  
+    const [mensajeModal, seMensajeModal]=useState('al aprobar no hay marcha atras el anular autorizacion'); 
+    
+    const openModalConfirmacion =()=>{
+       setOpenModalConfirm(true);
+    }    
+    const CloseModalConfirmacion =()=>{
+        setOpenModalConfirm(false);
+    }
+    const confirmarModalAutoriizar = () =>{
+      confirmarModalAutorizacion();
+    }
+    
   return (
     <>
         <Dialog
@@ -148,13 +166,14 @@ const VistaListaAutorizados = (props) => {
                         {objList.comisionAutorizada? 'CERRAR' :'CANCELAR' }
                         </Button>
                         {!objList.comisionAutorizada&& 
-                        <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botones}  >
+                        <Button  onClick={openModalConfirmacion} variant="contained" color="primary" className={classes.botones}  >
                             Autorizar
                         </Button>
                         }                      
                     </Grid>
             </DialogContent>             
         </Dialog>
+        <MessageConfirm open={openModalConfirm} titulo={tituloModal} subTituloModal={subTituloModal} tipoModal={tipoModal} mensaje={mensajeModal} handleCloseConfirm={openModalConfirmacion} handleCloseCancel={CloseModalConfirmacion}  />
     </>
   );
 };

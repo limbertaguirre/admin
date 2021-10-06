@@ -272,7 +272,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       }    
    }
 
-    const [autorizadorObjeto, setAutorizadorObjeto ]=useState({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0,autorizadores:[] })
+    const [autorizadorObjeto, setAutorizadorObjeto ]=useState({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0,idAutorizacionComision:0,autorizadores:[] })
    async function ApiVerificarAutorizador(user,cicloId, idUser, dispatch){      
     let respuesta = await Actions.VerificarAutorizadorComision(user, cicloId,idUser, dispatch);      
     if(respuesta && respuesta.code == 0){ 
@@ -281,14 +281,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
         setOpenModalAutorizadores(true); //abrir modal visualizaciones
       }
     }else{
-      setAutorizadorObjeto({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0 });
+      setAutorizadorObjeto({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0, idAutorizacionComision:0, autorizadores:[] });
     }    
     
   }
   
-    const cerrarModalListaAutorizadosConfirm = ()=>{
-         setOpenModalAutorizadores(false);
-    }
+  const cerrarModalListaAutorizadosConfirm = ()=>{
+        setOpenModalAutorizadores(false);
+  }
+  const confirmarModalAutorizacion =()=>{
+     alert('construir aler confirmacion')
+  }
 
   useEffect(()=>{
     
@@ -426,7 +429,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
-            <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} />
+            <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
       </>
     );
 

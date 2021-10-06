@@ -10,6 +10,7 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         
         public int idciclo { get; set; }
         public int idComision { get; set; }
+        public int idAutorizacionComision { get; set; }
         public bool autorizador { get; set; }
         public bool comisionAutorizada { get; set; }
         public  List<Autorizador> autorizadores { get; set; }
