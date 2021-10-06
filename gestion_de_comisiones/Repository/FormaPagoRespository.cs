@@ -248,7 +248,7 @@ namespace gestion_de_comisiones.Repository
                     Autorizador addObjAutorizador = new Autorizador();
                     addObjAutorizador.nombre = autoriza.Nombres;
                     addObjAutorizador.apellido = autoriza.Apellidos;
-                    
+                    addObjAutorizador.area = autoriza.DescripcionArea;
                     var confirmacionAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == autoriza.IdUsuarioAutorizacion && x.IdCiclo == param.idCiclo).FirstOrDefault();
                     if (confirmacionAutorizacion != null)
                     {
@@ -259,7 +259,7 @@ namespace gestion_de_comisiones.Repository
                         //agregamos de ultimo al autorizador
                         addObjAutorizador.aprobado = true;
                         autorizados.Add(addObjAutorizador);
-                        obj.autorizdores = autorizados;
+                        obj.autorizadores = autorizados;
                     } else {
                         obj.autorizador = true;
                         obj.comisionAutorizada = false;
@@ -268,7 +268,7 @@ namespace gestion_de_comisiones.Repository
                         //agregamos de ultimo al autorizador
                         addObjAutorizador.aprobado = false;
                         autorizados.Add(addObjAutorizador);
-                        obj.autorizdores = autorizados;
+                        obj.autorizadores = autorizados;
                     }
                 }
                 else
@@ -277,7 +277,7 @@ namespace gestion_de_comisiones.Repository
                     obj.comisionAutorizada = false;
                     obj.idciclo = param.idCiclo;
                     obj.idComision = 0; //no existe relacion
-                    obj.autorizdores = autorizados;
+                    obj.autorizadores = autorizados;
                 }
                 return obj;
             }
@@ -300,6 +300,7 @@ namespace gestion_de_comisiones.Repository
                     Autorizador obj = new Autorizador();
                     obj.nombre = iten.Nombres;
                     obj.apellido = iten.Apellidos;
+                    obj.area = iten.DescripcionArea;
                    
                     var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
                     if (tieneAutorizacion != null) 
@@ -310,7 +311,6 @@ namespace gestion_de_comisiones.Repository
                     }
                     list.Add(obj);
                 }
-
                 return list;
             }
             catch (Exception ex)

@@ -14,7 +14,8 @@ import {requestGet, requestPost} from '../../../service/request';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import GridFormaPagos from './Components/GridFormaPagos';
-import TipoPagosModal from './Components/TipoPagosModal'
+import TipoPagosModal from './Components/TipoPagosModal';
+import VistaListaAutorizados from './Components/VistaListaAutorizados';
 import * as Actions from '../../../redux/actions/FormaPagosAction';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
@@ -126,6 +127,14 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [tipoSnackbar, settipTSnackbar] = useState(true);
     const[ txtBusqueda, setTxtBusqueda]= useState('');
 
+    const [openTipoPago, setTipoPago]= useState(false);
+    const [listTipoPagos, setListTipoPagos] = useState([]);
+    const [idcomisionDetalleSelect, setIdcomisionDetalleSelect]= useState(0);
+    const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
+
+    const[openModalAutorizadores, setOpenModalAutorizadores] = useState(false);
+
+
     const mensajeGenericoCiclo =()=>{
       setOpenSnackbar(true);
       setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
@@ -191,10 +200,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       setOpenSnackbar(false);
     };
 
-    const [openTipoPago, setTipoPago]= useState(false);
-    const [listTipoPagos, setListTipoPagos] = useState([]);
-    const [idcomisionDetalleSelect, setIdcomisionDetalleSelect]= useState(0);
-    const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
+
 
     const selecionarDetalleFrelances = (comisionDetalleId, ciSeleccionado,idTipoPago)=>{     
       setIdtipoPagoSelect(String(idTipoPago));   
@@ -266,19 +272,26 @@ const StyledBreadcrumb = withStyles((theme) => ({
       }    
    }
 
-    const [autorizadorObjeto, setAutorizadorObjeto ]=useState({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0 })
+    const [autorizadorObjeto, setAutorizadorObjeto ]=useState({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0,autorizadores:[] })
    async function ApiVerificarAutorizador(user,cicloId, idUser, dispatch){      
     let respuesta = await Actions.VerificarAutorizadorComision(user, cicloId,idUser, dispatch);      
     if(respuesta && respuesta.code == 0){ 
       setAutorizadorObjeto(respuesta.data);
+      if(respuesta.data.autorizador == true){
+        setOpenModalAutorizadores(true); //abrir modal visualizaciones
+      }
     }else{
       setAutorizadorObjeto({autorizador:false,comisionAutorizada:false,idciclo:0, idComision:0 });
     }    
     
   }
   
+    const cerrarModalListaAutorizadosConfirm = ()=>{
+         setOpenModalAutorizadores(false);
+    }
+
   useEffect(()=>{
-    console.log('state autorizador : ',autorizadorObjeto);
+    
   },[autorizadorObjeto])
 
     return (
@@ -413,6 +426,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
+            <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} />
       </>
     );
 
