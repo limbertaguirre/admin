@@ -324,5 +324,77 @@ namespace gestion_de_comisiones.Repository
             }
 
         }
+
+        public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ConfirmarAutorizacion() ");
+                int estadoAutorizacionComision = 0; //aprobado
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario ).FirstOrDefault();
+                var verificarAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdUsuario == autorizado.IdUsuario && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).FirstOrDefault(); 
+                if(verificarAutorizacion == null)
+                {
+                    var obtenerComision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo).FirstOrDefault();
+                    AutorizacionComision obj = new AutorizacionComision();
+                    obj.IdComision = obtenerComision.IdComision;
+                    obj.IdUsuarioAutorizacion = autorizado.IdUsuarioAutorizacion;
+                    obj.IdEstadoAutorizacionComision = estadoAutorizacionComision;
+                    obj.Descripcion = "";
+                    obj.IdUsuarioModificacion = param.idUsuario;
+                    obj.FechaCreacion = DateTime.Now;
+                    obj.FechaActualizacion = DateTime.Now;
+                    ContextMulti.AutorizacionComisions.Add(obj);
+                    ContextMulti.SaveChanges();
+
+                    //verificar la cantidad para cambiar el estado de aprobacion
+                    //var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                    //if(cantidad == 1)
+                    //{//actualizr a pendiente de forma de pago
+                    //    var ComisionEstadoDetalle = ContextMulti.GpComisionEstadoComisionIs.Where(x => x.IdComision == verificarAutorizacion.IdComision && x.Habilitado == true).FirstOrDefault();
+                    //    if(ComisionEstadoDetalle != null){
+                    //        ComisionEstadoDetalle.Habilitado = false;
+                    //        ContextMulti.SaveChanges();
+                    //    }
+                    //    GpComisionEstadoComisionI newObj = new GpComisionEstadoComisionI();
+                    //    newObj.IdComision = verificarAutorizacion.IdComision;
+                    //    newObj.Habilitado = true;
+                    //    newObj.id
+                    //}
+
+                }
+                  return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
+                return false;
+            }
+        }
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo)
+        {
+            try
+            {
+
+            
+            Logger.LogWarning($" usuario: {usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion "+ "parametros: "+"idciclo: "+idCiclo+ " ");
+                int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
+                var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                if(cantidad > 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+     
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
+                return false;
+            }
+}
+
     }
 }

@@ -133,6 +133,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [idtipoPagoSelect, setIdtipoPagoSelect] = React.useState("0");
 
     const[openModalAutorizadores, setOpenModalAutorizadores] = useState(false);
+    const [pendienteFormaPago, setPendienteFormaPago]= useState(false);
 
 
     const mensajeGenericoCiclo =()=>{
@@ -244,7 +245,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
     const buscarFreelanzer=()=>{
-     console.log('texto q se :',txtBusqueda);
+    // console.log('texto q se :',txtBusqueda);
      buscarFrelancerPorCi();
     }
 
@@ -257,13 +258,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
      }
 
     const seleccionarTipoFiltroBusqueda=(idTipoFormaPago)=>{
-      console.log("listo tipo :", idTipoFormaPago)
+      //console.log("listo tipo :", idTipoFormaPago)
       filtrarComisionPorFormaPago(idTipoFormaPago)
     }
     async function filtrarComisionPorFormaPago(idTipoFormaPago){
       if(idCiclo && idCiclo !== 0){  
           let response= await Actions.ListarComisionFormaPagoFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
-          console.log('busqueda por filtro',response)          
+          //console.log('busqueda por filtro',response)          
           if(response && response.code == 0){
               setListaComisionesAPagar(response.data);  
           }       
@@ -289,9 +290,28 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const cerrarModalListaAutorizadosConfirm = ()=>{
         setOpenModalAutorizadores(false);
   }
-  const confirmarModalAutorizacion =()=>{
-     alert('construir aler confirmacion')
+  const confirmarModalAutorizacion =(idComision, idAutorizacionComision)=>{
+   // console.log('confirmar : ',idComision, idAutorizacionComision)      
+       ApiConfirmarAutorizacion(userName, idUsuario,idCiclo, idComision, idAutorizacionComision)
   }
+  async function ApiConfirmarAutorizacion(userNa, idUser,idCiclo, idComision, idAutorizacionComision){
+    if(idCiclo && idCiclo !== 0){  
+        let response= await Actions.ConfirmarAutorizacion(userNa, idUser,idCiclo, idComision,idAutorizacionComision, dispatch)   
+       // console.log('response confirm',response);          
+        if(response && response.code == 0){
+               setOpenModalAutorizadores(false);
+               dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
+               //api recarga el estado y lista de autorizaciones
+              ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch); 
+              //cerrar el modal
+            //  setOpenModalAutorizadores(false)
+        }else{
+              dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+        }  
+    }else{
+        mensajeGenericoCiclo();
+    }    
+ }
 
   useEffect(()=>{
     
@@ -427,8 +447,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
             </Card>
 
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
-            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} />
-            <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio} />
+            <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} pendienteFormaPago={pendienteFormaPago} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
+            <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio}  />  
             <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
       </>
     );

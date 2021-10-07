@@ -173,17 +173,18 @@ namespace gestion_de_comisiones.Controllers
 				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar el autorizador de pagos" });
 			}
 		}
-		public ActionResult ConfirmarAutorizacion([FromBody] AutorizacionVerificarParam param)
+		public ActionResult ConfirmarAutorizacion([FromBody] ConfirmarAutorizacionParam param)
 		{
 			try
 			{
-				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarAutorizadorPorComision() parametro: idciclo:{param.idCiclo}");
-				return Ok(Service.VerificarAutorizadorPorComision(param));
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ConfirmarAutorizacion() parametro: idciclo:{param.idCiclo}");
+				return Ok(Service.ConfirmarAutorizacionPagos(param));
+
 			}
 			catch
 			{
-				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarAutorizadorPorComision() controller ");
-				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar el autorizador de pagos" });
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  ConfirmarAutorizacion() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
 			}
 		}
 

@@ -121,3 +121,20 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
        
     });
   }
+
+  export async function ConfirmarAutorizacion(userName,idUsuario, idCiclo,idComision,idAutorizacionComision, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo),
+                idComision:parseInt(idComision),
+                idAutorizacionComision:parseInt(idAutorizacionComision)            
+          };          
+       requestPost('pagos/ConfirmarAutorizacion', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }

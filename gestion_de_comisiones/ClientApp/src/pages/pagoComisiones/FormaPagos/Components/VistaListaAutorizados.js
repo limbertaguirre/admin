@@ -115,8 +115,9 @@ const VistaListaAutorizados = (props) => {
     const CloseModalConfirmacion =()=>{
         setOpenModalConfirm(false);
     }
-    const confirmarModalAutoriizar = () =>{
-      confirmarModalAutorizacion();
+    const confirmarModalAutorizarOk = () =>{
+      setOpenModalConfirm(false);
+      confirmarModalAutorizacion(objList.idComision, objList.idAutorizacionComision);
     }
     
   return (
@@ -156,9 +157,11 @@ const VistaListaAutorizados = (props) => {
                             </List>                               
                         </div>                        
                         <div>
-                            <Typography variant="overline" display="block" gutterBottom>
-                                ¿Está segura que desea autorizar para pagar el ciclo?
-                            </Typography>
+                          {!objList.comisionAutorizada&&
+                              <Typography variant="overline" display="block" gutterBottom>
+                                  ¿Está segura que desea autorizar para pagar el ciclo?
+                              </Typography>
+                          } 
                         </div>                             
                     </Grid>                
                     <Grid  container item xs={12}  justify="flex-end"  >
@@ -173,7 +176,7 @@ const VistaListaAutorizados = (props) => {
                     </Grid>
             </DialogContent>             
         </Dialog>
-        <MessageConfirm open={openModalConfirm} titulo={tituloModal} subTituloModal={subTituloModal} tipoModal={tipoModal} mensaje={mensajeModal} handleCloseConfirm={openModalConfirmacion} handleCloseCancel={CloseModalConfirmacion}  />
+        <MessageConfirm open={openModalConfirm} titulo={tituloModal} subTituloModal={subTituloModal} tipoModal={tipoModal} mensaje={mensajeModal} handleCloseConfirm={confirmarModalAutorizarOk} handleCloseCancel={CloseModalConfirmacion}  />
     </>
   );
 };

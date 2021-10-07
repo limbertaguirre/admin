@@ -158,6 +158,29 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas");
             }
         }
+        public object ConfirmarAutorizacionPagos(ConfirmarAutorizacionParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ConfirmarAutorizacionPagos() ");
+                var result = Repository.ConfirmarAutorizacion(param);
+                if(result == true)
+                {
+                    return Respuesta.ReturnResultdo(0, "se autorizo la comision", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "problemas al autorizar una comision", "");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ConfirmarAutorizacionPagos(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al autorizar una comision de pagos", "problemas");
+            }
+        }
+
 
 
 
