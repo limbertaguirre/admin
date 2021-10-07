@@ -18,7 +18,7 @@ namespace gestion_de_comisiones.Repository
         private readonly IConfiguration Config;
         private readonly BDMultinivelContext ContextMulti;
 
-        public FormaPagoRespository(ILogger<FormaPagoRespository> logger, IConfiguration config, BDMultinivelContext contextMulti )
+        public FormaPagoRespository(ILogger<FormaPagoRespository> logger, IConfiguration config, BDMultinivelContext contextMulti)
         {
             Logger = logger;
             Config = config;
@@ -54,7 +54,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisione> list = new List<VwObtenercomisione>();
                 Logger.LogWarning($" usuario: {usuario} inicio el repository obtenerComisionesPendientes() ");
                 Logger.LogWarning($" usuario: {usuario} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision || ( x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -70,35 +70,42 @@ namespace gestion_de_comisiones.Repository
             {
                 List<TipoPagoInputmodel> newList = new List<TipoPagoInputmodel>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ListarFormaPagos() ");
-                var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p=> new TipoPagoInputmodel( p.IdTipoPago, p.Nombre, p.Icono)).ToList();
+                var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new TipoPagoInputmodel(p.IdTipoPago, p.Nombre, p.Icono)).ToList();
                 var verifi = ContextMulti.VwVerificarCuentasUsuarios.Where(x => x.Ci == param.carnet).FirstOrDefault();
                 foreach (var list in tipopagos)
                 {
                     TipoPagoInputmodel obj = new TipoPagoInputmodel();
                     obj.idTipoPago = list.idTipoPago;
                     obj.nombre = list.nombre;
-                    obj.icono = list.icono;                   
-                    if(list.idTipoPago == 1) //tiposion pay
+                    obj.icono = list.icono;
+                    if (list.idTipoPago == 1) //tiposion pay
                     {
                         obj.estado = bool.Parse(verifi.SionPay);
-                        if(bool.Parse(verifi.SionPay) == false)
+                        if (bool.Parse(verifi.SionPay) == false)
                         {
                             obj.descripcion = "El frelanzer no tiene SION PAY";
-                        } else {
+                        }
+                        else
+                        {
                             obj.descripcion = "";
                         }
-                    } else if(list.idTipoPago == 2)
+                    }
+                    else if (list.idTipoPago == 2)
                     {
                         obj.estado = verifi.TieneCuentaBancaria;
-                        if(verifi.TieneCuentaBancaria == false)
+                        if (verifi.TieneCuentaBancaria == false)
                         {
                             obj.descripcion = "El frelanzer no tiene cuenta habilitada";
-                        } else {
+                        }
+                        else
+                        {
                             obj.descripcion = "";
                         }
-                    } else {
+                    }
+                    else
+                    {
                         obj.estado = true;
-                    }                                      
+                    }
                     newList.Add(obj);
 
                 }
@@ -119,15 +126,16 @@ namespace gestion_de_comisiones.Repository
 
             try
             {
-                bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");             
+                bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");
                 var objDetalle = ContextMulti.ListadoFormasPagoes.Where(x => x.IdComisionesDetalle == param.idComisionDetalle).FirstOrDefault();
-                if(objDetalle != null)
+                if (objDetalle != null)
                 {
                     objDetalle.IdTipoPago = param.idTipoPago;
                     objDetalle.FechaActualizacion = DateTime.Now;
                     ContextMulti.SaveChanges();
                 }
-                else{
+                else
+                {
                     var deta = ContextMulti.GpComisionDetalles.Where(x => x.IdComisionDetalle == param.idComisionDetalle).FirstOrDefault();
                     ListadoFormasPago objL = new ListadoFormasPago();
                     objL.IdTipoPago = param.idTipoPago;
@@ -159,7 +167,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(param.nombreCriterio.Trim()) ).ToList();               
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -178,12 +186,12 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
-                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select( p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion,p.IdUsuario,p.FechaCreacion,p.FechaActualizacion,p.Estado,p.Icono)).ToList();
-                FormaPagoModel nuevoNinguno = new FormaPagoModel(){ IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.Estado, p.Icono)).ToList();
+                FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
                 LisFormaPagos.Add(nuevoNinguno);
                 foreach (var item in LisFormaPagos)
                 {
-                    if(ListComisiones != null)
+                    if (ListComisiones != null)
                     {
                         FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
                         obj.idTipoPago = item.IdTipoPago;
@@ -211,7 +219,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository FiltrarComisionPagoPorTipoPago() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.IdTipoPago== param.idTipoPago ).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.IdTipoPago == param.idTipoPago).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -221,11 +229,172 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param)
+        {
+            try
+            {
+                int idTipoAutorizacionFormaPago = 3;
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                List<Autorizador> listAurorizadores = new List<Autorizador>();
+                List<Autorizador> autorizados = new List<Autorizador>();
 
 
 
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarAutorizadorPorComision() ");
+                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago).FirstOrDefault();
+                if (autoriza != null)
+                {
+                     autorizados = ObtenerAutorizadores(autoriza.IdUsuarioAutorizacion,idTipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
+                    Autorizador addObjAutorizador = new Autorizador();
+                    addObjAutorizador.nombre = autoriza.Nombres;
+                    addObjAutorizador.apellido = autoriza.Apellidos;
+                    addObjAutorizador.area = autoriza.DescripcionArea;
+                    var confirmacionAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == autoriza.IdUsuarioAutorizacion && x.IdCiclo == param.idCiclo).FirstOrDefault();
+                    if (confirmacionAutorizacion != null)
+                    {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = true;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision = (int)confirmacionAutorizacion.IdComision;
+                        obj.idAutorizacionComision = (int)confirmacionAutorizacion.IdAutorizacionComision;
+                        //agregamos de ultimo al autorizador
+                        addObjAutorizador.aprobado = true;
+                        autorizados.Add(addObjAutorizador);
+                        obj.autorizadores = autorizados;
+                    } else {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = false;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision = 0;//no existe relacion
+                        obj.idAutorizacionComision = 0;
+                        //agregamos de ultimo al autorizador
+                        addObjAutorizador.aprobado = false;
+                        autorizados.Add(addObjAutorizador);
+                        obj.autorizadores = autorizados;
+                    }
+                }
+                else
+                {
+                    obj.autorizador = false;
+                    obj.comisionAutorizada = false;
+                    obj.idciclo = param.idCiclo;
+                    obj.idComision = 0; //no existe relacion
+                    obj.idAutorizacionComision = 0;
+                    obj.autorizadores = autorizados;
+                }
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarAutorizadorPorComision() mensaje : {ex}");
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                return obj;
+            }
+        }
+        private List<Autorizador> ObtenerAutorizadores(int idUserAutorizacion, int tipoAutorizador,int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                List<Autorizador> list = new List<Autorizador>();
 
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdTipoAutorizacion == tipoAutorizador && x.Estado == true && x.IdUsuarioAutorizacion != idUserAutorizacion).ToList();
+                foreach(var iten in autorizado)
+                {
+                    Autorizador obj = new Autorizador();
+                    obj.nombre = iten.Nombres;
+                    obj.apellido = iten.Apellidos;
+                    obj.area = iten.DescripcionArea;
+                   
+                    var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
+                    if (tieneAutorizacion != null) 
+                    {
+                        obj.aprobado = true;
+                    } else {
+                        obj.aprobado = false;
+                    }
+                    list.Add(obj);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizadorPorComision() mensaje : {ex}");
+                List<Autorizador> obj = new List<Autorizador>();
+                return obj;
+            }
 
+        }
+
+        public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ConfirmarAutorizacion() ");
+                int estadoAutorizacionComision = 0; //aprobado
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario ).FirstOrDefault();
+                var verificarAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdUsuario == autorizado.IdUsuario && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).FirstOrDefault(); 
+                if(verificarAutorizacion == null)
+                {
+                    var obtenerComision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo).FirstOrDefault();
+                    AutorizacionComision obj = new AutorizacionComision();
+                    obj.IdComision = obtenerComision.IdComision;
+                    obj.IdUsuarioAutorizacion = autorizado.IdUsuarioAutorizacion;
+                    obj.IdEstadoAutorizacionComision = estadoAutorizacionComision;
+                    obj.Descripcion = "";
+                    obj.IdUsuarioModificacion = param.idUsuario;
+                    obj.FechaCreacion = DateTime.Now;
+                    obj.FechaActualizacion = DateTime.Now;
+                    ContextMulti.AutorizacionComisions.Add(obj);
+                    ContextMulti.SaveChanges();
+
+                    //verificar la cantidad para cambiar el estado de aprobacion
+                    //var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                    //if(cantidad == 1)
+                    //{//actualizr a pendiente de forma de pago
+                    //    var ComisionEstadoDetalle = ContextMulti.GpComisionEstadoComisionIs.Where(x => x.IdComision == verificarAutorizacion.IdComision && x.Habilitado == true).FirstOrDefault();
+                    //    if(ComisionEstadoDetalle != null){
+                    //        ComisionEstadoDetalle.Habilitado = false;
+                    //        ContextMulti.SaveChanges();
+                    //    }
+                    //    GpComisionEstadoComisionI newObj = new GpComisionEstadoComisionI();
+                    //    newObj.IdComision = verificarAutorizacion.IdComision;
+                    //    newObj.Habilitado = true;
+                    //    newObj.id
+                    //}
+
+                }
+                  return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
+                return false;
+            }
+        }
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo)
+        {
+            try
+            {
+
+            
+            Logger.LogWarning($" usuario: {usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion "+ "parametros: "+"idciclo: "+idCiclo+ " ");
+                int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
+                var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                if(cantidad > 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+     
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
+                return false;
+            }
+}
 
     }
 }

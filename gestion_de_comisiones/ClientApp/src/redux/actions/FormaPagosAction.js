@@ -105,3 +105,36 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
        
     });
   }
+
+  export async function VerificarAutorizadorComision(userName,idCiclo,idUsuario, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+              usuarioLogin:userName,
+              idUsuario:parseInt(idUsuario),
+              idCiclo:idCiclo
+          };    
+       requestPost('pagos/VerificarAutorizadorPorComision', data, dispatch )
+        .then(response =>{     
+            console.log('response verificar :', response);     
+            resolve(response);  
+        }) 
+       
+    });
+  }
+
+  export async function ConfirmarAutorizacion(userName,idUsuario, idCiclo,idComision,idAutorizacionComision, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo),
+                idComision:parseInt(idComision),
+                idAutorizacionComision:parseInt(idAutorizacionComision)            
+          };          
+       requestPost('pagos/ConfirmarAutorizacion', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }

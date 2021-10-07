@@ -66,12 +66,12 @@ let MessageConfirm = ({ open, titulo,subTituloModal, tipoModal, mensaje, handleC
                        
                         </div>                   
                         <Grid  container item xs={12}  justify="flex-end"  >
-                            <Button onClick={cerrarModal} variant="contained"  className={classes.botonesSecondary} color="secondary">
-                                <CheckCircleIcon/> Aceptar
-                            </Button>
-                            <Button onClick={handleCloseCancel} variant="contained" color="primary" className={classes.botones} >
+                           <Button onClick={handleCloseCancel} variant="contained" color="primary" className={classes.botonesSecondary} >
                                 <CancelIcon/> Cancelar
                             </Button>
+                            <Button onClick={cerrarModal} variant="contained"  className={classes.botones} color="secondary">
+                                <CheckCircleIcon/> Aceptar
+                            </Button>                          
                             
                       </Grid>
                 </DialogContent>             

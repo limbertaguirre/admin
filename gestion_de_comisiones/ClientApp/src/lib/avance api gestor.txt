@@ -1,0 +1,66 @@
+
+
+
+
+--------------------------------------------------
+--post verificar y listar a los autorizadores de la comision
+      body:
+            usuarioLogin string
+            idUsuario    int 
+            idCiclo      int
+      path : pagos/VerificarAutorizadorPorComision
+      tipo : post
+
+      Respuesta ok: => cuando esta en la lista de autorizadores
+        response 1 {
+              code:0
+              mensaje:"ok"
+              data{
+                    autorizador: true  
+                    comisionAutorizada: false
+                     idComision: 50
+                     idciclo: 85
+                     idAutorizacionComision :125
+                     autorizadores:  [
+                              {
+                                idUsuario: int,
+                                nombre:string,
+                                apellido: string
+                                aprobado: boleano
+                                area: string
+                              }
+                              ,
+                              {…}
+                              ]
+              } 
+       Respuesta False: 
+        response 1 {
+              code:0
+              mensaje:"ok"
+              data{
+                    autorizador: false  => cuando no tiene autorizacion  
+                    comisionAutorizada: false
+                     idComision: 0
+                     idciclo: 85
+                     idAutorizacionComision :0
+                     autorizadores:  [  => lista vacia
+                              {
+                                idUsuario: int,
+                                nombre:string,
+                                apellido: string
+                                aprobado: boleano
+                                area: string
+                              }
+                              ,
+                              {…}
+                              ]
+              } 
+
+        Respuesta error : {
+              code:1
+              mensaje:"mensaje dinamico del error"
+              data : null
+        }
+---------------------------------------------------------------------------------------------
+-- confirmar autorizacion de ciclo - forma de pago ------------------------------------------
+

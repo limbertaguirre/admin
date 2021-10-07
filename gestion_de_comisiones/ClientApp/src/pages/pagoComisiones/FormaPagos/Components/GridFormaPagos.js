@@ -126,7 +126,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
     let style= useStyles();
     const dispatch=useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
-    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo} = props;
+    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo, pendienteFormaPago, permisoActualizar, permisoCrear} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -229,7 +229,8 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
       seleccionarTipoFiltroBusqueda(idtipo);
       setAnchorEl(null);
     };
-
+    console.log('permiso crear :',permisoCrear)
+    console.log('permisoActualozar :',permisoActualizar)
     return (
       <>
         <br />                 
@@ -317,20 +318,28 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
                             <TableCell align="center">
+                             
                                 {row.idListaFormasPago > 0? 
-                                     <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
-                                         <IconButton className={style.altoCeldas} edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                            
-                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago1.png')} /> 
-                                         </IconButton>
-                                    </Tooltip>
+                                   <>
+                                      {(permisoActualizar === true && pendienteFormaPago=== false )&&              
+                                        <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Agregar un tipo de pagos'}>                                        
+                                            <IconButton className={style.altoCeldas} edge="start" color="inherit" aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                            
+                                                <img width="22" height="22" src={require('../../../../assets/icons/tipopago1.png')} /> 
+                                            </IconButton>
+                                        </Tooltip>                                   
+                                      }
+                                    </>
                                     :
-                                    <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
-                                         <IconButton className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                          
-                                            <img width="22" height="22" src={require('../../../../assets/icons/tipopago2.png')} /> 
-                                         </IconButton>
-                                    </Tooltip>
-                                  }
-
+                                    <>
+                                        {(permisoCrear === true && pendienteFormaPago=== false)&& 
+                                          <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin tipo de pago'}>                                       
+                                              <IconButton className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"   onClick = {()=> selecionarDetalleFrelances(`${row.idComisionDetalle}`,`${row.ci}`,`${row.idTipoPago}`)}>                                          
+                                                  <img width="22" height="22" src={require('../../../../assets/icons/tipopago2.png')} /> 
+                                              </IconButton>
+                                          </Tooltip>
+                                        }
+                                    </>
+                                  }                               
                             </TableCell>   
                             </TableRow>
                         ))}

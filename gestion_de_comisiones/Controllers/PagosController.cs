@@ -53,9 +53,9 @@ namespace gestion_de_comisiones.Controllers
 			}
 		}
 
-		// POST: Pagos/ObtenerAplicaciones
+		// POST: Pagos/ObtenerFormasPagos
 		[HttpPost]
-		public ActionResult ObtenerAplicaciones([FromBody] ComisionesInputModel param)
+		public ActionResult ObtenerFormasPagos([FromBody] ComisionesInputModel param)
 		{
 			try
 			{
@@ -156,6 +156,35 @@ namespace gestion_de_comisiones.Controllers
 				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
 				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
 				return Ok(Result);
+			}
+		}
+		// POST: Pagos/VerificarAutorizadorPorComision
+		[HttpPost]
+		public ActionResult VerificarAutorizadorPorComision([FromBody] AutorizacionVerificarParam param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarAutorizadorPorComision() parametro: idciclo:{param.idCiclo}");
+				return Ok(Service.VerificarAutorizadorPorComision(param));
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarAutorizadorPorComision() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar el autorizador de pagos" });
+			}
+		}
+		public ActionResult ConfirmarAutorizacion([FromBody] ConfirmarAutorizacionParam param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ConfirmarAutorizacion() parametro: idciclo:{param.idCiclo}");
+				return Ok(Service.ConfirmarAutorizacionPagos(param));
+
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  ConfirmarAutorizacion() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
 			}
 		}
 

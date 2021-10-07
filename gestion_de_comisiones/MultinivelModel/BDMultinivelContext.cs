@@ -19,6 +19,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
+        public virtual DbSet<AutorizacionComision> AutorizacionComisions { get; set; }
+        public virtual DbSet<AutorizacionesArea> AutorizacionesAreas { get; set; }
         public virtual DbSet<Banco> Bancoes { get; set; }
         public virtual DbSet<Bitacora> Bitacoras { get; set; }
         public virtual DbSet<BitacoraDetalle> BitacoraDetalles { get; set; }
@@ -26,6 +28,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Ciudad> Ciudads { get; set; }
         public virtual DbSet<ComisionDetalleEmpresa> ComisionDetalleEmpresas { get; set; }
         public virtual DbSet<Empresa> Empresas { get; set; }
+        public virtual DbSet<EstadoAutorizacionComision> EstadoAutorizacionComisions { get; set; }
         public virtual DbSet<EstadoDetalleListadoFormaPago> EstadoDetalleListadoFormaPagoes { get; set; }
         public virtual DbSet<Ficha> Fichas { get; set; }
         public virtual DbSet<FichaIncentivo> FichaIncentivoes { get; set; }
@@ -59,12 +62,15 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<RolPaginaPermisoI> RolPaginaPermisoIs { get; set; }
         public virtual DbSet<Sucursal> Sucursals { get; set; }
         public virtual DbSet<TipoAplicacione> TipoAplicaciones { get; set; }
+        public virtual DbSet<TipoAutorizacion> TipoAutorizacions { get; set; }
         public virtual DbSet<TipoBaja> TipoBajas { get; set; }
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
+        public virtual DbSet<UsuarioAutorizacion> UsuarioAutorizacions { get; set; }
         public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
+        public virtual DbSet<VwListarAutorizacionesTipo> VwListarAutorizacionesTipoes { get; set; }
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
@@ -72,6 +78,8 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
+        public virtual DbSet<VwTipoAutorizacion> VwTipoAutorizacions { get; set; }
+        public virtual DbSet<VwVerificarAutorizacionComision> VwVerificarAutorizacionComisions { get; set; }
         public virtual DbSet<VwVerificarCuentasUsuario> VwVerificarCuentasUsuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -197,6 +205,79 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nombre")
                     .HasComment("Nombre del área. Ej. Calidad, Finanzas, Cartera, etc.");
+            });
+
+            modelBuilder.Entity<AutorizacionComision>(entity =>
+            {
+                entity.HasKey(e => e.IdAutorizacionComision)
+                    .HasName("PK__AUTORIZA__AF468D679791B45B");
+
+                entity.ToTable("AUTORIZACION_COMISION");
+
+                entity.Property(e => e.IdAutorizacionComision).HasColumnName("id_autorizacion_comision");
+
+                entity.Property(e => e.Descripcion)
+                    .IsRequired()
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
+                entity.Property(e => e.IdEstadoAutorizacionComision).HasColumnName("id_estado_autorizacion_comision");
+
+                entity.Property(e => e.IdUsuarioAutorizacion).HasColumnName("id_usuario_autorizacion");
+
+                entity.Property(e => e.IdUsuarioModificacion).HasColumnName("id_usuario_modificacion");
+            });
+
+            modelBuilder.Entity<AutorizacionesArea>(entity =>
+            {
+                entity.HasKey(e => e.IdAutorizacionesArea)
+                    .HasName("PK__AUTORIZA__28E9D5F8A77B6F5C");
+
+                entity.ToTable("AUTORIZACIONES_AREA");
+
+                entity.Property(e => e.IdAutorizacionesArea)
+                    .HasColumnName("id_autorizaciones_area")
+                    .HasComment("Es es la llave primaria de la tabla autoincremental.");
+
+                entity.Property(e => e.Cantidad)
+                    .HasColumnName("cantidad")
+                    .HasComment("Es la cantidad minima o igual que se puede tener para una autorizacion por tipo.");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.IdArea)
+                    .HasColumnName("id_area")
+                    .HasComment("LLave foranea que hace referencia al id de la tabla area en de trabajo.");
+
+                entity.Property(e => e.IdTipoAutorizacion)
+                    .HasColumnName("id_tipo_autorizacion")
+                    .HasComment("LLave foranea que hace referencia al id de la tabla tipo autorizacion");
+
+                entity.Property(e => e.IdUsuarioModificacion)
+                    .HasColumnName("id_usuario_modificacion")
+                    .HasComment("Es la descripcion del registro");
             });
 
             modelBuilder.Entity<Banco>(entity =>
@@ -532,6 +613,40 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("nombre_bd");
+            });
+
+            modelBuilder.Entity<EstadoAutorizacionComision>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("ESTADO_AUTORIZACION_COMISION");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.IdEstadoAutorizacionComision)
+                    .HasColumnName("id_estado_autorizacion_comision")
+                    .HasComment("es la llave primaria de la tablas");
+
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("Es el i usuario que creo o modifico el registro");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre")
+                    .HasComment("es el estado de una comision autorizada");
             });
 
             modelBuilder.Entity<EstadoDetalleListadoFormaPago>(entity =>
@@ -2074,6 +2189,43 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Este campo hace referencia si la descripcion es valido solo para guardian = true, false si es diferente a lo de guardian");
             });
 
+            modelBuilder.Entity<TipoAutorizacion>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoAutorizacion)
+                    .HasName("PK__TIPO_AUT__84026FCDB12CE103");
+
+                entity.ToTable("TIPO_AUTORIZACION");
+
+                entity.Property(e => e.IdTipoAutorizacion)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id_tipo_autorizacion");
+
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+
+                entity.Property(e => e.Estado)
+                    .IsRequired()
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdUsuarioModificacion).HasColumnName("id_usuario_modificacion");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+            });
+
             modelBuilder.Entity<TipoBaja>(entity =>
             {
                 entity.HasNoKey();
@@ -2279,6 +2431,37 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El usuario_id es el id del último usuario que modificó el registro.");
             });
 
+            modelBuilder.Entity<UsuarioAutorizacion>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuarioAutorizacion)
+                    .HasName("PK__USUARIO___59E0A6D55BB73C00");
+
+                entity.ToTable("USUARIO_AUTORIZACION");
+
+                entity.Property(e => e.IdUsuarioAutorizacion).HasColumnName("id_usuario_autorizacion");
+
+                entity.Property(e => e.Estado)
+                    .IsRequired()
+                    .HasColumnName("estado")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdTipoAutorizacion).HasColumnName("id_tipo_autorizacion");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdUsuarioModificacion).HasColumnName("id_usuario_modificacion");
+            });
+
             modelBuilder.Entity<UsuariosRole>(entity =>
             {
                 entity.HasKey(e => e.IdUsuariosRoles)
@@ -2433,6 +2616,53 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentaConexionId)
                     .HasColumnName("venta_conexion_id")
                     .HasComment("Este es el codigo de la venta en conexion.");
+            });
+
+            modelBuilder.Entity<VwListarAutorizacionesTipo>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("VW_LISTAR_AUTORIZACIONES_TIPO");
+
+                entity.Property(e => e.Apellidos)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("apellidos");
+
+                entity.Property(e => e.DescripcionArea)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion_area");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion");
+
+                entity.Property(e => e.IdArea).HasColumnName("id_area");
+
+                entity.Property(e => e.IdTipoAutorizacion).HasColumnName("id_tipo_autorizacion");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdUsuarioAutorizacion).HasColumnName("id_usuario_autorizacion");
+
+                entity.Property(e => e.NombreTipoAutorizacion)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_tipo_autorizacion");
+
+                entity.Property(e => e.Nombres)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombres");
+
+                entity.Property(e => e.Usuario)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("usuario");
             });
 
             modelBuilder.Entity<VwObtenerCiclo>(entity =>
@@ -2807,6 +3037,48 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("tipo_pago_descripcion");
+            });
+
+            modelBuilder.Entity<VwTipoAutorizacion>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("VW_TIPO_AUTORIZACION");
+
+                entity.Property(e => e.CantidadAprobacionMinimaArea).HasColumnName("cantidad_aprobacion_minima_area");
+
+                entity.Property(e => e.CantidadLimite).HasColumnName("cantidad_limite");
+
+                entity.Property(e => e.IdTipoAutorizacion).HasColumnName("id_tipo_autorizacion");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<VwVerificarAutorizacionComision>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwVerificarAutorizacionComision");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.IdAutorizacionComision).HasColumnName("id_autorizacion_comision");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
+                entity.Property(e => e.IdEstadoAutorizacionComision).HasColumnName("id_estado_autorizacion_comision");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.IdUsuarioAutorizacion).HasColumnName("id_usuario_autorizacion");
             });
 
             modelBuilder.Entity<VwVerificarCuentasUsuario>(entity =>
