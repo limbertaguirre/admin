@@ -154,8 +154,8 @@ namespace gestion_de_comisiones.Controllers
 			catch
 			{
 				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
-				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
-				return Ok(Result);
+				//var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
 			}
 		}
 		// POST: Pagos/VerificarAutorizadorPorComision

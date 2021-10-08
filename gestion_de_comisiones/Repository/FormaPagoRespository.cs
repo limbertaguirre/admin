@@ -47,7 +47,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex.Message}");
-                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }
@@ -160,7 +160,7 @@ namespace gestion_de_comisiones.Repository
 
 
         }
-        public object GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
-                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }
@@ -212,7 +212,7 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-        public object FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch FiltrarComisionPagoPorTipoPago() mensaje : {ex}");
-                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }

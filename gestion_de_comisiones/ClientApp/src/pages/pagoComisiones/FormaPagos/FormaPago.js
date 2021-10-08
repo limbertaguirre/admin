@@ -19,6 +19,7 @@ import VistaListaAutorizados from './Components/VistaListaAutorizados';
 import * as Actions from '../../../redux/actions/FormaPagosAction';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import  imageFac from "../../../../src/assets/img/approved.png";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -178,9 +179,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
             usuarioLogin:userName,
             idCiclo: idCiclo
           };
-          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{           
+          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{  
+            console.log('orrrrrrrrrrrrr', res.data.lista);         
               if(res.code === 0){  
-                  setListaComisionesAPagar(res.data);  
+                let data= res.data;
+                  setPendienteFormaPago(data.pendienteFormaPago);
+                  setListaComisionesAPagar(data.lista);  
                   setStatusBusqueda(true);    
                   ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch);               
               }else{
@@ -214,10 +218,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
     async function listarTiposPagos(ciSeleccionado){      
-      let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado , dispatch);
+      let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado, idCiclo , dispatch);
       if(respuesta && respuesta.code == 0){ 
         setListTipoPagos(respuesta.data);
         setTipoPago(true);
+      }else{
+         dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
       }
     }
 
@@ -235,11 +241,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     async function funcionConfirmarTipoPago(){
      if (idcomisionDetalleSelect != 0){     
-          let response= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario, dispatch)             
+          let response= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario,idCiclo, dispatch)             
           if(response && response.code == 0){
               setTipoPago(false);
               setIdtipoPagoSelect("0");
               handleOnGetAplicaciones();
+          }else{
+            dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
           }
       }
     }
@@ -250,10 +258,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
     async function buscarFrelancerPorCi(){         
-           let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)   
-           console.log('busqueda por nombre',response)          
+           let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)               
            if(response && response.code == 0){
-               setListaComisionesAPagar(response.data);                 
+               let data= response.data;
+               setPendienteFormaPago(data.pendienteFormaPago);
+               setListaComisionesAPagar(data.lista);                 
            }       
      }
 
@@ -266,7 +275,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
           let response= await Actions.ListarComisionFormaPagoFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
           //console.log('busqueda por filtro',response)          
           if(response && response.code == 0){
-              setListaComisionesAPagar(response.data);  
+              let data= response.data;
+              setPendienteFormaPago(data.pendienteFormaPago);
+              setListaComisionesAPagar(data.lista);  
           }       
       }else{
           mensajeGenericoCiclo();
@@ -299,7 +310,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
         let response= await Actions.ConfirmarAutorizacion(userNa, idUser,idCiclo, idComision,idAutorizacionComision, dispatch)   
        // console.log('response confirm',response);          
         if(response && response.code == 0){
+              let data= response.data;
                setOpenModalAutorizadores(false);
+               setPendienteFormaPago(data.pendienteFormaPago);
                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
                //api recarga el estado y lista de autorizaciones
               ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch); 
@@ -330,6 +343,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Typography variant="h4" gutterBottom  >
              {'Forma de pagos'}
            </Typography>    
+           <Grid  container item xs={12}  justify="flex-end">
+                  {pendienteFormaPago&&
+                    <img src={imageFac} alt={'sion'} style={{width:'100px'}} />
+                   }
+           </Grid>
             {autorizadorObjeto.autorizador&&
            <Card>             
               <Grid container className={style.gridContainer} >         

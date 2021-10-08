@@ -52,12 +52,16 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio AplicacionesService => getAplicacionesPendientes() ");
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
-                var ciclos = Repository.GetComisiones(usuario, idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
-                return Respuesta.ReturnResultdo(0, "ok", ciclos);
+                var comisiones = Repository.GetComisiones(usuario, idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(usuario, idCiclo);
+                obj.lista = comisiones;
+                //obj.pendienteFormaPago = pendiente;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
             }
             catch (Exception ex)
             {
@@ -69,7 +73,10 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarFormasPagos()");              
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarFormasPagos()");
+                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                if (tieneUnaComisionAprobada)
+                return Respuesta.ReturnResultdo(1, "ESTA ACCIÓN NO SE PUDO COMPLETAR, MOTIVO : PROCESO DE AUTORIZACIÓN EN CURSO.", "");                
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", (List<TipoPagoInputmodel>)Repository.ListarFormaPagos(param));
             }
             catch (Exception ex)
@@ -83,6 +90,10 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio AplicarMetodoPago()");
+                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                if (tieneUnaComisionAprobada){
+                    return Respuesta.ReturnResultdo(1, "ESTA ACCIÓN NO SE PUDO COMPLETAR, MOTIVO : PROCESO DE AUTORIZACIÓN EN CURSO.", "");
+                }
                 var apli = Repository.AplicarFormaPago(param);
                 if (apli) {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", apli);
@@ -102,10 +113,14 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
-                int idEstadoDetalleNoPresentaFactura = 6;               
-                return Respuesta.ReturnResultdo(0, "ok", Repository.GetComisionesPorCarnetListFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura));
+                int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
+                var comisiones = Repository.GetComisionesPorCarnetListFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                obj.lista = comisiones;
+                return Respuesta.ReturnResultdo(0, "ok",obj);
             }
             catch (Exception ex)
             {
@@ -134,10 +149,14 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
-                return Respuesta.ReturnResultdo(0, "ok", Repository.FiltrarComisionPagoPorTipoPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura));
+                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                obj.lista = comisiones;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
             }
             catch (Exception ex)
             {
@@ -163,13 +182,14 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ConfirmarAutorizacionPagos() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();               
                 var result = Repository.ConfirmarAutorizacion(param);
                 if(result == true)
                 {
-                    return Respuesta.ReturnResultdo(0, "se autorizo la comision", "");
-                }
-                else
-                {
+                    obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                    //obj.lista = comisiones;
+                    return Respuesta.ReturnResultdo(0, "se autorizo la comision", obj );
+                } else {
                     return Respuesta.ReturnResultdo(1, "problemas al autorizar una comision", "");
                 }
                 
