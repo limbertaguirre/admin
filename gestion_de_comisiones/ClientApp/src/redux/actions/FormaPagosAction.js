@@ -140,3 +140,18 @@ export async function listarFormaPagos(userName, ciSeleccionado,idCiclo, dispatc
        
     });
   }
+
+  export async function VerificarCierreFormaPago(userName,idUsuario, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo)         
+          };          
+       requestPost('pagos/VerificarCierreFormaPago', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }

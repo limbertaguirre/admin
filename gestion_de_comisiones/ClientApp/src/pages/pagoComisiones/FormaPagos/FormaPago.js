@@ -5,6 +5,7 @@ import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
    InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import SearchIcon from '@material-ui/icons/Search';
+import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
@@ -19,7 +20,8 @@ import VistaListaAutorizados from './Components/VistaListaAutorizados';
 import * as Actions from '../../../redux/actions/FormaPagosAction';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import  imageFac from "../../../../src/assets/img/approved.png";
+import  imageFac from "../../../../src/assets/img/pendiente.png";
+import ConfirmarCierrePagoModal from "./Components/ConfirmarCierrePagoModal";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -180,7 +182,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             idCiclo: idCiclo
           };
           requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{  
-            console.log('orrrrrrrrrrrrr', res.data.lista);         
+           // console.log('orrrrrrrrrrrrr', res.data.lista);         
               if(res.code === 0){  
                 let data= res.data;
                   setPendienteFormaPago(data.pendienteFormaPago);
@@ -330,6 +332,37 @@ const StyledBreadcrumb = withStyles((theme) => ({
     
   },[autorizadorObjeto])
 
+   const[openCierrePagoModal, setOpenCierrePagoModal] = useState(false);
+   const[habilitadoCierrePago, setHabilitadoCierrePago]= useState(false);
+   const[listadoConfirm,setListadoConfirm ]= useState([]);
+
+  const verificarConfirmarFomaPago =()=>{
+    ApiVerificarConfirmarFormaPago(userName, idUsuario,idCiclo);
+  }
+  async function ApiVerificarConfirmarFormaPago(userNa, idUser,idCICLO){
+      if(idCICLO && idCICLO !== 0){  
+          let response= await Actions.VerificarCierreFormaPago(userNa, idUser,idCICLO, dispatch)   
+          console.log('respo : ', response);
+          if(response && response.code == 0){
+            let data= response.data;
+            setOpenCierrePagoModal(true);
+            setHabilitadoCierrePago(data.habilitado);
+            setListadoConfirm(data.listado);
+          }else{
+              dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+          }
+
+      }else{
+          mensajeGenericoCiclo();
+      }    
+    }
+    const cancelarModalConfirmarCierre =()=>{
+       setOpenCierrePagoModal(false);
+    }
+    const confirmarCierrePagoModal =()=>{
+       setOpenCierrePagoModal(false);
+    }
+
     return (
       <>
           <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
@@ -383,7 +416,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Card>
            <Grid container className={style.gridContainer} >
            <Grid item xs={12} md={3} className={style.containerSave} >
-                  {/*  {statusBusqueda&&
+                    {statusBusqueda&&
                       <>
                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
                           <Button
@@ -391,17 +424,17 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           variant="contained"
                           color="primary"
                           className={style.submitSAVE}
-                          onClick = {()=> CerrarAplicacion()}                                         
+                          onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
-                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN
+                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
                           </Button> 
                           :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                              <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN </Button> 
+                              <Button variant="contained"   onClick = {()=> verificarConfirmarFomaPago()} > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
                             </Tooltip> 
                          }
                       </> 
-                   }    */}
+                   }    
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
                     {statusBusqueda&&
@@ -468,6 +501,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} pendienteFormaPago={pendienteFormaPago} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio}  />  
             <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
+            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilidado={habilitadoCierrePago} />
+
       </>
     );
 

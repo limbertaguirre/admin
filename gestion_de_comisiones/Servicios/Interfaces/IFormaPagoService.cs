@@ -18,6 +18,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInputModel param);
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
         public object ConfirmarAutorizacionPagos(ConfirmarAutorizacionParam param);
-
+        public object VerificarCierreFormaPago(VerificarCierreFormaPagoParam param);
     }
 }

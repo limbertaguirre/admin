@@ -304,7 +304,7 @@ namespace gestion_de_comisiones.Repository
                     obj.nombre = iten.Nombres;
                     obj.apellido = iten.Apellidos;
                     obj.area = iten.DescripcionArea;
-                   
+                    obj.idArea = iten.IdArea;
                     var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
                     if (tieneAutorizacion != null) 
                     {
@@ -394,7 +394,93 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
                 return false;
             }
-}
+        }
+
+        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param)
+        {
+            try
+            {
+
+                ConfirmarPagoOutPut obj = new ConfirmarPagoOutPut();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + param.idCiclo + " ");
+                int tipoAutorizacionFormaPago = 3; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
+                List<Autorizador> lista = ListarAutorizadoresPorTipoAutorizacion(tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
+                obj.Habilitado = VerificarAutorizacionPorArea(lista, tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
+                obj.listado = lista;
+                return obj;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarSiExisteAutorizacionFormaPagoCiclo() mensaje : {ex}");
+                ConfirmarPagoOutPut obj = new ConfirmarPagoOutPut();
+                return obj;
+            }
+        }
+        private List<Autorizador> ListarAutorizadoresPorTipoAutorizacion(int tipoAutorizador, int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                List<Autorizador> list = new List<Autorizador>();
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdTipoAutorizacion == tipoAutorizador && x.Estado == true).ToList();
+                foreach (var iten in autorizado)
+                {
+                    Autorizador obj = new Autorizador();
+                    obj.nombre = iten.Nombres;
+                    obj.apellido = iten.Apellidos;
+                    obj.area = iten.DescripcionArea;
+                    obj.idArea = iten.IdArea;
+
+                    var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
+                    if (tieneAutorizacion != null)
+                    {
+                        obj.aprobado = true;
+                    }
+                    else
+                    {
+                        obj.aprobado = false;
+                    }
+                    list.Add(obj);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ListarAutorizadoresPorTipoAutorizacion() mensaje : {ex}");
+                List<Autorizador> obj = new List<Autorizador>();
+                return obj;
+            }
+
+        }
+
+        private bool VerificarAutorizacionPorArea(List<Autorizador> lista,int tipoAutorizador, int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                List<Autorizador> list = new List<Autorizador>();
+                var autorizado = lista.GroupBy(p => new { p.idArea }).Select(g => new { idArea = g.Key.idArea, cantidad = g.Count() }).ToList();
+                bool habilitado = true;
+
+                foreach(var iten in autorizado)
+                {
+                    var CantiAutorizadosArea = lista.Where(x => x.idArea == iten.idArea && x.aprobado == true).Count();
+                    var areaConfig = ContextMulti.AutorizacionesAreas.Where(x => x.IdArea == iten.idArea).FirstOrDefault();
+                    if(CantiAutorizadosArea < areaConfig.Cantidad)
+                    {
+                        habilitado = false;
+                    }
+                }           
+                return habilitado;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizacionPorArea() mensaje : {ex}");
+                return false;
+            }
+        }
+
 
     }
 }

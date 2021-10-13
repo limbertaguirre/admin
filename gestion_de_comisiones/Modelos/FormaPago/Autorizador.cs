@@ -12,5 +12,6 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         public string apellido { get; set; }
         public bool aprobado { get; set; }
         public string area { get; set; }
+        public int idArea { get; set; }
     }
 }

@@ -201,7 +201,19 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object VerificarCierreFormaPago(VerificarCierreFormaPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarCierreFormaPago() ");
+                return Respuesta.ReturnResultdo(0, "ok", Repository.VerificarCierreFormaPago(param));
 
+            }
+            catch (Exception ex) {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarCierreFormaPago(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al verificar la forma de pago", "");
+            }
+        }
 
 
 
