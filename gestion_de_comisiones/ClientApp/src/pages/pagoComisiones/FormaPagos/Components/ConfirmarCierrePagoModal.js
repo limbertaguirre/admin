@@ -12,6 +12,10 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import Paper from '@material-ui/core/Paper';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+
 //import LogoSion from '../../../../assets/icons/LogoSION.sgv'
 
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +55,15 @@ const useStyles = makeStyles((theme) => ({
         marginRight:theme.spacing(1),
         marginLeft:theme.spacing(1),
     },
+    botonesSecondary:{
+        background: "#f44336", 
+        boxShadow: '2px 4px 5px #1872b8',
+        color:'white',  
+        marginBottom:theme.spacing(2),
+        marginTop:theme.spacing(2),
+        marginRight:theme.spacing(1),
+        marginLeft:theme.spacing(1),
+    },
     TextFiel: {
         marginBottom: theme.spacing(1),
         marginTop: theme.spacing(1),
@@ -69,13 +82,34 @@ const useStyles = makeStyles((theme) => ({
     },
     titleDescripcion:{
       color:'red',  
-  },
+    },
+    root2: {
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(2),
+        margin: 'auto',
+        maxWidth: 500,
+    },
+    image: {
+        width: 110,
+       // height: 128,
+       display:'flex',
+       alignItems:'center',
+       justifyContent:'center',
+    },
+    img: {
+        margin: 'auto',
+        display: 'block',
+        maxWidth: '100%',
+        maxHeight: '100%',
+    },
     
   }));
 
 
 const ConfirmarCierrePagoModal = (props) => {
-   const { open , closeHandelModal,confirmarPago, listado, habilidado }= props;
+   const { open , closeHandelModal,confirmarPago, listado, habilitado }= props;
    const classes = useStyles();
 
   return (
@@ -89,38 +123,59 @@ const ConfirmarCierrePagoModal = (props) => {
                         <Alert severity={"warning"}>
                         
                        
-                              <AlertTitle>  {habilidado? 'COFIRMAR CIERRE PAGO ':'PENDIENTE A AUTORIZAR '}</AlertTitle>
+                              <AlertTitle>  {habilitado? 'CONFIRMAR CIERRE PAGO ':'PENDIENTE AUTORIZAR '}</AlertTitle>
                                     <br /> 
-                                {!habilidado&&                          
+                                {habilitado&&                          
                                 <Typography variant="caption" display="block" gutterBottom>
                                     <strong>NOTA :</strong> {'Esta seguro que desea cerrar el pago.'} 
                                 </Typography>
                                  }                                                                                                                               
                         </Alert>                    
-                        <br />   
-                        <Grid  container  >                                                     
-                            <div className={classes.divRadio}>
-                                <List className={classes.rootList}>
-                                  {/*   {listado.map((valu, index) => (
-                                        <ListItem key={index}>                                        
-                                            <ListItemText primary={valu.nombre.toUpperCase() +' '+ valu.apellido.toUpperCase()} />
-                                            <ListItemAvatar>
-                                            {valu.aprobado? <DoneAllIcon style={{color:'#1D7C0E'}} /> :
-                                                <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Pendiente a aprobacion'}>
-                                                <ErrorOutlineIcon color="disabled" /> 
-                                                </Tooltip>
-                                                }
-                                            </ListItemAvatar>
-                                        </ListItem>                                      
-                                    ))}             */}        
-                                </List>                                                
-                            </div>                               
-                        </Grid>                
+                        <br />             
+
+                            <div className={classes.root2}>
+                                <Paper className={classes.paper}>
+                                  {listado.map((valu, index) => ( 
+                                      <div key={index} >
+                                        <Grid container spacing={2}>                                        
+                                            <Grid item xs={12} sm container>
+                                                <Grid item xs container direction="column" spacing={2}>
+                                                    <Grid item xs>
+                                                        <Typography gutterBottom variant="subtitle1">
+                                                    <b>  {valu.area.toUpperCase()} {'  ('} {valu.cantidadMin} {' Personas '} {valu.cantidadMax} {'  )'}  </b>
+                                                        </Typography>
+                                                        {valu.listaAutorizadores.map((value, index2) => (   
+                                                            <div key={index2}>
+                                                            <Typography variant="body2" color="textSecondary">
+                                                                {value.nombre.toUpperCase() +' '+ value.apellido.toUpperCase()} • {' '} {value.aprobado&&<DoneAllIcon  />}
+                                                            </Typography>
+                                                            </div>
+                                                        ))}                                                                                                  
+                                                    </Grid>   
+                                                {/*  <Grid item>
+                                                        <Typography variant="body2" style={{ cursor: 'pointer' }}>
+                                                        Valido : {valu.cantidadMin} {' '} Cant :{valu.cantidadMax}
+                                                        </Typography>
+                                                    </Grid>  */}                                 
+                                                </Grid>                                          
+                                            </Grid>
+                                            <Grid item>
+                                                <ButtonBase className={classes.image}>                     
+                                                {valu.habilitado&& <CheckCircleOutlineIcon fontSize={'large'} style={{color:'#1D7C0E'}}  /> }
+                                                </ButtonBase>
+                                            </Grid>
+                                        </Grid>                                      
+                                        <hr />
+                                       </ div>
+                                   ))}
+                                </Paper>                                                                                             
+                     </div>
+
                     <Grid  container item xs={12}  justify="flex-end"  >
-                        <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botones}  >
-                           {habilidado?  'Cancelar': 'Cerrar'}
+                        <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botonesSecondary}  >
+                           {habilitado?  'Cancelar': 'Cerrar'}
                         </Button>
-                        {habilidado&&
+                        {habilitado&&
                             <Button  onClick={confirmarPago} variant="contained" color="primary" className={classes.botones} >
                                Confirmar
                             </Button>

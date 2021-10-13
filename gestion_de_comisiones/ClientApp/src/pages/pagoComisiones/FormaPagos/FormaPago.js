@@ -501,7 +501,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} pendienteFormaPago={pendienteFormaPago} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio}  />  
             <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
-            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilidado={habilitadoCierrePago} />
+            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilitado={habilitadoCierrePago} />
 
       </>
     );
