@@ -10,8 +10,8 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         public int IdArea { get; set; }
         public string Area { get; set; }
         public bool Habilitado { get; set; }
-        public int CantidadMin { get; set; }
-        public int CantidadMax { get; set; }
+        public int CantidadHabilitados { get; set; }
+        public int CantidadConfigMinima { get; set; }
         public List<Autorizador> ListaAutorizadores { get; set; }
 
     }

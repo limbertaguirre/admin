@@ -120,19 +120,17 @@ const ConfirmarCierrePagoModal = (props) => {
             aria-labelledby="customized-dialog-title"            
         >            
             <DialogContent>
-                        <Alert severity={"warning"}>
-                        
-                       
+                        <Alert severity={"warning"}>                                               
                               <AlertTitle>  {habilitado? 'CONFIRMAR CIERRE PAGO ':'PENDIENTE AUTORIZAR '}</AlertTitle>
-                                    <br /> 
-                                {habilitado&&                          
+                                <br /> 
+                                 {habilitado&&                          
                                 <Typography variant="caption" display="block" gutterBottom>
                                     <strong>NOTA :</strong> {'Esta seguro que desea cerrar el pago.'} 
                                 </Typography>
                                  }                                                                                                                               
                         </Alert>                    
                         <br />             
-
+                        {listado.length >0 &&
                             <div className={classes.root2}>
                                 <Paper className={classes.paper}>
                                   {listado.map((valu, index) => ( 
@@ -142,7 +140,7 @@ const ConfirmarCierrePagoModal = (props) => {
                                                 <Grid item xs container direction="column" spacing={2}>
                                                     <Grid item xs>
                                                         <Typography gutterBottom variant="subtitle1">
-                                                    <b>  {valu.area.toUpperCase()} {'  ('} {valu.cantidadMin} {' Personas '} {valu.cantidadMax} {'  )'}  </b>
+                                                        <b> {valu.area.toUpperCase()} {' ('} {valu.cantidadHabilitados} {' Personas '} {valu.cantidadConfigMinima} {'  )'}  </b>
                                                         </Typography>
                                                         {valu.listaAutorizadores.map((value, index2) => (   
                                                             <div key={index2}>
@@ -151,12 +149,7 @@ const ConfirmarCierrePagoModal = (props) => {
                                                             </Typography>
                                                             </div>
                                                         ))}                                                                                                  
-                                                    </Grid>   
-                                                {/*  <Grid item>
-                                                        <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                                                        Valido : {valu.cantidadMin} {' '} Cant :{valu.cantidadMax}
-                                                        </Typography>
-                                                    </Grid>  */}                                 
+                                                    </Grid>                                                        
                                                 </Grid>                                          
                                             </Grid>
                                             <Grid item>
@@ -165,12 +158,12 @@ const ConfirmarCierrePagoModal = (props) => {
                                                 </ButtonBase>
                                             </Grid>
                                         </Grid>                                      
-                                        <hr />
+                                        { index+1 != listado.length && <hr />}
                                        </ div>
                                    ))}
                                 </Paper>                                                                                             
-                     </div>
-
+                            </div>
+                        }
                     <Grid  container item xs={12}  justify="flex-end"  >
                         <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botonesSecondary}  >
                            {habilitado?  'Cancelar': 'Cerrar'}

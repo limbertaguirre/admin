@@ -203,6 +203,24 @@ namespace gestion_de_comisiones.Controllers
 				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
 			}
 		}
+		// POST: Pagos/CerrarFormaDePago
+		[HttpPost]
+		public ActionResult CerrarFormaDePago([FromBody] CierreformaPagoInput param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarCierreFormaPago() parametro: idciclo:{param.idCiclo}");
+				return Ok(new GenericDataJson<string> { Code = 0, Message = "se finalizo la forma de pago" });
+				//return Ok(Service.VerificarCierreFormaPago(param));
+
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarCierreFormaPago() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
+			}
+		}
+
 
 
 

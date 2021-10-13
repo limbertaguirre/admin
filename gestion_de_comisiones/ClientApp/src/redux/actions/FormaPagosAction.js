@@ -155,3 +155,18 @@ export async function listarFormaPagos(userName, ciSeleccionado,idCiclo, dispatc
        
     });
   }
+
+  export async function CerrarFormaPago(userName,idUsuario, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo)         
+          };          
+       requestPost('pagos/CerrarFormaDePago', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }

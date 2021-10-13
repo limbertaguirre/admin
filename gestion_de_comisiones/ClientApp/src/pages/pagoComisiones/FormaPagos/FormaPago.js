@@ -360,7 +360,23 @@ const StyledBreadcrumb = withStyles((theme) => ({
        setOpenCierrePagoModal(false);
     }
     const confirmarCierrePagoModal =()=>{
-       setOpenCierrePagoModal(false);
+      
+       ApiCerrarFormaDePago(userName, idUsuario,idCiclo);
+
+    }
+
+    async function ApiCerrarFormaDePago(userNa, idUser,idCICLO){
+      if(idCICLO && idCICLO !== 0){  
+            let response= await Actions.CerrarFormaPago(userNa, idUser,idCICLO, dispatch)         
+            if(response && response.code == 0){
+                setOpenCierrePagoModal(false);  //cierra el modal
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
+            }else{
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+            }
+        }else{
+              mensajeGenericoCiclo();
+        }    
     }
 
     return (

@@ -494,8 +494,8 @@ namespace gestion_de_comisiones.Repository
                     area.Area = detalleArea.area;
                     area.IdArea = detalleArea.idArea;
                     area.Habilitado = habilitado;
-                    area.CantidadMin = areaConfig.Cantidad;
-                    area.CantidadMax = lista.Where(x => x.idArea == iten.idArea).Count();
+                    area.CantidadHabilitados = CantiAutorizadosArea; //cantidad autorizados
+                    area.CantidadConfigMinima = areaConfig.Cantidad;
                     var seleccionados = lista.Where(x => x.idArea == iten.idArea).ToList();
                     List<Autorizador> autores = new List<Autorizador>();
                     foreach (var item in seleccionados)
