@@ -241,7 +241,7 @@ namespace gestion_de_comisiones.Repository
 
 
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarAutorizadorPorComision() ");
-                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago).FirstOrDefault();
+                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago && x.Estado == true).FirstOrDefault();
                 if (autoriza != null)
                 {
                      autorizados = ObtenerAutorizadores(autoriza.IdUsuarioAutorizacion,idTipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);

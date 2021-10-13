@@ -446,7 +446,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           </Button> 
                           :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                              <Button variant="contained"   onClick = {()=> verificarConfirmarFomaPago()} > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
+                              <Button variant="contained"  
+                              > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
                             </Tooltip> 
                          }
                       </> 
