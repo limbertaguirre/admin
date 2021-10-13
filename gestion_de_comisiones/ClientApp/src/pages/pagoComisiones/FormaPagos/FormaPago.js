@@ -347,7 +347,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             let data= response.data;
             setOpenCierrePagoModal(true);
             setHabilitadoCierrePago(data.habilitado);
-            setListadoConfirm(data.listado);
+            setListadoConfirm(data.listaPorAreas);
           }else{
               dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
           }

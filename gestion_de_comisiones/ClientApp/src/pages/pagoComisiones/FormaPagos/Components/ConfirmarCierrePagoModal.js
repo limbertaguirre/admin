@@ -101,7 +101,7 @@ const ConfirmarCierrePagoModal = (props) => {
                         <Grid  container  >                                                     
                             <div className={classes.divRadio}>
                                 <List className={classes.rootList}>
-                                    {listado.map((valu, index) => (
+                                  {/*   {listado.map((valu, index) => (
                                         <ListItem key={index}>                                        
                                             <ListItemText primary={valu.nombre.toUpperCase() +' '+ valu.apellido.toUpperCase()} />
                                             <ListItemAvatar>
@@ -112,7 +112,7 @@ const ConfirmarCierrePagoModal = (props) => {
                                                 }
                                             </ListItemAvatar>
                                         </ListItem>                                      
-                                    ))}                    
+                                    ))}             */}        
                                 </List>                                                
                             </div>                               
                         </Grid>                

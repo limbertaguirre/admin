@@ -347,20 +347,6 @@ namespace gestion_de_comisiones.Repository
                     ContextMulti.AutorizacionComisions.Add(obj);
                     ContextMulti.SaveChanges();
 
-                    //verificar la cantidad para cambiar el estado de aprobacion
-                    //var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
-                    //if(cantidad == 1)
-                    //{//actualizr a pendiente de forma de pago
-                    //    var ComisionEstadoDetalle = ContextMulti.GpComisionEstadoComisionIs.Where(x => x.IdComision == verificarAutorizacion.IdComision && x.Habilitado == true).FirstOrDefault();
-                    //    if(ComisionEstadoDetalle != null){
-                    //        ComisionEstadoDetalle.Habilitado = false;
-                    //        ContextMulti.SaveChanges();
-                    //    }
-                    //    GpComisionEstadoComisionI newObj = new GpComisionEstadoComisionI();
-                    //    newObj.IdComision = verificarAutorizacion.IdComision;
-                    //    newObj.Habilitado = true;
-                    //    newObj.id
-                    //}
 
                 }
                   return true;
@@ -406,7 +392,8 @@ namespace gestion_de_comisiones.Repository
                 int tipoAutorizacionFormaPago = 3; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
                 List<Autorizador> lista = ListarAutorizadoresPorTipoAutorizacion(tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
                 obj.Habilitado = VerificarAutorizacionPorArea(lista, tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
-                obj.listado = lista;
+                var detalle = ListarAutorizadoresPorAreas(lista, param.usuarioLogin);
+                obj.ListaPorAreas = detalle.ListaPorAreas;
                 return obj;
 
             }
@@ -478,6 +465,62 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizacionPorArea() mensaje : {ex}");
                 return false;
+            }
+        }
+        private ConfirmarPagoOutPut ListarAutorizadoresPorAreas(List<Autorizador> lista, string usuarioLogin)
+        {
+            try
+            {
+                // AutorizacionAreaModel
+                //Autorizador
+                ConfirmarPagoOutPut model = new ConfirmarPagoOutPut();
+                
+
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorAreas() ");
+                
+                var autorizado = lista.GroupBy(p => new { p.idArea }).Select(g => new { idArea = g.Key.idArea, cantidad = g.Count() }).ToList();
+
+                List<AutorizacionAreaModel> ListArea = new List<AutorizacionAreaModel>();
+                foreach (var iten in autorizado)
+                {
+                    bool habilitado = false;
+                    AutorizacionAreaModel area = new AutorizacionAreaModel();
+                    var detalleArea = lista.Where(x => x.idArea == iten.idArea).FirstOrDefault();
+                    var CantiAutorizadosArea = lista.Where(x => x.idArea == iten.idArea && x.aprobado == true).Count();
+                    var areaConfig = ContextMulti.AutorizacionesAreas.Where(x => x.IdArea == iten.idArea).FirstOrDefault();
+                    if (CantiAutorizadosArea >= areaConfig.Cantidad){
+                        habilitado = true;
+                    }                    
+                    area.Area = detalleArea.area;
+                    area.IdArea = detalleArea.idArea;
+                    area.Habilitado = habilitado;
+                    area.CantidadMin = areaConfig.Cantidad;
+                    area.CantidadMax = lista.Where(x => x.idArea == iten.idArea).Count();
+                    var seleccionados = lista.Where(x => x.idArea == iten.idArea).ToList();
+                    List<Autorizador> autores = new List<Autorizador>();
+                    foreach (var item in seleccionados)
+                    {
+                        Autorizador autor = new Autorizador();
+                        autor.idArea = item.idArea;
+                        autor.area = item.area;
+                        autor.nombre = item.nombre;
+                        autor.apellido = item.apellido;
+                        autor.idUsuario = item.idUsuario;
+                        autor.aprobado = item.aprobado;
+                        autores.Add(autor);
+                    }
+                    area.ListaAutorizadores = autores;
+                    ListArea.Add(area);
+                }
+                model.ListaPorAreas = ListArea;
+                Logger.LogWarning($" usuario: {usuarioLogin} fin del ListarAutorizadoresPorAreas() ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ListarAutorizadoresPorAreas() mensaje : {ex}");
+                ConfirmarPagoOutPut model = new ConfirmarPagoOutPut();
+                return model;
             }
         }
 

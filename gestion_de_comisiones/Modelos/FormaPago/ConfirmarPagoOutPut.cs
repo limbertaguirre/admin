@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Modelos.FormaPago
     public class ConfirmarPagoOutPut
     {
         public bool Habilitado { get; set; }
-        public List<Autorizador> listado { get; set; }
+        public List<AutorizacionAreaModel> ListaPorAreas { get; set; }
     } 
 }
