@@ -209,9 +209,8 @@ namespace gestion_de_comisiones.Controllers
 		{
 			try
 			{
-				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarCierreFormaPago() parametro: idciclo:{param.idCiclo}");
-				return Ok(new GenericDataJson<string> { Code = 0, Message = "se finalizo la forma de pago" });
-				//return Ok(Service.VerificarCierreFormaPago(param));
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarCierreFormaPago() parametro: idciclo:{param.idCiclo}");				
+				return Ok(Service.CerrarFormaDePago(param));
 
 			}
 			catch

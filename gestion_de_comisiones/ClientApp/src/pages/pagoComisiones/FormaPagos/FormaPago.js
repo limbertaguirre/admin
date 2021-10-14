@@ -367,7 +367,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     async function ApiCerrarFormaDePago(userNa, idUser,idCICLO){
       if(idCICLO && idCICLO !== 0){  
-            let response= await Actions.CerrarFormaPago(userNa, idUser,idCICLO, dispatch)         
+            let response= await Actions.CerrarFormaPago(userNa, idUser,idCICLO, dispatch)   
+            console.log("cierre resp: ", response);      
             if(response && response.code == 0){
                 setOpenCierrePagoModal(false);  //cierra el modal
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));

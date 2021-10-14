@@ -214,7 +214,23 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al verificar la forma de pago", "");
             }
         }
+        public object CerrarFormaDePago(CierreformaPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarCierreFormaPago() ");
+                var result = Repository.CerrarFormaDePago(param);
+                if(result)
+                return Respuesta.ReturnResultdo(0, "se cerro la forma de pago","" );
+                return Respuesta.ReturnResultdo(0, "Problemas al procesar el cierre de pagos", "" );
 
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarCierreFormaPago(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al verificar la forma de pago", "");
+            }
+        }
 
 
 
