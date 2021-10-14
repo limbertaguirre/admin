@@ -101,7 +101,6 @@ const useStyles = makeStyles((theme) => ({
 const VistaListaAutorizados = (props) => {
    const { open , closeHandelModal, objList, nameComboSeleccionado, confirmarModalAutorizacion }= props;
    const classes = useStyles();
-   console.log('lista ',objList);
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
     const [tituloModal, setTituloModal]=useState('esta Seguro');

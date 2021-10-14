@@ -9,6 +9,7 @@ namespace gestion_de_comisiones.Modelos.FormaPago
     {
         public string usuarioLogin { get; set; }
         public string carnet { get; set; }
+        public int idCiclo { get; set; }
 
     }
 }

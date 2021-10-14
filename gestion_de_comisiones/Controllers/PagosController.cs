@@ -154,8 +154,8 @@ namespace gestion_de_comisiones.Controllers
 			catch
 			{
 				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
-				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
-				return Ok(Result);
+				//var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
 			}
 		}
 		// POST: Pagos/VerificarAutorizadorPorComision
@@ -184,6 +184,38 @@ namespace gestion_de_comisiones.Controllers
 			catch
 			{
 				Logger.LogError($"usuario : {param.usuarioLogin} error catch  ConfirmarAutorizacion() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
+			}
+		}
+		// POST: Pagos/VerificarCierreFormaPago
+		[HttpPost]
+		public ActionResult VerificarCierreFormaPago([FromBody] VerificarCierreFormaPagoParam param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarCierreFormaPago() parametro: idciclo:{param.idCiclo}");
+				return Ok(Service.VerificarCierreFormaPago(param));
+
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarCierreFormaPago() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
+			}
+		}
+		// POST: Pagos/CerrarFormaDePago
+		[HttpPost]
+		public ActionResult CerrarFormaDePago([FromBody] CierreformaPagoInput param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller VerificarCierreFormaPago() parametro: idciclo:{param.idCiclo}");				
+				return Ok(Service.CerrarFormaDePago(param));
+
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  VerificarCierreFormaPago() controller ");
 				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al autorizr el pago" });
 			}
 		}

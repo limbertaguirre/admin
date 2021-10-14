@@ -3,6 +3,8 @@ using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,7 +49,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> GetComisiones(string usuario, int idCiclo, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -60,7 +62,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {usuario} error catch getComisiones() mensaje : {ex.Message}");
-                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }
@@ -160,7 +162,7 @@ namespace gestion_de_comisiones.Repository
 
 
         }
-        public object GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListFormaPago(BuscarInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -173,7 +175,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
-                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }
@@ -212,7 +214,7 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-        public object FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura)
         {
             try
             {
@@ -225,7 +227,7 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch FiltrarComisionPagoPorTipoPago() mensaje : {ex}");
-                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
         }
@@ -241,7 +243,7 @@ namespace gestion_de_comisiones.Repository
 
 
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarAutorizadorPorComision() ");
-                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago).FirstOrDefault();
+                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago && x.Estado == true).FirstOrDefault();
                 if (autoriza != null)
                 {
                      autorizados = ObtenerAutorizadores(autoriza.IdUsuarioAutorizacion,idTipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
@@ -304,7 +306,7 @@ namespace gestion_de_comisiones.Repository
                     obj.nombre = iten.Nombres;
                     obj.apellido = iten.Apellidos;
                     obj.area = iten.DescripcionArea;
-                   
+                    obj.idArea = iten.IdArea;
                     var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
                     if (tieneAutorizacion != null) 
                     {
@@ -347,20 +349,6 @@ namespace gestion_de_comisiones.Repository
                     ContextMulti.AutorizacionComisions.Add(obj);
                     ContextMulti.SaveChanges();
 
-                    //verificar la cantidad para cambiar el estado de aprobacion
-                    //var cantidad= ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
-                    //if(cantidad == 1)
-                    //{//actualizr a pendiente de forma de pago
-                    //    var ComisionEstadoDetalle = ContextMulti.GpComisionEstadoComisionIs.Where(x => x.IdComision == verificarAutorizacion.IdComision && x.Habilitado == true).FirstOrDefault();
-                    //    if(ComisionEstadoDetalle != null){
-                    //        ComisionEstadoDetalle.Habilitado = false;
-                    //        ContextMulti.SaveChanges();
-                    //    }
-                    //    GpComisionEstadoComisionI newObj = new GpComisionEstadoComisionI();
-                    //    newObj.IdComision = verificarAutorizacion.IdComision;
-                    //    newObj.Habilitado = true;
-                    //    newObj.id
-                    //}
 
                 }
                   return true;
@@ -394,7 +382,195 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
                 return false;
             }
-}
+        }
+
+        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param)
+        {
+            try
+            {
+
+                ConfirmarPagoOutPut obj = new ConfirmarPagoOutPut();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + param.idCiclo + " ");
+                int tipoAutorizacionFormaPago = 3; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
+                List<Autorizador> lista = ListarAutorizadoresPorTipoAutorizacion(tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
+                obj.Habilitado = VerificarAutorizacionPorArea(lista, tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
+                var detalle = ListarAutorizadoresPorAreas(lista, param.usuarioLogin);
+                obj.ListaPorAreas = detalle.ListaPorAreas;
+                return obj;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarSiExisteAutorizacionFormaPagoCiclo() mensaje : {ex}");
+                ConfirmarPagoOutPut obj = new ConfirmarPagoOutPut();
+                return obj;
+            }
+        }
+        private List<Autorizador> ListarAutorizadoresPorTipoAutorizacion(int tipoAutorizador, int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                List<Autorizador> list = new List<Autorizador>();
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdTipoAutorizacion == tipoAutorizador && x.Estado == true).ToList();
+                foreach (var iten in autorizado)
+                {
+                    Autorizador obj = new Autorizador();
+                    obj.nombre = iten.Nombres;
+                    obj.apellido = iten.Apellidos;
+                    obj.area = iten.DescripcionArea;
+                    obj.idArea = iten.IdArea;
+
+                    var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo).FirstOrDefault();
+                    if (tieneAutorizacion != null)
+                    {
+                        obj.aprobado = true;
+                    }
+                    else
+                    {
+                        obj.aprobado = false;
+                    }
+                    list.Add(obj);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ListarAutorizadoresPorTipoAutorizacion() mensaje : {ex}");
+                List<Autorizador> obj = new List<Autorizador>();
+                return obj;
+            }
+
+        }
+
+        private bool VerificarAutorizacionPorArea(List<Autorizador> lista,int tipoAutorizador, int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                List<Autorizador> list = new List<Autorizador>();
+                var autorizado = lista.GroupBy(p => new { p.idArea }).Select(g => new { idArea = g.Key.idArea, cantidad = g.Count() }).ToList();
+                bool habilitado = true;
+
+                foreach(var iten in autorizado)
+                {
+                    var CantiAutorizadosArea = lista.Where(x => x.idArea == iten.idArea && x.aprobado == true).Count();
+                    var areaConfig = ContextMulti.AutorizacionesAreas.Where(x => x.IdArea == iten.idArea).FirstOrDefault();
+                    if(CantiAutorizadosArea < areaConfig.Cantidad)
+                    {
+                        habilitado = false;
+                    }
+                }           
+                return habilitado;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizacionPorArea() mensaje : {ex}");
+                return false;
+            }
+        }
+        private ConfirmarPagoOutPut ListarAutorizadoresPorAreas(List<Autorizador> lista, string usuarioLogin)
+        {
+            try
+            {
+                // AutorizacionAreaModel
+                //Autorizador
+                ConfirmarPagoOutPut model = new ConfirmarPagoOutPut();
+                
+
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorAreas() ");
+                
+                var autorizado = lista.GroupBy(p => new { p.idArea }).Select(g => new { idArea = g.Key.idArea, cantidad = g.Count() }).ToList();
+
+                List<AutorizacionAreaModel> ListArea = new List<AutorizacionAreaModel>();
+                foreach (var iten in autorizado)
+                {
+                    bool habilitado = false;
+                    AutorizacionAreaModel area = new AutorizacionAreaModel();
+                    var detalleArea = lista.Where(x => x.idArea == iten.idArea).FirstOrDefault();
+                    var CantiAutorizadosArea = lista.Where(x => x.idArea == iten.idArea && x.aprobado == true).Count();
+                    var areaConfig = ContextMulti.AutorizacionesAreas.Where(x => x.IdArea == iten.idArea).FirstOrDefault();
+                    if (CantiAutorizadosArea >= areaConfig.Cantidad){
+                        habilitado = true;
+                    }                    
+                    area.Area = detalleArea.area;
+                    area.IdArea = detalleArea.idArea;
+                    area.Habilitado = habilitado;
+                    area.CantidadHabilitados = CantiAutorizadosArea; //cantidad autorizados
+                    area.CantidadConfigMinima = areaConfig.Cantidad;
+                    var seleccionados = lista.Where(x => x.idArea == iten.idArea).ToList();
+                    List<Autorizador> autores = new List<Autorizador>();
+                    foreach (var item in seleccionados)
+                    {
+                        Autorizador autor = new Autorizador();
+                        autor.idArea = item.idArea;
+                        autor.area = item.area;
+                        autor.nombre = item.nombre;
+                        autor.apellido = item.apellido;
+                        autor.idUsuario = item.idUsuario;
+                        autor.aprobado = item.aprobado;
+                        autores.Add(autor);
+                    }
+                    area.ListaAutorizadores = autores;
+                    ListArea.Add(area);
+                }
+                model.ListaPorAreas = ListArea;
+                Logger.LogWarning($" usuario: {usuarioLogin} fin del ListarAutorizadoresPorAreas() ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ListarAutorizadoresPorAreas() mensaje : {ex}");
+                ConfirmarPagoOutPut model = new ConfirmarPagoOutPut();
+                return model;
+            }
+        }
+
+        public bool CerrarFormaDePago(CierreformaPagoInput param)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idCiclo
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.VarChar,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idUsuario
+                              }};
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO] @id_ciclo,  @id_usuario  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0){
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se proceso la forma de pago.");
+                    return true;
+                } else {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO se actualizo el cierre de factura porque el [SP_PROCESAR_FACTURAS_PENDIENTES] devuelte cero (0) en registro, no hubo ningun registro ni actualizacion.");
+                    return false;
+                }
+              
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch CerrarFormaDePago() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
+                return false;
+            }
+        }
+
 
     }
 }

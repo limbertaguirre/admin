@@ -31,28 +31,30 @@ const formaPagos= {
         }
     ]
 }
-export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
+export async function listarFormaPagos(userName, ciSeleccionado,idCiclo, dispatch) {
     return new Promise(resolve =>{
         const data={
             usuarioLogin:userName,
-            carnet:ciSeleccionado
+            carnet:ciSeleccionado,
+            idCiclo:idCiclo
           };      
       requestPost('pagos/GetListarFormaPagos', data, dispatch )
         .then(response =>{
-            console.log('respuesta api :', response);
+           // console.log('ger list :', response);
           resolve(response);  
         })
        
     });
   }
 
-  export async function aplicarFormaPago(userName, idComisionDetalle,idtipoPagoSelect, idUsuario, dispatch) {
+  export async function aplicarFormaPago(userName, idComisionDetalle,idtipoPagoSelect, idUsuario,idCiclo, dispatch) {
     return new Promise(resolve =>{
         const data={
             usuarioLogin:userName,
             idComisionDetalle:parseInt(idComisionDetalle),
             idtipoPago:parseInt(idtipoPagoSelect),
-            idUsuario:idUsuario
+            idUsuario:idUsuario,
+            idCiclo:idCiclo
           };     
       requestPost('pagos/aplicarMetodoPagoComision', data, dispatch )
         .then(response =>{
@@ -68,7 +70,7 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
                 idCiclo:parseInt(idCiclo),
                 nombreCriterio:criterio
           }; 
-          console.log('llego a', data);    
+          //console.log('llego a', data);    
       requestPost('pagos/BuscarComisionCarnetFormaPago', data, dispatch )
         .then(response =>{
            resolve(response);  
@@ -84,7 +86,7 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
           };              
          requestPost('pagos/GetFormaPagosDisponibles', data, dispatch )
         .then(response =>{
-            console.log('respuesta api :', response);
+           // console.log('respuesta api :', response);
             resolve(response);  
         }) 
     });
@@ -97,7 +99,7 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
               idCiclo:idCiclo,
               idTipoPago:parseInt(idTipoPago)
           };    
-       console.log('data : ', data);
+      // console.log('data : ', data);
        requestPost('pagos/FiltrarComisionPagoPorTipoPago', data, dispatch )
         .then(response =>{          
             resolve(response);  
@@ -115,7 +117,7 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
           };    
        requestPost('pagos/VerificarAutorizadorPorComision', data, dispatch )
         .then(response =>{     
-            console.log('response verificar :', response);     
+         //   console.log('response verificar :', response);     
             resolve(response);  
         }) 
        
@@ -132,6 +134,36 @@ export async function listarFormaPagos(userName, ciSeleccionado, dispatch) {
                 idAutorizacionComision:parseInt(idAutorizacionComision)            
           };          
        requestPost('pagos/ConfirmarAutorizacion', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }
+
+  export async function VerificarCierreFormaPago(userName,idUsuario, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo)         
+          };          
+       requestPost('pagos/VerificarCierreFormaPago', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }
+
+  export async function CerrarFormaPago(userName,idUsuario, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:idUsuario,
+                idCiclo:parseInt(idCiclo)         
+          };          
+       requestPost('pagos/CerrarFormaDePago', data, dispatch )
         .then(response =>{          
             resolve(response);  
         }) 

@@ -5,6 +5,7 @@ import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
    InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import SearchIcon from '@material-ui/icons/Search';
+import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
@@ -19,6 +20,8 @@ import VistaListaAutorizados from './Components/VistaListaAutorizados';
 import * as Actions from '../../../redux/actions/FormaPagosAction';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import  imageFac from "../../../../src/assets/img/pendiente.png";
+import ConfirmarCierrePagoModal from "./Components/ConfirmarCierrePagoModal";
 
 const StyledBreadcrumb = withStyles((theme) => ({
     root: {
@@ -178,9 +181,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
             usuarioLogin:userName,
             idCiclo: idCiclo
           };
-          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{           
+          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{  
+           // console.log('orrrrrrrrrrrrr', res.data.lista);         
               if(res.code === 0){  
-                  setListaComisionesAPagar(res.data);  
+                let data= res.data;
+                  setPendienteFormaPago(data.pendienteFormaPago);
+                  setListaComisionesAPagar(data.lista);  
                   setStatusBusqueda(true);    
                   ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch);               
               }else{
@@ -214,10 +220,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
     async function listarTiposPagos(ciSeleccionado){      
-      let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado , dispatch);
+      let respuesta = await Actions.listarFormaPagos(userName, ciSeleccionado, idCiclo , dispatch);
       if(respuesta && respuesta.code == 0){ 
         setListTipoPagos(respuesta.data);
         setTipoPago(true);
+      }else{
+         dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
       }
     }
 
@@ -235,11 +243,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     async function funcionConfirmarTipoPago(){
      if (idcomisionDetalleSelect != 0){     
-          let response= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario, dispatch)             
+          let response= await Actions.aplicarFormaPago(userName, idcomisionDetalleSelect, idtipoPagoSelect,idUsuario,idCiclo, dispatch)             
           if(response && response.code == 0){
               setTipoPago(false);
               setIdtipoPagoSelect("0");
               handleOnGetAplicaciones();
+          }else{
+            dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
           }
       }
     }
@@ -250,10 +260,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
 
     async function buscarFrelancerPorCi(){         
-           let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)   
-           console.log('busqueda por nombre',response)          
+           let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)               
            if(response && response.code == 0){
-               setListaComisionesAPagar(response.data);                 
+               let data= response.data;
+               setPendienteFormaPago(data.pendienteFormaPago);
+               setListaComisionesAPagar(data.lista);                 
            }       
      }
 
@@ -266,7 +277,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
           let response= await Actions.ListarComisionFormaPagoFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
           //console.log('busqueda por filtro',response)          
           if(response && response.code == 0){
-              setListaComisionesAPagar(response.data);  
+              let data= response.data;
+              setPendienteFormaPago(data.pendienteFormaPago);
+              setListaComisionesAPagar(data.lista);  
           }       
       }else{
           mensajeGenericoCiclo();
@@ -299,7 +312,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
         let response= await Actions.ConfirmarAutorizacion(userNa, idUser,idCiclo, idComision,idAutorizacionComision, dispatch)   
        // console.log('response confirm',response);          
         if(response && response.code == 0){
+              let data= response.data;
                setOpenModalAutorizadores(false);
+               setPendienteFormaPago(data.pendienteFormaPago);
                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
                //api recarga el estado y lista de autorizaciones
               ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch); 
@@ -317,6 +332,54 @@ const StyledBreadcrumb = withStyles((theme) => ({
     
   },[autorizadorObjeto])
 
+   const[openCierrePagoModal, setOpenCierrePagoModal] = useState(false);
+   const[habilitadoCierrePago, setHabilitadoCierrePago]= useState(false);
+   const[listadoConfirm,setListadoConfirm ]= useState([]);
+
+  const verificarConfirmarFomaPago =()=>{
+    ApiVerificarConfirmarFormaPago(userName, idUsuario,idCiclo);
+  }
+  async function ApiVerificarConfirmarFormaPago(userNa, idUser,idCICLO){
+      if(idCICLO && idCICLO !== 0){  
+          let response= await Actions.VerificarCierreFormaPago(userNa, idUser,idCICLO, dispatch)   
+          console.log('respo : ', response);
+          if(response && response.code == 0){
+            let data= response.data;
+            setOpenCierrePagoModal(true);
+            setHabilitadoCierrePago(data.habilitado);
+            setListadoConfirm(data.listaPorAreas);
+          }else{
+              dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+          }
+
+      }else{
+          mensajeGenericoCiclo();
+      }    
+    }
+    const cancelarModalConfirmarCierre =()=>{
+       setOpenCierrePagoModal(false);
+    }
+    const confirmarCierrePagoModal =()=>{
+      
+       ApiCerrarFormaDePago(userName, idUsuario,idCiclo);
+
+    }
+
+    async function ApiCerrarFormaDePago(userNa, idUser,idCICLO){
+      if(idCICLO && idCICLO !== 0){  
+            let response= await Actions.CerrarFormaPago(userNa, idUser,idCICLO, dispatch)   
+            console.log("cierre resp: ", response);      
+            if(response && response.code == 0){
+                setOpenCierrePagoModal(false);  //cierra el modal
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
+            }else{
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+            }
+        }else{
+              mensajeGenericoCiclo();
+        }    
+    }
+
     return (
       <>
           <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
@@ -330,6 +393,11 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Typography variant="h4" gutterBottom  >
              {'Forma de pagos'}
            </Typography>    
+           <Grid  container item xs={12}  justify="flex-end">
+                  {pendienteFormaPago&&
+                    <img src={imageFac} alt={'sion'} style={{width:'100px'}} />
+                   }
+           </Grid>
             {autorizadorObjeto.autorizador&&
            <Card>             
               <Grid container className={style.gridContainer} >         
@@ -365,7 +433,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
            <Card>
            <Grid container className={style.gridContainer} >
            <Grid item xs={12} md={3} className={style.containerSave} >
-                  {/*  {statusBusqueda&&
+                    {statusBusqueda&&
                       <>
                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
                           <Button
@@ -373,17 +441,18 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           variant="contained"
                           color="primary"
                           className={style.submitSAVE}
-                          onClick = {()=> CerrarAplicacion()}                                         
+                          onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
-                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN
+                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
                           </Button> 
                           :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                              <Button variant="contained"  > <SaveIcon style={{marginRight:'5px'}} /> CERRAR APLICACIÓN </Button> 
+                              <Button variant="contained"  
+                              > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
                             </Tooltip> 
                          }
                       </> 
-                   }    */}
+                   }    
                   </Grid>
                   <Grid item xs={12} md={4} className={style.containerSave}>
                     {statusBusqueda&&
@@ -450,6 +519,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} pendienteFormaPago={pendienteFormaPago} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio}  />  
             <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
+            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilitado={habilitadoCierrePago} />
+
       </>
     );
 

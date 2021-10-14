@@ -229,8 +229,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
       seleccionarTipoFiltroBusqueda(idtipo);
       setAnchorEl(null);
     };
-    console.log('permiso crear :',permisoCrear)
-    console.log('permisoActualozar :',permisoActualizar)
+
     return (
       <>
         <br />                 
