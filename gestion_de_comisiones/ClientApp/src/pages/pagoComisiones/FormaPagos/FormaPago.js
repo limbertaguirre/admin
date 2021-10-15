@@ -159,6 +159,15 @@ const StyledBreadcrumb = withStyles((theme) => ({
               }    
           })   
      };
+     const recargarGetCiclos=()=>{   
+      setCiclos([]); 
+      const headers={usuarioLogin:userName};
+      requestGet('Pagos/GetCiclos',headers,dispatch).then((res)=>{             
+          if(res.code === 0){                 
+               setCiclos(res.data);                            
+          }   
+      })   
+      };
      const seleccionarNombreCombo = (nombre)=>{
       setNameComboSeleccionado(nombre);
      }
@@ -371,6 +380,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             console.log("cierre resp: ", response);      
             if(response && response.code == 0){
                 setOpenCierrePagoModal(false);  //cierra el modal
+                limpiarReiniciarValoresCerrados()
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
             }else{
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
@@ -378,6 +388,16 @@ const StyledBreadcrumb = withStyles((theme) => ({
         }else{
               mensajeGenericoCiclo();
         }    
+    }
+   
+    const limpiarReiniciarValoresCerrados =()=>{
+       setListaComisionesAPagar([]);
+       setStatusBusqueda(false);
+       setPendienteFormaPago(false)
+       setIdCiclo(0);
+       setIdCicloSelected(0);
+       setNameComboSeleccionado("")
+       recargarGetCiclos();      
     }
 
     return (

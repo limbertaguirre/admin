@@ -1213,6 +1213,7 @@ AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
 	        GPCOMI.id_comision AS 'idComision', 
+			GPCOMI.id_tipo_comision,
 			GPDETA.id_ficha AS 'idFicha',
 			FIC.nombres +' '+ FIC.apellidos as 'nombre',
 			FIC.ci,
@@ -1272,7 +1273,8 @@ AS
 		C.nombre,
 		C.descripcion,
 		E.id_estado_comision,
-		E.estado
+		E.estado,
+		CC.id_tipo_comision
 	FROM BDMultinivel.DBO.CICLO C
 		INNER JOIN BDMultinivel.DBO.GP_COMISION CC ON C.id_ciclo = CC.id_ciclo
 		INNER JOIN BDMultinivel.DBO.GP_TIPO_COMISION T ON CC.id_tipo_comision = T.id_tipo_comision
@@ -1354,6 +1356,7 @@ AS
      select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
 	        GPCOMI.id_comision AS 'idComision', 
+			GPCOMI.id_tipo_comision,
 			GPDETA.id_ficha AS 'idFicha',
 			FIC.nombres +' '+ FIC.apellidos as 'nombre',
 			FIC.ci,
