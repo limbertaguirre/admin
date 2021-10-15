@@ -9,6 +9,7 @@ namespace gestion_de_comisiones.MultinivelModel
     {
         public int IdComisionDetalle { get; set; }
         public int IdComision { get; set; }
+        public int? IdTipoComision { get; set; }
         public int? IdFicha { get; set; }
         public string Nombre { get; set; }
         public string Ci { get; set; }

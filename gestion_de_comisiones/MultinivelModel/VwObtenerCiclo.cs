@@ -12,5 +12,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public string Descripcion { get; set; }
         public int IdEstadoComision { get; set; }
         public string Estado { get; set; }
+        public int? IdTipoComision { get; set; }
     }
 }

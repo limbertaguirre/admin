@@ -30,7 +30,8 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio FormaPagoService => getCiclos()");
                 int idEstadoCerradoProrrateo = 8; //parametro
-                List<CicloDto> ciclos = (List<CicloDto>)Repository.GetCiclos(usuario, idEstadoCerradoProrrateo);
+                int idTipoComisionPagoComision = 1; //parametro
+                List<CicloDto> ciclos = (List<CicloDto>)Repository.GetCiclos(usuario, idEstadoCerradoProrrateo, idTipoComisionPagoComision);
                 if (ciclos.Count > 0)
                 {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
@@ -57,7 +58,8 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
-                var comisiones = Repository.GetComisiones(usuario, idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                int idTipoComisionPagoComision = 1; //parametro
+                var comisiones = Repository.GetComisiones(usuario, idCiclo, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision);
                 obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(usuario, idCiclo);
                 obj.lista = comisiones;
                 //obj.pendienteFormaPago = pendiente;
@@ -117,7 +119,8 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
-                var comisiones = Repository.GetComisionesPorCarnetListFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                int idTipoComisionPagoComision = 1; //parametro
+                var comisiones = Repository.GetComisionesPorCarnetListFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision);
                 obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
                 obj.lista = comisiones;
                 return Respuesta.ReturnResultdo(0, "ok",obj);
@@ -136,7 +139,8 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
-                return Respuesta.ReturnResultdo(0, "ok", Repository.GetComisionesPorFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura));
+                int idTipoComisionPagoComision = 1; //parametro
+                return Respuesta.ReturnResultdo(0, "ok", Repository.GetComisionesPorFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision));
             }
             catch (Exception ex)
             {
@@ -153,7 +157,8 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoComisionSiFacturo = 2; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
-                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura);
+                int idTipoComisionPagoComision = 1; //parametro
+                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision);
                 obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
                 obj.lista = comisiones;
                 return Respuesta.ReturnResultdo(0, "ok", obj);
