@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Breadcrumbs,Chip,emphasize, withStyles} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-import { useDispatch} from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
+import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
+import { useHistory } from 'react-router-dom';
+import * as permiso from '../../../routes/permiso'; 
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -31,7 +34,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[])
 
-    const dispatch = useDispatch();
 
   
      
