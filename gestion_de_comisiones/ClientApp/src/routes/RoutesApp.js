@@ -22,7 +22,7 @@ import {useSelector,useDispatch} from "react-redux";
                 <Route path='/prorrateo' component={Pages.Prorrateo} exact />
                 <Route path='/facturacion' component={Pages.Facturacion} exact />     
                 <Route path='/forma/pago' component={Pages.FormaPago} exact />  
-                <Route path='/pagos' component={Pages.Pagos} exact />                
+                <Route path='/pagos-gestor' component={Pages.Pagos} exact />                
                 <Route path='/gestion/roles' component={Pages.GestionRol} exact />     
                 <Route path='/gestion/nuevo/roles' component={Pages.Roles} exact /> 
                 <Route path='/gestion/edit/rol' component={Pages.EditRol} exact />        
