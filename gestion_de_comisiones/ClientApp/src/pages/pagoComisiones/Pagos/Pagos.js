@@ -12,6 +12,8 @@ import * as permiso from '../../../routes/permiso';
 import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SearchIcon from '@material-ui/icons/Search';
+import * as Actions from '../../../redux/actions/PagosGestorAction';
+import * as ActionMensaje from '../../../redux/actions/messageAction';
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -111,6 +113,22 @@ const useStyles = makeStyles((theme) => ({
   const[statusBusqueda, setStatusBusqueda]= useState(false);
   const[ txtBusqueda, setTxtBusqueda]= useState('');
   const[idCiclo, setIdCiclo]= useState(0);
+  const[listCiclo, setListCiclo]= useState(0);
+
+
+  async function cargarCiclo(userNa){      
+      let respuesta = await Actions.ObtenerCiclosPagos(userNa, dispatch);
+      console.log('lista ciclos: ',respuesta);
+      if(respuesta && respuesta.code == 0){ 
+         
+      }else{
+        dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
+      }
+   }
+
+   useEffect(()=>{
+      cargarCiclo(userName);
+   },[])
      
     return (
       <>
