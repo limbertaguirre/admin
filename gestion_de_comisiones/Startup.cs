@@ -66,6 +66,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IProrrateadoService, ProrrateadoService>();
             services.AddScoped<IFormaPagoService, FormaPagoService>();
+            services.AddScoped<IGestionPagosService, GestionPagosService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -76,6 +77,8 @@ namespace gestion_de_comisiones
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IProrrateadoRepository, ProrrateadoRepository>();
             services.AddScoped<IFormaPagoRepository, FormaPagoRespository>();
+            services.AddScoped<IGestionPagoRepository, GestionPagoRepository>();
+
 
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
