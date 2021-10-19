@@ -29,7 +29,6 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerCiclos()  ");
-             //   return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al obtener ciclos de pagos" });
                 return Ok(Service.GetCiclos(usuarioLogin));
 
             }
