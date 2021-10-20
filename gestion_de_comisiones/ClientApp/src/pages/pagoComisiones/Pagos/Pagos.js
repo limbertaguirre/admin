@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
+import MessageConfirm from '../../../components/mesageModal/MessageConfirm';
+
 import GridPagos from './Components/GridPagos'
 import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
   Grid, TextField, Typography,FormControl,
@@ -48,21 +50,13 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '2px 4px 5px #1872b8',
     color:'white',
    },
-   submitPendiente: {                 
-    background: "#E29020", 
-    boxShadow: '2px 4px 5px #1872b8',
-    color:'white',
-   },
-   submitAprobado: {                 
-    background: "#197608", 
-    boxShadow: '2px 4px 5px #1872b8',
-    color:'white',
-   },
    submitSAVE: {                 
-    background: "#1872b8", 
+  //  background: "#1872b8", 
+    background: "#f44336", 
     boxShadow: '2px 4px 5px #1872b8',
     color:'white',
     marginLeft:theme.spacing(1),
+
    },
    gridContainer:{
     paddingLeft:theme.spacing(1),
@@ -75,6 +69,11 @@ const useStyles = makeStyles((theme) => ({
     paddingRight:theme.spacing(1),
     paddingTop:theme.spacing(1),
     paddingBottom:theme.spacing(1),
+
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center', 
+
   },
   containerSave:{
     paddingLeft:theme.spacing(1),
@@ -97,8 +96,7 @@ const useStyles = makeStyles((theme) => ({
     alignContent:'center',
     alignItems:'center',
     justifyContent:'center',
-  },
-
+  }
 
 }));
 
@@ -149,9 +147,9 @@ const useStyles = makeStyles((theme) => ({
       if (texfiel === "idCiclo") {
           setIdCiclo(value);        
       }
-       /*  if (texfiel === "txtBusqueda") {
+        if (texfiel === "txtBusqueda") {
           setTxtBusqueda(value);
-       } */
+       }
    };
 
    const handleOnGetPagos=()=>{         
@@ -210,12 +208,40 @@ const useStyles = makeStyles((theme) => ({
              generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning');
       }    
     }
+    const buscarFreelanzer=()=>{
+          if(txtBusqueda != ""){ 
+              buscarFrelancerPorCi();
+          }else{
+              generarSnackBar('¡Introduzca carnet de identidad!','info');
+          }
+      }
+  
+      async function buscarFrelancerPorCi(){   
 
+             let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)               
+             if(response && response.code == 0){
+               console.log('response busca ', response);
+                 let data= response.data;
+                // setPendienteFormaPago(data.pendienteFormaPago);
+                 setListaComisionesAPagar(data);                 
+             }       
+       }
 
    useEffect(()=>{
       cargarCiclo(userName);
    },[])
-     
+
+    const [openModalConfirm, setOpenModalConfirm] = useState(false);
+   const abrirModal = ()=> {
+     setOpenModalConfirm(true);
+   }
+   const CloseModalConfirmacion =()=>{
+      setOpenModalConfirm(false);
+   }
+   const confirmarModal =()=>{
+      setOpenModalConfirm(false);
+   }
+
     return (
       <>
         <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
@@ -229,30 +255,47 @@ const useStyles = makeStyles((theme) => ({
         </Typography>     
 
         <Card>
-           <Grid container className={style.gridContainer} >
-           <Grid item xs={12} md={3} className={style.containerSave} >
+             <Grid container className={style.gridContainer} >
+                 <Grid item xs={12} md={4} className={style.containerSave} >
                     {statusBusqueda&&
                       <>
                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
+                        <>
                           <Button
                           type="submit"
                           variant="contained"
-                          color="primary"
-                          className={style.submitSAVE}
+                          color="secondary"
+                          className={style.submitSAVE}                          
+                          onClick = {()=> abrirModal()}                                         
+                          >
+                             PAGAR SION PAY
+                          </Button> 
+                          <Button
+                          type="submit"
+                          variant="contained"
+                          color="secondary"
+                          className={style.submitSAVE}                          
                          // onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
-                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
+                            GENERAR PARA TRANSFERENCIA
                           </Button> 
-                          :
-                            <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                              <Button variant="contained"  
-                              > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
-                            </Tooltip> 
+
+                          </>
+                          : <>
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  
+                                > <SaveIcon style={{marginRight:'5px'}} /> PAGAR SION PAY</Button> 
+                              </Tooltip> 
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  
+                                > <SaveIcon style={{marginRight:'5px'}} /> GENERAR PARA TRANSFERENCIA</Button> 
+                              </Tooltip> 
+                            </>
                          }
                       </> 
                    }    
                   </Grid>
-                  <Grid item xs={12} md={4} className={style.containerSave}>
+                  <Grid item xs={12} md={3} className={style.containerSave}>
                     {statusBusqueda&&
                         <TextField
                           label="Buscar freelancer"
@@ -261,11 +304,11 @@ const useStyles = makeStyles((theme) => ({
                           placeholder={'Buscar por carnet identidad'}
                           name="txtBusqueda"                    
                           value={txtBusqueda}
-                         // onChange={onChangeSelectCiclo}
+                         onChange={onChangeSelectCiclo}
                           fullWidth
                           onKeyPress={(ev) => {
                             if (ev.key === 'Enter') {
-                            //  buscarFreelanzer();
+                              buscarFreelanzer();
                             }
                           }}                    
                           InputProps={{
@@ -319,6 +362,7 @@ const useStyles = makeStyles((theme) => ({
               idCiclo={idCiclo} 
              
                permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
+               <MessageConfirm open={openModalConfirm} titulo={"CONFIRMAR TODO"} subTituloModal={"Pagar por sion pay"} tipoModal={"warning"} mensaje={"Al confirmar se procesaran todas los pagos por sion pay."} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
       </>
     );
 

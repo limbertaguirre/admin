@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos.GestionPagos;
+using gestion_de_comisiones.MultinivelModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object GetCiclos(string usuario, int idEstadoComision, int idTipoComisionPagoComision);
         public object GetComisionesPagos(string usuario, int idCiclo, int idEstadoComision, int idTipoComisionPagoComision);
         public object GetFiltroComisionesPorFormaPago(FiltroFormaPagosInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListPagos(BuscarComisionInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
 
     }
 }

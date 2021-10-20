@@ -59,3 +59,20 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
        
     });
   }
+
+  export async function buscarPorCarnetFormaPago(userName, idCiclo,criterio, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idCiclo:parseInt(idCiclo),
+                nombreCriterio:criterio
+          }; 
+          //console.log('llego a', data);    
+      requestPost('gestionPagos/BuscarComisionCarnetFormaPago', data, dispatch )
+        .then(response =>{
+           resolve(response);  
+        })
+       
+    });
+  }
+

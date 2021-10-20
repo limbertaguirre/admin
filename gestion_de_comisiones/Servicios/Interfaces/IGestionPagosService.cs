@@ -11,5 +11,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object GetCiclos(string usuario);
         public object GetComisionesDePagos(ComisionesPagosInput param);
         public object GetFormaPagosDisponibles(FiltroFormaPagosInput param);
+        public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param);
+
     }
 }
