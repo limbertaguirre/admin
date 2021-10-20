@@ -1,4 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import SnackbarSion from "../../../components/message/SnackbarSion";
+import * as permiso from '../../../routes/permiso'; 
+import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
+import GridPagos from './Components/GridPagos'
 import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
   Grid, TextField, Typography,FormControl,
    InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
@@ -6,9 +10,9 @@ import HomeIcon from '@material-ui/icons/Home';
 import {emphasize, withStyles} from '@material-ui/core';
 import {  makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector} from "react-redux";
-import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
+
 import { useHistory } from 'react-router-dom';
-import * as permiso from '../../../routes/permiso'; 
+
 import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SearchIcon from '@material-ui/icons/Search';
@@ -112,19 +116,101 @@ const useStyles = makeStyles((theme) => ({
 
   const[statusBusqueda, setStatusBusqueda]= useState(false);
   const[ txtBusqueda, setTxtBusqueda]= useState('');
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [mensajeSnackbar, setMensajeSnackbar] = useState("");
+  const [tipoSnackbar, settipTSnackbar] = useState(true);
+ 
+
   const[idCiclo, setIdCiclo]= useState(0);
-  const[listCiclo, setListCiclo]= useState(0);
+  const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
+  const[idCicloSelected, setIdCicloSelected]= useState(0);
+  const[listCiclo, setListCiclo]= useState([]);
+
+  const[listaComisionesAPagar, setListaComisionesAPagar]= useState([]);
+
 
 
   async function cargarCiclo(userNa){      
       let respuesta = await Actions.ObtenerCiclosPagos(userNa, dispatch);
       console.log('lista ciclos: ',respuesta);
       if(respuesta && respuesta.code == 0){ 
-         
+        setListCiclo(respuesta.data);
       }else{
         dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
       }
    }
+   const seleccionarNombreCombo = (nombre)=>{
+    setNameComboSeleccionado(nombre);
+   }
+   const onChangeSelectCiclo= (e) => {
+      const texfiel = e.target.name;
+      const value = e.target.value;
+      if (texfiel === "idCiclo") {
+          setIdCiclo(value);        
+      }
+       /*  if (texfiel === "txtBusqueda") {
+          setTxtBusqueda(value);
+       } */
+   };
+
+   const handleOnGetPagos=()=>{         
+        if(idCiclo && idCiclo !== 0){  
+            setIdCicloSelected(idCiclo);     
+            cargarComisionesPagos(userName, idCiclo)
+
+        }else{
+          generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
+         /*  setOpenSnackbar(true);
+          setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
+          settipTSnackbar('warning'); */
+        }      
+    }
+
+    async function cargarComisionesPagos(userNa, cicloId){      
+      let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);
+      console.log('comisiones pagos: ',respuesta);
+      if(respuesta && respuesta.code == 0){ 
+        setListaComisionesAPagar(respuesta.data);
+        setStatusBusqueda(true);    
+      }else{
+        dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
+      }
+    }
+    //--navbar
+      const closeSnackbar= (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenSnackbar(false);
+      };
+      const generarSnackBar =(mensaje, tipo)=>{
+        setOpenSnackbar(true);
+        setMensajeSnackbar(mensaje);
+        settipTSnackbar(tipo);
+      }
+    
+     const selecionarDetalleFrelances =() =>{
+
+     } 
+    
+    const seleccionarTipoFiltroBusqueda=(idTipoFormaPago)=>{
+      filtrarComisionPorFormaPago(idTipoFormaPago)
+    }
+    async function filtrarComisionPorFormaPago(idTipoFormaPago){
+      if(idCiclo && idCiclo !== 0){  
+          let response= await Actions.ListarFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
+          console.log('busqueda por filtro',response)          
+          if(response && response.code == 0){
+              let data= response.data;
+             // setPendienteFormaPago(data.pendienteFormaPago);
+              setListaComisionesAPagar(data.lista);  
+          }       
+      }else{
+             generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning');
+      }    
+    }
+
 
    useEffect(()=>{
       cargarCiclo(userName);
@@ -138,9 +224,8 @@ const useStyles = makeStyles((theme) => ({
           </Breadcrumbs>
         </div>
         <br />
-        <h1>Pagos !</h1>
         <Typography variant="h4" gutterBottom  >
-             {'Forma de pagos'}
+             {'Pagos'}
         </Typography>     
 
         <Card>
@@ -203,13 +288,13 @@ const useStyles = makeStyles((theme) => ({
                                     labelId="demo-simple-select-outlined-labelciclo"                              
                                     value={idCiclo}
                                     name="idCiclo"                              
-                                    //onChange={onChangeSelectCiclo}
+                                    onChange={onChangeSelectCiclo}
                                     label="CICLO # "
                                     >
                                     <MenuItem value={0}>
                                         <em>Seleccione un ciclo</em>
                                     </MenuItem>
-                                  {/*  {ciclos.map((value,index)=> ( <MenuItem key={index} onClick={()=> seleccionarNombreCombo(`${value.nombre}`)} value={value.idCiclo}>{value.nombre}</MenuItem> ))}   */}
+                                    {listCiclo.map((value,index)=> ( <MenuItem key={index} onClick={()=> seleccionarNombreCombo(`${value.nombre}`)} value={value.idCiclo}>{value.nombre}</MenuItem> ))}   
                                 </Select>                               
                             </FormControl>
                     </Grid>
@@ -220,15 +305,20 @@ const useStyles = makeStyles((theme) => ({
                           variant="contained"
                           color="primary"
                           className={style.submitCargar}
-                         // onClick = {()=> handleOnGetAplicaciones()}                                         
+                          onClick = {()=> handleOnGetPagos()}                                         
                           > 
                             {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
                           </Button>   
                     </Grid>
               </Grid>
             </Card>
-
-       
+            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
+            <GridPagos listaComisionesAPagar={listaComisionesAPagar}
+              selecionarDetalleFrelances={selecionarDetalleFrelances} 
+              seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} 
+              idCiclo={idCiclo} 
+             
+               permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
       </>
     );
 

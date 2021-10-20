@@ -1,6 +1,8 @@
 ﻿using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -40,7 +42,42 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
             }
         }
-
+      
+        public object GetComisionesDePagos(ComisionesPagosInput param)
+        {
+            try
+            {
+               
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio FormaPagoService => getCiclos()");
+                int idEstadoCerradoformaPago = 10; //rametro
+                int idTipoComisionPagoComision = 1; //parametro
+                var  comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoCerradoformaPago, idTipoComisionPagoComision);                
+                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
+            
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtenerlas comisiones de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object GetFormaPagosDisponibles(FiltroFormaPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio getFormaPagosDisponibles() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                int idTipoComisionPagoComision = 1; //parametro
+                return Respuesta.ReturnResultdo(0, "ok", Repository.GetFiltroComisionesPorFormaPago(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch getFormaPagosDisponibles(), error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de filtro de forma de pago", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
     }
 }
