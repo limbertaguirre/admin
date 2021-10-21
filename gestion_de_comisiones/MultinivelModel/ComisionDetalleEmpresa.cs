@@ -25,5 +25,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public decimal Retencion { get; set; }
         public decimal MontoNeto { get; set; }
         public bool SiFacturo { get; set; }
+        public long IdComprobanteGenerico { get; set; }
     }
 }

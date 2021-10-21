@@ -29,7 +29,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<ComisionDetalleEmpresa> ComisionDetalleEmpresas { get; set; }
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<EstadoAutorizacionComision> EstadoAutorizacionComisions { get; set; }
-        public virtual DbSet<EstadoDetalleListadoFormaPago> EstadoDetalleListadoFormaPagoes { get; set; }
+        public virtual DbSet<EstadoListadoFormaPago> EstadoListadoFormaPagoes { get; set; }
         public virtual DbSet<Ficha> Fichas { get; set; }
         public virtual DbSet<FichaIncentivo> FichaIncentivoes { get; set; }
         public virtual DbSet<FichaNivelI> FichaNivelIs { get; set; }
@@ -39,8 +39,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<GpComisionDetalle> GpComisionDetalles { get; set; }
         public virtual DbSet<GpComisionDetalleEstadoI> GpComisionDetalleEstadoIs { get; set; }
         public virtual DbSet<GpComisionEstadoComisionI> GpComisionEstadoComisionIs { get; set; }
-        public virtual DbSet<GpDetalleEstadoDetalleListadoFormaPagol> GpDetalleEstadoDetalleListadoFormaPagols { get; set; }
-        public virtual DbSet<GpDetalleListadoFormaPago> GpDetalleListadoFormaPagoes { get; set; }
+        public virtual DbSet<GpDetalleEstadoListadoFormaPagol> GpDetalleEstadoListadoFormaPagols { get; set; }
         public virtual DbSet<GpEstadoComision> GpEstadoComisions { get; set; }
         public virtual DbSet<GpEstadoComisionDetalle> GpEstadoComisionDetalles { get; set; }
         public virtual DbSet<GpEstadoProrrateoDetalle> GpEstadoProrrateoDetalles { get; set; }
@@ -75,6 +74,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
+        public virtual DbSet<VwObtenerPagosPorTransferencia> VwObtenerPagosPorTransferencias { get; set; }
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
@@ -520,6 +520,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
 
+                entity.Property(e => e.IdComprobanteGenerico)
+                    .HasColumnName("id_comprobante_generico")
+                    .HasComment("El id_comprobante_generico. puede ser idmovimiento o el idcomprobante de pago");
+
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
                 entity.Property(e => e.IdUsuario)
@@ -649,16 +653,16 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("es el estado de una comision autorizada");
             });
 
-            modelBuilder.Entity<EstadoDetalleListadoFormaPago>(entity =>
+            modelBuilder.Entity<EstadoListadoFormaPago>(entity =>
             {
-                entity.HasKey(e => e.IdEstadoDetalleListadoFormaPago)
-                    .HasName("PK__ESTADO_D__6FD4B26DFE4C3711");
+                entity.HasKey(e => e.IdEstadoListadoFormaPago)
+                    .HasName("PK__ESTADO_L__3EB39F9E07333B66");
 
-                entity.ToTable("ESTADO_DETALLE_LISTADO_FORMA_PAGO");
+                entity.ToTable("ESTADO_LISTADO_FORMA_PAGO");
 
-                entity.Property(e => e.IdEstadoDetalleListadoFormaPago)
+                entity.Property(e => e.IdEstadoListadoFormaPago)
                     .ValueGeneratedNever()
-                    .HasColumnName("id_estado_detalle_listado_forma_pago")
+                    .HasColumnName("id_estado_listado_forma_pago")
                     .HasComment("Es la llave primaria de la tabla.");
 
                 entity.Property(e => e.Descripcion)
@@ -1173,9 +1177,9 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
             });
 
-            modelBuilder.Entity<GpDetalleEstadoDetalleListadoFormaPagol>(entity =>
+            modelBuilder.Entity<GpDetalleEstadoListadoFormaPagol>(entity =>
             {
-                entity.ToTable("GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL");
+                entity.ToTable("GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -1197,58 +1201,17 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("habilitado")
                     .HasComment("Es el estado de la tabla expresado en boleando ejemplo: habilitado = true, inhabilitado = false");
 
-                entity.Property(e => e.IdEstadoDetalleListadoFormaPago)
-                    .HasColumnName("id_estado_detalle_listado_forma_pago")
+                entity.Property(e => e.IdEstadoListadoFormaPago)
+                    .HasColumnName("id_estado_listado_forma_pago")
                     .HasComment("llave foranea de la tabla estado del listado de forma de pagos");
 
-                entity.Property(e => e.IdGpDetalleListadoFormaPago)
-                    .HasColumnName("id_gp_detalle_listado_forma_pago")
+                entity.Property(e => e.IdListaFormasPago)
+                    .HasColumnName("id_lista_formas_pago")
                     .HasComment("llave forare de la tabla detalle lista formad e pago.");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
                     .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
-            });
-
-            modelBuilder.Entity<GpDetalleListadoFormaPago>(entity =>
-            {
-                entity.HasKey(e => e.IdGpDetalleListadoFormaPago)
-                    .HasName("PK__GP_DETAL__6EECFD025E8A5656");
-
-                entity.ToTable("GP_DETALLE_LISTADO_FORMA_PAGO");
-
-                entity.Property(e => e.IdGpDetalleListadoFormaPago)
-                    .HasColumnName("id_gp_detalle_listado_forma_pago")
-                    .HasComment("Es la llave primaria de la tabla.");
-
-                entity.Property(e => e.FechaActualizacion)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fecha_actualizacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de actualización del registro");
-
-                entity.Property(e => e.FechaCreacion)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fecha_creacion")
-                    .HasDefaultValueSql("(getdate())")
-                    .HasComment("Es el timestamp de creación del registro");
-
-                entity.Property(e => e.IdEmpresa)
-                    .HasColumnName("id_empresa")
-                    .HasComment("Llave foranea que hace referencia a la tabla empresa.");
-
-                entity.Property(e => e.IdListaFormasPago)
-                    .HasColumnName("id_lista_formas_pago")
-                    .HasComment("Llave foranea d la tabla lista forma de pagos.");
-
-                entity.Property(e => e.IdUsuario)
-                    .HasColumnName("id_usuario")
-                    .HasComment("El id_usuario es el id del último usuario que modificó el registro.");
-
-                entity.Property(e => e.Monto)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("monto")
-                    .HasComment("Es el monto en especifico detallado de un listado de forma de pago.");
             });
 
             modelBuilder.Entity<GpEstadoComision>(entity =>
@@ -2849,6 +2812,92 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("nombreCompleto");
 
                 entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tieneCuentaBancaria");
+            });
+
+            modelBuilder.Entity<VwObtenerPagosPorTransferencia>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerPagosPorTransferencia");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.Ciclo)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ciclo");
+
+                entity.Property(e => e.CuentaBancaria)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaBancaria");
+
+                entity.Property(e => e.EstadoDetalleFacturaNombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("estadoDetalleFacturaNombre");
+
+                entity.Property(e => e.EstadoFacturoId).HasColumnName("estadoFacturoId");
+
+                entity.Property(e => e.Factura)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("factura");
+
+                entity.Property(e => e.IdBanco).HasColumnName("id_banco");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("idComision");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("idComisionDetalle");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
+                entity.Property(e => e.IdFicha).HasColumnName("idFicha");
+
+                entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
+
+                entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
+
+                entity.Property(e => e.MontoAplicacion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_aplicacion");
+
+                entity.Property(e => e.MontoBruto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoBruto");
+
+                entity.Property(e => e.MontoNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("montoNeto");
+
+                entity.Property(e => e.MontoRetencion)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_retencion");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombreBanco");
+
+                entity.Property(e => e.TipoPagoDescripcion)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("tipo_pago_descripcion");
             });
 
             modelBuilder.Entity<VwObtenerProyectoxProducto>(entity =>
