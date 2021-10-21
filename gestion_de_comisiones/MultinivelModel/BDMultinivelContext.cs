@@ -520,6 +520,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
 
+                entity.Property(e => e.IdComprobanteGenerico)
+                    .HasColumnName("id_comprobante_generico")
+                    .HasComment("El id_comprobante_generico. puede ser idmovimiento o el idcomprobante de pago");
+
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
                 entity.Property(e => e.IdUsuario)

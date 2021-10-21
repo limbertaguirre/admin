@@ -750,7 +750,8 @@ create table COMISION_DETALLE_EMPRESA
 	residual decimal(18,2) default 0 not null,
 	retencion decimal(18,2) default 0 not null,
 	monto_neto decimal(18,2) default 0 not null,
-	si_facturo bit default 0 not null,
+	si_facturo bit default 0 not null,	
+	id_comprobante_generico bigint,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -762,6 +763,7 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de autorizacion de la factura', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'nro_autorizacion'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_a_facturar'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto total a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_total_facturar'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_comprobante_generico. puede ser idmovimiento o el idcomprobante de pago', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comprobante_generico'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'fecha_creacion'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'fecha_actualizacion'
