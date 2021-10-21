@@ -3,6 +3,8 @@ using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -101,9 +103,11 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
                 if (param.nombreCriterio != "")
-                {
-                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoPago != 0 && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
-                    return ListComisiones;
+                {                    
+
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                    var lista = ListComisiones.Where(x =>  x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
+                    return lista;
                 } else {
                     return list;
                 }
@@ -115,6 +119,58 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+        public bool PagarSionPayComision(PagarSionPayInput param)
+        {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+
+            try
+            {
+                Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): idciclo {param.idCiclo}  ");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idCiclo
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idUsuario
+                              }
+
+                };
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PAGAR_SION_PAY_COMISIONES_CICLO] @id_ciclo,  @id_usuario  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0)
+                {
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO].");
+                    return true;
+                }
+                else
+                {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    return false;
+                }
+
+               
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch PagarSionPayComision() en pagos mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return false;
+            }
+        }
+
 
 
 

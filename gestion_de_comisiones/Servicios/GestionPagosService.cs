@@ -97,6 +97,23 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object PagarSionPayComisionTodo(PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio FormaPagoService => getCiclos()");              
+                var pay = Repository.PagarSionPayComision(param);
+                if (pay)                
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);               
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
 
 
     }
