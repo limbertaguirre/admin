@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace gestion_de_comisiones.MultinivelModel
 {
-    public partial class VwObtenercomisionesFormaPago
+    public partial class VwObtenerPagosPorTransferencia
     {
         public int IdComisionDetalle { get; set; }
         public int IdComision { get; set; }

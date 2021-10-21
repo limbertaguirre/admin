@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace gestion_de_comisiones.MultinivelModel
 {
-    public partial class UsuarioAutorizacion
+    public partial class GpDetalleEstadoListadoFormaPagol
     {
-        public int IdUsuarioAutorizacion { get; set; }
+        public int Id { get; set; }
+        public bool Habilitado { get; set; }
+        public int IdListaFormasPago { get; set; }
+        public int IdEstadoListadoFormaPago { get; set; }
         public int IdUsuario { get; set; }
-        public int IdTipoAutorizacion { get; set; }
-        public bool? Estado { get; set; }
-        public int IdUsuarioModificacion { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
     }

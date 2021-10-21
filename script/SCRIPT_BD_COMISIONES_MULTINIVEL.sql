@@ -820,23 +820,22 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_ESTADO_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-CREATE TABLE ESTADO_DETALLE_LISTADO_FORMA_PAGO(
-  id_estado_detalle_listado_forma_pago int NOT NULL PRIMARY KEY,
+CREATE TABLE ESTADO_LISTADO_FORMA_PAGO( --ESTADO_DETALLE_LISTADO_FORMA_PAGO
+  id_estado_listado_forma_pago int NOT NULL PRIMARY KEY,
   descripcion varchar(500) NOT NULL,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
 )
 go
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_estado_detalle_listado_forma_pago'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la breve descripcion del estado ejemplo: 1: para pagar, 2: error al pagar, 3 pago exitoso ', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'descripcion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'id_estado_listado_forma_pago'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la breve descripcion del estado ejemplo: 1: para pagar, 2: error al pagar, 3 pago exitoso ', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'descripcion'
 
-    EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_usuario'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_creacion'
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_actualizacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del ultimo usuario que modifico el registro.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_actualizacion'
 go
-   --insert into ESTADO_DETALLE_LISTADO_FORMA_PAGO (id_estado_detalle_listado_forma_pago,descripcion,id_usuario) values(1, 'para pago',0)
-
+   
 go
 CREATE TABLE TIPO_PAGO(
   id_tipo_pago int NOT NULL PRIMARY KEY,
@@ -1047,47 +1046,26 @@ go
 
 go
 --referencia empresa
-
-
-CREATE TABLE GP_DETALLE_LISTADO_FORMA_PAGO(
-  id_gp_detalle_listado_forma_pago  int NOT NULL PRIMARY KEY identity,
-  monto decimal(18, 2) NOT NULL,
-  id_lista_formas_pago int NOT NULL,
-  id_empresa int not null,
-  id_usuario int not null,
-  fecha_creacion datetime default CURRENT_TIMESTAMP,
-  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
-)
 go
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_gp_detalle_listado_forma_pago'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el monto en especifico detallado de un listado de forma de pago.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'monto'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea d la tabla lista forma de pagos.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_lista_formas_pago'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea que hace referencia a la tabla empresa.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_empresa'
-
-	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'id_usuario'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_creacion'
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_actualizacion'
-
-go
-CREATE TABLE GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL(
+CREATE TABLE GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL( --GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL
   id int NOT NULL PRIMARY KEY identity,
   habilitado bit not null,
-  id_gp_detalle_listado_forma_pago  int not null,
-  id_estado_detalle_listado_forma_pago int NOT NULL,
+  id_lista_formas_pago  int not null,
+  id_estado_listado_forma_pago int NOT NULL,
   id_usuario int not null,
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
 )
 
 go
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de tabla.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'id'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla expresado en boleando ejemplo: habilitado = true, inhabilitado = false', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'habilitado'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'llave forare de la tabla detalle lista formad e pago.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_gp_detalle_listado_forma_pago'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea de la tabla estado del listado de forma de pagos', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_estado_detalle_listado_forma_pago'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de tabla.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'id'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla expresado en boleando ejemplo: habilitado = true, inhabilitado = false', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'habilitado'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'llave forare de la tabla detalle lista formad e pago.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_lista_formas_pago'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea de la tabla estado del listado de forma de pagos', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_estado_listado_forma_pago'
 
-   	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_usuario'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'fecha_creacion'
-    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_DETALLE_LISTADO_FORMA_PAGOL', N'COLUMN', N'fecha_actualizacion'
+   	EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'id_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL', N'COLUMN', N'fecha_actualizacion'
 
 go
 --referencia empresa
