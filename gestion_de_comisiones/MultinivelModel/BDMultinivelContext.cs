@@ -50,6 +50,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Incentivo> Incentivoes { get; set; }
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
         public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
+        public virtual DbSet<LogPagoMasivoSionPayComisionOEmpresaFail> LogPagoMasivoSionPayComisionOEmpresaFails { get; set; }
         public virtual DbSet<Modulo> Moduloes { get; set; }
         public virtual DbSet<Nivel> Nivels { get; set; }
         public virtual DbSet<Pagina> Paginas { get; set; }
@@ -1678,6 +1679,72 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("total_monto_Bruto")
                     .HasComment("Es el monto total bruto de la comision de freelancer");
+            });
+
+            modelBuilder.Entity<LogPagoMasivoSionPayComisionOEmpresaFail>(entity =>
+            {
+                entity.HasKey(e => e.IdSionPayComisioEmpresaFail)
+                    .HasName("PK__LOG_PAGO__8A08B05F7E48A7BE");
+
+                entity.ToTable("LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL");
+
+                entity.Property(e => e.IdSionPayComisioEmpresaFail)
+                    .HasColumnName("id_sion_pay_comisio_empresa_fail")
+                    .HasComment("Llave primaria de la tabla autoincremental.");
+
+                entity.Property(e => e.Carnet)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("carnet")
+                    .HasComment("Es carnet de identidad del freelancers");
+
+                entity.Property(e => e.CuentaSionPay)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("cuenta_sion_pay")
+                    .HasComment("Es el nro de cuenta en sion pay del freelancer");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion")
+                    .HasComment("Es la descripcion del registro");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de actualizacion del registro");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("Es el timestamp de creacion del registro");
+
+                entity.Property(e => e.IdCiclo)
+                    .HasColumnName("id_ciclo")
+                    .HasComment("El idciclo es la llave foranea de comision ciclo");
+
+                entity.Property(e => e.IdDetalleComision)
+                    .HasColumnName("id_detalle_comision")
+                    .HasComment("Es el id de la tabla detalle comision se registrara em caso de no existir su detalle por empresa");
+
+                entity.Property(e => e.IdDetalleComisionEmpresa)
+                    .HasColumnName("id_detalle_comision_empresa")
+                    .HasDefaultValueSql("((0))")
+                    .HasComment("Es el id de la tabla detalle_comision_empresa que se registrara en caso de haya un pago con monto cero por default cero");
+
+                entity.Property(e => e.IdFicha)
+                    .HasColumnName("id_ficha")
+                    .HasComment("Es el id ficha de la tabla comisiones");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto")
+                    .HasDefaultValueSql("((0))")
+                    .HasComment("es el monto de la transaccion datos por default cero");
             });
 
             modelBuilder.Entity<Modulo>(entity =>

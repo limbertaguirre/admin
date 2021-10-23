@@ -5,13 +5,16 @@ using System.Collections.Generic;
 
 namespace gestion_de_comisiones.MultinivelModel
 {
-    public partial class LogDetalleComisionEmpresaFail
+    public partial class LogPagoMasivoSionPayComisionOEmpresaFail
     {
-        public int IdDetalleComisioEmpresaFail { get; set; }
+        public int IdSionPayComisioEmpresaFail { get; set; }
         public int IdCiclo { get; set; }
         public int IdFicha { get; set; }
-        public int CodigoCliente { get; set; }
-        public decimal TotalMontoBruto { get; set; }
+        public string Carnet { get; set; }
+        public string CuentaSionPay { get; set; }
+        public int IdDetalleComision { get; set; }
+        public int? IdDetalleComisionEmpresa { get; set; }
+        public decimal? Monto { get; set; }
         public string Descripcion { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
