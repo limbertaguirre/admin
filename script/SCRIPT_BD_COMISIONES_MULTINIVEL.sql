@@ -752,6 +752,7 @@ create table COMISION_DETALLE_EMPRESA
 	monto_neto decimal(18,2) default 0 not null,
 	si_facturo bit default 0 not null,	
 	id_comprobante_generico bigint,
+	id_movimiento int NOT NULL default 0,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -1304,7 +1305,36 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 go
+ CREATE TABLE LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL(
+  id_sion_pay_comisio_empresa_fail int NOT NULL PRIMARY KEY identity,
+  id_ciclo int not null,
+  id_ficha int not null, 
+  carnet varchar(100) not null, 
+  cuenta_sion_pay varchar(100) not null, 
+  id_detalle_comision int not null,
+  id_detalle_comision_empresa int default 0,
+  monto decimal(18,2) default 0,
+  descripcion varchar(max),
+  id_empresa_cnx INT NOT NULL default 0,
+  nombre_empresa varchar(100) NOT NULL default '',
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla autoincremental.', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_sion_pay_comisio_empresa_fail'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El idciclo es la llave foranea de comision ciclo', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_ciclo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id ficha de la tabla comisiones', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_ficha'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es carnet de identidad del freelancers', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'carnet'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de cuenta en sion pay del freelancer', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'cuenta_sion_pay'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla detalle comision se registrara em caso de no existir su detalle por empresa', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comision'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla detalle_comision_empresa que se registrara en caso de haya un pago con monto cero por default cero', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comision_empresa'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es el monto de la transaccion datos por default cero', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'monto'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'descripcion'   
 
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
+
+go
 create VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
 AS
 	 select
