@@ -286,11 +286,9 @@ const Pagos = (props) => {
   };
   const CloseModalConfirmacion = () => {
     setOpenModalConfirm(false);
-    setOpenModalTransferenciaConfirm(false);
   };
   const confirmarModal = () => {
     setOpenModalConfirm(false);
-    setOpenModalTransferenciaConfirm(false);
   };
 
   return (
