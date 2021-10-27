@@ -156,12 +156,27 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 													SET @IDMOVIMIENTO_GENERIC= SCOPE_IDENTITY ();
 													-- --ACTUALIZAR COMISION DETALLE
 													update BDPuntosCash.DBO.COMISIONES_DETALLE set id_movimiento= @IDMOVIMIENTO_GENERIC, fecha_movimiento =GETDATE(), id_comisiones_estado_maestro_detalle=1 WHERE id_comisiones_detalle=@SIONPAY_IDCOMISIONDETALLE
-													-- --GENERAR COMPROBANTE MEDIANTE SP
-													
+													-- --GENERAR COMPROBANTE MEDIANTE SP-----------------------------
+													    BEGIN TRY
+														   
+															  DECLARE @RESPUESTA INT;
+															  EXEC BDConexionADVEL.dbo.SP_GENERARCOMPROBANTE_RECARGA_COMISIONES 	@IDMOVIMIENTO_GENERIC	, @RESPUESTA OUTPUT, 	@2_IDEMPRESA_CNX
+															  IF @RESPUESTA > 1
+															  BEGIN
+															    SET @IDCOMPROBANTE_NEW_GENERICO= @RESPUESTA;
+															  END
+														     
+													    END TRY
+						                                BEGIN CATCH
+																  SET @IMPBODY =  concat(' ERROR NO SE PUEDO GENERAR , exec [SP_2_PROCESAR_PAGO_SION_PAY_UPDATE_DETALLES] EL IDMOVIMIENTO :   ', @IDMOVIMIENTO_GENERIC  );
+															   SET @IMPSUBJECT = CONCAT('ALERTA PRODUCCION : NO SE PUDO GENERAR COMPROBANTE ' , @IDMOVIMIENTO_GENERIC);
+																 --EXECUTE  msdb.dbo.sp_send_dbmail @profile_name = 'NotificacionSQL', 
+																 --  @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+																 --  @body = @IMPBODY ,  
+																 --  @subject = @IMPSUBJECT ;
+													   	END CATCH
 													-- --ACTUALIZAR DETALLE EMPRESA MULTINIVEL: IDMOVIMIENTO, Y COMPROBANT @IDCOMPROBANTE_NEW_GENERICO
 													update  BDMultinivel.dbo.COMISION_DETALLE_EMPRESA set id_movimiento = @IDMOVIMIENTO_GENERIC, id_comprobante_generico= @IDCOMPROBANTE_NEW_GENERICO, fecha_actualizacion= GETDATE() where id_comision_detalle_empresa= @2_IDCOMISIONEMPRESA_item
-
-											     -- SELECT @2_IDCOMISIONEMPRESA_item as 'id detalle detalle', @SIONPAY_IDCOMISIONDETALLE AS 'ID DETALLE CO', @SIONPAY_NROCUENTA AS 'NRO CUENTA', @SALDOACTUAL AS 'MONTO',@SIONPAY_MONTO AS 'MONTO GANADO',  @2DE_CARNET_ITEM AS 'CI', @2_IDEMPRESA_CNX AS 'EMPRESA', @CUENTAID AS 'IDCUENTA'
 
 											   END
 											END																							
