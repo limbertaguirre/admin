@@ -144,12 +144,33 @@ namespace gestion_de_comisiones.Repository
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = param.idUsuario
                               }
-
-                };
+                           };
+                var parameterReturn2 = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idCiclo
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idUsuario
+                              }
+                           };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PAGAR_SION_PAY_COMISIONES_CICLO] @id_ciclo,  @id_usuario  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 if (returnValue > 0)
                 {
+                    var result2 = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_2_PROCESAR_PAGO_SION_PAY_UPDATE_DETALLES] @id_ciclo,  @id_usuario  ", parameterReturn2);
+                    int returnValue2 = (int)parameterReturn2[0].Value;
+
                     dbcontextTransaction.Commit();
                     Logger.LogInformation($" usuario: {param.UsuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO].");
                     return true;
