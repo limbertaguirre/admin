@@ -35,6 +35,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import * as Actions from "../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 
+import GridTransferencia from "./Components/GridTransferencia";
+
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.grey[100],
@@ -184,9 +186,6 @@ const Pagos = (props) => {
         "¡Debe Seleccionar un ciclo para cargar las comisiones!",
         "warning"
       );
-      /*  setOpenSnackbar(true);
-          setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-          settipTSnackbar('warning'); */
     }
   };
 
@@ -238,7 +237,6 @@ const Pagos = (props) => {
       console.log("busqueda por filtro", response);
       if (response && response.code == 0) {
         let data = response.data;
-        // setPendienteFormaPago(data.pendienteFormaPago);
         setListaComisionesAPagar(data.lista);
       }
     } else {
@@ -266,7 +264,6 @@ const Pagos = (props) => {
     if (response && response.code == 0) {
       console.log("response busca ", response);
       let data = response.data;
-      // setPendienteFormaPago(data.pendienteFormaPago);
       setListaComisionesAPagar(data);
     }
   }
@@ -276,13 +273,12 @@ const Pagos = (props) => {
   }, []);
 
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
+
+
+  const [openGridTransferencia, setOpenGridTransferencia] = useState(false);
+
   const abrirModal = () => {
     setOpenModalConfirm(true);
-  };
-  const [openModalTransferenciaConfirm, setOpenModalTransferenciaConfirm] =
-    useState(false);
-  const abrirTransferenciaModal = () => {
-    setOpenModalTransferenciaConfirm(true);
   };
   const CloseModalConfirmacion = () => {
     setOpenModalConfirm(false);
@@ -335,8 +331,7 @@ const Pagos = (props) => {
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      // onClick = {()=> verificarConfirmarFomaPago()}
-                      onClick={() => abrirTransferenciaModal()}
+                      href="GridTransferencia"
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
@@ -469,17 +464,6 @@ const Pagos = (props) => {
         open={openModalConfirm}
         titulo={"ATENCIÓN"}
         subTituloModal={"FORMA DE PAGO: SION PAY"}
-        tipoModal={"warning"}
-        mensaje={
-          "Al confirmar este método de pago, no se podrá revertir la acción."
-        }
-        handleCloseConfirm={confirmarModal}
-        handleCloseCancel={CloseModalConfirmacion}
-      />
-      <MessageConfirm
-        open={openModalTransferenciaConfirm}
-        titulo={"ATENCIÓN"}
-        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
         tipoModal={"warning"}
         mensaje={
           "Al confirmar este método de pago, no se podrá revertir la acción."
