@@ -2235,3 +2235,10 @@ Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password
 
 Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
 
+## script insert externo BDPuntosCash agente
+
+INSERT INTO [dbo].[AGENTE] ([id_agente], [usuario], [password], [descripcion])
+VALUES (27, 'recarga_sistema_gestor_pagos', 'cc8f530d7aa420ba73af8bfaa2831c48', 'recarga desde el sistema de gestor de pagos')
+
+
+

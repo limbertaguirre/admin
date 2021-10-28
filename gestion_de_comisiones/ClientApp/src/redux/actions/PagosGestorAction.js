@@ -75,4 +75,19 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
        
     });
   }
+  export async function pagarComisionSionPay(userName,usuarioId, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idUsuario:parseInt(usuarioId),
+                idCiclo:parseInt(idCiclo)
+          }; 
+          //console.log('llego a', data);    
+      requestPost('gestionPagos/PagarComisionSionPay', data, dispatch )
+        .then(response =>{
+           resolve(response);  
+        })
+       
+    });
+  }
 
