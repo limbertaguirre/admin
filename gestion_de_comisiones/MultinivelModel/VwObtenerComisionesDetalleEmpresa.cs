@@ -7,6 +7,7 @@ namespace gestion_de_comisiones.MultinivelModel
 {
     public partial class VwObtenerComisionesDetalleEmpresa
     {
+        public int? IdComision { get; set; }
         public int IdComisionDetalleEmpresa { get; set; }
         public int IdComisionDetalle { get; set; }
         public string Empresa { get; set; }
@@ -16,6 +17,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public string RespaldoPath { get; set; }
         public string NroAutorizacion { get; set; }
         public int IdEmpresa { get; set; }
+        public int EstadoEmpresa { get; set; }
         public bool EstadoDetalleEmpresa { get; set; }
         public decimal VentasPersonales { get; set; }
         public decimal VentasGrupales { get; set; }
