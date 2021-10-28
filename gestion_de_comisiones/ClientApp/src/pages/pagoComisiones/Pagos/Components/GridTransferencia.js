@@ -1,26 +1,27 @@
-import * as GeneralReact from "react";
+import React, * as GeneralReact from "react";
 import * as Redux from "react-redux";
+import PropTypes from 'prop-types';
 import * as Core from "@material-ui/core";
 import * as CoreStyles from "@material-ui/core/styles";
-import * as GeneralIcons from "@material-ui/icons/Error";
+import * as GeneralIcons from "@material-ui/icons";
 
-const GeneralStyles = withStyles({
-  paper: { border: "1px solid #d3d4d5" },
-})((props) => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "center",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "center",
-    }}
-    {...props}
-  />
-));
+// const GeneralStyles = GeneralReact.withStyles({
+//   paper: { border: "1px solid #d3d4d5" },
+// })((props) => (
+//   <Core.Menu
+//     elevation={0}
+//     getContentAnchorEl={null}
+//     anchorOrigin={{
+//       vertical: "bottom",
+//       horizontal: "center",
+//     }}
+//     transformOrigin={{
+//       vertical: "top",
+//       horizontal: "center",
+//     }}
+//     {...props}
+//   />
+// ));
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -50,61 +51,61 @@ function Row(props) {
   const [open, setOpen] = GeneralReact.useState(false);
 
   return (
-    <GeneralReact.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
+    <React.Fragment>
+      <Core.TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <Core.TableCell>
+          <Core.IconButton
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
+            {open ? <GeneralIcons.KeyboardArrowUp  /> : <GeneralIcons.KeyboardArrowDown />}
+          </Core.IconButton>
+        </Core.TableCell>
+        <Core.TableCell component="th" scope="row">
           {row.name}
-        </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
+        </Core.TableCell>
+        <Core.TableCell align="right">{row.calories}</Core.TableCell>
+        <Core.TableCell align="right">{row.fat}</Core.TableCell>
+        <Core.TableCell align="right">{row.carbs}</Core.TableCell>
+        <Core.TableCell align="right">{row.protein}</Core.TableCell>
+      </Core.TableRow>
+      <Core.TableRow>
+        <Core.TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Core.Collapse in={open} timeout="auto" unmountOnExit>
+            <Core.Box sx={{ margin: 1 }}>
+              <Core.Typography variant="h6" gutterBottom component="div">
                 History
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+              </Core.Typography>
+              <Core.Table size="small" aria-label="purchases">
+                <Core.TableHead>
+                  <Core.TableRow>
+                    <Core.TableCell>Date</Core.TableCell>
+                    <Core.TableCell>Customer</Core.TableCell>
+                    <Core.TableCell align="right">Amount</Core.TableCell>
+                    <Core.TableCell align="right">Total price ($)</Core.TableCell>
+                  </Core.TableRow>
+                </Core.TableHead>
+                <Core.TableBody>
                   {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
+                    <Core.TableRow key={historyRow.date}>
+                      <Core.TableCell component="th" scope="row">
                         {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
+                      </Core.TableCell>
+                      <Core.TableCell>{historyRow.customerId}</Core.TableCell>
+                      <Core.TableCell align="right">{historyRow.amount}</Core.TableCell>
+                      <Core.TableCell align="right">
                         {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
+                      </Core.TableCell>
+                    </Core.TableRow>
                   ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </GeneralReact.Fragment>
+                </Core.TableBody>
+              </Core.Table>
+            </Core.Box>
+          </Core.Collapse>
+        </Core.TableCell>
+      </Core.TableRow>
+    </React.Fragment>
   );
 }
 
@@ -136,25 +137,25 @@ const rows = [
 
 const GridTransferencia = () => {
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <Core.TableContainer component={Core.Paper}>
+      <Core.Table aria-label="collapsible table">
+        <Core.TableHead>
+          <Core.TableRow>
+            <Core.TableCell />
+            <Core.TableCell>Dessert (100g serving)</Core.TableCell>
+            <Core.TableCell align="right">Calories</Core.TableCell>
+            <Core.TableCell align="right">Fat&nbsp;(g)</Core.TableCell>
+            <Core.TableCell align="right">Carbs&nbsp;(g)</Core.TableCell>
+            <Core.TableCell align="right">Protein&nbsp;(g)</Core.TableCell>
+          </Core.TableRow>
+        </Core.TableHead>
+        <Core.TableBody>
           {rows.map((row) => (
             <Row key={row.name} row={row} />
           ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        </Core.TableBody>
+      </Core.Table>
+    </Core.TableContainer>
   );
 };
 
