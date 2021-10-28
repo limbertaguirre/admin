@@ -488,17 +488,6 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
-      <MessageConfirm
-        open={openModalTransferenciaConfirm}
-        titulo={"ATENCIÓN"}
-        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
-        tipoModal={"warning"}
-        mensaje={
-          "Al confirmar este método de pago, no se podrá revertir la acción."
-        }
-        handleCloseConfirm={confirmarModal}
-        handleCloseCancel={CloseModalConfirmacion}
-      />
     </>
   );
 };
