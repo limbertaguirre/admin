@@ -31,6 +31,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />
+    <PackageReference Include="EPPlus" Version="5.8.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <None Remove="Microsoft.EntityFrameworkCore" />
     <None Remove="MySql.EntityFrameworkCore" />
     <None Remove="Serilog.Settings.AppSettings" />
+    <None Remove="EPPlus" />
   </ItemGroup>
 
   <ItemGroup>

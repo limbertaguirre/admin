@@ -12,6 +12,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object GetComisionesDePagos(ComisionesPagosInput param);
         public object GetFormaPagosDisponibles(FiltroFormaPagosInput param);
         public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param);
-
+        object handleTransferenciasEmpresas(ComisionesPagosInput param);
+        object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
     }
 }

@@ -98,6 +98,34 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object handleTransferenciasEmpresas(ComisionesPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");                
+                var empresas = Repository.handleTransferenciasEmpresas(param);
+                return Respuesta.ReturnResultdo(0, "ok", empresas);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
+        public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
+                var file = Repository.handleDownloadFileEmpresas(body);                                
+                return Respuesta.ReturnResultdo(0, "ok", file);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

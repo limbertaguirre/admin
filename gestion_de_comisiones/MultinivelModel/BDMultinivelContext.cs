@@ -74,7 +74,9 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
+        public virtual DbSet<VwObtenerEmpresasComisionesDetalleEmpresa> VwObtenerEmpresasComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
+        public virtual DbSet<VwObtenerInfoExcelFormatoBanco> VwObtenerInfoExcelFormatoBancoes { get; set; }
         public virtual DbSet<VwObtenerPagosPorTransferencia> VwObtenerPagosPorTransferencias { get; set; }
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
@@ -526,6 +528,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El id_comprobante_generico. puede ser idmovimiento o el idcomprobante de pago");
 
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdMovimiento).HasColumnName("id_movimiento");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
@@ -1736,6 +1740,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasDefaultValueSql("((0))")
                     .HasComment("Es el id de la tabla detalle_comision_empresa que se registrara en caso de haya un pago con monto cero por default cero");
 
+                entity.Property(e => e.IdEmpresaCnx).HasColumnName("id_empresa_cnx");
+
                 entity.Property(e => e.IdFicha)
                     .HasColumnName("id_ficha")
                     .HasComment("Es el id ficha de la tabla comisiones");
@@ -1745,6 +1751,13 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("monto")
                     .HasDefaultValueSql("((0))")
                     .HasComment("es el monto de la transaccion datos por default cero");
+
+                entity.Property(e => e.NombreEmpresa)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_empresa")
+                    .HasDefaultValueSql("('')");
             });
 
             modelBuilder.Entity<Modulo>(entity =>
@@ -2777,6 +2790,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.EstadoDetalleEmpresa).HasColumnName("estadoDetalleEmpresa");
 
+                entity.Property(e => e.EstadoEmpresa).HasColumnName("estadoEmpresa");
+
+                entity.Property(e => e.IdComision).HasColumnName("idComision");
+
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
 
                 entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
@@ -2826,6 +2843,30 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentasPersonales)
                     .HasColumnType("decimal(18, 0)")
                     .HasColumnName("ventas_personales");
+            });
+
+            modelBuilder.Entity<VwObtenerEmpresasComisionesDetalleEmpresa>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerEmpresasComisionesDetalleEmpresa");
+
+                entity.Property(e => e.Empresa)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("empresa");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
+
+                entity.Property(e => e.MontoTransferir)
+                    .HasColumnType("decimal(38, 2)")
+                    .HasColumnName("monto_transferir");
             });
 
             modelBuilder.Entity<VwObtenerFicha>(entity =>
@@ -2879,6 +2920,70 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("nombreCompleto");
 
                 entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tieneCuentaBancaria");
+            });
+
+            modelBuilder.Entity<VwObtenerInfoExcelFormatoBanco>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerInfoExcelFormatoBanco");
+
+                entity.Property(e => e.CodigoDeCliente)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("CODIGO_DE_CLIENTE");
+
+                entity.Property(e => e.DocDeIdentidad)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("DOC_DE_IDENTIDAD");
+
+                entity.Property(e => e.Empresa)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("empresa");
+
+                entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD_DESTINO");
+
+                entity.Property(e => e.FechaDePago)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA_DE_PAGO");
+
+                entity.Property(e => e.FormaDePago).HasColumnName("FORMA_DE_PAGO");
+
+                entity.Property(e => e.Glosa)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("GLOSA");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.ImporteNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("IMPORTE_NETO");
+
+                entity.Property(e => e.ImportePorEmpresa)
+                    .HasColumnType("decimal(38, 2)")
+                    .HasColumnName("IMPORTE_POR_EMPRESA");
+
+                entity.Property(e => e.MonedaDestino).HasColumnName("MONEDA_DESTINO");
+
+                entity.Property(e => e.NombreDeCliente)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("NOMBRE_DE_CLIENTE");
+
+                entity.Property(e => e.NroDeCuenta)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("NRO_DE_CUENTA");
             });
 
             modelBuilder.Entity<VwObtenerPagosPorTransferencia>(entity =>

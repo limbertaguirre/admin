@@ -18,5 +18,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public string Descripcion { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+        public int IdEmpresaCnx { get; set; }
+        public string NombreEmpresa { get; set; }
     }
 }
