@@ -38,6 +38,8 @@ import TransferenciasDialog from './Components/TransferenciasDialog'
 
 // import GridTransferenciaModal from "./Components/GridTransferencia";
 
+import GridTransferencia from "./Components/GridTransferencia";
+
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.grey[100],
@@ -392,8 +394,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      // onClick = {()=> verificarConfirmarFomaPago()}
-                      onClick={() => abrirTransferenciaModal()}
+                      href="GridTransferencia"
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
