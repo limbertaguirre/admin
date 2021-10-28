@@ -92,6 +92,10 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio AplicarMetodoPago()");
+                if(param.idTipoPago == 0)
+                {
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "SELECCIONE UNA FORMA DE PAGO", "");
+                }
                 var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
                 if (tieneUnaComisionAprobada){
                     return Respuesta.ReturnResultdo(1, "ESTA ACCIÓN NO SE PUDO COMPLETAR, MOTIVO : PROCESO DE AUTORIZACIÓN EN CURSO.", "");

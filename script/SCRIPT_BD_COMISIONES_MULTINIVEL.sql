@@ -1364,7 +1364,7 @@ AS
 
  ALTER VIEW [dbo].[vwObtenercomisionesFormaPago]
  AS
-     select 
+        select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
 	        GPCOMI.id_comision AS 'idComision', 
 			GPCOMI.id_tipo_comision,
@@ -1386,7 +1386,10 @@ AS
 			GPDETA.monto_aplicacion,
 			CASE WHEN LISTFO.id_lista_formas_pago IS NULL THEN 0 ELSE LISTFO.id_lista_formas_pago END As 'id_lista_formas_pago',
 			CASE WHEN LISTFO.id_tipo_pago IS NULL THEN 0 ELSE LISTFO.id_tipo_pago END As 'id_tipo_pago',			
-			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion'
+			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion',
+			CASE WHEN FPAGO.id IS NULL THEN 0 ELSE FPAGO.id END As 'id_detalle_estado_forma_pago',
+			CASE WHEN FPAGO.habilitado IS NULL THEN 'False' ELSE FPAGO.habilitado END As 'pago_detalle_habilitado',		
+			CASE WHEN FPAGO.id_estado_listado_forma_pago IS NULL THEN 0 ELSE FPAGO.id_estado_listado_forma_pago END As 'id_estado_listado_forma_pago'			
 	        from BDMultinivel.dbo.GP_COMISION GPCOMI
 	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
@@ -1397,6 +1400,7 @@ AS
 			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
 			left join BDMultinivel.dbo.LISTADO_FORMAS_PAGO LISTFO ON  LISTFO.id_comisiones_detalle = GPDETA.id_comision_detalle
 			left join BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago= LISTFO.id_tipo_pago
+			LEFT join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL FPAGO ON FPAGO.id_lista_formas_pago = LISTFO.id_lista_formas_pago
 			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
 go
 

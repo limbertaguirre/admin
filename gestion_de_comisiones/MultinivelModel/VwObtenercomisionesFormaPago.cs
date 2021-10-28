@@ -29,5 +29,8 @@ namespace gestion_de_comisiones.MultinivelModel
         public int? IdListaFormasPago { get; set; }
         public int? IdTipoPago { get; set; }
         public string TipoPagoDescripcion { get; set; }
+        public int? IdDetalleEstadoFormaPago { get; set; }
+        public bool? PagoDetalleHabilitado { get; set; }
+        public int? IdEstadoListadoFormaPago { get; set; }
     }
 }

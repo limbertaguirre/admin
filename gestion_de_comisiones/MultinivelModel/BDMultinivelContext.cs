@@ -2932,26 +2932,26 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("CODIGO DE CLIENTE");
+                    .HasColumnName("CODIGO_DE_CLIENTE");
 
                 entity.Property(e => e.DocDeIdentidad)
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("DOC. DE IDENTIDAD");
+                    .HasColumnName("DOC_DE_IDENTIDAD");
 
                 entity.Property(e => e.Empresa)
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("empresa");
 
-                entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD DESTINO");
+                entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD_DESTINO");
 
                 entity.Property(e => e.FechaDePago)
                     .HasColumnType("datetime")
-                    .HasColumnName("FECHA DE PAGO");
+                    .HasColumnName("FECHA_DE_PAGO");
 
-                entity.Property(e => e.FormaDePago).HasColumnName("FORMA DE PAGO");
+                entity.Property(e => e.FormaDePago).HasColumnName("FORMA_DE_PAGO");
 
                 entity.Property(e => e.Glosa)
                     .HasMaxLength(255)
@@ -2966,24 +2966,24 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.ImporteNeto)
                     .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("IMPORTE NETO");
+                    .HasColumnName("IMPORTE_NETO");
 
                 entity.Property(e => e.ImportePorEmpresa)
                     .HasColumnType("decimal(38, 2)")
-                    .HasColumnName("IMPORTE POR EMPRESA");
+                    .HasColumnName("IMPORTE_POR_EMPRESA");
 
-                entity.Property(e => e.MonedaDestino).HasColumnName("MONEDA DESTINO");
+                entity.Property(e => e.MonedaDestino).HasColumnName("MONEDA_DESTINO");
 
                 entity.Property(e => e.NombreDeCliente)
                     .IsRequired()
                     .HasMaxLength(511)
                     .IsUnicode(false)
-                    .HasColumnName("NOMBRE DE CLIENTE");
+                    .HasColumnName("NOMBRE_DE_CLIENTE");
 
                 entity.Property(e => e.NroDeCuenta)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("NRO. DE CUENTA");
+                    .HasColumnName("NRO_DE_CUENTA");
             });
 
             modelBuilder.Entity<VwObtenerPagosPorTransferencia>(entity =>
@@ -3223,7 +3223,11 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("idComisionDetalle");
 
+                entity.Property(e => e.IdDetalleEstadoFormaPago).HasColumnName("id_detalle_estado_forma_pago");
+
                 entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
+                entity.Property(e => e.IdEstadoListadoFormaPago).HasColumnName("id_estado_listado_forma_pago");
 
                 entity.Property(e => e.IdFicha).HasColumnName("idFicha");
 
@@ -3259,6 +3263,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("nombreBanco");
+
+                entity.Property(e => e.PagoDetalleHabilitado).HasColumnName("pago_detalle_habilitado");
 
                 entity.Property(e => e.TipoPagoDescripcion)
                     .HasMaxLength(100)
