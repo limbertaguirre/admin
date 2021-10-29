@@ -155,18 +155,15 @@ namespace gestion_de_comisiones.Repository
 
         public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
-            //throw new NotImplementedException();
-            ///*
             try
             {
-                //List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
 
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
                 int cicloId = Convert.ToInt32(body.cicloId);
-
+                int tipoPagoTransferencia = 1;
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
-                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId)
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .ToList();
 
                 Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
@@ -216,15 +213,10 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 12].AutoFitColumns(1);
                         ws.Cells[i, 13].Value = "";
                     }
-
-                    //Save the new workbook. We haven't specified the filename so use the Save as method.
-                    //p.SaveAs(new FileInfo(@"c:\workbooks\myworkbook.xlsx"));
-                    //p.SaveAs(new FileInfo($@"/Users/ehumerez/{info[0].Empresa}.xlsx"));
                     DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
                     r.file = Convert.ToBase64String(p.GetAsByteArray());
                     r.fileName = info[0].Empresa;
                     return r;
-                    //return p.GetAsByteArray();
                 }                
             }
             catch (Exception ex)
@@ -233,7 +225,6 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 return list;
             }
-            //*/
         }
     }
 }

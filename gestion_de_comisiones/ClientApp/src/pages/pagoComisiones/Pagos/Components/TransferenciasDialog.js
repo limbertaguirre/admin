@@ -31,7 +31,19 @@ import * as ActionMensaje from '../../../../redux/actions/messageAction';
         color: "white",
       },
     },
-  
+    descriptionText: {
+        color: "#212121"
+    },
+    businessSelect: {
+        flex: 1
+    },
+    dialogConfirmButton: {
+        color: theme.palette.primary.main,
+    },
+    downloadButton: {
+        display: "flex",
+        verticalAlign: 'center'
+    },
     dialogContainer: {
       "& .MuiPaper-root": {
         [theme.breakpoints.down("lg")]: {
@@ -52,37 +64,12 @@ const TransferenciasDialog = ({
     openDialog,
     closeTransferenciasDialog,
     empresas,
-    //handleDownloadFileEmpresas
 }) => {
     const style = useStyles();
     const dispatch = useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     const [empresaId, setEmpresaId] = useState(-1);
-    // const[empresasTransferencias, setEmpresasTransferencias]= useState([]);
-    
-    // useEffect(()=>{
-    //     try { 
-    //         handleTransferenciasEmpresas(userName);
-    //         //verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
-    //     } catch (err) {
-    //         //verificarAcceso(perfiles, 'none', history);
-    //         console.error(err)
-    //     }
-    //  },[]);
 
-    // const handleTransferenciasEmpresas = async (user) => {
-    //     // Verificar si hay conexion a internet.
-    //     if(cicloId && cicloId !== 0) {  
-    //     let response = await Actions.handleTransferenciasEmpresas(user, cicloId, dispatch);
-    //       console.log('handleTransferenciasEmpresas response ',response);
-    //       if(response && response.code == 0) { 
-    //         setEmpresasTransferencias(response.data);
-    //         // setStatusBusqueda(true);    
-    //       } else {
-    //         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-    //       }
-    //     }
-    //   }
 
       const downloadExcel = (base64, fileName) => {
         // const contentType = "application/vnd.ms-excel";
@@ -121,9 +108,6 @@ const TransferenciasDialog = ({
       }
 
     const handleEmpresasSelectChange = (event) => {
-        console.log('handleEmpresasSelectChange empresaId: ', event.target.value)
-        // console.log('handleEmpresasSelectChange empresaId: ', event.currentTarget.value)
-        // setEmpresaId(event.currentTarget.value);
         setEmpresaId(event.target.value);
     };
 
@@ -140,7 +124,9 @@ const TransferenciasDialog = ({
         <DialogTitle className={style.dialgoTitle}>Transferencia</DialogTitle>
         <DialogContent>
           <DialogContentText>
-          Hola María, selecciona la empresa a realizar la transferencia para generar el archivo.
+            <Typography variant="body1" component="h2" className={style.descriptionText}>
+                Selecciona la empresa a realizar la transferencia para generar el archivo.  
+            </Typography>          
           </DialogContentText>
           {/* <div className="d-flex flex-row align-items-center"> */}
           {/* <Container
@@ -154,35 +140,44 @@ const TransferenciasDialog = ({
             }}
           > */}
           <div style={{flexGrow: 1}}>
-          <Grid container spacing={1}>
-              <Grid item xs={8} sm={6}>
+          <Grid container 
+            alignItems="center"
+            justifyContent="center"
+            alignContent="center"
+            alignSelf= 'center'
+            spacing={1}
+            direction="row">
+              <Grid item xs={8} sm={8}>
               <TextField
+                className={style.businessSelect}
                 id="outlined-select-currency"
                 select
                 label="Seleccione una empresa"
-                value={empresaId}
+                value={empresaId?empresaId:-1}
                 onChange={handleEmpresasSelectChange}
                 helperText="Por favor seleccione una empresa."
                 variant="outlined"
+                fullWidth
               >
-                {/* <MenuItem value=""><em>Seleccione una empresa</em></MenuItem> */}
-                {empresas.map((x, i) => {
+                <MenuItem value={-1}>Seleccione una empresa</MenuItem>
+                {empresas.length > 0 && empresas.map((x, i) => {
                   return <MenuItem value={x.idEmpresa}>{x.empresa}</MenuItem>
-                })
-              }
+                })}
               </TextField>
             </Grid>
-            <Grid item xs={4} sm={6}>
-              <Button variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
+            <Grid item xs={4} sm={4}>
+              <Button className={style.downloadButton} variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
                 Descargar
               </Button>
-              </Grid>
+            </Grid>
           </Grid>
           </div>
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>closeTransferenciasDialog()}>Close</Button>
+            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
+            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
+            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     );

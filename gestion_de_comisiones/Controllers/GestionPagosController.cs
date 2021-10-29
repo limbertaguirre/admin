@@ -105,21 +105,12 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
-        // POST: Pagos/BuscarComisionCarnetFormaPago
         [HttpPost]
-        //[Produces("application/octet-stream")]
         public ActionResult handleDownloadFileEmpresas([FromBody] DownloadFileTransferenciaInput body)
         {
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el controller handleDownloadFileEmpresas() parametro: idciclo:{body.cicloId}, empresaId: {body.empresaId}");
-
-                //return new FileContentResult(System.IO.File.ReadAllBytes();
-                
-                //var resp = HttpContext.Response;
-                //resp.ContentType = "application/octet-stream; charset=utf-8";
-                //resp.Headers.Add("Content-Disposition", "attachment;filename=avdel.xlsx");
-                //resp.Headers.Add("","");
                 return Ok(Service.handleDownloadFileEmpresas(body));               
             }
             catch(Exception e)
