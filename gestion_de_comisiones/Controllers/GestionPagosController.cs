@@ -104,6 +104,22 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
+        // POST: Pagos/BuscarComisionCarnetFormaPago
+        [HttpPost]
+        public ActionResult PagarComisionSionPay([FromBody] PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}");             
+                return Ok(Service.PagarSionPayComisionTodo(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.UsuarioLogin} error catch  BuscarComisionNombre() controller ");        
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+
 
         [HttpPost]
         public ActionResult handleDownloadFileEmpresas([FromBody] DownloadFileTransferenciaInput body)

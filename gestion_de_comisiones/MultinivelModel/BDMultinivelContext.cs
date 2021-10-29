@@ -3352,3 +3352,4 @@ namespace gestion_de_comisiones.MultinivelModel
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
+

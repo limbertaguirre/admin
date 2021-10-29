@@ -244,11 +244,16 @@ const useStyles = makeStyles((theme) => ({
      setOpenModalConfirm(true);
    }
    const CloseModalConfirmacion =()=>{
-      setOpenModalConfirm(false);
+      setOpenModalConfirm(false);      
    }
    const confirmarModal =()=>{
-      setOpenModalConfirm(false);
+    if(idCiclo && idCiclo !== 0){  
+      prosesarPagoSionPay(userName,idUsuario, idCiclo);
+    }else{
+      generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
+    }
    }
+<<<<<<< HEAD
   
   const handleClickOpenTransferencias = () => {
     handleTransferenciasEmpresas(userName);
@@ -270,6 +275,19 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   }
+=======
+   async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
+
+    let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
+      if(response && response.code == 0){           
+           setOpenModalConfirm(false);      
+           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
+      } else{
+         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+      }      
+    }
+
+>>>>>>> origin/develop
 
     return (
       <>

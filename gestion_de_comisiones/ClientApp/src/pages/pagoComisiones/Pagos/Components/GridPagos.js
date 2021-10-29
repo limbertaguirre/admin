@@ -26,7 +26,7 @@ import SendIcon from '@material-ui/icons/Send';
 import Fade from '@material-ui/core/Fade';
 import * as Actions from '../../../../redux/actions/PagosGestorAction';
 import PaymentIcon from '@material-ui/icons/Payment';
-
+import Chip from '@material-ui/core/Chip';
 import ImageIconPagos from "../../../../components/ImageIconPagos";
 
     const StyledMenu = withStyles({
@@ -299,6 +299,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                             <TableCell align="center" className={style.headerRow} ><b>Descuento ($us.)</b></TableCell> */}
                             <TableCell align="center" className={style.headerRow}><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center" className={style.headerRow} ><b>Forma Pago</b> </TableCell>
+                            <TableCell align="center" className={style.headerRow} ><b>Estado Pago</b> </TableCell>
                             <TableCell align="center" className={style.headerRow}></TableCell>
                         </TableRow>
                         </TableHead>
@@ -316,7 +317,11 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                             <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>  */}                             
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
-                            <TableCell align="center">
+                            <TableCell align="center">{row.pagoDetalleHabilitado? 
+                                <Chip label="Pagado" color="primary" variant="outlined" />
+                              :  <Chip label="por pagar"  color="secondary" variant="outlined"   />
+                            }</TableCell> 
+                           {/*  <TableCell align="center">
                              
                                 {row.idListaFormasPago > 0? 
                                    <>
@@ -339,7 +344,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                                         }
                                     </>
                                   }                               
-                            </TableCell>   
+                            </TableCell>    */}
                             </TableRow>
                         ))}
 
@@ -353,6 +358,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                               <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
                               <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
                               <TableCell align="center"><b> {totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"></TableCell>
                               <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableBody>
