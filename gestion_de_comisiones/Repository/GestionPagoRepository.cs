@@ -165,7 +165,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
                 int cicloId = Convert.ToInt32(body.cicloId);
-                int tipoPagoTransferencia = 1;
+                int tipoPagoTransferencia = 2;
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .ToList();

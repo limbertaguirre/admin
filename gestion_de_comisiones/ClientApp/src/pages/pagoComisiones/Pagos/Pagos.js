@@ -253,8 +253,7 @@ const useStyles = makeStyles((theme) => ({
       generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
     }
    }
-<<<<<<< HEAD
-  
+
   const handleClickOpenTransferencias = () => {
     handleTransferenciasEmpresas(userName);
   };
@@ -275,7 +274,7 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   }
-=======
+
    async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
 
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
@@ -286,8 +285,6 @@ const useStyles = makeStyles((theme) => ({
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
-
->>>>>>> origin/develop
 
     return (
       <>
