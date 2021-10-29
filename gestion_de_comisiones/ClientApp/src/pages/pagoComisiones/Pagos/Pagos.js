@@ -233,8 +233,19 @@ const useStyles = makeStyles((theme) => ({
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
    const abrirModal = ()=> {
-     setOpenModalConfirm(true);
+    verificarConfirmarSionPay(userName,idCiclo);
+      //setOpenModalConfirm(true);
    }
+   async function verificarConfirmarSionPay(userN, cicloId){   
+
+    let response= await Actions.verificarPagoSionPayXCiclo(userN, cicloId, dispatch)               
+      if(response && response.code == 0){           
+          setOpenModalConfirm(true);    
+      } else{
+         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+      }      
+    }
+
    const CloseModalConfirmacion =()=>{
       setOpenModalConfirm(false);      
    }

@@ -102,6 +102,21 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        // POST: Pagos/VerificarPagosSionPayFormaPago 
+        [HttpPost]
+        public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo} ");
+                return Ok(Service.VerificarPagoSionPayCiclo(param));
+            } catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  verificarPagosSionPayFormaPagoCiclo() controller {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar los pagos por sion pay" });
+            }
+        }
+
 
 
 
