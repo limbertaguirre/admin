@@ -35,7 +35,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import * as Actions from "../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 
-import GridTransferencia from "./Components/GridTransferencia";
+import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -272,30 +272,41 @@ const Pagos = (props) => {
     cargarCiclo(userName);
   }, []);
 
-    const [openModalConfirm, setOpenModalConfirm] = useState(false);
-   const abrirModal = ()=> {
-     setOpenModalConfirm(true);
-   }
-   const CloseModalConfirmacion =()=>{
-      setOpenModalConfirm(false);      
-   }
-   const confirmarModal =()=>{
+const [openModalConfirm, setOpenModalConfirm] = useState(false);
+
+const abrirModal = ()=> {
+setOpenModalConfirm(true);
+}
+const CloseModalConfirmacion =()=>{
+    setOpenModalConfirm(false);      
+}
+const confirmarModal =()=>{
     if(idCiclo && idCiclo !== 0){  
       prosesarPagoSionPay(userName,idUsuario, idCiclo);
     }else{
       generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
     }
-   }
-   async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
+}
+async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
 
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
-           setOpenModalConfirm(false);      
-           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
+setOpenModalConfirm(false);      
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
       } else{
-         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
+
+    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
+
+  const openFullScreenModal = () => {
+    setOpenModalFullScreen(true);
+  };
+
+  const closeFullScreenModal = () => {
+    setOpenModalFullScreen(false);
+  };
 
 
     return (
@@ -306,8 +317,7 @@ const Pagos = (props) => {
           </Breadcrumbs>
         </div>
         <br />
-        <Typography variant="h4" gutterBottom  >
-             {'Pagos'}
+        <Typography variant="h4" gutterBottom  >{'Pagos'}
         </Typography>     
 
       <Card>
@@ -334,7 +344,7 @@ const Pagos = (props) => {
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      href="GridTransferencia"
+                      onClick = {() => openFullScreenModal()}
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
@@ -474,6 +484,7 @@ const Pagos = (props) => {
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
+      <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/>
     </>
   );
 };
