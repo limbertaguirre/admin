@@ -11,7 +11,7 @@ BEGIN TRY
  ------------------------------------------------------------------ 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha INT,nombre varchar(100), ci varchar(100), id_tipo_pago int, tipo_pago varchar(100), ciudad varchar(100), pais varchar(100));
+DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha INT,nombre varchar(100), ci varchar(100), id_tipo_pago int, tipo_pago varchar(100), ciudad varchar(100), pais varchar(100), id_lista_formas_pago INT);
 
     DECLARE @IDCICLO INT;
 	DECLARE @IDUSUARIO INT;
@@ -23,6 +23,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 	DECLARE @ID_TIPO_SION_PAY INT;
 	DECLARE @ESTADO_COMISION_ACTIVO INT;
 	DECLARE @AGENTE_GESTOR_EN_SION_PAY INT;
+	DECLARE @ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3 INT;
 
 	
 
@@ -36,6 +37,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 	SET @ID_TIPO_SION_PAY=1;  --//TIPO_PAGO
 	SET @ESTADO_COMISION_ACTIVO=1;
 	SET @AGENTE_GESTOR_EN_SION_PAY=27; --EN PUNTOSCASH AGENTE
+	SET @ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3 = 3; --Estado_Listado_Forma_Pago
 
 	  SELECT @DESCRIPCION_CICLO= nombre FROM  BDMultinivel.dbo.CICLO WHERE id_ciclo=@IDCICLO
 	  SELECT @USUARIO_LOGUADO= usuario, @USUARIO_NOMBRE= nombres + ' '+apellidos FROM BDMultinivel.dbo.USUARIO where id_usuario=@IDUSUARIO
@@ -45,12 +47,12 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 	  SET @Result = CONCAT( SUBSTRING(@DESCRIPCION_CICLO, 1, 3), ' ',REVERSE(LEFT(REVERSE(@DESCRIPCION_CICLO), CHARINDEX(' ', REVERSE(@DESCRIPCION_CICLO))-1 )) )
 	  SET @DESCRIPCION_CICLO = CONCAT('RECARGA - Desde comisiones  - ', @Result)
 	  ---------------------------------------
-	  insert into @COMISIONES  select id_comision, CD.id_comision_detalle,FIC.id_ficha,FIC.nombres +' '+ FIC.apellidos AS 'nombre', FIC.ci,TIPO.id_tipo_pago, TIPO.nombre as 'tipo_pago', CIU.nombre AS 'ciudad', PAI.nombre AS 'pais' from BDMultinivel.dbo.GP_COMISION_DETALLE CD 
+	  insert into @COMISIONES  select id_comision, CD.id_comision_detalle,FIC.id_ficha,FIC.nombres +' '+ FIC.apellidos AS 'nombre', FIC.ci,TIPO.id_tipo_pago, TIPO.nombre as 'tipo_pago', CIU.nombre AS 'ciudad', PAI.nombre AS 'pais',  LIFO.id_lista_formas_pago  from BDMultinivel.dbo.GP_COMISION_DETALLE CD 
 	    INNER JOIN BDMultinivel.dbo.LISTADO_FORMAS_PAGO LIFO ON LIFO.id_comisiones_detalle= CD.id_comision_detalle
 		INNER JOIN  BDMultinivel.dbo.TIPO_PAGO TIPO ON TIPO.id_tipo_pago= LIFO.id_tipo_pago
 		INNER JOIN BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha = CD.id_ficha
-		INNER JOIN BDMultinivel.dbo.CIUDAD CIU ON CIU.id_ciudad = FIC.id_ciudad
-		INNER JOIN BDMultinivel.dbo.PAIS PAI ON PAI.id_pais= CIU.id_pais
+		left JOIN BDMultinivel.dbo.CIUDAD CIU ON CIU.id_ciudad = FIC.id_ciudad
+		left JOIN BDMultinivel.dbo.PAIS PAI ON PAI.id_pais= CIU.id_pais
 		where CD.id_comision= @ID_COMISION_SELECTED AND LIFO.id_tipo_pago=@ID_TIPO_SION_PAY
 
 
@@ -65,17 +67,36 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 			  DECLARE @2DE_TIPOPAGO_ITEM VARCHAR(100);
 			  DECLARE @2DE_CIUDAD_ITEM VARCHAR(100);
 			  DECLARE @2DE_PAIS_ITEM VARCHAR(100);
+			  DECLARE @2DE_ID_LISTA_FORMAS_PAGO_ITEM INT;
 
 			
 
 					DECLARE COMISION_CURSOR_TRES CURSOR FOR 
-					Select id_comision, idComisionDetalle, idFicha, nombre, ci, id_tipo_pago, tipo_pago,ciudad,pais from @COMISIONES
+					Select id_comision, idComisionDetalle, idFicha, nombre, ci, id_tipo_pago, tipo_pago,ciudad,pais, id_lista_formas_pago from @COMISIONES
 					OPEN COMISION_CURSOR_TRES
-					FETCH NEXT FROM COMISION_CURSOR_TRES INTO @DDE_IDCOMISION_ITEM, @2DE_IDCOMISIONdETALLE_ITEM, @2DE_IDFICHA_ITEM, @2DE_NOMBRE_ITEM, @2DE_CARNET_ITEM, @2DE_IDTIPOPAGO_ITEM, @2DE_TIPOPAGO_ITEM, @2DE_CIUDAD_ITEM, @2DE_PAIS_ITEM 
+					FETCH NEXT FROM COMISION_CURSOR_TRES INTO @DDE_IDCOMISION_ITEM, @2DE_IDCOMISIONdETALLE_ITEM, @2DE_IDFICHA_ITEM, @2DE_NOMBRE_ITEM, @2DE_CARNET_ITEM, @2DE_IDTIPOPAGO_ITEM, @2DE_TIPOPAGO_ITEM, @2DE_CIUDAD_ITEM, @2DE_PAIS_ITEM,@2DE_ID_LISTA_FORMAS_PAGO_ITEM 
 
 					WHILE @@FETCH_STATUS = 0  
 					BEGIN 
 					------------------------INICIO FORCOMISION
+						--AL FINAL agregamos el detalle de forma de pago @2DE_ID_LISTA_FORMAS_PAGO_ITEM
+							DECLARE @DETALLE_ESTADO_LISTADO_FORMA_PAGO INT;
+							SET @DETALLE_ESTADO_LISTADO_FORMA_PAGO = 0;
+							SELECT @DETALLE_ESTADO_LISTADO_FORMA_PAGO= id FROM BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL where id_lista_formas_pago=@2DE_ID_LISTA_FORMAS_PAGO_ITEM and habilitado='true'								                             
+							IF @DETALLE_ESTADO_LISTADO_FORMA_PAGO = 0 
+							BEGIN
+							--INSERTAR ESTADO DE FORMA DE PAGO
+								   INSERT INTO BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL(habilitado,id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario, fecha_creacion, fecha_actualizacion)
+								   values(
+									'True',-- habilitado,
+									 @2DE_ID_LISTA_FORMAS_PAGO_ITEM,--id_lista_formas_pago, 
+									 @ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3, --id_estado_listado_forma_pago,  pago exitoso
+									 @IDUSUARIO,--id_usuario, 
+									 GETDATE(), -- fecha_creacion, 
+									 GETDATE() --fecha_actualizacion
+								   );
+							END
+					-------------------------------------------------------------------------------
 					DECLARE @2_CANTIDADempresas INT;
 					DECLARE @2_CUENTA_SIONPAY VARCHAR(100);
 					SET @2_CANTIDADempresas=0;
@@ -90,6 +111,8 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 				   IF @2_CANTIDADempresas > 0
 				   BEGIN
 							----------------------------------------------------------------------------------------------------------
+						
+							------------------------------------------------------------------------------------------------------
 						    DECLARE @2_IDCOMISIONEMPRESA_item INT;
 							DECLARE @2_MONTONETO_item DECIMAL(18,2);
 							DECLARE @2_IDEMPRESA_item INT;
@@ -190,10 +213,11 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 								CLOSE COMISION_2_CURSOR
 								DEALLOCATE COMISION_2_CURSOR
 							-----------------------------------------------------------------------------------------------------------
+							
 					END
 		
 					----------------------- FIN FORCOMISION
-					FETCH NEXT FROM COMISION_CURSOR_TRES INTO @DDE_IDCOMISION_ITEM, @2DE_IDCOMISIONdETALLE_ITEM, @2DE_IDFICHA_ITEM, @2DE_NOMBRE_ITEM, @2DE_CARNET_ITEM, @2DE_IDTIPOPAGO_ITEM, @2DE_TIPOPAGO_ITEM, @2DE_CIUDAD_ITEM, @2DE_PAIS_ITEM 
+					FETCH NEXT FROM COMISION_CURSOR_TRES INTO @DDE_IDCOMISION_ITEM, @2DE_IDCOMISIONdETALLE_ITEM, @2DE_IDFICHA_ITEM, @2DE_NOMBRE_ITEM, @2DE_CARNET_ITEM, @2DE_IDTIPOPAGO_ITEM, @2DE_TIPOPAGO_ITEM, @2DE_CIUDAD_ITEM, @2DE_PAIS_ITEM, @2DE_ID_LISTA_FORMAS_PAGO_ITEM 
 					END
 
 					DELETE from @COMISIONES

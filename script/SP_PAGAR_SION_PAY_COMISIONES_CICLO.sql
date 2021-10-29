@@ -45,8 +45,8 @@ BEGIN TRY
 	    INNER JOIN BDMultinivel.dbo.LISTADO_FORMAS_PAGO LIFO ON LIFO.id_comisiones_detalle= CD.id_comision_detalle
 		INNER JOIN  BDMultinivel.dbo.TIPO_PAGO TIPO ON TIPO.id_tipo_pago= LIFO.id_tipo_pago
 		INNER JOIN BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha = CD.id_ficha
-		INNER JOIN BDMultinivel.dbo.CIUDAD CIU ON CIU.id_ciudad = FIC.id_ciudad
-		INNER JOIN BDMultinivel.dbo.PAIS PAI ON PAI.id_pais= CIU.id_pais
+		left JOIN BDMultinivel.dbo.CIUDAD CIU ON CIU.id_ciudad = FIC.id_ciudad
+		left JOIN BDMultinivel.dbo.PAIS PAI ON PAI.id_pais= CIU.id_pais
 		where CD.id_comision= @ID_COMISION_SELECTED AND LIFO.id_tipo_pago=@ID_TIPO_SION_PAY
 
 	   SET @DESCRIPCION_CICLO = CONCAT('RECARGA - Desde comisiones  - ', @DESCRIPCION_CICLO)
