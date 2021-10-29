@@ -118,13 +118,20 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
-                var file = Repository.handleDownloadFileEmpresas(body);                                
-                return Respuesta.ReturnResultdo(0, "ok", file);
+                DownloadFileTransferenciaOutput file = Repository.handleDownloadFileEmpresas(body);
+                Logger.LogInformation($"handleDownloadFileEmpresas file: {file}");
+                if(file != null) {
+                    return Respuesta.ReturnResultdo(0, "ok", file);
+                } else
+                {
+                    Logger.LogInformation($"usuario : {body.user} handleDownloadFileEmpresas() Reporte vacío desde base de datos.");
+                    return Respuesta.ReturnResultdo(1, "Hay inconvenientes al generar el archivo.  Intente más tarde.", "");
+                }
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
-                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+                return Respuesta.ReturnResultdo(1, "Hay inconvenientes al generar el archivo. Intente más tarde.", "");
             }
         }
         

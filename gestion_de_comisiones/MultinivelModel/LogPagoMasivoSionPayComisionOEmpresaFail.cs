@@ -22,4 +22,3 @@ namespace gestion_de_comisiones.MultinivelModel
         public string NombreEmpresa { get; set; }
     }
 }
-

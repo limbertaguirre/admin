@@ -130,7 +130,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                int idTipoPago = 1;
+                int idTipoPago = 2;
                 int idTipoComision = 1;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPago: {idTipoPago}");
@@ -157,7 +157,7 @@ namespace gestion_de_comisiones.Repository
             //*/
         }
 
-        public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
+        public DownloadFileTransferenciaOutput handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
             try
             {
@@ -171,63 +171,68 @@ namespace gestion_de_comisiones.Repository
                     .ToList();
 
                 Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
-                using (var p = new ExcelPackage())
+
+                if(info.Count > 0) { 
+                    using (var p = new ExcelPackage())
+                    {
+                        var ws = p.Workbook.Worksheets.Add($"{info[0].Empresa}");
+
+                        string[] headers = { "NRO. DE ORDEN", "CODIGO DE CLIENTE", "NRO. DE CUENTA", "NOMBRE DE CLIENTE",
+                                             "DOC. DE IDENTIDAD", "IMPORTE", "FECHA DE PAGO", "FORMA DE PAGO", "MONEDA DESTINO",
+                                            "ENTIDAD DESTINO", "SUCURSAL DESTINO", "GLOSA", "CODIGO UNICO"};
+
+                        for (int i = 1; i <= 13; i++)
+                        {
+                            ws.Cells[1, i].Value = headers[i - 1];
+                            ws.Cells[1, i].AutoFitColumns(1);
+                        }
+
+                        var range = ws.Cells["A1:M13"];
+                        range.AutoFilter = true;
+                        ws.AutoFilter.ApplyFilter();                
+
+                        for (int i = 2; i <= info.Count; i++)
+                        {
+                            VwObtenerInfoExcelFormatoBanco f = info[i - 2];
+                            ws.Cells[i, 1].Value = Convert.ToString(i - 1);
+                            //ws.Cells[i, 1].AutoFitColumns(1);
+                            ws.Cells[i, 2].Value = Convert.ToString(f.CodigoDeCliente);
+                            //ws.Cells[i, 2].AutoFitColumns(1);
+                            ws.Cells[i, 3].Value = Convert.ToString(f.NroDeCuenta);
+                            //ws.Cells[i, 3].AutoFitColumns(1);
+                            ws.Cells[i, 4].Value = Convert.ToString(f.NombreDeCliente);
+                            ws.Cells[i, 4].AutoFitColumns(1);
+                            ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
+                            ws.Cells[i, 5].AutoFitColumns(1);                        
+                            ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".",",");
+                            //ws.Cells[i, 6].AutoFitColumns(1);
+                            ws.Cells[i, 7].Value = Convert.ToString(f.FechaDePago);
+                            ws.Cells[i, 7].AutoFitColumns(1);
+                            ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
+                            //ws.Cells[i, 8].AutoFitColumns(1);
+                            ws.Cells[i, 9].Value = Convert.ToString(f.MonedaDestino);
+                            //ws.Cells[i, 9].AutoFitColumns(1);
+                            ws.Cells[i, 10].Value = Convert.ToString(f.EntidadDestino);
+                            //ws.Cells[i, 10].AutoFitColumns(1);
+                            ws.Cells[i, 11].Value = "";
+                            ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
+                            ws.Cells[i, 12].AutoFitColumns(1);
+                            ws.Cells[i, 13].Value = "";
+                        }
+                        DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
+                        r.file = Convert.ToBase64String(p.GetAsByteArray());
+                        r.fileName = info[0].Empresa;
+                        return r;
+                    }
+                } else
                 {
-                    var ws = p.Workbook.Worksheets.Add($"{info[0].Empresa}");
-
-                    string[] headers = { "NRO. DE ORDEN", "CODIGO DE CLIENTE", "NRO. DE CUENTA", "NOMBRE DE CLIENTE",
-                                         "DOC. DE IDENTIDAD", "IMPORTE", "FECHA DE PAGO", "FORMA DE PAGO", "MONEDA DESTINO",
-                                        "ENTIDAD DESTINO", "SUCURSAL DESTINO", "GLOSA", "CODIGO UNICO"};
-
-                    for (int i = 1; i <= 13; i++)
-                    {
-                        ws.Cells[1, i].Value = headers[i - 1];
-                        ws.Cells[1, i].AutoFitColumns(1);
-                    }
-
-                    var range = ws.Cells["A1:M13"];
-                    range.AutoFilter = true;
-                    ws.AutoFilter.ApplyFilter();                
-
-                    for (int i = 2; i <= info.Count; i++)
-                    {
-                        VwObtenerInfoExcelFormatoBanco f = info[i - 2];
-                        ws.Cells[i, 1].Value = Convert.ToString(i - 1);
-                        //ws.Cells[i, 1].AutoFitColumns(1);
-                        ws.Cells[i, 2].Value = Convert.ToString(f.CodigoDeCliente);
-                        //ws.Cells[i, 2].AutoFitColumns(1);
-                        ws.Cells[i, 3].Value = Convert.ToString(f.NroDeCuenta);
-                        //ws.Cells[i, 3].AutoFitColumns(1);
-                        ws.Cells[i, 4].Value = Convert.ToString(f.NombreDeCliente);
-                        ws.Cells[i, 4].AutoFitColumns(1);
-                        ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
-                        ws.Cells[i, 5].AutoFitColumns(1);                        
-                        ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".",",");
-                        //ws.Cells[i, 6].AutoFitColumns(1);
-                        ws.Cells[i, 7].Value = Convert.ToString(f.FechaDePago);
-                        ws.Cells[i, 7].AutoFitColumns(1);
-                        ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
-                        //ws.Cells[i, 8].AutoFitColumns(1);
-                        ws.Cells[i, 9].Value = Convert.ToString(f.MonedaDestino);
-                        //ws.Cells[i, 9].AutoFitColumns(1);
-                        ws.Cells[i, 10].Value = Convert.ToString(f.EntidadDestino);
-                        //ws.Cells[i, 10].AutoFitColumns(1);
-                        ws.Cells[i, 11].Value = "";
-                        ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
-                        ws.Cells[i, 12].AutoFitColumns(1);
-                        ws.Cells[i, 13].Value = "";
-                    }
-                    DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
-                    r.file = Convert.ToBase64String(p.GetAsByteArray());
-                    r.fileName = info[0].Empresa;
-                    return r;
-                }                
+                    throw new Exception("GestionPagoRepository.cs handleDownloadFileEmpresas: Reporte vacío desde base de datos.");
+                }
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
-                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                return list;
+                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");                
+                return null;
             }
         }
         

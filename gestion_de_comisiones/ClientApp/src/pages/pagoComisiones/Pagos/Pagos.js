@@ -266,7 +266,8 @@ const useStyles = makeStyles((theme) => ({
     // Verificar si hay conexion a internet.
     if(idCiclo && idCiclo !== 0) {  
     let response = await Actions.handleTransferenciasEmpresas(user, idCiclo, dispatch);
-      if(response && response.code == 0) { 
+    console.log('handleTransferenciasEmpresas response ', response)
+    if(response && response.code == 0) { 
         setEmpresasTransferencias(response.data);
         setOpenTransferenciasDialog(true);  
       } else {

@@ -97,7 +97,8 @@ const TransferenciasDialog = ({
     
       const handleDownloadFileEmpresas = async (user, empresaId) => {
         if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
-          let response = await Actions.handleDownloadFileEmpresas(user, cicloId, empresaId, dispatch);      
+          let response = await Actions.handleDownloadFileEmpresas(user, cicloId, empresaId, dispatch);     
+          console.log('handleDownloadFileEmpresas response ', response); 
           if(response && response.code == 0) { 
             downloadExcel(response.data.file, response.data.fileName);
             // setStatusBusqueda(true);    
