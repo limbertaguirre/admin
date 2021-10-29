@@ -91,3 +91,19 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
     });
   }
 
+  export async function verificarPagoSionPayXCiclo(userName, idCiclo, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+                usuarioLogin:userName,
+                idCiclo:parseInt(idCiclo)
+          }; 
+          //console.log('llego a', data);    
+      requestPost('gestionPagos/VerificarPagosSionPayFormaPagoCiclo', data, dispatch )
+        .then(response =>{
+           resolve(response);  
+        })
+       
+    });
+  }
+
+

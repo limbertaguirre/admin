@@ -113,7 +113,27 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
             }
         }
-
+        public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarPagoSionPayCiclo() ");
+                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
+                int idTipoComisionPagoComision = 1; //parametro
+                int idTipoFormaPagoSionPay = 1; //parametro
+                var comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (comisiones == -1)
+                 return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
+                if (comisiones > 0 )
+                 return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
+                 return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);                              
+            } catch (Exception ex) {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() el nro de  pagos en sion pay: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al verificar los pagos realizados", "problemas en el servidor, intente mas tarde");
+            }
+        }
 
 
     }
