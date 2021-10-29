@@ -308,5 +308,26 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
+        
+        public int VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision, int idTipoFormaPagoSionPay)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarPagoSionPayCiclo() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");     
+                    var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision  && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                    var cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false ).Count();
+                    return cantidad;
+             
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() mensaje : {ex}");
+                return -1;
+            }
+        }
+
     }
 }

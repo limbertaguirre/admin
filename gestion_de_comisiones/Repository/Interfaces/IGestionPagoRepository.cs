@@ -16,5 +16,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object handleTransferenciasEmpresas(ComisionesPagosInput param);
         DownloadFileTransferenciaOutput handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         public bool PagarSionPayComision(PagarSionPayInput param);
+		public int VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision, int idTipoFormaPagoSionPay);
     }
 }
