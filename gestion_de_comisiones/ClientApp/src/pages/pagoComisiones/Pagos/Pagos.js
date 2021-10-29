@@ -281,7 +281,8 @@ const useStyles = makeStyles((theme) => ({
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
            setOpenModalConfirm(false);      
-           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
+           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
+           handleOnGetPagos();      
       } else{
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
