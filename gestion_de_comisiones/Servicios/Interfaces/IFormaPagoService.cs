@@ -1,6 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
-using gestion_de_comisiones.Modelos.GestionPagos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
