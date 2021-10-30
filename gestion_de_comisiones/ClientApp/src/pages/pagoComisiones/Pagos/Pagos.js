@@ -241,9 +241,10 @@ const useStyles = makeStyles((theme) => ({
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
    const abrirModal = ()=> {
-    verificarConfirmarSionPay(userName,idCiclo);
-      //setOpenModalConfirm(true);
+     //setOpenModalConfirm(true);
+     verificarConfirmarSionPay(userName,idCiclo);
    }
+
    async function verificarConfirmarSionPay(userN, cicloId){   
 
     let response= await Actions.verificarPagoSionPayXCiclo(userN, cicloId, dispatch)               
@@ -277,7 +278,7 @@ const useStyles = makeStyles((theme) => ({
     // Verificar si hay conexion a internet.
     if(idCiclo && idCiclo !== 0) {  
     let response = await Actions.handleTransferenciasEmpresas(user, idCiclo, dispatch);
-    console.log('handleTransferenciasEmpresas response ', response)
+
     if(response && response.code == 0) { 
         setEmpresasTransferencias(response.data);
         setOpenTransferenciasDialog(true);  
@@ -292,8 +293,8 @@ const useStyles = makeStyles((theme) => ({
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
            setOpenModalConfirm(false);      
-           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
-           handleOnGetPagos();      
+           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
+           handleOnGetPagos();
       } else{
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      

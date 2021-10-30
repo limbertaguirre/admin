@@ -69,6 +69,7 @@ const TransferenciasDialog = ({
     const dispatch = useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     const [empresaId, setEmpresaId] = useState(-1);
+    const [authorizationDisabled, setAuthorizationDisabled] = useState(true);
 
 
       const downloadExcel = (base64, fileName) => {
@@ -110,7 +111,16 @@ const TransferenciasDialog = ({
 
     const handleEmpresasSelectChange = (event) => {
         setEmpresaId(event.target.value);
+        handleAuthorizationDisabled(event.target.value);
     };
+
+    const handleAuthorizationDisabled = (empresaId) => {
+        if(empresaId == -1) {
+            setAuthorizationDisabled(true);
+        } else {
+            setAuthorizationDisabled(false);
+        }
+    } 
 
     console.log('TransferenciasDialog openDialog ', openDialog);
 
@@ -167,7 +177,7 @@ const TransferenciasDialog = ({
               </TextField>
             </Grid>
             <Grid item xs={4} sm={4}>
-              <Button className={style.downloadButton} variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
+              <Button disabled={authorizationDisabled} className={style.downloadButton} variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
                 Descargar
               </Button>
             </Grid>
@@ -176,8 +186,8 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
-            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
+            <Button disabled={authorizationDisabled} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
+            <Button disabled={authorizationDisabled} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>
       </Dialog>
