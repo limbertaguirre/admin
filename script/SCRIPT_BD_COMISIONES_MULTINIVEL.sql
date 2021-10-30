@@ -830,6 +830,9 @@ CREATE TABLE ESTADO_LISTADO_FORMA_PAGO( --ESTADO_DETALLE_LISTADO_FORMA_PAGO
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
 )
+GO
+    insert into BDMultinivel.dbo.ESTADO_LISTADO_FORMA_PAGO(id_estado_listado_forma_pago, descripcion, id_usuario, fecha_creacion, fecha_actualizacion) VALUES (1, 'PAGO EXITOSO' , 1, GETDATE(), GETDATE());
+    insert into BDMultinivel.dbo.ESTADO_LISTADO_FORMA_PAGO(id_estado_listado_forma_pago, descripcion, id_usuario, fecha_creacion, fecha_actualizacion) VALUES (2, 'ERROR AL PAGAR' , 1, GETDATE(), GETDATE());
 go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'id_estado_listado_forma_pago'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la breve descripcion del estado ejemplo: 1: para pagar, 2: error al pagar, 3 pago exitoso ', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'descripcion'
@@ -1225,7 +1228,8 @@ GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
 AS
-	 select 
+	 select
+         GPDE.id_comision as 'idComision', 
 	     ComiEmp.id_comision_detalle_empresa,
 		 ComiEmp.id_comision_detalle,
 	     Emp.nombre AS 'empresa',
@@ -1235,6 +1239,7 @@ AS
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
 		 Emp.id_empresa AS 'idEmpresa',
+         Emp.estado AS 'estadoEmpresa',
 		 ComiEmp.estado As 'estadoDetalleEmpresa',
 		 ComiEmp.ventas_personales,
 		 ComiEmp.ventas_grupales,
@@ -1546,4 +1551,37 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	from BDMultinivel.dbo.USUARIO_AUTORIZACION UA
 	LEFT JOIN BDMultinivel.dbo.AUTORIZACION_COMISION AUC on AUC.id_usuario_autorizacion=UA.id_usuario_autorizacion
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
-	where UA.estado='True' 
+	where UA.estado='True'
+
+GO
+ALTER VIEW dbo.vwObtenerInfoExcelFormatoBanco
+as
+select 
+c.id_ciclo,
+cde.id_empresa,
+TRIM(e.nombre) as empresa,
+l.id_comisiones_detalle,
+f.codigo_cnx as [CODIGO_DE_CLIENTE],
+f.cuenta_bancaria AS [NRO_DE_CUENTA],
+f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
+f.ci as [DOC_DE_IDENTIDAD],
+sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
+l.monto_neto as [IMPORTE_NETO],
+CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
+ 1 as [FORMA_DE_PAGO],
+ 2 AS [MONEDA_DESTINO],
+ 1014 AS [ENTIDAD_DESTINO],
+ ci.nombre as GLOSA,
+ l.id_tipo_pago
+from LISTADO_FORMAS_PAGO l
+inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+inner join GP_COMISION c on c.id_comision = cd.id_comision
+inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
+inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
+inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
+inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
+where cde.monto_neto <> 0
+and c.id_tipo_comision = 1
+and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
+group by l.id_comisiones_detalle, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
+GO

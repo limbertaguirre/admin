@@ -2948,7 +2948,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD_DESTINO");
 
                 entity.Property(e => e.FechaDePago)
-                    .HasColumnType("datetime")
+                    .HasMaxLength(92)
+                    .IsUnicode(false)
                     .HasColumnName("FECHA_DE_PAGO");
 
                 entity.Property(e => e.FormaDePago).HasColumnName("FORMA_DE_PAGO");
@@ -2963,6 +2964,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
 
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
                 entity.Property(e => e.ImporteNeto)
                     .HasColumnType("decimal(18, 2)")

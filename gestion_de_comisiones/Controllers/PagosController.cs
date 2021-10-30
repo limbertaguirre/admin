@@ -1,6 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -220,9 +221,7 @@ namespace gestion_de_comisiones.Controllers
 			}
 		}
 
-
-
-
+		
 
 	}
 }

@@ -74,7 +74,8 @@ export const requestGet = (url, data, dispatch) => {
 
 export const requestPost = (url, data, dispatch) => {
   dispatch(loadingRequest());
-  const config = { headers: { "Content-Type": "application/json"
+  const config = { 
+    headers: { "Content-Type": "application/json"
                           //  ,"token":token 
                  } };
   
