@@ -3,12 +3,10 @@ using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 
 namespace gestion_de_comisiones.Controllers
 {
@@ -88,23 +86,6 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-
-        // POST: Pagos/BuscarComisionCarnetFormaPago
-        [HttpPost]
-        public ActionResult handleTransferenciasEmpresas([FromBody] ComisionesPagosInput param)
-        {
-            try
-            {
-                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller handleTransferenciasEmpresas() parametro: idciclo:{param.idCiclo}");
-                return Ok(Service.handleTransferenciasEmpresas(param));
-            }
-            catch
-            {
-                Logger.LogError($"usuario : {param.usuarioLogin} error catch  handleTransferenciasEmpresas() controller ");
-                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
-                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
-            }
-        }
         // POST: Pagos/BuscarComisionCarnetFormaPago
         [HttpPost]
         public ActionResult PagarComisionSionPay([FromBody] PagarSionPayInput param)
@@ -137,21 +118,8 @@ namespace gestion_de_comisiones.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult handleDownloadFileEmpresas([FromBody] DownloadFileTransferenciaInput body)
-        {
-            try
-            {
-                Logger.LogInformation($"usuario : {body.user} inicio el controller handleDownloadFileEmpresas() parametro: idciclo:{body.cicloId}, empresaId: {body.empresaId}");
-                return Ok(Service.handleDownloadFileEmpresas(body));               
-            }
-            catch(Exception e)
-            {
-                Logger.LogError($"usuario :  error catch  handleDownloadFileEmpresas() controller {e}");
-                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
-                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
-            }
-        }
+
+
 
     }
 }

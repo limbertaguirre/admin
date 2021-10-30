@@ -20,7 +20,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SearchIcon from '@material-ui/icons/Search';
 import * as Actions from '../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
-import TransferenciasDialog from './Components/TransferenciasDialog'
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -97,11 +96,8 @@ const useStyles = makeStyles((theme) => ({
     alignContent:'center',
     alignItems:'center',
     justifyContent:'center',
-  },
-  formControlEmpresas: {
-    margin: theme.spacing(1),
-    minWidth: 300,
   }
+
 }));
 
 
@@ -130,10 +126,6 @@ const useStyles = makeStyles((theme) => ({
   const[listCiclo, setListCiclo]= useState([]);
 
   const[listaComisionesAPagar, setListaComisionesAPagar]= useState([]);
-  const[empresasTransferencias, setEmpresasTransferencias]= useState([]);
-  
-  const [openTransferenciasDialog, setOpenTransferenciasDialog] = useState(false);
-  
 
 
 
@@ -241,10 +233,9 @@ const useStyles = makeStyles((theme) => ({
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
    const abrirModal = ()=> {
-     //setOpenModalConfirm(true);
-     verificarConfirmarSionPay(userName,idCiclo);
+    verificarConfirmarSionPay(userName,idCiclo);
+      //setOpenModalConfirm(true);
    }
-
    async function verificarConfirmarSionPay(userN, cicloId){   
 
     let response= await Actions.verificarPagoSionPayXCiclo(userN, cicloId, dispatch)               
@@ -265,40 +256,18 @@ const useStyles = makeStyles((theme) => ({
       generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
     }
    }
-
-  const handleClickOpenTransferencias = () => {
-    handleTransferenciasEmpresas(userName);
-  };
-
-  const handleCloseTransferencias = () => {
-    setOpenTransferenciasDialog(false);
-  };
-
-  const handleTransferenciasEmpresas = async (user) => {
-    // Verificar si hay conexion a internet.
-    if(idCiclo && idCiclo !== 0) {  
-    let response = await Actions.handleTransferenciasEmpresas(user, idCiclo, dispatch);
-
-    if(response && response.code == 0) { 
-        setEmpresasTransferencias(response.data);
-        setOpenTransferenciasDialog(true);  
-      } else {
-        dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-      }
-    }
-  }
-
    async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
 
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
            setOpenModalConfirm(false);      
-           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
-           handleOnGetPagos();
+           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
+           handleOnGetPagos();      
       } else{
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
+
 
     return (
       <>
@@ -311,15 +280,6 @@ const useStyles = makeStyles((theme) => ({
         <Typography variant="h4" gutterBottom  >
              {'Pagos'}
         </Typography>     
-        {empresasTransferencias && (
-          <TransferenciasDialog
-            cicloId={idCiclo} 
-            openDialog={openTransferenciasDialog}
-            closeTransferenciasDialog={handleCloseTransferencias}
-            empresas={empresasTransferencias}
-            // handleDownloadFileEmpresas = {handleDownloadFileEmpresas}          
-          />
-        )}
 
         <Card>
              <Grid container className={style.gridContainer} >
@@ -342,7 +302,7 @@ const useStyles = makeStyles((theme) => ({
                           variant="contained"
                           color="secondary"
                           className={style.submitSAVE}                          
-                         onClick = {()=> handleClickOpenTransferencias()}                                         
+                         // onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
                             GENERAR PARA TRANSFERENCIA
                           </Button> 
