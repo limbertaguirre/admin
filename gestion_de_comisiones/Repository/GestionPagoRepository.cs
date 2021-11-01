@@ -220,7 +220,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                int idTipoPago = 1;
+                int idTipoPago = 2;
                 int idTipoComision = 1;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPago: {idTipoPago}");
@@ -250,12 +250,12 @@ namespace gestion_de_comisiones.Repository
 
         public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
-            /*{
+            try {
 
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
                 int cicloId = Convert.ToInt32(body.cicloId);
-                int tipoPagoTransferencia = 1;
+                int tipoPagoTransferencia = 2;
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .ToList();
@@ -318,8 +318,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 return list;
-            }*/
-                return null;
+            }
         }
     }
 }
