@@ -237,6 +237,7 @@ const Pagos = (props) => {
       console.log("busqueda por filtro", response);
       if (response && response.code == 0) {
         let data = response.data;
+        // setPendienteFormaPago(data.pendienteFormaPago);
         setListaComisionesAPagar(data.lista);
       }
     } else {
@@ -264,6 +265,7 @@ const Pagos = (props) => {
     if (response && response.code == 0) {
       console.log("response busca ", response);
       let data = response.data;
+      // setPendienteFormaPago(data.pendienteFormaPago);
       setListaComisionesAPagar(data);
     }
   }
@@ -308,16 +310,6 @@ async function prosesarPagoSionPay(userN,usuarioId, cicloId){
 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
-
-    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
-
-  // const openFullScreenModal = () => {
-  //   setOpenModalFullScreen(true);
-  // };
-
-  // const closeFullScreenModal = () => {
-  //   setOpenModalFullScreen(false);
-  // };
 
 
     return (
