@@ -187,9 +187,6 @@ const Pagos = (props) => {
         "¡Debe Seleccionar un ciclo para cargar las comisiones!",
         "warning"
       );
-      /*  setOpenSnackbar(true);
-          setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-          settipTSnackbar('warning'); */
     }
   };
 
@@ -241,7 +238,6 @@ const Pagos = (props) => {
       console.log("busqueda por filtro", response);
       if (response && response.code == 0) {
         let data = response.data;
-        // setPendienteFormaPago(data.pendienteFormaPago);
         setListaComisionesAPagar(data.lista);
       }
     } else {
@@ -269,7 +265,6 @@ const Pagos = (props) => {
     if (response && response.code == 0) {
       console.log("response busca ", response);
       let data = response.data;
-      // setPendienteFormaPago(data.pendienteFormaPago);
       setListaComisionesAPagar(data);
     }
   }
