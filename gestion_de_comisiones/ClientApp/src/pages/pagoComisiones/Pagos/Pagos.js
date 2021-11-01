@@ -359,7 +359,7 @@ const Pagos = (props) => {
                       color="secondary"
                       className={style.submitSAVE}
                       // onClick = {()=> verificarConfirmarFomaPago()}
-                      //onClick={() => abrirTransferenciaModal()}
+                      onClick={() => abrirTransferenciaModal()}
                     >
                       GENERAR PARA TRANSFERENCIA
                     </Button>
@@ -492,6 +492,17 @@ const Pagos = (props) => {
         open={openModalConfirm}
         titulo={"ATENCIÓN"}
         subTituloModal={"FORMA DE PAGO: SION PAY"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+      <MessageConfirm
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
         tipoModal={"warning"}
         mensaje={
           "Al confirmar este método de pago, no se podrá revertir la acción."
