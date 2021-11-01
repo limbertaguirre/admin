@@ -342,7 +342,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       className={style.submitSAVE}
                       onClick={() => abrirModal()}
                     >
-                      PAGAR SION PAY
+                      PAGAR POR SION PAY
                     </Button>
                     <Button
                       type="submit"
@@ -350,9 +350,9 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       color="secondary"
                       className={style.submitSAVE}
                       // onClick = {()=> verificarConfirmarFomaPago()}
-                      //onClick={() => abrirTransferenciaModal()}
+                      onClick={() => abrirTransferenciaModal()}
                     >
-                      GENERAR PARA TRANSFERENCIA
+                      PAGAR POR TRANSFERENCIA
                     </Button>
                   </>
                 ) : (
