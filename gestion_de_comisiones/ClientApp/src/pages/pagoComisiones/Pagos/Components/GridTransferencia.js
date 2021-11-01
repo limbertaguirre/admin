@@ -6,6 +6,23 @@ import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
 import clsx from 'clsx';
 
+// const GeneralStyles = GeneralReact.withStyles({
+//   paper: { border: "1px solid #d3d4d5" },
+// })((props) => (
+//   <Core.Menu
+//     elevation={0}
+//     getContentAnchorEl={null}
+//     anchorOrigin={{
+//       vertical: "bottom",
+//       horizontal: "center",
+//     }}
+//     transformOrigin={{
+//       vertical: "top",
+//       horizontal: "center",
+//     }}
+//     {...props}
+//   />
+// ));
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -19,10 +36,10 @@ function createData(name, calories, fat, carbs, protein) {
 const rows = [
   createData("ELIOT HUMEREZ", "1234567", "1234567EH", "FASSIL", 50,2,1),
   createData("GRACIELA GUTIERREZ", 452, 25.0, 51, 4.9,1,0),
-  createData("MARWIN NU�EZ", 262, 16.0, 24, 6.0,1,0),
+  createData("MARWIN NUÑEZ", 262, 16.0, 24, 6.0,1,0),
   createData("JUAN MANUEL JUSTINIANO", 159, 6.0, 24, 4.0,1,0),
   createData("LUIS VACA", 356, 16.0, 49, 3.9,1,0),
-  createData("MAR�A LOPEZ", 408, 3.2, 87, 6.5,1,0),
+  createData("MARÍA LOPEZ", 408, 3.2, 87, 6.5,1,0),
   createData("LIMBERT AGUIRRE", 237, 9.0, 37, 4.3,1,0),
   createData("JHON DOE", 375, 0.0, 94, 0.0,1,0),
   createData("PEDRO DOMINGO", 518, 26.0, 65, 7.0,1,0),
@@ -59,18 +76,18 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-      {
+  {
     id: "nombreCompleto",
     numeric: false,
     disablePadding: true,
     label: "NOMBRE COMPLETO",
   },
-  { id: "ci", numeric: false, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
-  { id: "nroCuenta", numeric: false, disablePadding: false, label: "Nro. CUENTA" },
-  { id: "banco", numeric: false, disablePadding: false, label: "BANCO" },
-  { id: "montoReal", numeric: false, disablePadding: false, label: "MONTO TOTAL (Bs.)" },
-  { id: "formaPago", numeric: false, disablePadding: false, label: "FORMA PAGO" },
-  { id: "estado", numeric: false, disablePadding: false, label: "ESTADO" },
+  { id: "ci", numeric: true, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
+  { id: "nroCuenta", numeric: true, disablePadding: false, label: "Nro. CUENTA" },
+  { id: "banco", numeric: true, disablePadding: false, label: "BANCO" },
+  { id: "montoReal", numeric: true, disablePadding: false, label: "MONTO TOTAL (Bs.)" },
+  { id: "formaPago", numeric: true, disablePadding: false, label: "FORMA PAGO" },
+  { id: "estado", numeric: true, disablePadding: false, label: "ESTADO" },
 ];
 
 function EnhancedTableHead(props) {
@@ -356,7 +373,6 @@ const GridTransferencia = (props) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
-const GridTransferencia = () => {
   return (
                       <Core.TableRow
                         hover
