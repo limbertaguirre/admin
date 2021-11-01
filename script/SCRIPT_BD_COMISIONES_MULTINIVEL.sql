@@ -829,9 +829,6 @@ CREATE TABLE ESTADO_LISTADO_FORMA_PAGO( --ESTADO_DETALLE_LISTADO_FORMA_PAGO
   fecha_creacion datetime default CURRENT_TIMESTAMP,
   fecha_actualizacion datetime default CURRENT_TIMESTAMP,
 )
-GO
-    insert into BDMultinivel.dbo.ESTADO_LISTADO_FORMA_PAGO(id_estado_listado_forma_pago, descripcion, id_usuario, fecha_creacion, fecha_actualizacion) VALUES (1, 'PAGO EXITOSO' , 1, GETDATE(), GETDATE());
-    insert into BDMultinivel.dbo.ESTADO_LISTADO_FORMA_PAGO(id_estado_listado_forma_pago, descripcion, id_usuario, fecha_creacion, fecha_actualizacion) VALUES (2, 'ERROR AL PAGAR' , 1, GETDATE(), GETDATE());
 go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'id_estado_listado_forma_pago'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la breve descripcion del estado ejemplo: 1: para pagar, 2: error al pagar, 3 pago exitoso ', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'descripcion'
@@ -1247,8 +1244,7 @@ GO
 
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
 AS
-	 select
-         GPDE.id_comision as 'idComision', 
+	 select 
 	     ComiEmp.id_comision_detalle_empresa,
 		 ComiEmp.id_comision_detalle,
 	     Emp.nombre AS 'empresa',
@@ -1258,7 +1254,6 @@ AS
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
 		 Emp.id_empresa AS 'idEmpresa',
-         Emp.estado AS 'estadoEmpresa',
 		 ComiEmp.estado As 'estadoDetalleEmpresa',
 		 ComiEmp.ventas_personales,
 		 ComiEmp.ventas_grupales,
@@ -1537,6 +1532,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	from BDMultinivel.dbo.USUARIO_AUTORIZACION UA
 	LEFT JOIN BDMultinivel.dbo.AUTORIZACION_COMISION AUC on AUC.id_usuario_autorizacion=UA.id_usuario_autorizacion
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
+<<<<<<< HEAD
 	where UA.estado='True'
 
 GO
@@ -1572,3 +1568,6 @@ and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultini
 group by l.id_comisiones_detalle, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
 GO
 select * from BDMultinivel.dbo.USUARIOS_ROLES
+=======
+	where UA.estado='True' 
+>>>>>>> origin/develop

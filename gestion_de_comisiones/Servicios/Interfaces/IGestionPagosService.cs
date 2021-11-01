@@ -1,4 +1,4 @@
-using gestion_de_comisiones.Modelos.GestionPagos;
+﻿using gestion_de_comisiones.Modelos.GestionPagos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +12,9 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object GetComisionesDePagos(ComisionesPagosInput param);
         public object GetFormaPagosDisponibles(FiltroFormaPagosInput param);
         public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param);
-        object handleTransferenciasEmpresas(ComisionesPagosInput param);
-        object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         public object PagarSionPayComisionTodo(PagarSionPayInput param);
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
+
+
     }
 }

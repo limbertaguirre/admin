@@ -90,22 +90,6 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
        
     });
   }
-  
-
-  export async function handleTransferenciasEmpresas(user ,cicloId, dispatch) {
-    return new Promise(resolve =>{
-        const data={
-          usuarioLogin: user,
-          idCiclo: cicloId,
-          tipoPagoId: 1
-        };    
-      // console.log('handleTransferenciasEmpresas data: ', data);
-       requestPost('gestionPagos/handleTransferenciasEmpresas', data, dispatch )
-        .then(response =>{          
-            resolve(response);  
-        }) 
-      });
-    }
 
   export async function verificarPagoSionPayXCiclo(userName, idCiclo, dispatch) {
     return new Promise(resolve =>{
@@ -118,21 +102,8 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
         .then(response =>{
            resolve(response);  
         })
-    });
-  }
-
-  export async function handleDownloadFileEmpresas(user ,cicloId, empresaId, dispatch) {
-    return new Promise(resolve =>{
-        const data={
-          user: user,
-          cicloId: cicloId,
-          empresaId: empresaId
-        };    
-      console.log('handleDownloadFileEmpresas data: ', data);
-       requestPost('gestionPagos/handleDownloadFileEmpresas', data, dispatch )
-        .then(response =>{          
-            resolve(response);  
-        }) 
        
     });
   }
+
+
