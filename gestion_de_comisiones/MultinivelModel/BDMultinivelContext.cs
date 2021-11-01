@@ -19,6 +19,7 @@ namespace gestion_de_comisiones.MultinivelModel
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
+        public virtual DbSet<AsignacionEmpresaPago> AsignacionEmpresaPagoes { get; set; }
         public virtual DbSet<AutorizacionComision> AutorizacionComisions { get; set; }
         public virtual DbSet<AutorizacionesArea> AutorizacionesAreas { get; set; }
         public virtual DbSet<Banco> Bancoes { get; set; }
@@ -208,6 +209,39 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nombre")
                     .HasComment("Nombre del área. Ej. Calidad, Finanzas, Cartera, etc.");
+            });
+
+            modelBuilder.Entity<AsignacionEmpresaPago>(entity =>
+            {
+                entity.HasKey(e => e.IdAsignacionEmpresaPago)
+                    .HasName("PK__ASIGNACI__05B4D3C3AE5EA47C");
+
+                entity.ToTable("ASIGNACION_EMPRESA_PAGO");
+
+                entity.Property(e => e.IdAsignacionEmpresaPago).HasColumnName("id_asignacion_empresa_pago");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(250)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
             });
 
             modelBuilder.Entity<AutorizacionComision>(entity =>
@@ -2948,7 +2982,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD_DESTINO");
 
                 entity.Property(e => e.FechaDePago)
-                    .HasColumnType("datetime")
+                    .HasMaxLength(92)
+                    .IsUnicode(false)
                     .HasColumnName("FECHA_DE_PAGO");
 
                 entity.Property(e => e.FormaDePago).HasColumnName("FORMA_DE_PAGO");
@@ -2963,6 +2998,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
 
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
                 entity.Property(e => e.ImporteNeto)
                     .HasColumnType("decimal(18, 2)")
