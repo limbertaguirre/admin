@@ -349,7 +349,8 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      href="GridTransferencia"
+                      // onClick = {()=> verificarConfirmarFomaPago()}
+                      //onClick={() => abrirTransferenciaModal()}
                     >
                       GENERAR PARA TRANSFERENCIA
                     </Button>
