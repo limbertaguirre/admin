@@ -6,6 +6,23 @@ import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
 import clsx from 'clsx';
 
+const GeneralStyles = withStyles({
+  paper: { border: "1px solid #d3d4d5" },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center",
+    }}
+    {...props}
+  />
+));
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -59,12 +76,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  {
+      {
     id: "nombreCompleto",
     numeric: false,
     disablePadding: true,
     label: "NOMBRE COMPLETO",
-  },
+      },
   { id: "ci", numeric: false, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
   { id: "nroCuenta", numeric: false, disablePadding: false, label: "Nro. CUENTA" },
   { id: "banco", numeric: false, disablePadding: false, label: "BANCO" },
@@ -163,7 +180,7 @@ const EnhancedTableToolbar = (props) => {
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
-    >
+          >
       {numSelected > 0 ? (
         <Core.Typography
           className={classes.title}
@@ -277,11 +294,11 @@ const GridTransferencia = (props) => {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1),
-      );
-    }
+  );
+}
 
     setSelected(newSelected);
-  };
+};
 
   // const handleChangePage = (event, newPage) => {
   //   setPage(newPage);
@@ -356,7 +373,8 @@ const GridTransferencia = (props) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
+const GridTransferencia = () => {
+  return (
                       <Core.TableRow
                         hover
                         onClick={(event) => handleClick(event, row.name)}
