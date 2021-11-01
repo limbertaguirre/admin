@@ -35,7 +35,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import * as Actions from "../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 
-import GridTransferencia from "./Components/GridTransferencia";
+import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -309,6 +309,16 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
       }      
     }
 
+    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
+
+  const openFullScreenModal = () => {
+    setOpenModalFullScreen(true);
+  };
+
+  const closeFullScreenModal = () => {
+    setOpenModalFullScreen(false);
+  };
+
 
     return (
       <>
@@ -345,7 +355,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      href="GridTransferencia"
+                      onClick = {() => openFullScreenModal()}
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
@@ -485,6 +495,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
+      <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/>
     </>
   );
 };
