@@ -40,7 +40,7 @@ import TransferenciasDialog from './Components/TransferenciasDialog'
 
 import GridTransferencia from "./Components/GridTransferencia";
 
-import GridTransferenciaModal from "./Components/GridTransferencia";
+// import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -345,13 +345,13 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
 
     const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
 
-  const openFullScreenModal = () => {
-    setOpenModalFullScreen(true);
-  };
+  // const openFullScreenModal = () => {
+  //   setOpenModalFullScreen(true);
+  // };
 
-  const closeFullScreenModal = () => {
-    setOpenModalFullScreen(false);
-  };
+  // const closeFullScreenModal = () => {
+  //   setOpenModalFullScreen(false);
+  // };
 
 
     return (
@@ -390,7 +390,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      onClick = {() => openFullScreenModal()}
+                      //onClick = {() => openFullScreenModal()}
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
@@ -530,7 +530,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
-      <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/>
+      {/* <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/> */}
     </>
   );
 };
