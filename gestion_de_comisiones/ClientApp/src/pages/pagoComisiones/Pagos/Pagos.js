@@ -35,7 +35,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import * as Actions from "../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 
-import GridTransferenciaModal from "./Components/GridTransferencia";
+// import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -311,13 +311,13 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
 
     const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
 
-  const openFullScreenModal = () => {
-    setOpenModalFullScreen(true);
-  };
+  // const openFullScreenModal = () => {
+  //   setOpenModalFullScreen(true);
+  // };
 
-  const closeFullScreenModal = () => {
-    setOpenModalFullScreen(false);
-  };
+  // const closeFullScreenModal = () => {
+  //   setOpenModalFullScreen(false);
+  // };
 
 
     return (
