@@ -1532,7 +1532,6 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	from BDMultinivel.dbo.USUARIO_AUTORIZACION UA
 	LEFT JOIN BDMultinivel.dbo.AUTORIZACION_COMISION AUC on AUC.id_usuario_autorizacion=UA.id_usuario_autorizacion
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
-<<<<<<< HEAD
 	where UA.estado='True'
 
 GO
@@ -1567,7 +1566,3 @@ and c.id_tipo_comision = 1
 and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
 group by l.id_comisiones_detalle, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
 GO
-select * from BDMultinivel.dbo.USUARIOS_ROLES
-=======
-	where UA.estado='True' 
->>>>>>> origin/develop
