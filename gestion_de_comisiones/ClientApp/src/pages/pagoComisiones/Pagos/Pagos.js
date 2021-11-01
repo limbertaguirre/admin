@@ -35,7 +35,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import * as Actions from "../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 
-import GridTransferencia from "./Components/GridTransferencia";
+import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -296,8 +296,8 @@ const Pagos = (props) => {
     }else{
       generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
     }
-   }
-   async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
+}
+async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
 
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
@@ -305,29 +305,31 @@ const Pagos = (props) => {
            dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
            handleOnGetPagos();      
       } else{
-         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
 
-  return (
-    <>
-      <div
-        className="col-xl-12 col-lg-12 d-none d-lg-block"
-        style={{ paddingLeft: "0px", paddingRight: "0px" }}
-      >
-        <Breadcrumbs aria-label="breadcrumb">
-          <StyledBreadcrumb
-            key={1}
-            component="a"
-            label="Pagos"
-            icon={<HomeIcon fontSize="small" />}
-          />
-        </Breadcrumbs>
-      </div>
-      <br />
-      <Typography variant="h4" gutterBottom>
-        {"Pagos"}
-      </Typography>
+    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
+
+  const openFullScreenModal = () => {
+    setOpenModalFullScreen(true);
+  };
+
+  const closeFullScreenModal = () => {
+    setOpenModalFullScreen(false);
+  };
+
+
+    return (
+      <>
+        <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+          <Breadcrumbs aria-label="breadcrumb">
+                <StyledBreadcrumb key={1} component="a" label="Pagos"icon={<HomeIcon fontSize="small" />}  />                
+          </Breadcrumbs>
+        </div>
+        <br />
+        <Typography variant="h4" gutterBottom  >{'Pagos'}
+        </Typography>     
 
       <Card>
         <Grid container className={style.gridContainer}>
