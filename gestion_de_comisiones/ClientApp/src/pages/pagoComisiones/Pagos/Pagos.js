@@ -279,76 +279,22 @@ const Pagos = (props) => {
     cargarCiclo(userName);
   }, []);
 
-    const [openModalConfirm, setOpenModalConfirm] = useState(false);
-   const abrirModal = ()=> {
-    verificarConfirmarSionPay(userName,idCiclo);
-      //setOpenModalConfirm(true);
-   }
-   async function verificarConfirmarSionPay(userN, cicloId){   
-
-    let response= await Actions.verificarPagoSionPayXCiclo(userN, cicloId, dispatch)               
-      if(response && response.code == 0){           
-          setOpenModalConfirm(true);    
-      } else{
-         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-      }      
-    }
-
-   const CloseModalConfirmacion =()=>{
-      setOpenModalConfirm(false);      
-   }
-   const confirmarModal =()=>{
-    if(idCiclo && idCiclo !== 0){  
-      prosesarPagoSionPay(userName,idUsuario, idCiclo);
-    }else{
-      generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
-    }
-}
-async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
-
-    let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
-      if(response && response.code == 0){           
-           setOpenModalConfirm(false);      
-           dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
-           handleOnGetPagos();      
-      } else{
-dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-      }      
-    }
-
-<<<<<<< HEAD
-    const handleClickOpenTransferencias = () => {
-      handleTransferenciasEmpresas(userName);
-    };
-  
-    const handleCloseTransferencias = () => {
-      setOpenTransferenciasDialog(false);
-    };
-  
-    const handleTransferenciasEmpresas = async (user) => {
-      // Verificar si hay conexion a internet.
-      if(idCiclo && idCiclo !== 0) {  
-      let response = await Actions.handleTransferenciasEmpresas(user, idCiclo, dispatch);
-        if(response && response.code == 0) { 
-          setEmpresasTransferencias(response.data);
-          setOpenTransferenciasDialog(true);  
-        } else {
-          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-        }
-      }
-    }
-  
-=======
-    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
-
-  // const openFullScreenModal = () => {
-  //   setOpenModalFullScreen(true);
+  const [openModalConfirm, setOpenModalConfirm] = useState(false);
+  const abrirModal = () => {
+    setOpenModalConfirm(true);
+  };
+  // const [openModalTransferenciaConfirm, setOpenModalTransferenciaConfirm] =
+  //   useState(false);
+  // const abrirTransferenciaModal = () => {
+  //   setOpenModalTransferenciaConfirm(true);
   // };
-
-<<<<<<< HEAD
->>>>>>> d03231a (17/19)
-  const closeFullScreenModal = () => {
-    setOpenModalFullScreen(false);
+  const CloseModalConfirmacion = () => {
+    setOpenModalConfirm(false);
+    // setOpenModalTransferenciaConfirm(false);
+  };
+  const confirmarModal = () => {
+    setOpenModalConfirm(false);
+    // setOpenModalTransferenciaConfirm(false);
   };
 =======
   // const closeFullScreenModal = () => {
@@ -387,16 +333,17 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       className={style.submitSAVE}
                       onClick={() => abrirModal()}
                     >
-                      PAGAR POR SION PAY
+                      PAGAR SION PAY
                     </Button>
                     <Button
                       type="submit"
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      href="GridTransferencia"
+                      // onClick = {()=> verificarConfirmarFomaPago()}
+                      //onClick={() => abrirTransferenciaModal()}
                     >
-                      PAGAR POR TRANSFERENCIA
+                      GENERAR PARA TRANSFERENCIA
                     </Button>
                   </>
                 ) : (
