@@ -213,7 +213,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object handleTransferenciasEmpresas(ComisionesPagosInput param)
+        public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param)
         {
             //throw new NotImplementedException();
             ///*
@@ -224,9 +224,30 @@ namespace gestion_de_comisiones.Repository
                 int idTipoComision = 1;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPago: {idTipoPago}");
+                var empresasIds = ContextMulti.Usuarios
+                .Join(ContextMulti.AsignacionEmpresaPagoes,
+                      p => p.IdUsuario,
+                      e => e.IdUsuario,
+                      (p, e) => new
+                      {
+                          empresaId = e.IdEmpresa,
+                          usuario = p.Usuario1
+                      }
+                 )
+                .Where(x => x.usuario == param.usuarioLogin)
+                .Select(u => new 
+                {
+                    u.empresaId
+                })
+                .ToList();
 
+                int[] ids = new int[empresasIds.Count];
+                for(int i = 0; i < empresasIds.Count; i++)
+                {
+                    ids[i] = (int) empresasIds[i].empresaId;
+                }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPago)
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPago && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,
@@ -234,10 +255,7 @@ namespace gestion_de_comisiones.Repository
                         empresa = e.Empresa,
                         montoATransferir = e.MontoTransferir,
                     }).ToList();
-
-
                 return empresas;
-
             }
             catch (Exception ex)
             {

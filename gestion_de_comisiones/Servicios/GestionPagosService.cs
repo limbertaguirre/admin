@@ -141,7 +141,12 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
                 var empresas = Repository.handleTransferenciasEmpresas(param);
-                return Respuesta.ReturnResultdo(0, "ok", empresas);
+                if (empresas.Count > 0)
+                {
+                    return Respuesta.ReturnResultdo(0, "ok", empresas);
+                } else { 
+                    return Respuesta.ReturnResultdo(1, "No tiene empresas asignadas para transferir.", "");
+                }
             }
             catch (Exception ex)
             {
