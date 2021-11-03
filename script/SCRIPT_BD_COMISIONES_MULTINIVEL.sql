@@ -702,6 +702,7 @@ go
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(3, 'Para forma de pago','estado  forma de pago', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(4, 'Para autorizar','previo para autorizar', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(5, 'Resagado','cuando no presenta factura o no tiene una forma de pago', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(6, 'No presenta factura','el freelancer comisiona pero no presenta factura', 1 )
 
 go
 create table GP_COMISION_DETALLE
