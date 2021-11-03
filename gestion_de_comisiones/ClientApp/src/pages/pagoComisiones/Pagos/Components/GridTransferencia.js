@@ -6,6 +6,23 @@ import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
 import clsx from 'clsx';
 
+const GeneralStyles = withStyles({
+  paper: { border: "1px solid #d3d4d5" },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center",
+    }}
+    {...props}
+  />
+));
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -64,7 +81,7 @@ const headCells = [
     numeric: false,
     disablePadding: true,
     label: "NOMBRE COMPLETO",
-  },
+      },
   { id: "ci", numeric: false, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
   { id: "nroCuenta", numeric: false, disablePadding: false, label: "Nro. CUENTA" },
   { id: "banco", numeric: false, disablePadding: false, label: "BANCO" },
