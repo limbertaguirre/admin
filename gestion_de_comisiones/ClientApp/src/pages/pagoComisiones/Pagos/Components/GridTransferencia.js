@@ -76,12 +76,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  {
+      {
     id: "nombreCompleto",
     numeric: false,
     disablePadding: true,
     label: "NOMBRE COMPLETO",
-  },
+      },
   { id: "ci", numeric: true, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
   { id: "nroCuenta", numeric: true, disablePadding: false, label: "Nro. CUENTA" },
   { id: "banco", numeric: true, disablePadding: false, label: "BANCO" },
@@ -373,6 +373,7 @@ const GridTransferencia = (props) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
+const GridTransferencia = () => {
   return (
                       <Core.TableRow
                         hover
