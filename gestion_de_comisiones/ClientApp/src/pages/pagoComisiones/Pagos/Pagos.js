@@ -410,50 +410,86 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
           </Grid>
           </Grid>
 
-                  <Grid item xs={12} md={3} className={style.containerCiclo}>
-                              <FormControl  variant="outlined"  
-                              fullWidth                       
-                              className={style.TextFiel}  >
-                                <InputLabel id="demo-simple-select-outlined-labelciclo">CICLO # </InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-labelciclo"                              
-                                    value={idCiclo}
-                                    name="idCiclo"                              
-                                    onChange={onChangeSelectCiclo}
-                                    label="CICLO # "
-                                    >
-                                    <MenuItem value={0}>
-                                        <em>Seleccione un ciclo</em>
-                                    </MenuItem>
-                                    {listCiclo.map((value,index)=> ( <MenuItem key={index} onClick={()=> seleccionarNombreCombo(`${value.nombre}`)} value={value.idCiclo}>{value.nombre}</MenuItem> ))}   
-                                </Select>                               
-                            </FormControl>
-                    </Grid>
-                    <Grid item  xs={12} md={2}  className={style.containerCargar} >
-                          <Button
-                          type="submit"
-                          fullWidth
-                          variant="contained"
-                          color="primary"
-                          className={style.submitCargar}
-                          onClick = {()=> handleOnGetPagos()}                                         
-                          > 
-                            {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
-                          </Button>   
-                    </Grid>
-              </Grid>
-            </Card>
-            <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
-            <GridPagos listaComisionesAPagar={listaComisionesAPagar}
-              selecionarDetalleFrelances={selecionarDetalleFrelances} 
-              seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} 
-              idCiclo={idCiclo} 
-             
-               permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
-               <MessageConfirm open={openModalConfirm} titulo={"CONFIRMAR TODO"} subTituloModal={"Pagar por sion pay"} tipoModal={"warning"} mensaje={"Al confirmar se procesaran todas los pagos por sion pay."} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
-      </>
-    );
-
-}
+          <Grid item xs={12} md={3} className={style.containerCiclo}>
+            <FormControl
+              variant="outlined"
+              fullWidth
+              className={style.TextFiel}
+            >
+              <InputLabel id="demo-simple-select-outlined-labelciclo">
+                CICLO #{" "}
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-labelciclo"
+                value={idCiclo}
+                name="idCiclo"
+                onChange={onChangeSelectCiclo}
+                label="CICLO # "
+              >
+                <MenuItem value={0}>
+                  <em>Seleccione un ciclo</em>
+                </MenuItem>
+                {listCiclo.map((value, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => seleccionarNombreCombo(`${value.nombre}`)}
+                    value={value.idCiclo}
+                  >
+                    {value.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={2} className={style.containerCargar}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={style.submitCargar}
+              onClick={() => handleOnGetPagos()}
+            >
+              {"CARGAR "} <CloudUploadIcon style={{ marginLeft: "12px" }} />
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
+      <SnackbarSion
+        open={openSnackbar}
+        closeSnackbar={closeSnackbar}
+        tipo={tipoSnackbar}
+        duracion={2000}
+        mensaje={mensajeSnackbar}
+      />
+      <GridPagos
+        listaComisionesAPagar={listaComisionesAPagar}
+        selecionarDetalleFrelances={selecionarDetalleFrelances}
+        seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
+        idCiclo={idCiclo}
+        permisoActualizar={validarPermiso(
+          perfiles,
+          props.location.state.namePagina + permiso.ACTUALIZAR
+        )}
+        permisoCrear={validarPermiso(
+          perfiles,
+          props.location.state.namePagina + permiso.CREAR
+        )}
+      />
+      <MessageConfirm
+        open={openModalConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: SION PAY"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+      {/* <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/> */}
+    </>
+  );
+};
 
 export default Pagos;

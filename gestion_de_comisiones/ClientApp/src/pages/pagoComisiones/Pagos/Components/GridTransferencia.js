@@ -66,12 +66,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-      {
+  {
     id: "nombreCompleto",
     numeric: false,
     disablePadding: true,
     label: "NOMBRE COMPLETO",
-      },
+  },
   { id: "ci", numeric: false, disablePadding: false, label: "C�DULA DE IDENTIDAD" },
   { id: "nroCuenta", numeric: false, disablePadding: false, label: "Nro. CUENTA" },
   { id: "banco", numeric: false, disablePadding: false, label: "BANCO" },
@@ -450,47 +450,69 @@ const GridTransferencia = (props) => {
                         const labelId = `enhanced-table-checkbox-${index}`;
 
 const GridTransferencia = () => {
-  return (
-                      <Core.TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row.name)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.name}
-                        selected={isItemSelected}
-                      >
-                        <Core.TableCell padding="checkbox">
-                          <Core.Checkbox
-                            checked={isItemSelected}
-                            inputProps={{ "aria-labelledby": labelId }}
-                          />
-                        </Core.TableCell>
-                        <Core.TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="none"
-                        >
-                          {row.name}
-                        </Core.TableCell>
+                        return (
+                          <Core.TableRow
+                            hover
+                            onClick={(event) =>
+                              handleClick(event, row.nombreCompleto)
+                            }
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.nombreCompleto}
+                            selected={isItemSelected}
+                          >
+                            <Core.TableCell padding="checkbox">
+                              <Core.Checkbox
+                                checked={isItemSelected}
+                                inputProps={{ "aria-labelledby": labelId }}
+                              />
+                            </Core.TableCell>
+                            <Core.TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                              padding="none"
+                            >
+                              {row.nombreCompleto}
+                            </Core.TableCell>
+                            <Core.TableCell align="center">
+                              {row.ci}
+                            </Core.TableCell>
+                            <Core.TableCell align="right">
+                              {row.nroCuenta}
+                            </Core.TableCell>
+                            <Core.TableCell align="right">
+                              {row.banco}
+                            </Core.TableCell>
+                            <Core.TableCell align="right">
+                              {row.monto}
+                            </Core.TableCell>
+                            <Core.TableCell align="right">
+                              {row.formaPago}
+                            </Core.TableCell>
+                            <Core.TableCell align="right">
+                              {row.estadoPago}
+                            </Core.TableCell>
                         <Core.TableCell align="right">{row.calories}</Core.TableCell>
                         <Core.TableCell align="right">{row.fat}</Core.TableCell>
                         <Core.TableCell align="right">{row.carbs}</Core.TableCell>
                         <Core.TableCell align="right">{row.protein}</Core.TableCell>
-                      </Core.TableRow>
-                    );
-                  })}
+                          </Core.TableRow>
+                        );
+                      })}
                 {emptyRows > 0 && (
                   <Core.TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                     <Core.TableCell colSpan={6} />
                   </Core.TableRow>
                 )}
-              </Core.TableBody>
-            </Core.Table>
-          </Core.TableContainer>
+                  </Core.TableBody>
+                </Core.Table>
+              </Core.TableContainer>
           
-        </Core.Paper>
+            </Core.Paper>
+          </Core.Grid>
+        </Core.Grid>
       </Core.Dialog>
     </div>
   );
