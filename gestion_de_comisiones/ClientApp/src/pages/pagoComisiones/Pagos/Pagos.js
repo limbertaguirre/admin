@@ -484,7 +484,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
-      <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/>
+      {/* <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/> */}
     </>
   );
 };
