@@ -368,89 +368,6 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
              {'Pagos'}
         </Typography>     
 
-<<<<<<< HEAD
-        {empresasTransferencias && (
-          <TransferenciasDialog
-            cicloId={idCiclo} 
-            openDialog={openTransferenciasDialog}
-            closeTransferenciasDialog={handleCloseTransferencias}
-            empresas={empresasTransferencias}
-            // handleDownloadFileEmpresas = {handleDownloadFileEmpresas}          
-          />
-        )}
-
-        <Card>
-             <Grid container className={style.gridContainer} >
-                 <Grid item xs={12} md={4} className={style.containerSave} >
-                    {statusBusqueda&&
-                      <>
-                        {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
-                        <>
-                          <Button
-                          type="submit"
-                          variant="contained"
-                          color="secondary"
-                          className={style.submitSAVE}                          
-                          onClick = {()=> abrirModal()}                                         
-                          >
-                             PAGAR SION PAY
-                          </Button> 
-                          <Button
-                          type="submit"
-                          variant="contained"
-                          color="secondary"
-                          className={style.submitSAVE}                          
-                         onClick = {()=> handleClickOpenTransferencias()}                                         
-                          >
-                            GENERAR PARA TRANSFERENCIA
-                          </Button> 
-=======
-        <Typography variant="h4" gutterBottom  >{'Pagos'}
-        </Typography>     
->>>>>>> d03231a (17/19)
-
-                          </>
-                          : <>
-                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                                <Button variant="contained"  
-                                > <SaveIcon style={{marginRight:'5px'}} /> PAGAR SION PAY</Button> 
-                              </Tooltip> 
-                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
-                                <Button variant="contained"  
-                                > <SaveIcon style={{marginRight:'5px'}} /> GENERAR PARA TRANSFERENCIA</Button> 
-                              </Tooltip> 
-                            </>
-                         }
-                      </> 
-                   }    
-                  </Grid>
-                  <Grid item xs={12} md={3} className={style.containerSave}>
-                    {statusBusqueda&&
-                        <TextField
-                          label="Buscar freelancer"
-                          type={'text'}
-                          variant="outlined"
-                          placeholder={'Buscar por carnet identidad'}
-                          name="txtBusqueda"                    
-                          value={txtBusqueda}
-                         onChange={onChangeSelectCiclo}
-                          fullWidth
-                          onKeyPress={(ev) => {
-                            if (ev.key === 'Enter') {
-                              buscarFreelanzer();
-                            }
-                          }}                    
-                          InputProps={{
-                              startAdornment: (
-                              <InputAdornment position="start">
-                                  <SearchIcon />
-                              </InputAdornment>
-                              ),
-                          }}                    
-                        />       
-                     }
-                  </Grid>
-=======
       <Card>
         <Grid container className={style.gridContainer}>
           <Grid item xs={12} md={4} className={style.containerSave}>
@@ -468,7 +385,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       className={style.submitSAVE}
                       onClick={() => abrirModal()}
                     >
-                      PAGAR SION PAY
+                      PAGAR POR SION PAY
                     </Button>
                     <Button
                       type="submit"
@@ -478,7 +395,7 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
                       // onClick = {()=> verificarConfirmarFomaPago()}
                       onClick={() => abrirTransferenciaModal()}
                     >
-                      GENERAR PARA TRANSFERENCIA
+                      PAGAR POR TRANSFERENCIA
                     </Button>
                   </>
                 ) : (
@@ -538,7 +455,6 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
               />
             )}
           </Grid>
->>>>>>> 4417856 (Rebase final.)
 
           <Grid item xs={12} md={3} className={style.containerCiclo}>
             <FormControl
