@@ -14,7 +14,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param);
         public object PagarSionPayComisionTodo(PagarSionPayInput param);
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
-
-
+        object handleTransferenciasEmpresas(ComisionesPagosInput param);
+        object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
     }
 }
