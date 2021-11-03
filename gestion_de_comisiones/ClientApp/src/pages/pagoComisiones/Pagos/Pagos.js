@@ -36,6 +36,8 @@ import * as Actions from '../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import TransferenciasDialog from './Components/TransferenciasDialog'
 
+import GridTransferencia from "./Components/GridTransferencia";
+
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.grey[100],
@@ -185,9 +187,6 @@ const Pagos = (props) => {
         "¡Debe Seleccionar un ciclo para cargar las comisiones!",
         "warning"
       );
-      /*  setOpenSnackbar(true);
-          setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-          settipTSnackbar('warning'); */
     }
   };
 
@@ -239,7 +238,6 @@ const Pagos = (props) => {
       console.log("busqueda por filtro", response);
       if (response && response.code == 0) {
         let data = response.data;
-        // setPendienteFormaPago(data.pendienteFormaPago);
         setListaComisionesAPagar(data.lista);
       }
     } else {
@@ -267,7 +265,6 @@ const Pagos = (props) => {
     if (response && response.code == 0) {
       console.log("response busca ", response);
       let data = response.data;
-      // setPendienteFormaPago(data.pendienteFormaPago);
       setListaComisionesAPagar(data);
     }
   }
