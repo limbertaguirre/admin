@@ -1,19 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import SnackbarSion from "../../../components/message/SnackbarSion";
-import * as permiso from '../../../routes/permiso'; 
-import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
-import MessageConfirm from '../../../components/mesageModal/MessageConfirm';
+import * as permiso from "../../../routes/permiso";
+import { verificarAcceso, validarPermiso } from "../../../lib/accesosPerfiles";
+import MessageConfirm from "../../../components/mesageModal/MessageConfirm";
 
-import GridPagos from './Components/GridPagos'
-import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
-  Grid, TextField, Typography,FormControl,
-   InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
-import HomeIcon from '@material-ui/icons/Home';
-import {emphasize, withStyles} from '@material-ui/core';
-import {  makeStyles } from '@material-ui/core/styles';
-import { useDispatch, useSelector} from "react-redux";
+import GridPagos from "./Components/GridPagos";
+import {
+  Container,
+  Tooltip,
+  Zoom,
+  Chip,
+  InputAdornment,
+  Card,
+  Button,
+  Grid,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Breadcrumbs,
+} from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import { emphasize, withStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
@@ -28,103 +42,111 @@ const StyledBreadcrumb = withStyles((theme) => ({
     height: theme.spacing(3),
     color: theme.palette.grey[800],
     fontWeight: theme.typography.fontWeightRegular,
-    '&:hover, &:focus': {
+    "&:hover, &:focus": {
       backgroundColor: theme.palette.grey[300],
     },
-    '&:active': {
+    "&:active": {
       boxShadow: theme.shadows[1],
       backgroundColor: emphasize(theme.palette.grey[300], 0.12),
     },
   },
-}))(Chip); 
+}))(Chip);
 
 const useStyles = makeStyles((theme) => ({
   etiqueta: {
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(1),
-    marginRight:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingLeft:theme.spacing(1),
-   },
-   submitCargar: {                 
-    background: "#1872b8", 
-    boxShadow: '2px 4px 5px #1872b8',
-    color:'white',
-   },
-   submitSAVE: {                 
-  //  background: "#1872b8", 
-    background: "#f44336", 
-    boxShadow: '2px 4px 5px #1872b8',
-    color:'white',
-    marginLeft:theme.spacing(1),
-
-   },
-   gridContainer:{
-    paddingLeft:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingTop:theme.spacing(1),
-    paddingBottom:theme.spacing(1),
+    marginRight: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
   },
-   containerCiclo:{
-    paddingLeft:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingTop:theme.spacing(1),
-    paddingBottom:theme.spacing(1),
-
-    display:'flex',
-    alignItems:'center',
-    justifyContent:'center', 
-
+  submitCargar: {
+    background: "#1872b8",
+    boxShadow: "2px 4px 5px #1872b8",
+    color: "white",
   },
-  containerSave:{
-    paddingLeft:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingTop:theme.spacing(1),
-    paddingBottom:theme.spacing(1),
-
-    display:'flex',
-    alignItems:'center',
-    justifyContent:'center', 
+  submitSAVE: {
+    //  background: "#1872b8",
+    background: "#f44336",
+    boxShadow: "2px 4px 5px #1872b8",
+    color: "white",
+    marginLeft: theme.spacing(1),
   },
-  containerCargar:{
-    paddingLeft:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingTop:theme.spacing(1),
-    paddingBottom:theme.spacing(1),
+  gridContainer: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  containerCiclo: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
 
-    display:'flex',
-    flexDirection:'column',
-    alignContent:'center',
-    alignItems:'center',
-    justifyContent:'center',
-  }
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerSave: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
 
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerCargar: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+
+    display: "flex",
+    flexDirection: "column",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 }));
 
-
- const Pagos =(props)=> {
+const Pagos = (props) => {
   let history = useHistory();
-  const dispatch=useDispatch();
-  const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
-  const {perfiles} = useSelector((stateSelector) =>{ return stateSelector.home});   
-  useEffect(()=>{  try{  
-     verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
-     }catch (err) {  verificarAcceso(perfiles, 'none', history); }
-  },[])
-  const style= useStyles();
+  const dispatch = useDispatch();
+  const { userName, idUsuario } = useSelector((stateSelector) => {
+    return stateSelector.load;
+  });
+  const { perfiles } = useSelector((stateSelector) => {
+    return stateSelector.home;
+  });
+  useEffect(() => {
+    try {
+      verificarAcceso(
+        perfiles,
+        props.location.state.namePagina + permiso.VISUALIZAR,
+        history
+      );
+    } catch (err) {
+      verificarAcceso(perfiles, "none", history);
+    }
+  }, []);
+  const style = useStyles();
 
-  const[statusBusqueda, setStatusBusqueda]= useState(false);
-  const[ txtBusqueda, setTxtBusqueda]= useState('');
+  const [statusBusqueda, setStatusBusqueda] = useState(false);
+  const [txtBusqueda, setTxtBusqueda] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
   const [tipoSnackbar, settipTSnackbar] = useState(true);
- 
 
-  const[idCiclo, setIdCiclo]= useState(0);
-  const[nameComboSeleccionado, setNameComboSeleccionado] = useState("");
-  const[idCicloSelected, setIdCicloSelected]= useState(0);
-  const[listCiclo, setListCiclo]= useState([]);
+  const [idCiclo, setIdCiclo] = useState(0);
+  const [nameComboSeleccionado, setNameComboSeleccionado] = useState("");
+  const [idCicloSelected, setIdCicloSelected] = useState(0);
+  const [listCiclo, setListCiclo] = useState([]);
+
+  const [listaComisionesAPagar, setListaComisionesAPagar] = useState([]);
 
   const[listaComisionesAPagar, setListaComisionesAPagar]= useState([]);
 
@@ -146,96 +168,117 @@ const useStyles = makeStyles((theme) => ({
    }
    const seleccionarNombreCombo = (nombre)=>{
     setNameComboSeleccionado(nombre);
-   }
-   const onChangeSelectCiclo= (e) => {
-      const texfiel = e.target.name;
-      const value = e.target.value;
-      if (texfiel === "idCiclo") {
-          setIdCiclo(value);        
-      }
-        if (texfiel === "txtBusqueda") {
-          setTxtBusqueda(value);
-       }
-   };
+  };
+  const onChangeSelectCiclo = (e) => {
+    const texfiel = e.target.name;
+    const value = e.target.value;
+    if (texfiel === "idCiclo") {
+      setIdCiclo(value);
+    }
+    if (texfiel === "txtBusqueda") {
+      setTxtBusqueda(value);
+    }
+  };
 
-   const handleOnGetPagos=()=>{         
-        if(idCiclo && idCiclo !== 0){  
-            setIdCicloSelected(idCiclo);     
-            cargarComisionesPagos(userName, idCiclo)
-
-        }else{
-          generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-         /*  setOpenSnackbar(true);
+  const handleOnGetPagos = () => {
+    if (idCiclo && idCiclo !== 0) {
+      setIdCicloSelected(idCiclo);
+      cargarComisionesPagos(userName, idCiclo);
+    } else {
+      generarSnackBar(
+        "¡Debe Seleccionar un ciclo para cargar las comisiones!",
+        "warning"
+      );
+      /*  setOpenSnackbar(true);
           setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
           settipTSnackbar('warning'); */
-        }      
     }
+  };
 
-    async function cargarComisionesPagos(userNa, cicloId){      
-      let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);
-      console.log('comisiones pagos: ',respuesta);
-      if(respuesta && respuesta.code == 0){ 
-        setListaComisionesAPagar(respuesta.data);
-        setStatusBusqueda(true);    
-      }else{
-        dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
+  async function cargarComisionesPagos(userNa, cicloId) {
+    let respuesta = await Actions.ObtenerComisionesPagos(
+      userNa,
+      cicloId,
+      dispatch
+    );
+    console.log("comisiones pagos: ", respuesta);
+    if (respuesta && respuesta.code == 0) {
+      setListaComisionesAPagar(respuesta.data);
+      setStatusBusqueda(true);
+    } else {
+      dispatch(
+        ActionMensaje.showMessage({
+          message: respuesta.message,
+          variant: "error",
+        })
+      );
+    }
+  }
+  //--navbar
+  const closeSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+  const generarSnackBar = (mensaje, tipo) => {
+    setOpenSnackbar(true);
+    setMensajeSnackbar(mensaje);
+    settipTSnackbar(tipo);
+  };
+
+  const selecionarDetalleFrelances = () => {};
+
+  const seleccionarTipoFiltroBusqueda = (idTipoFormaPago) => {
+    filtrarComisionPorFormaPago(idTipoFormaPago);
+  };
+  async function filtrarComisionPorFormaPago(idTipoFormaPago) {
+    if (idCiclo && idCiclo !== 0) {
+      let response = await Actions.ListarFiltrada(
+        userName,
+        idCiclo,
+        idTipoFormaPago,
+        dispatch
+      );
+      console.log("busqueda por filtro", response);
+      if (response && response.code == 0) {
+        let data = response.data;
+        // setPendienteFormaPago(data.pendienteFormaPago);
+        setListaComisionesAPagar(data.lista);
       }
+    } else {
+      generarSnackBar(
+        "¡Debe Seleccionar un ciclo para cargar las comisiones!",
+        "warning"
+      );
     }
-    //--navbar
-      const closeSnackbar= (event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setOpenSnackbar(false);
-      };
-      const generarSnackBar =(mensaje, tipo)=>{
-        setOpenSnackbar(true);
-        setMensajeSnackbar(mensaje);
-        settipTSnackbar(tipo);
-      }
-    
-     const selecionarDetalleFrelances =() =>{
-
-     } 
-    
-    const seleccionarTipoFiltroBusqueda=(idTipoFormaPago)=>{
-      filtrarComisionPorFormaPago(idTipoFormaPago)
+  }
+  const buscarFreelanzer = () => {
+    if (txtBusqueda != "") {
+      buscarFrelancerPorCi();
+    } else {
+      generarSnackBar("¡Introduzca carnet de identidad!", "info");
     }
-    async function filtrarComisionPorFormaPago(idTipoFormaPago){
-      if(idCiclo && idCiclo !== 0){  
-          let response= await Actions.ListarFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
-          console.log('busqueda por filtro',response)          
-          if(response && response.code == 0){
-              let data= response.data;
-             // setPendienteFormaPago(data.pendienteFormaPago);
-              setListaComisionesAPagar(data.lista);  
-          }       
-      }else{
-             generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning');
-      }    
+  };
+
+  async function buscarFrelancerPorCi() {
+    let response = await Actions.buscarPorCarnetFormaPago(
+      userName,
+      idCiclo,
+      txtBusqueda,
+      dispatch
+    );
+    if (response && response.code == 0) {
+      console.log("response busca ", response);
+      let data = response.data;
+      // setPendienteFormaPago(data.pendienteFormaPago);
+      setListaComisionesAPagar(data);
     }
-    const buscarFreelanzer=()=>{
-          if(txtBusqueda != ""){ 
-              buscarFrelancerPorCi();
-          }else{
-              generarSnackBar('¡Introduzca carnet de identidad!','info');
-          }
-      }
-  
-      async function buscarFrelancerPorCi(){   
+  }
 
-             let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)               
-             if(response && response.code == 0){
-               console.log('response busca ', response);
-                 let data= response.data;
-                // setPendienteFormaPago(data.pendienteFormaPago);
-                 setListaComisionesAPagar(data);                 
-             }       
-       }
-
-   useEffect(()=>{
-      cargarCiclo(userName);
-   },[])
+  useEffect(() => {
+    cargarCiclo(userName);
+  }, []);
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
    const abrirModal = ()=> {
