@@ -6,23 +6,6 @@ import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
 import clsx from 'clsx';
 
-// const GeneralStyles = GeneralReact.withStyles({
-//   paper: { border: "1px solid #d3d4d5" },
-// })((props) => (
-//   <Core.Menu
-//     elevation={0}
-//     getContentAnchorEl={null}
-//     anchorOrigin={{
-//       vertical: "bottom",
-//       horizontal: "center",
-//     }}
-//     transformOrigin={{
-//       vertical: "top",
-//       horizontal: "center",
-//     }}
-//     {...props}
-//   />
-// ));
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
