@@ -4,16 +4,23 @@ import PropTypes from "prop-types";
 import * as Core from "@material-ui/core";
 import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
-import clsx from 'clsx';
-
-
+import clsx from "clsx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
 });
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+//-------------------------- PROPIEDADES DE LA TABLA ----------------------------------------
+function createData(
+  nombreCompleto,
+  ci,
+  nroCuenta,
+  banco,
+  monto,
+  formaPago,
+  estadoPago
+) {
+  return { nombreCompleto, ci, nroCuenta, banco, monto, formaPago, estadoPago };
 }
 
 const rows = [
@@ -143,7 +150,10 @@ const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
     theme.palette.type === "light"
       ? {
           color: theme.palette.secondary.main,
-          backgroundColor: CoreStyles.lighten(theme.palette.secondary.light, 0.85),
+          backgroundColor: CoreStyles.lighten(
+            theme.palette.secondary.light,
+            0.85
+          ),
         }
       : {
           color: theme.palette.text.primary,
@@ -163,7 +173,7 @@ const EnhancedTableToolbar = (props) => {
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
-          >
+    >
       {numSelected > 0 ? (
         <Core.Typography
           className={classes.title}
@@ -171,7 +181,7 @@ const EnhancedTableToolbar = (props) => {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {numSelected} seleccionados
         </Core.Typography>
       ) : (
         <Core.Typography
@@ -179,25 +189,10 @@ const EnhancedTableToolbar = (props) => {
           variant="h6"
           id="tableTitle"
           component="div"
-        >
-        </Core.Typography>
+        ></Core.Typography>
       )}
 
-      {numSelected > 0 
-      //? (
-      //   <Core.Tooltip title="Delete">
-      //     <Core.IconButton aria-label="delete">
-      //       <GeneralIcons.Delete />
-      //     </Core.IconButton>
-      //   </Core.Tooltip>
-      // ) : (''
-        // <Core.Tooltip title="Filter list">
-        //   <Core.IconButton aria-label="filter list">
-        //     <GeneralIcons.FilterList />
-        //   </Core.IconButton>
-        // </Core.Tooltip>
-      //)
-      }
+      {numSelected > 0}
     </Core.Toolbar>
   );
 };
@@ -207,19 +202,16 @@ EnhancedTableToolbar.propTypes = {
 };
 
 const useStyles = CoreStyles.makeStyles((theme) => ({
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: theme.spacing(2),
-    flex: 1,
-  },
   root: {
     width: "100%",
   },
+  appBar: {
+    position: "relative",
+    backgroundColor: "#1872b8",
+    marginRight: theme.spacing(4),
+  },
   paper: {
     width: "100%",
-    marginBottom: theme.spacing(2),
   },
   table: {
     minWidth: 750,
@@ -235,40 +227,125 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  containerSave: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gridContainer: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
 }));
+//-----------------------------------------------------------------------------------------------
 
 const GridTransferencia = (props) => {
   const classes = useStyles();
+  const dispatch = Redux.useDispatch();
   const { openModalFullScreen, closeFullScreenModal } = props;
+  const [txtBusqueda, setTxtBusqueda] = React.useState("");
+  const [idCiclo, setIdCiclo] = React.useState(0);
+  const [idCicloSelected, setIdCicloSelected] = React.useState(0);
+  const [statusBusqueda, setStatusBusqueda] = React.useState(false);
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [mensajeSnackbar, setMensajeSnackbar] = React.useState("");
+  const [tipoSnackbar, settipTSnackbar] = React.useState(true);
+  const [listaComisionesAPagar, setListaComisionesAPagar] = React.useState([]);
+  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
+    return stateSelector.load;
+  });
 
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const generarSnackBar = (mensaje, tipo) => {
+    setOpenSnackbar(true);
+    setMensajeSnackbar(mensaje);
+    settipTSnackbar(tipo);
+  };
+  const onChangeSelectCiclo = (e) => {
+    const texfiel = e.target.name;
+    const value = e.target.value;
+    if (texfiel === "idCiclo") {
+      setIdCiclo(value);
+    }
+    if (texfiel === "txtBusqueda") {
+      setTxtBusqueda(value);
+    }
+  };
+  const buscarFreelanzer = () => {
+    if (txtBusqueda != "") {
+      buscarFrelancerPorCi();
+    } else {
+      generarSnackBar("¡Introduzca carnet de identidad!", "info");
+    }
+  };
+  async function cargarComisionesPagos(userNa, cicloId) {
+    // let respuesta = await Actions.ObtenerComisionesPagos(
+    //   userNa,
+    //   cicloId,
+    //   dispatch
+    // );
+    // console.log("comisiones pagos: ", respuesta);
+    // if (respuesta && respuesta.code == 0) {
+    //   setListaComisionesAPagar(respuesta.data);
+    //   setStatusBusqueda(true);
+    // } else {
+    //   dispatch(
+    //     ActionMensaje.showMessage({
+    //       message: respuesta.message,
+    //       variant: "error",
+    //     })
+    //   );
+    // }
+  }
+
+  async function buscarFrelancerPorCi() {
+    // let response = await Actions.buscarPorCarnetFormaPago(
+    //   userName,
+    //   idCiclo,
+    //   txtBusqueda,
+    //   dispatch
+    // );
+    // if (response && response.code == 0) {
+    //   console.log("response busca ", response);
+    //   let data = response.data;
+    //   setListaComisionesAPagar(data);
+    // }
+  }
+  //-------------------------------- TABLA CHECK ----------------------------------------
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("ci");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = rows.map((n) => n.nombreCompleto);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, nombreCompleto) => {
+    const selectedIndex = selected.indexOf(nombreCompleto);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, nombreCompleto);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -276,33 +353,20 @@ const GridTransferencia = (props) => {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-  );
-}
+        selected.slice(selectedIndex + 1)
+      );
+    }
 
     setSelected(newSelected);
-};
+  };
 
-  // const handleChangePage = (event, newPage) => {
-  //   setPage(newPage);
-  // };
+  const isSelected = (nombreCompleto) =>
+    selected.indexOf(nombreCompleto) !== -1;
 
-  // const handleChangeRowsPerPage = (event) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
-
-  // const handleChangeDense = (event) => {
-  //   setDense(event.target.checked);
-  // };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
+  // const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div>
+    <div className={classes.root}>
       <Core.Dialog
         fullScreen
         open={openModalFullScreen}
@@ -322,39 +386,68 @@ const GridTransferencia = (props) => {
             <Core.Typography variant="h6" className={classes.title}>
               TRANSFERENCIA
             </Core.Typography>
-            <Core.Button
-              autoFocus
-              color="inherit"
-              onClick={closeFullScreenModal}
-            >
-              CONTINUAR
-            </Core.Button>
           </Core.Toolbar>
         </Core.AppBar>
-        <Core.Paper className={classes.paper}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <Core.TableContainer>
-            <Core.Table
-              className={classes.table}
-              aria-labelledby="tableTitle"
-              size={dense ? "small" : "medium"}
-              aria-label="enhanced table"
-            >
-              <EnhancedTableHead
-                classes={classes}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-              />
-              <Core.TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const isItemSelected = isSelected(row.name);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+        <Core.Card>
+          <Core.Grid container className={classes.gridContainer}>
+            <Core.Grid item xs={12} md={4}></Core.Grid>
+            <Core.Grid item xs={12} md={3} className={classes.containerSave}>
+              {
+                // statusBusqueda && (
+                <Core.TextField
+                  label="Buscar freelancer"
+                  type={"text"}
+                  variant="outlined"
+                  placeholder={"CÉDULA DE IDENTIDAD"}
+                  name="txtBusqueda"
+                  value={txtBusqueda}
+                  onChange={onChangeSelectCiclo}
+                  fullWidth
+                  onKeyPress={(ev) => {
+                    if (ev.key === "Enter") {
+                      buscarFreelanzer();
+                    }
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <Core.InputAdornment position="start">
+                        <GeneralIcons.Search />
+                      </Core.InputAdornment>
+                    ),
+                  }}
+                />
+                // )
+              }
+            </Core.Grid>
+          </Core.Grid>
+        </Core.Card>
+
+        <Core.Grid container className={classes.gridContainer}>
+          <Core.Grid item xs={12}>
+            <Core.Paper className={classes.paper}>
+              <EnhancedTableToolbar numSelected={selected.length} />
+              <Core.TableContainer>
+                <Core.Table
+                  className={classes.table}
+                  aria-labelledby="tableTitle"
+                  size={dense ? "small" : "medium"}
+                  aria-label="enhanced table"
+                >
+                  <EnhancedTableHead
+                    classes={classes}
+                    numSelected={selected.length}
+                    order={order}
+                    orderBy={orderBy}
+                    onSelectAllClick={handleSelectAllClick}
+                    onRequestSort={handleRequestSort}
+                    rowCount={rows.length}
+                  />
+                  <Core.TableBody>
+                    {stableSort(rows, getComparator(order, orderBy))
+                      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row.nombreCompleto);
+                        const labelId = `enhanced-table-checkbox-${index}`;
 
 const GridTransferencia = () => {
   return (
@@ -401,6 +494,6 @@ const GridTransferencia = () => {
       </Core.Dialog>
     </div>
   );
+  //-------------------------------------------------------------------------------------
 };
-
 export default GridTransferencia;
