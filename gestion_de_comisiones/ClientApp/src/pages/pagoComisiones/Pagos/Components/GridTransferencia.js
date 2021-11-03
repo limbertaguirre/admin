@@ -1,161 +1,409 @@
 import React, * as GeneralReact from "react";
 import * as Redux from "react-redux";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import * as Core from "@material-ui/core";
 import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
+import clsx from 'clsx';
 
-// const GeneralStyles = GeneralReact.withStyles({
-//   paper: { border: "1px solid #d3d4d5" },
-// })((props) => (
-//   <Core.Menu
-//     elevation={0}
-//     getContentAnchorEl={null}
-//     anchorOrigin={{
-//       vertical: "bottom",
-//       horizontal: "center",
-//     }}
-//     transformOrigin={{
-//       vertical: "top",
-//       horizontal: "center",
-//     }}
-//     {...props}
-//   />
-// ));
 
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
-  };
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Core.Slide direction="up" ref={ref} {...props} />;
+});
+
+function createData(name, calories, fat, carbs, protein) {
+  return { name, calories, fat, carbs, protein };
 }
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = GeneralReact.useState(false);
+const rows = [
+  createData("Eliot Humerez", 305, 3.7, 67, 4.3,1,0),
+  createData("Donut", 452, 25.0, 51, 4.9,1,0),
+  createData("Eclair", 262, 16.0, 24, 6.0,1,0),
+  createData("Frozen yoghurt", 159, 6.0, 24, 4.0,1,0),
+  createData("Gingerbread", 356, 16.0, 49, 3.9,1,0),
+  createData("Honeycomb", 408, 3.2, 87, 6.5,1,0),
+  createData("Ice cream sandwich", 237, 9.0, 37, 4.3,1,0),
+  createData("Jelly Bean", 375, 0.0, 94, 0.0,1,0),
+  createData("KitKat", 518, 26.0, 65, 7.0,1,0),
+  createData("Lollipop", 392, 0.2, 98, 0.0,1,0),
+  createData("Marshmallow", 318, 0, 81, 2.0,1,0),
+  createData("Nougat", 360, 19.0, 9, 37.0,1,0),
+  createData("Oreo", 437, 18.0, 63, 4.0,1,0),
+];
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+
+const headCells = [
+  {
+    id: "nombreCompleto",
+    numeric: false,
+    disablePadding: true,
+    label: "NOMBRE COMPLETO",
+  },
+  { id: "ci", numeric: true, disablePadding: false, label: "CÉDULA DE IDENTIDAD" },
+  { id: "nroCuenta", numeric: true, disablePadding: false, label: "Nro. CUENTA" },
+  { id: "banco", numeric: true, disablePadding: false, label: "BANCO" },
+  { id: "montoReal", numeric: true, disablePadding: false, label: "MONTO TOTAL (Bs.)" },
+  { id: "formaPago", numeric: true, disablePadding: false, label: "FORMA PAGO" },
+  { id: "estado", numeric: true, disablePadding: false, label: "ESTADO" },
+];
+
+function EnhancedTableHead(props) {
+  const {
+    classes,
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
 
   return (
-    <React.Fragment>
-      <Core.TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <Core.TableCell>
-          <Core.IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <GeneralIcons.KeyboardArrowUp  /> : <GeneralIcons.KeyboardArrowDown />}
-          </Core.IconButton>
-        </Core.TableCell>
-        <Core.TableCell component="th" scope="row">
-          {row.name}
-        </Core.TableCell>
-        <Core.TableCell align="right">{row.calories}</Core.TableCell>
-        <Core.TableCell align="right">{row.fat}</Core.TableCell>
-        <Core.TableCell align="right">{row.carbs}</Core.TableCell>
-        <Core.TableCell align="right">{row.protein}</Core.TableCell>
-      </Core.TableRow>
+    <Core.TableHead>
       <Core.TableRow>
-        <Core.TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Core.Collapse in={open} timeout="auto" unmountOnExit>
-            <Core.Box sx={{ margin: 1 }}>
-              <Core.Typography variant="h6" gutterBottom component="div">
-                History
-              </Core.Typography>
-              <Core.Table size="small" aria-label="purchases">
-                <Core.TableHead>
-                  <Core.TableRow>
-                    <Core.TableCell>Date</Core.TableCell>
-                    <Core.TableCell>Customer</Core.TableCell>
-                    <Core.TableCell align="right">Amount</Core.TableCell>
-                    <Core.TableCell align="right">Total price ($)</Core.TableCell>
-                  </Core.TableRow>
-                </Core.TableHead>
-                <Core.TableBody>
-                  {row.history.map((historyRow) => (
-                    <Core.TableRow key={historyRow.date}>
-                      <Core.TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </Core.TableCell>
-                      <Core.TableCell>{historyRow.customerId}</Core.TableCell>
-                      <Core.TableCell align="right">{historyRow.amount}</Core.TableCell>
-                      <Core.TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </Core.TableCell>
-                    </Core.TableRow>
-                  ))}
-                </Core.TableBody>
-              </Core.Table>
-            </Core.Box>
-          </Core.Collapse>
+        <Core.TableCell padding="checkbox">
+          <Core.Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{ "aria-label": "select all desserts" }}
+          />
         </Core.TableCell>
+        {headCells.map((headCell) => (
+          <Core.TableCell
+            key={headCell.id}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <Core.TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <span className={classes.visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </span>
+              ) : null}
+            </Core.TableSortLabel>
+          </Core.TableCell>
+        ))}
       </Core.TableRow>
-    </React.Fragment>
+    </Core.TableHead>
   );
 }
 
-Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      })
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
+EnhancedTableHead.propTypes = {
+  classes: PropTypes.object.isRequired,
+  numSelected: PropTypes.number.isRequired,
+  onRequestSort: PropTypes.func.isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+  orderBy: PropTypes.string.isRequired,
+  rowCount: PropTypes.number.isRequired,
 };
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-];
+const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
+  root: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+  },
+  highlight:
+    theme.palette.type === "light"
+      ? {
+          color: theme.palette.secondary.main,
+          backgroundColor: CoreStyles.lighten(theme.palette.secondary.light, 0.85),
+        }
+      : {
+          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.secondary.dark,
+        },
+  title: {
+    flex: "1 1 100%",
+  },
+}));
 
-const GridTransferencia = () => {
+const EnhancedTableToolbar = (props) => {
+  const classes = useToolbarStyles();
+  const { numSelected } = props;
+
   return (
-    <Core.TableContainer component={Core.Paper}>
-      <Core.Table aria-label="collapsible table">
-        <Core.TableHead>
-          <Core.TableRow>
-            <Core.TableCell />
-            <Core.TableCell>Dessert (100g serving)</Core.TableCell>
-            <Core.TableCell align="right">Calories</Core.TableCell>
-            <Core.TableCell align="right">Fat&nbsp;(g)</Core.TableCell>
-            <Core.TableCell align="right">Carbs&nbsp;(g)</Core.TableCell>
-            <Core.TableCell align="right">Protein&nbsp;(g)</Core.TableCell>
-          </Core.TableRow>
-        </Core.TableHead>
-        <Core.TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
-          ))}
-        </Core.TableBody>
-      </Core.Table>
-    </Core.TableContainer>
+    <Core.Toolbar
+      className={clsx(classes.root, {
+        [classes.highlight]: numSelected > 0,
+      })}
+    >
+      {numSelected > 0 ? (
+        <Core.Typography
+          className={classes.title}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
+          {numSelected} selected
+        </Core.Typography>
+      ) : (
+        <Core.Typography
+          className={classes.title}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+        </Core.Typography>
+      )}
+
+      {numSelected > 0 ? (
+        <Core.Tooltip title="Delete">
+          <Core.IconButton aria-label="delete">
+            <GeneralIcons.Delete />
+          </Core.IconButton>
+        </Core.Tooltip>
+      ) : (''
+        // <Core.Tooltip title="Filter list">
+        //   <Core.IconButton aria-label="filter list">
+        //     <GeneralIcons.FilterList />
+        //   </Core.IconButton>
+        // </Core.Tooltip>
+      )}
+    </Core.Toolbar>
+  );
+};
+
+EnhancedTableToolbar.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+};
+
+const useStyles = CoreStyles.makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
+  root: {
+    width: "100%",
+  },
+  paper: {
+    width: "100%",
+    marginBottom: theme.spacing(2),
+  },
+  table: {
+    minWidth: 750,
+  },
+  visuallyHidden: {
+    border: 0,
+    clip: "rect(0 0 0 0)",
+    height: 1,
+    margin: -1,
+    overflow: "hidden",
+    padding: 0,
+    position: "absolute",
+    top: 20,
+    width: 1,
+  },
+}));
+
+const GridTransferencia = (props) => {
+  const classes = useStyles();
+  const { openModalFullScreen, closeFullScreenModal } = props;
+
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = rows.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
+  };
+
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+
+  return (
+    <div>
+      <Core.Dialog
+        fullScreen
+        open={openModalFullScreen}
+        onClose={closeFullScreenModal}
+        TransitionComponent={Transition}
+      >
+        <Core.AppBar className={classes.appBar}>
+          <Core.Toolbar>
+            <Core.IconButton
+              edge="start"
+              color="inherit"
+              onClick={closeFullScreenModal}
+              aria-label="close"
+            >
+              <GeneralIcons.Close />
+            </Core.IconButton>
+            <Core.Typography variant="h6" className={classes.title}>
+              TRANSFERENCIA
+            </Core.Typography>
+            <Core.Button
+              autoFocus
+              color="inherit"
+              onClick={closeFullScreenModal}
+            >
+              CONFIRMAR TODO
+            </Core.Button>
+            <Core.Button
+              autoFocus
+              color="inherit"
+              onClick={closeFullScreenModal}
+            >
+              CONFIRMAR
+            </Core.Button>
+          </Core.Toolbar>
+        </Core.AppBar>
+        <Core.Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <Core.TableContainer>
+            <Core.Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <Core.TableBody>
+                {stableSort(rows, getComparator(order, orderBy))
+                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.name);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <Core.TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row.name)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.name}
+                        selected={isItemSelected}
+                      >
+                        <Core.TableCell padding="checkbox">
+                          <Core.Checkbox
+                            checked={isItemSelected}
+                            inputProps={{ "aria-labelledby": labelId }}
+                          />
+                        </Core.TableCell>
+                        <Core.TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {row.name}
+                        </Core.TableCell>
+                        <Core.TableCell align="right">{row.calories}</Core.TableCell>
+                        <Core.TableCell align="right">{row.fat}</Core.TableCell>
+                        <Core.TableCell align="right">{row.carbs}</Core.TableCell>
+                        <Core.TableCell align="right">{row.protein}</Core.TableCell>
+                      </Core.TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <Core.TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <Core.TableCell colSpan={6} />
+                  </Core.TableRow>
+                )}
+              </Core.TableBody>
+            </Core.Table>
+          </Core.TableContainer>
+          
+        </Core.Paper>
+      </Core.Dialog>
+    </div>
   );
 };
 

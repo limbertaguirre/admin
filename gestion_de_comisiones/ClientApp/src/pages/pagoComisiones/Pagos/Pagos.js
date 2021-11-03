@@ -36,7 +36,7 @@ import * as Actions from '../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import TransferenciasDialog from './Components/TransferenciasDialog'
 
-import GridTransferencia from "./Components/GridTransferencia";
+import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -297,8 +297,8 @@ const Pagos = (props) => {
     }else{
       generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
     }
-   }
-   async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
+}
+async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
 
     let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
       if(response && response.code == 0){           
@@ -306,7 +306,7 @@ const Pagos = (props) => {
            dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));   
            handleOnGetPagos();      
       } else{
-         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
     }
 
