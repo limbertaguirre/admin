@@ -36,11 +36,7 @@ import * as Actions from '../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import TransferenciasDialog from './Components/TransferenciasDialog'
 
-<<<<<<< HEAD
-// import GridTransferenciaModal from "./Components/GridTransferencia";
-=======
 import GridTransferencia from "./Components/GridTransferencia";
->>>>>>> 4209604 (Rebase final.)
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -495,17 +491,6 @@ dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error
         open={openModalConfirm}
         titulo={"ATENCIÓN"}
         subTituloModal={"FORMA DE PAGO: SION PAY"}
-        tipoModal={"warning"}
-        mensaje={
-          "Al confirmar este método de pago, no se podrá revertir la acción."
-        }
-        handleCloseConfirm={confirmarModal}
-        handleCloseCancel={CloseModalConfirmacion}
-      />
-      <MessageConfirm
-        open={openModalTransferenciaConfirm}
-        titulo={"ATENCIÓN"}
-        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
         tipoModal={"warning"}
         mensaje={
           "Al confirmar este método de pago, no se podrá revertir la acción."
