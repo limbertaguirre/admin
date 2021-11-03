@@ -511,6 +511,56 @@ const Pagos = (props) => {
         handleCloseCancel={CloseModalConfirmacion}
       />
       {/* <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/> */}
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
+        open={openModalTransferenciaConfirm}
+        titulo={"ATENCIÓN"}
+        subTituloModal={"FORMA DE PAGO: TRANSFERENCIA"}
+        tipoModal={"warning"}
+        mensaje={
+          "Al confirmar este método de pago, no se podrá revertir la acción."
+        }
+        handleCloseConfirm={confirmarModal}
+        handleCloseCancel={CloseModalConfirmacion}
+      />
     </>
   );
 };
