@@ -40,7 +40,7 @@ import TransferenciasDialog from './Components/TransferenciasDialog'
 
 import GridTransferencia from "./Components/GridTransferencia";
 
-import GridTransferencia from "./Components/GridTransferencia";
+import GridTransferenciaModal from "./Components/GridTransferencia";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -281,6 +281,7 @@ const Pagos = (props) => {
     cargarCiclo(userName);
   }, []);
 
+<<<<<<< HEAD
   const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
 
@@ -315,6 +316,55 @@ const Pagos = (props) => {
       <Typography variant="h4" gutterBottom>
         {"Pagos"}
       </Typography>
+=======
+const [openModalConfirm, setOpenModalConfirm] = useState(false);
+
+const abrirModal = ()=> {
+setOpenModalConfirm(true);
+}
+const CloseModalConfirmacion =()=>{
+    setOpenModalConfirm(false);      
+}
+const confirmarModal =()=>{
+    if(idCiclo && idCiclo !== 0){  
+      prosesarPagoSionPay(userName,idUsuario, idCiclo);
+    }else{
+      generarSnackBar('¡Debe seleccionar un ciclo para el cierre','info');
+    }
+}
+async function prosesarPagoSionPay(userN,usuarioId, cicloId){   
+
+    let response= await Actions.pagarComisionSionPay(userN,usuarioId, cicloId, dispatch)               
+      if(response && response.code == 0){           
+setOpenModalConfirm(false);      
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));         
+      } else{
+dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+      }      
+    }
+
+    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
+
+  const openFullScreenModal = () => {
+    setOpenModalFullScreen(true);
+  };
+
+  const closeFullScreenModal = () => {
+    setOpenModalFullScreen(false);
+  };
+
+
+    return (
+      <>
+        <div className="col-xl-12 col-lg-12 d-none d-lg-block" style={{ paddingLeft: "0px", paddingRight: "0px" }}>
+          <Breadcrumbs aria-label="breadcrumb">
+                <StyledBreadcrumb key={1} component="a" label="Pagos"icon={<HomeIcon fontSize="small" />}  />                
+          </Breadcrumbs>
+        </div>
+        <br />
+        <Typography variant="h4" gutterBottom  >{'Pagos'}
+        </Typography>     
+>>>>>>> fef1393 (Avance de tablas para las transferencias.)
 
       <Card>
         <Grid container className={style.gridContainer}>
@@ -340,7 +390,7 @@ const Pagos = (props) => {
                       variant="contained"
                       color="secondary"
                       className={style.submitSAVE}
-                      href="GridTransferencia"
+                      onClick = {() => openFullScreenModal()}
                     >
                       PAGAR POR TRANSFERENCIA
                     </Button>
@@ -480,6 +530,7 @@ const Pagos = (props) => {
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={CloseModalConfirmacion}
       />
+      <GridTransferenciaModal openModalFullScreen = {openModalFullScreen} closeFullScreenModal = {closeFullScreenModal}/>
     </>
   );
 };
