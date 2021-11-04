@@ -12,6 +12,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as Actions from '../../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../../redux/actions/messageAction';
+
+import GridTransferenciaModal from '../Components/GridTransferencia'
   
   const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -70,6 +72,8 @@ const TransferenciasDialog = ({
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     const [empresaId, setEmpresaId] = useState(-1);
     const [enabledInputs, setEnabledInputs] = useState(false);
+    const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
+    const [list, setList] = useState([]);
 
       const downloadExcel = (base64, fileName) => {
         // const contentType = "application/vnd.ms-excel";
@@ -119,6 +123,25 @@ const TransferenciasDialog = ({
         } else {
             setEnabledInputs(true);
         }
+    }
+
+    const openFullScreenModal = () => {
+      setOpenModalFullScreen(true);
+    }
+    const closeFullScreenModal = () => {
+      setOpenModalFullScreen(false);
+    }
+    const handleObtenerPagosTransferencias = async (user, empresaId) =>{
+      if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
+        let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
+        console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
+        if(response && response.code == 0) { 
+          setList(response.data);
+          setOpenModalFullScreen(true);
+        } else {
+          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+        }
+      }
     }
 
     return(
@@ -184,9 +207,10 @@ const TransferenciasDialog = ({
         </DialogContent>
         <DialogActions>
             <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
+            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
-        </DialogActions>
+        </DialogActions>         
+        <GridTransferenciaModal list= {list} empresaId={empresaId} openModalFullScreen={openModalFullScreen} closeFullScreenModal ={closeFullScreenModal }/>   
       </Dialog>
     );
 }
