@@ -24,19 +24,19 @@ function createData(
 }
 
 const rows = [
-  createData("ELIOT HUMEREZ", "1234567", "1234567EH", "FASSIL", 50,2,1),
-  createData("GRACIELA GUTIERREZ", 452, 25.0, 51, 4.9,1,0),
-  createData("MARWIN NU�EZ", 262, 16.0, 24, 6.0,1,0),
-  createData("JUAN MANUEL JUSTINIANO", 159, 6.0, 24, 4.0,1,0),
-  createData("LUIS VACA", 356, 16.0, 49, 3.9,1,0),
-  createData("MAR�A LOPEZ", 408, 3.2, 87, 6.5,1,0),
-  createData("LIMBERT AGUIRRE", 237, 9.0, 37, 4.3,1,0),
-  createData("JHON DOE", 375, 0.0, 94, 0.0,1,0),
-  createData("PEDRO DOMINGO", 518, 26.0, 65, 7.0,1,0),
-  createData("MARWIL VILLALPANDO", 392, 0.2, 98, 0.0,1,0),
-  createData("SERGIO RIOS", 318, 0, 81, 2.0,1,0),
-  createData("ROLANDO GONZALES", 360, 19.0, 9, 37.0,1,0),
-  createData("ABRAHAM TIRADO", 437, 18.0, 63, 4.0,1,0),
+  createData("ELIOT HUMEREZ", "1234567", "1234567EH", "FASSIL", 50, 2, 1),
+  createData("GRACIELA GUTIERREZ", 452, 25.0, 51, 4.9, 1, 0),
+  createData("MARWIN NU�EZ", 262, 16.0, 24, 6.0, 1, 0),
+  createData("JUAN MANUEL JUSTINIANO", 159, 6.0, 24, 4.0, 1, 0),
+  createData("LUIS VACA", 356, 16.0, 49, 3.9, 1, 0),
+  createData("MAR�A LOPEZ", 408, 3.2, 87, 6.5, 1, 0),
+  createData("LIMBERT AGUIRRE", 237, 9.0, 37, 4.3, 1, 0),
+  createData("JHON DOE", 375, 0.0, 94, 0.0, 1, 0),
+  createData("PEDRO DOMINGO", 518, 26.0, 65, 7.0, 1, 0),
+  createData("MARWIL VILLALPANDO", 392, 0.2, 98, 0.0, 1, 0),
+  createData("SERGIO RIOS", 318, 0, 81, 2.0, 1, 0),
+  createData("ROLANDO GONZALES", 360, 19.0, 9, 37.0, 1, 0),
+  createData("ABRAHAM TIRADO", 437, 18.0, 63, 4.0, 1, 0),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -72,11 +72,31 @@ const headCells = [
     disablePadding: true,
     label: "NOMBRE COMPLETO",
   },
-  { id: "ci", numeric: false, disablePadding: false, label: "C�DULA DE IDENTIDAD" },
-  { id: "nroCuenta", numeric: false, disablePadding: false, label: "Nro. CUENTA" },
+  {
+    id: "ci",
+    numeric: false,
+    disablePadding: false,
+    label: "C�DULA DE IDENTIDAD",
+  },
+  {
+    id: "nroCuenta",
+    numeric: false,
+    disablePadding: false,
+    label: "Nro. CUENTA",
+  },
   { id: "banco", numeric: false, disablePadding: false, label: "BANCO" },
-  { id: "montoReal", numeric: false, disablePadding: false, label: "MONTO TOTAL (Bs.)" },
-  { id: "formaPago", numeric: false, disablePadding: false, label: "FORMA PAGO" },
+  {
+    id: "montoReal",
+    numeric: false,
+    disablePadding: false,
+    label: "MONTO TOTAL (Bs.)",
+  },
+  {
+    id: "formaPago",
+    numeric: false,
+    disablePadding: false,
+    label: "FORMA PAGO",
+  },
   { id: "estado", numeric: false, disablePadding: false, label: "ESTADO" },
 ];
 
@@ -449,67 +469,77 @@ const GridTransferencia = (props) => {
                         const isItemSelected = isSelected(row.nombreCompleto);
                         const labelId = `enhanced-table-checkbox-${index}`;
 
-const GridTransferencia = () => {
-                        return (
-                          <Core.TableRow
-                            hover
-                            onClick={(event) =>
-                              handleClick(event, row.nombreCompleto)
-                            }
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            key={row.nombreCompleto}
-                            selected={isItemSelected}
-                          >
-                            <Core.TableCell padding="checkbox">
-                              <Core.Checkbox
-                                checked={isItemSelected}
-                                inputProps={{ "aria-labelledby": labelId }}
-                              />
-                            </Core.TableCell>
-                            <Core.TableCell
-                              component="th"
-                              id={labelId}
-                              scope="row"
-                              padding="none"
+                        const GridTransferencia = () => {
+                          return (
+                            <Core.TableRow
+                              hover
+                              onClick={(event) =>
+                                handleClick(event, row.nombreCompleto)
+                              }
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={row.nombreCompleto}
+                              selected={isItemSelected}
                             >
-                              {row.nombreCompleto}
-                            </Core.TableCell>
-                            <Core.TableCell align="center">
-                              {row.ci}
-                            </Core.TableCell>
-                            <Core.TableCell align="right">
-                              {row.nroCuenta}
-                            </Core.TableCell>
-                            <Core.TableCell align="right">
-                              {row.banco}
-                            </Core.TableCell>
-                            <Core.TableCell align="right">
-                              {row.monto}
-                            </Core.TableCell>
-                            <Core.TableCell align="right">
-                              {row.formaPago}
-                            </Core.TableCell>
-                            <Core.TableCell align="right">
-                              {row.estadoPago}
-                            </Core.TableCell>
-                        <Core.TableCell align="right">{row.calories}</Core.TableCell>
-                        <Core.TableCell align="right">{row.fat}</Core.TableCell>
-                        <Core.TableCell align="right">{row.carbs}</Core.TableCell>
-                        <Core.TableCell align="right">{row.protein}</Core.TableCell>
-                          </Core.TableRow>
-                        );
+                              <Core.TableCell padding="checkbox">
+                                <Core.Checkbox
+                                  checked={isItemSelected}
+                                  inputProps={{ "aria-labelledby": labelId }}
+                                />
+                              </Core.TableCell>
+                              <Core.TableCell
+                                component="th"
+                                id={labelId}
+                                scope="row"
+                                padding="none"
+                              >
+                                {row.nombreCompleto}
+                              </Core.TableCell>
+                              <Core.TableCell align="center">
+                                {row.ci}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.nroCuenta}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.banco}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.monto}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.formaPago}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.estadoPago}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.calories}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.fat}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.carbs}
+                              </Core.TableCell>
+                              <Core.TableCell align="right">
+                                {row.protein}
+                              </Core.TableCell>
+                            </Core.TableRow>
+                          );
+                        };
                       })}
-                {emptyRows > 0 && (
-                  <Core.TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                    <Core.TableCell colSpan={6} />
-                  </Core.TableRow>
-                )}
+                    {emptyRows > 0 && (
+                      <Core.TableRow
+                        style={{ height: (dense ? 33 : 53) * emptyRows }}
+                      >
+                        <Core.TableCell colSpan={6} />
+                      </Core.TableRow>
+                    )}
                   </Core.TableBody>
                 </Core.Table>
               </Core.TableContainer>
-          
             </Core.Paper>
           </Core.Grid>
         </Core.Grid>
