@@ -16,5 +16,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
         object handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param);
+        object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput param);
     }
 }

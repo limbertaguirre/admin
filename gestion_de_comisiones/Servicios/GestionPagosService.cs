@@ -170,5 +170,34 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferencias() ");
+                var file = Repository.handleConfirmarPagosTransferencias(body);
+                return Respuesta.ReturnResultdo(0, "ok", file);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleConfirmarPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleObtenerPagosTransferencias() ");
+                var file = Repository.handleObtenerPagosTransferencias(body);
+                return Respuesta.ReturnResultdo(0, "ok", file);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleObtenerPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

@@ -101,7 +101,6 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
-
         // POST: Pagos/VerificarPagosSionPayFormaPago 
         [HttpPost]
         public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
@@ -146,6 +145,36 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogError($"usuario :  error catch  handleDownloadFileEmpresas() controller {e}");
                 //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
+        // GET: Pagos/ListadoComisionTransferencia
+        [HttpGet]
+        public ActionResult handleConfirmarPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleConfirmarPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleConfirmarPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult handleObtenerPagosTransferencias([FromBody] DownloadFileTransferenciaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleObtenerPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleObtenerPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleObtenerPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
     }

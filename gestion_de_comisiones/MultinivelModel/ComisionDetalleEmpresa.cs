@@ -9,7 +9,7 @@ namespace gestion_de_comisiones.MultinivelModel
     {
         public int IdComisionDetalleEmpresa { get; set; }
         public decimal Monto { get; set; }
-        public bool Estado { get; set; }
+        public byte? Estado { get; set; }
         public string RespaldoPath { get; set; }
         public string NroAutorizacion { get; set; }
         public decimal? MontoAFacturar { get; set; }

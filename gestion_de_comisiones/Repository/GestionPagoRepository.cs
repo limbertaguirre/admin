@@ -338,5 +338,37 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-    }
+
+        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        {
+            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.empresaId}");
+            for (int i=0; i < body.rechazados.Count; i++ ) {
+                var a = body.rechazados[i];
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+                    }
+            return 0;
+        }
+
+        public object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+
+                Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
+                Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
+                int cicloId = Convert.ToInt32(body.cicloId);
+                int tipoPagoTransferencia = 2;
+                List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
+                    .ToList();
+                return info;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return list;
+            }
+        }
+}
 }
