@@ -766,7 +766,7 @@ create table COMISION_DETALLE_EMPRESA
 (
     id_comision_detalle_empresa int not null primary key IDENTITY,
     monto decimal(18,2) not null,
-	estado bit not null,
+	estado estado TINYINT,
 	respaldo_path varchar(500),
 	nro_autorizacion varchar,
 	monto_a_facturar decimal(18,2),
@@ -1241,6 +1241,7 @@ GO
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
 AS
 	 select 
+	     GPDE.id_comision as 'idComision',
 	     ComiEmp.id_comision_detalle_empresa,
 		 ComiEmp.id_comision_detalle,
 	     Emp.nombre AS 'empresa',
@@ -1250,6 +1251,7 @@ AS
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
 		 Emp.id_empresa AS 'idEmpresa',
+		 Emp.estado AS 'estadoEmpresa',
 		 ComiEmp.estado As 'estadoDetalleEmpresa',
 		 ComiEmp.ventas_personales,
 		 ComiEmp.ventas_grupales,
