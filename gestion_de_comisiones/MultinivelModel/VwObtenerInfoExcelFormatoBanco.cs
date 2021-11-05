@@ -12,6 +12,10 @@ namespace gestion_de_comisiones.MultinivelModel
         public string Empresa { get; set; }
         public int IdComisionesDetalle { get; set; }
         public int IdComisionDetalleEmpresa { get; set; }
+<<<<<<< HEAD
+=======
+        public byte? IdEstadoComisionDetalleEmpresa { get; set; }
+>>>>>>> 14c91cf7f981bd89225198cd589e8eed58349c40
         public string CodigoDeCliente { get; set; }
         public string NroDeCuenta { get; set; }
         public string NombreDeCliente { get; set; }

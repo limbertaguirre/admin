@@ -1,5 +1,5 @@
 
-ALTER PROCEDURE [dbo].[SP_PAGAR_SION_PAY_COMISIONES_CICLO]
+CREATE PROCEDURE [dbo].[SP_PAGAR_SION_PAY_COMISIONES_CICLO]
      @id_Ciclo     int,
      @id_usuario int
 AS
