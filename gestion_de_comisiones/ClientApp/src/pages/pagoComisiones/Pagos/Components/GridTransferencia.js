@@ -5,9 +5,11 @@ import * as Core from "@material-ui/core";
 import * as CoreStyles from "@material-ui/core/styles";
 import * as GeneralIcons from "@material-ui/icons";
 import clsx from "clsx";
-import * as Actions from '../../../../redux/actions/PagosGestorAction';
-import * as ActionMensaje from '../../../../redux/actions/messageAction';
+import * as Actions from "../../../../redux/actions/PagosGestorAction";
+import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
+import { Button } from "bootstrap";
+import MessageConfirm from '../../../../components/mesageModal/MessageConfirm';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
@@ -23,6 +25,22 @@ function descendingComparator(a, b, orderBy) {
   }
   return 0;
 }
+
+const StyledBreadcrumb = Core.withStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.grey[100],
+    height: theme.spacing(3),
+    color: theme.palette.grey[800],
+    fontWeight: theme.typography.fontWeightRegular,
+    "&:hover, &:focus": {
+      backgroundColor: theme.palette.grey[300],
+    },
+    "&:active": {
+      boxShadow: theme.shadows[1],
+      backgroundColor: Core.emphasize(theme.palette.grey[300], 0.12),
+    },
+  },
+}))(Core.Chip);
 
 function getComparator(order, orderBy) {
   return order === "desc"
@@ -47,10 +65,25 @@ const headCells = [
     disablePadding: true,
     label: "Nombre completo",
   },
-  { id: "docDeIdentidad", numeric: false, disablePadding: true, label: "Cédula identidad" },
-  { id: "nroDeCuenta", numeric: false, disablePadding: true, label: "Cuenta banco" },
+  {
+    id: "docDeIdentidad",
+    numeric: false,
+    disablePadding: true,
+    label: "Cédula identidad",
+  },
+  {
+    id: "nroDeCuenta",
+    numeric: false,
+    disablePadding: true,
+    label: "Cuenta banco",
+  },
   // { id: "banco", numeric: false, disablePadding: true, label: "Banco" },
-  { id: "idComisionDetalleEmpresa", numeric: true, disablePadding: false, label: "Comision detalle" },
+  {
+    id: "idComisionDetalleEmpresa",
+    numeric: true,
+    disablePadding: false,
+    label: "Comision detalle",
+  },
   { id: "empresa", numeric: false, disablePadding: true, label: "Empresa" },
   { id: "estado", numeric: false, disablePadding: false, label: "Estado" },
 ];
@@ -70,9 +103,11 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <Core.TableHead>
+    <>
+    <br />
+      <Core.TableHead>
       <Core.TableRow>
-        <Core.TableCell padding="checkbox">
+        <Core.TableCell padding="Checkbox">
           <Core.Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -103,6 +138,8 @@ function EnhancedTableHead(props) {
         ))}
       </Core.TableRow>
     </Core.TableHead>
+      
+    </>
   );
 }
 
@@ -169,20 +206,11 @@ const EnhancedTableToolbar = (props) => {
         </Core.Typography>
       )}
 
-      {numSelected > 0 
-      // ? (
-      //   <Core.Tooltip title="Delete">
-      //     <Core.IconButton aria-label="delete">
-      //       <GeneralIcons.Delete />
-      //     </Core.IconButton>
-      //   </Core.Tooltip>
-      // ) : (
-      //   <Core.Tooltip title="Filter list">
-      //     <Core.IconButton aria-label="filter list">
-      //       <GeneralIcons.FilterList />
-      //     </Core.IconButton>
-      //   </Core.Tooltip>
-      // )
+      {
+        numSelected > 0
+        //? (<Core.Tooltip title="Aceptar transferencias"><Core.IconButton aria-label="next">Aceptar<GeneralIcons.NavigateNext fontSize={"large"}/></Core.IconButton></Core.Tooltip>) :
+        //(<Core.Tooltip title="Filter list"><Core.IconButton aria-label="filter list"><GeneralIcons.FilterList /></Core.IconButton></Core.Tooltip>)
+        //''
       }
     </Core.Toolbar>
   );
@@ -196,6 +224,9 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
   root: {
     width: "100%",
     marginTop: theme.spacing(2),
+  },
+  appBar: {
+    position: "relative",
   },
   paper: {
     width: "100%",
@@ -215,24 +246,39 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
-  gridContainer:{
-    paddingLeft:theme.spacing(1),
-    paddingRight:theme.spacing(1),
-    paddingTop:theme.spacing(1),
-    paddingBottom:theme.spacing(1),
-    marginTop:theme.spacing(1)
+  gridContainer: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   containerSave: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    // marginTop: theme.spacing(6),
-    marginBlock: theme.spacing(4),
 
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  containerCargar: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+
+    display: "flex",
+    flexDirection: "row",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  submitCargar: {
+    background: "#1872b8",
+    boxShadow: "2px 4px 5px #1872b8",
+    color: "white",
   },
 }));
 //-----------------------------------------------------------------------------------------------
@@ -240,7 +286,11 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { list,empresaId, openModalFullScreen, closeFullScreenModal } = props;
+  const { list, empresaId, openModalFullScreen, closeFullScreenModal } = props;
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
+  const [selected, setSelected] = React.useState([]);
+  const [dense, setDense] = React.useState(false);
   const [txtBusqueda, setTxtBusqueda] = React.useState("");
   const [idCiclo, setIdCiclo] = React.useState(0);
   const [idCicloSelected, setIdCicloSelected] = React.useState(0);
@@ -252,12 +302,20 @@ const GridTransferencia = (props) => {
   const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
     return stateSelector.load;
   });
+  const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
 
-  const generarSnackBar = (mensaje, tipo) => {
-    setOpenSnackbar(true);
-    setMensajeSnackbar(mensaje);
-    settipTSnackbar(tipo);
-  };
+  const openModalMessage =()=>{
+    setOpenModalConfirmation(true)
+  }
+  const closeModalMessage =()=>{
+    setOpenModalConfirmation(false)
+  }
+
+  // const generarSnackBar = (mensaje, tipo) => {
+  //   setOpenSnackbar(true);
+  //   setMensajeSnackbar(mensaje);
+  //   settipTSnackbar(tipo);
+  // };
   const onChangeSelectCiclo = (e) => {
     const texfiel = e.target.nombreCompleto;
     const value = e.target.value;
@@ -268,55 +326,13 @@ const GridTransferencia = (props) => {
       setTxtBusqueda(value);
     }
   };
-  const buscarFreelanzer = () => {
-    if (txtBusqueda != "") {
-      buscarFrelancerPorCi();
-    } else {
-      generarSnackBar("¡Introduzca carnet de identidad!", "info");
-    }
-  };
-  async function cargarComisionesPagos(userNa, cicloId) {
-    // let respuesta = await Actions.ObtenerComisionesPagos(
-    //   userNa,
-    //   cicloId,
-    //   dispatch
-    // );
-    // console.log("comisiones pagos: ", respuesta);
-    // if (respuesta && respuesta.code == 0) {
-    //   setListaComisionesAPagar(respuesta.data);
-    //   setStatusBusqueda(true);
-    // } else {
-    //   dispatch(
-    //     ActionMensaje.showMessage({
-    //       message: respuesta.message,
-    //       variant: "error",
-    //     })
-    //   );
-    // }
-  }
-
-  async function buscarFrelancerPorCi() {
-    // let response = await Actions.buscarPorCarnetFormaPago(
-    //   userName,
-    //   idCiclo,
-    //   txtBusqueda,
-    //   dispatch
-    // );
-    // if (response && response.code == 0) {
-    //   console.log("response busca ", response);
-    //   let data = response.data;
-    //   setListaComisionesAPagar(data);
-    // }
-  }
-  //-------------------------------- TABLA CHECK ----------------------------------------
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
-  const [selected, setSelected] = React.useState([]);
-  const [dense, setDense] = React.useState(false);
-  
-  // React.useEffect(()=>{ 
-  //   handleSelectAllClick()
-  // },[])
+  // const buscarFreelanzer = () => {
+  //   if (txtBusqueda != "") {
+  //     buscarFrelancerPorCi();
+  //   } else {
+  //     generarSnackBar("¡Introduzca carnet de identidad!", "info");
+  //   }
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -325,7 +341,7 @@ const GridTransferencia = (props) => {
   };
 
   const handleSelectAllClick = (event) => {
-    if (event.target.checked ) {
+    if (event.target.checked) {
       const newSelecteds = list.map((n) => n.nombreDeCliente);
       setSelected(newSelecteds);
       return;
@@ -353,9 +369,12 @@ const GridTransferencia = (props) => {
     setSelected(newSelected);
   };
 
-  const isSelected = (nombreDeCliente) => selected.indexOf(nombreDeCliente) !== -1;
+  const isSelected = (nombreDeCliente) =>
+    selected.indexOf(nombreDeCliente) !== -1;
 
-  
+const error = (message) =>{
+  dispatch(ActionMensaje.showMessage({ message: message , variant: "info" }));
+}
 
   return (
     <Core.Dialog
@@ -364,57 +383,85 @@ const GridTransferencia = (props) => {
       onClose={closeFullScreenModal}
       TransitionComponent={Transition}
     >
-      <Core.Grid container className={classes.gridContainer}>
-        <Core.Grid item xs={12}>
-          <Core.AppBar className={classes.appBar}>
-            <Core.Toolbar>
-              <Core.IconButton
-                edge="start"
-                color="inherit"
-                onClick={closeFullScreenModal}
-                aria-label="close"
-              >
-                <GeneralIcons.Close />
-              </Core.IconButton>
-              <Core.Typography variant="h6" className={classes.title}>
-                TRANSFERENCIA
-              </Core.Typography>
-            </Core.Toolbar>
-          </Core.AppBar>
+      <Core.AppBar className={classes.appBar}>
+        <Core.Toolbar>
+          <Core.IconButton
+            edge="start"
+            color="inherit"
+            onClick={closeFullScreenModal}
+            aria-label="close"
+          >
+            <GeneralIcons.Close />
+          </Core.IconButton>
+          <Core.Typography variant="h6" className={classes.title}>
+            CONFIRMAR TRANSFERENCIA
+          </Core.Typography>
+        </Core.Toolbar>
+      </Core.AppBar>
+      {/* --------------------------------------------------------------CABECERA-------------------------------------------------------------------- */}
+      <div style={{ paddingLeft: "0px", paddingRight: "0px", paddingTop: "10px" }}>
+        <Core.Breadcrumbs aria-label="breadcrumb">
+          <StyledBreadcrumb
+            key={1}
+            component="a"
+            label="Confirmar selección"
+            icon={<GeneralIcons.Home fontSize="small" />}
+          />
+        </Core.Breadcrumbs>
+      </div>
+      <br />
+
+      <Core.Card style={{overflow:"initial"}}>
+        <Core.Grid container className={classes.gridContainer}>
+          <Core.Grid item xs={12} md={4}></Core.Grid>
+          <Core.Grid item xs={12} md={4} className={classes.containerSave}>
+            {/* {statusBusqueda&& */}
+            <Core.TextField
+              label="Buscar freelancer"
+              type={"text"}
+              variant="outlined"
+              placeholder={"Buscar por carnet identidad"}
+              name="txtBusqueda"
+              value={txtBusqueda}
+              //onChange={onChangeSelectCiclo}
+              fullWidth
+              onKeyPress={(ev) => {
+                if (ev.key === "Enter") {
+                  //buscarFreelanzer();
+                }
+              }}
+              InputProps={{
+                startAdornment: (
+                  <Core.InputAdornment position="start">
+                    <GeneralIcons.Search />
+                  </Core.InputAdornment>
+                ),
+              }}
+            />
+            {/* } */}
+          </Core.Grid>
+          <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
+            <Core.Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submitCargar}
+              onClick = {
+                ()=> selected.length >0 ? openModalMessage() : error('¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!')
+              }
+            >
+              {"Confirmar transferencias "}{" "}
+              <GeneralIcons.CloudUpload style={{ marginLeft: "12px" }} />
+            </Core.Button>
+          </Core.Grid>
         </Core.Grid>
-        {/* <Core.Grid item xs={12} md={4}></Core.Grid>
-        <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-          <Core.Card>
-            {
-              // statusBusqueda && (
-              <Core.TextField
-                label="Buscar freelancer"
-                type={"text"}
-                variant="outlined"
-                placeholder={"CÉDULA DE IDENTIDAD"}
-                name="txtBusqueda"
-                value={txtBusqueda}
-                onChange={onChangeSelectCiclo}
-                fullWidth
-                onKeyPress={(ev) => {
-                  if (ev.key === "Enter") {
-                    buscarFreelanzer();
-                  }
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <Core.InputAdornment position="start">
-                      <GeneralIcons.Search />
-                    </Core.InputAdornment>
-                  ),
-                }}
-              />
-              // )
-            }
-          </Core.Card>
-        </Core.Grid> */}
+      </Core.Card>
+      <br />
+
+      
+      <Core.Grid container className={classes.gridContainer}>
         <Core.Grid item xs={12} className={classes.containerSave}>
-          <div className={classes.root}>
             <Core.Paper className={classes.paper}>
               <EnhancedTableToolbar numSelected={selected.length} />
               <Core.TableContainer>
@@ -442,29 +489,56 @@ const GridTransferencia = (props) => {
                         return (
                           <Core.TableRow
                             hover
-                            onClick={(event) => handleClick(event, row.nombreDeCliente)}
+                            onClick={(event) =>
+                              handleClick(event, row.nombreDeCliente)
+                            }
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row.nombreDeCliente}
                             selected={isItemSelected}
                           >
-                            <Core.TableCell padding="checkbox">
+                            <Core.TableCell padding="Checkbox">
                               <Core.Checkbox
                                 checked={isItemSelected}
                                 inputProps={{ "aria-labelledby": labelId }}
                               />
                             </Core.TableCell>
-                            <Core.TableCell component="th" id={labelId} scope="row" >{row.nombreDeCliente}</Core.TableCell>
-                            <Core.TableCell align="center">{row.docDeIdentidad}</Core.TableCell>
-                            <Core.TableCell align="center">{row.nroDeCuenta}</Core.TableCell>
-                            <Core.TableCell align="center">{row.idComisionDetalleEmpresa}</Core.TableCell>
-                            <Core.TableCell align="center">{row.empresa}</Core.TableCell>
+                            <Core.TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                            >
+                              {row.nombreDeCliente}
+                            </Core.TableCell>
+                            <Core.TableCell align="center">
+                              {row.docDeIdentidad}
+                            </Core.TableCell>
+                            <Core.TableCell align="center">
+                              {row.nroDeCuenta}
+                            </Core.TableCell>
+                            <Core.TableCell align="center">
+                              {row.idComisionDetalleEmpresa}
+                            </Core.TableCell>
+                            <Core.TableCell align="center">
+                              {row.empresa}
+                            </Core.TableCell>
                             {/* <Core.TableCell align="center">{row.formaPago}</Core.TableCell> */}
-                            <Core.TableCell align="center">{row.estado? 
-                                <Core.Chip label="Pagado" color="primary" variant="outlined" />
-                              :  <Core.Chip label="por pagar"  color="secondary" variant="outlined"   />
-                            }</Core.TableCell> 
+                            <Core.TableCell align="center">
+                              {row.estado ? (
+                                <Core.Chip
+                                  label="Pagado"
+                                  color="primary"
+                                  variant="outlined"
+                                />
+                              ) : (
+                                <Core.Chip
+                                  label="Pendiente"
+                                  color="secondary"
+                                  variant="outlined"
+                                />
+                              )}
+                            </Core.TableCell>
                           </Core.TableRow>
                         );
                       }
@@ -473,9 +547,10 @@ const GridTransferencia = (props) => {
                 </Core.Table>
               </Core.TableContainer>
             </Core.Paper>
-          </div>
-        </Core.Grid> 
+          
+        </Core.Grid>
       </Core.Grid>
+      <MessageConfirm open={openModalConfirmation} titulo={"CONFIRMAR"} subTituloModal={"PAGO POR TRANSFERENCIA"} tipoModal={"warning"} mensaje={"Al aceptar esta selección, confirmo que los Freelancers han recibido su transferencia."} handleCloseConfirm={openModalMessage} handleCloseCancel={closeModalMessage}  />
     </Core.Dialog>
   );
   //-------------------------------------------------------------------------------------
