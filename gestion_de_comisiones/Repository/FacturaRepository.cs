@@ -229,13 +229,8 @@ namespace gestion_de_comisiones.Repository
                         {
                             objEstadoComisionDetalle.IdEstadoComisionDetalle = 2;
                             context.SaveChanges();
-<<<<<<< HEAD
-
-                            var detallesComisiones = context.ComisionDetalleEmpresas.Where(x => x.Estado == 1 && x.IdComisionDetalle == comision.idComisionDetalle).ToList();
-=======
                             int idEstadoPendiente = 1;// #variable table estadodetalle comision empresa
                             var detallesComisiones = context.ComisionDetalleEmpresas.Where(x => x.Estado == idEstadoPendiente && x.IdComisionDetalle == comision.idComisionDetalle).ToList();
->>>>>>> 14c91cf7f981bd89225198cd589e8eed58349c40
                             if(detallesComisiones.Count > 0)
                             {
                                 foreach(var item in detallesComisiones)
@@ -333,14 +328,9 @@ namespace gestion_de_comisiones.Repository
 
                             }
                             else
-<<<<<<< HEAD
-                            {                                
-                                var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == 1 &&  x.IdComisionDetalle == idComisionDetalle && x.SiFacturo == false).ToList();
-=======
                             {
                                 int estadoPendiente = 1; //variable  estado de detalle comision empresa
                                 var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == estadoPendiente &&  x.IdComisionDetalle == idComisionDetalle && x.SiFacturo == false).ToList();
->>>>>>> 14c91cf7f981bd89225198cd589e8eed58349c40
                                 Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle empresas no facturadas : {detallesEstados.Count}");
                                 if (detallesEstados.Count == 0)
                                 {
@@ -460,13 +450,8 @@ namespace gestion_de_comisiones.Repository
                             }
                             context.SaveChanges();
                             Logger.LogInformation($" usuario: {usuarioLogin} -  habilitara un detalle empresa facturado : estado facturado :{estadoFacturado}");
-<<<<<<< HEAD
-                            
-                            var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == 1 && x.IdComisionDetalle == idComisionDetalle ).ToList();
-=======
                             int estadoPendiente = 1; //variable  estado de detalle comision empresa
                             var detallesEstados = context.ComisionDetalleEmpresas.Where(x => x.Estado == estadoPendiente && x.IdComisionDetalle == idComisionDetalle ).ToList();
->>>>>>> 14c91cf7f981bd89225198cd589e8eed58349c40
                             Logger.LogInformation($" usuario: {usuarioLogin} - se cantidad de detalle detalles a cambiar si facturo nro : {detallesEstados.Count}");
 
                             decimal retencionGlobal = 0;
