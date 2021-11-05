@@ -1566,7 +1566,35 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
 	where UA.estado='True' 
 
+	---------------------------------------------------------------------------------------------------------------------------------------------
+	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
+		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
 
-	----- correr insert primera vej, PAIS  Y CIUADAD
-	 -- insert BDMultinivel.dbo.PAIS select pa.IDPAIS, pa.DESCRIPCION, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PEPAIS pa  
-     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
+				--values(1,1,7,1,GETDATE(),GETDATE())
+		  --INSERTAR PERMISO VISUALIZAR-----------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 1, 1, GETDATE(), GETDATE())
+		  ---- INSERTAR PERMISO CREAR----------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 2, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ACTUALIZAR------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 3, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ELIMINAR--------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 4, 1, GETDATE(), GETDATE())
+
+		 --ASIGNAR ROL A USUARIO
+	
+			 --insert into BDMultinivel.dbo.USUARIOS_ROLES(id_usuario, id_rol,estado, usuario_id, fecha_creacion, fecha_actualizacion)
+			 --values(1, --id_usuario
+				--	1, --id_rol
+				--	1,-- estado
+				--	1,--usuario_id
+				--	GETDATE(), 
+				--GETDATE()
+				--); 
+	---------------------------------------------------------------------------------------------------------------------------------------------------
