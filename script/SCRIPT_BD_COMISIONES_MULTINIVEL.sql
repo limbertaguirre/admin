@@ -766,7 +766,7 @@ create table COMISION_DETALLE_EMPRESA
 (
     id_comision_detalle_empresa int not null primary key IDENTITY,
     monto decimal(18,2) not null,
-	estado estado TINYINT,
+	estado TINYINT,
 	respaldo_path varchar(500),
 	nro_autorizacion varchar,
 	monto_a_facturar decimal(18,2),
