@@ -138,5 +138,36 @@ export async function ObtenerCiclosPagos(userName, dispatch) {
     });
   }
 
+  export async function handleConfirmarPagosTransferenciasTodos(user ,cicloId, empresaId, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+          user: user,
+          cicloId: cicloId,
+          empresaId: empresaId
+        };    
+      console.log('handleConfirmarPagosTransferenciasTodos data: ', data);
+       requestPost('gestionPagos/handleConfirmarPagosTransferenciasTodos', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }
+  
+  export async function handleVerificarPagosTransferenciasTodos(user ,cicloId, empresaId, dispatch) {
+    return new Promise(resolve =>{
+        const data={
+          user: user,
+          cicloId: cicloId,
+          empresaId: empresaId
+        };    
+      console.log('handleVerificarPagosTransferenciasTodos data: ', data);
+       requestPost('gestionPagos/handleVerificarPagosTransferenciasTodos', data, dispatch )
+        .then(response =>{          
+            resolve(response);  
+        }) 
+       
+    });
+  }
 
 

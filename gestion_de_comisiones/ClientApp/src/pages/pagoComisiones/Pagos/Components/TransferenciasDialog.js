@@ -70,6 +70,9 @@ const TransferenciasDialog = ({
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     const [empresaId, setEmpresaId] = useState(-1);
     const [enabledInputs, setEnabledInputs] = useState(false);
+    const [enabledDownloadInput, setEnabledDownloadInput] = useState(false);
+    const [enabledConfirmarTodosInput, setEnabledConfirmarTodosInput] = useState(false);
+    const [enabledConfirmarSeleccionInput, setEnabledConfirmarSeleccionInput] = useState(false);
 
       const downloadExcel = (base64, fileName) => {
         // const contentType = "application/vnd.ms-excel";
@@ -110,7 +113,8 @@ const TransferenciasDialog = ({
 
     const handleEmpresasSelectChange = (event) => {
         setEmpresaId(event.target.value);
-        setInputs(event.target.value);
+        console.log('handleEmpresasSelectChange ', event.target.value)
+        handleVerificarPagosTransferenciasTodos(userName, event.target.value);        
     };
 
     const setInputs = (empresaId) => {
@@ -121,6 +125,34 @@ const TransferenciasDialog = ({
         }
     }
 
+    const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
+        if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
+            let response = await Actions.handleConfirmarPagosTransferenciasTodos(user, cicloId, empresaId, dispatch);   
+            console.log('TransferenciasDialog.js handleConfirmarPagosTransferenciasTodos response ', response);   
+            if(response && response.code == 0) {                 
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "info" }));
+              // setStatusBusqueda(true);    
+            } else {
+              dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+            }
+        }
+    }
+
+    const handleVerificarPagosTransferenciasTodos = async (user, empresaId) => {
+        if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
+            let response = await Actions.handleVerificarPagosTransferenciasTodos(user, cicloId, empresaId, dispatch);   
+            console.log('TransferenciasDialog.js handleConfirmarPagosTransferenciasTodos response ', response);   
+            if(response && response.code == 0) {                 
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "info" }));
+                setEnabledConfirmarTodosInput(false);   
+                setEnabledDownloadInput(true);   
+            } else {
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+                setEnabledConfirmarTodosInput(true); 
+            }
+        }  
+    }
+ 
     return(
         <Dialog
         open={openDialog}
@@ -174,7 +206,7 @@ const TransferenciasDialog = ({
               </TextField>
             </Grid>
             <Grid item xs={4} sm={4}>
-              <Button disabled={!enabledInputs} className={style.downloadButton} variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
+              <Button disabled={!enabledInputs && !enabledDownloadInput} className={style.downloadButton} variant="outlined" color="primary" onClick={() => handleDownloadFileEmpresas(userName, empresaId)}>
                 Descargar
               </Button>
             </Grid>
@@ -183,8 +215,8 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
+            <Button disabled={!enabledInputs && !enabledConfirmarTodosInput} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confimar todos</Button>
+            <Button disabled={!enabledInputs && !enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>
       </Dialog>

@@ -170,5 +170,48 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);                
+                if (confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No se pudo realizar la confirmacion de las transferencias.", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleConfirmarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                var confirm = Repository.handleVerificarPagosTransferenciasTodos(body);
+                if (confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Ya se confirmaron el pago de la transferencia para esta empresa en este ciclo.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "Falta confirmaci[on de transferencia para el pago para esta empresa en este ciclo", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleVerificarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

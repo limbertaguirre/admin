@@ -220,10 +220,10 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                int idTipoPago = 2;
+                int idTipoPagoTransferencia = 2;
                 int idTipoComision = 1;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPago: {idTipoPago}");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPagoTransferencia: {idTipoPagoTransferencia}");
                 var empresasIds = ContextMulti.Usuarios
                 .Join(ContextMulti.AsignacionEmpresaPagoes,
                       p => p.IdUsuario,
@@ -231,10 +231,11 @@ namespace gestion_de_comisiones.Repository
                       (p, e) => new
                       {
                           empresaId = e.IdEmpresa,
-                          usuario = p.Usuario1
+                          usuario = p.Usuario1,
+                          idTipoPago = e.IdTipoPago
                       }
                  )
-                .Where(x => x.usuario == param.usuarioLogin)
+                .Where(x => x.usuario == param.usuarioLogin && x.idTipoPago == idTipoPagoTransferencia)
                 .Select(u => new 
                 {
                     u.empresaId
@@ -247,7 +248,7 @@ namespace gestion_de_comisiones.Repository
                     ids[i] = (int) empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPago && ids.Contains(x.IdEmpresa))
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,
@@ -297,7 +298,7 @@ namespace gestion_de_comisiones.Repository
                     range.AutoFilter = true;
                     ws.AutoFilter.ApplyFilter();
 
-                    for (int i = 2; i <= info.Count; i++)
+                    for (int i = 2; i <= info.Count + 1; i++)
                     {
                         VwObtenerInfoExcelFormatoBanco f = info[i - 2];
                         ws.Cells[i, 1].Value = Convert.ToString(i - 1);
@@ -336,6 +337,88 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 return list;
+            }
+        }
+
+        public bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try {
+                Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasTodos()");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              }
+                           };
+
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS] @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
+                if (returnValue == 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+                //return 0;
+            } catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return false;
+            }
+        }
+
+        public bool handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                List<VwObtenerInfoExcelFormatoBanco> list = new List<VwObtenerInfoExcelFormatoBanco>();
+                Logger.LogWarning($" usuario: {body.user} inicio el repository handleVerificarPagosTransferenciasTodos() ");
+                Logger.LogWarning($" usuario: {body.user} parametros: idciclo:{body.cicloId} empresaId: {body.empresaId}");
+                var cantidad = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa != 2).Count();
+                if(cantidad > 0)
+                {
+                    // Se confirmo todas las transacciones para esta empresa en este ciclo
+                    return false;
+                } else
+                {
+                    return true;
+                }                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleVerificarPagosTransferenciasTodos() mensaje : {ex}");
+                return false;
             }
         }
     }

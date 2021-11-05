@@ -755,7 +755,7 @@ create table COMISION_DETALLE_EMPRESA
 (
     id_comision_detalle_empresa int not null primary key IDENTITY,
     monto decimal(18,2) not null,
-	estado bit not null,
+	estado TINYINT not null,
 	respaldo_path varchar(500),
 	nro_autorizacion varchar,
 	monto_a_facturar decimal(18,2),
@@ -777,7 +777,7 @@ create table COMISION_DETALLE_EMPRESA
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comision_detalle_empresa'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'es el monto comision por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla activo (1) e inactico (0)', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'estado'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado que pueda tener la tupla (1 Pendiente, 2 Confirmado, 3 Rechazado/Anulado)', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'estado'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de autorizacion de la factura', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'nro_autorizacion'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_a_facturar'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto total a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_total_facturar'
@@ -1569,3 +1569,36 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	----- correr insert primera vej, PAIS  Y CIUADAD
 	 -- insert BDMultinivel.dbo.PAIS select pa.IDPAIS, pa.DESCRIPCION, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PEPAIS pa  
      -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+GO
+ALTER VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
+as
+    select 
+    c.id_ciclo,
+    cde.id_empresa,
+    TRIM(e.nombre) as empresa,
+    l.id_comisiones_detalle,
+    cde.id_comision_detalle_empresa,
+    f.codigo_cnx as [CODIGO_DE_CLIENTE],
+    f.cuenta_bancaria AS [NRO_DE_CUENTA],
+    f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
+    f.ci as [DOC_DE_IDENTIDAD],
+    sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
+    l.monto_neto as [IMPORTE_NETO],
+    CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
+    1 as [FORMA_DE_PAGO],
+    2 AS [MONEDA_DESTINO],
+    1014 AS [ENTIDAD_DESTINO],
+    ci.nombre as GLOSA,
+    l.id_tipo_pago
+    from LISTADO_FORMAS_PAGO l
+    inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+    inner join GP_COMISION c on c.id_comision = cd.id_comision
+    inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
+    inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
+    inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
+    inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
+    where cde.monto_neto <> 0
+    and c.id_tipo_comision = 1
+    and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
+    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
+GO
