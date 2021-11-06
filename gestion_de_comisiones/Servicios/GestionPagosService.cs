@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Dtos;
+﻿using gestion_de_comisiones.Controllers.Events;
+using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
@@ -66,7 +67,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio getFormaPagosDisponibles() ");
-                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoComisionSiFacturo = 10; //VARIABLE cerrado forma de pago forma de pago
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
                 int idTipoComisionPagoComision = 1; //parametro
@@ -83,7 +84,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");              
-                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoComisionSiFacturo = 10; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
                 int idTipoComisionPagoComision = 1; //parametro
@@ -160,13 +161,17 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
-                var file = Repository.handleDownloadFileEmpresas(body);
-                return Respuesta.ReturnResultdo(0, "ok", file);
+                GestionPagosEvent r = (GestionPagosEvent) Repository.handleDownloadFileEmpresas(body);
+                if(r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
+                {
+                    throw new Exception(r.errorMessage);
+                } 
+                return Respuesta.ReturnResultdo(0, "ok", r.file);
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
-                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
             }
         }
 

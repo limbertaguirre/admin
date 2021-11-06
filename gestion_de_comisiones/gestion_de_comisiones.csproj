@@ -17,6 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="EPPlus" Version="5.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
@@ -32,7 +33,6 @@
     <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="5.0.0" />
    
-    <PackageReference Include="EPPlus" Version="5.8.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,15 +41,16 @@
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="Repositorios\**" />
     <EmbeddedResource Remove="Repositorios\**" />
-    <None Remove="$(SpaRoot)**" />
     <None Remove="Repositorios\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     <None Remove="EPPlus" />
+    <None Remove="Controllers\Events\" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="Modelos\Ciudad\" />
+    <Folder Include="Controllers\Events\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

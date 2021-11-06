@@ -138,7 +138,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {body.user} inicio el controller handleDownloadFileEmpresas() parametro: idciclo:{body.cicloId}, empresaId: {body.empresaId}");
+                Logger.LogInformation($"usuario : {body.user} inicio el controller handleDownloadFileEmpresas() parametro: idciclo:{body.cicloId}, empresaId: {body.empresaId}, date: {body.date}");
                 return Ok(Service.handleDownloadFileEmpresas(body));
             }
             catch (Exception e)

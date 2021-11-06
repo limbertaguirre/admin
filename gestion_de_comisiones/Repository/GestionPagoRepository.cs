@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Dtos;
+﻿using gestion_de_comisiones.Controllers.Events;
+using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
@@ -56,7 +57,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision ).ToList();
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision== comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision ).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -74,7 +76,9 @@ namespace gestion_de_comisiones.Repository
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetFiltroComisionesPorFormaPago() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.Estado, p.Icono)).ToList();               
                 foreach (var item in LisFormaPagos)
                 {
@@ -106,7 +110,7 @@ namespace gestion_de_comisiones.Repository
                 if (param.nombreCriterio != "")
                 {
                     var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision ).ToList();
                     var lista = ListComisiones.Where(x => x.IdTipoPago !=0 &&  x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                     return lista;
                 } else {
@@ -272,11 +276,67 @@ namespace gestion_de_comisiones.Repository
             try {
 
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
-                Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
+                Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("dd/MM/yyyy")}");
+
+                /*Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasTodos()");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@FechaPago",
+                                            SqlDbType =  System.Data.SqlDbType.DateTime,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.date
+                              }
+                           };
+
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS] @CicloId,  @EmpresaId, @UsuarioId, @FechaPago ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
+                if (returnValue == 1)
+                {
+                    //throw new Exception("Pas[o algo inesperado, no se pudo realizar la actualizacion.");
+                    return postEvent(GestionPagosEvent.ERROR, "Pas[o algo inesperado, no se pudo realizar la actualizacion.");
+                }
+                else if (returnValue == 2)
+                {
+                    return postEvent(GestionPagosEvent.ROLLBACK_ERROR, "Hubo problemas de conexion, por favor intenta mas tarde.");
+                }*/
+
                 int cicloId = Convert.ToInt32(body.cicloId);
                 int tipoPagoTransferencia = 2;
+                int estadoComisionDetalleEmpresaPendienteId = 1;
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
-                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendienteId)
                     .ToList();
 
                 Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
@@ -313,7 +373,7 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 5].AutoFitColumns(1);
                         ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".", ",");
                         //ws.Cells[i, 6].AutoFitColumns(1);
-                        ws.Cells[i, 7].Value = Convert.ToString(f.FechaDePago);
+                        ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
                         ws.Cells[i, 7].AutoFitColumns(1);
                         ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
                         //ws.Cells[i, 8].AutoFitColumns(1);
@@ -329,14 +389,13 @@ namespace gestion_de_comisiones.Repository
                     DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
                     r.file = Convert.ToBase64String(p.GetAsByteArray());
                     r.fileName = info[0].Empresa;
-                    return r;
+                    return postEvent(GestionPagosEvent.SUCCESS, r, "Archivo excel generado correctamente.");
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
-                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                return list;
+                return postEvent(GestionPagosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
             }
         }
 
@@ -420,6 +479,26 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} error catch handleVerificarPagosTransferenciasTodos() mensaje : {ex}");
                 return false;
             }
+        }
+
+        private GestionPagosEvent postEvent(int type, string errorMessage)
+        {
+            return postEvent(type, null, errorMessage);
+        }
+
+        private GestionPagosEvent postEvent(int type, DownloadFileTransferenciaOutput file, string errorMessage)
+        {
+            GestionPagosEvent e = new GestionPagosEvent();
+            e.eventType = type;
+            if(file != null)
+            {
+                e.file = file;
+            }
+            if(errorMessage != null)
+            {
+                e.errorMessage = errorMessage;
+            }
+            return e;
         }
     }
 }
