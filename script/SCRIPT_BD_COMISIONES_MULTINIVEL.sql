@@ -497,7 +497,24 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'fecha_actualizacion'
 go
     -- -- obtener bancos de bd comisiones
-    -- insert BDMultinivel.dbo.banco select B.IDENTIDAD, B.DESCRIPCION, '',0,1,GETDATE(), GETDATE()  from  BDComisiones.dbo.INENTIDAD_FIN B 
+      --insert into BDMultinivel.dbo.BANCO values( 1,'BANCO NACIONAL DE BOLIVIA','',1001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 2,'BANCO MERCANTIL SANTA CRUZ','',1003, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 3,'BANCO DE CRÉDITO DE BOLIVIA','',1005, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 4,'BANCO DO BRASIL','',1008, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 5,'BANCO BISA','',1009, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 6,'BANCO UNION','',1014, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 7,'BANCO ECONOMICO','',1016, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 8,'BANCO SOLIDARIO','',1017, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 9,'BANCO FIE','',1033, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 10,'BANCO FORTALEZA','',1034, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 11,'BANCO FASSIL','',1035, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 12,'BANCO PRODEM S.A','',1036, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 13,'COOPERATIVA JESUS NAZARENO','',3001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 14,'E-EFECTIVO S.A','',53001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 15,'BANCO PYME ECOFUTURO S.A.A.','',74002, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 16,'BANCO PYME DE LA COMUNIDAD','',74003, 1,GETDATE(), GETDATE() )
 go
 create table FICHA
 (
