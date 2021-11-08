@@ -147,8 +147,8 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
-        // GET: Pagos/ListadoComisionTransferencia
-        [HttpGet]
+        // POST: Pagos/handleConfirmarPagosTransferencias
+        [HttpPost]
         public ActionResult handleConfirmarPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
         {
             try
@@ -162,7 +162,21 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
-
+        // POST: Pagos/handleRechazadosPagosTransferencias
+        [HttpPost]
+        public ActionResult handleRechazadosPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleRechazadosPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleRechazadosPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
         [HttpPost]
         public ActionResult handleObtenerPagosTransferencias([FromBody] DownloadFileTransferenciaInput param)
         {

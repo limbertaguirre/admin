@@ -18,5 +18,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput param);
+        object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
     }
 }
