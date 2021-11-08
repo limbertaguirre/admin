@@ -373,5 +373,10 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
-}
+
+        public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
