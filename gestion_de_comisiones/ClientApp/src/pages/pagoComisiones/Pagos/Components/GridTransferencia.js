@@ -106,12 +106,12 @@ function EnhancedTableHead(props) {
     orderBy,
     numSelected,
     rowCount,
-    onRequestSort,
+    onRequestSort
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
+  
   return (
     <>
       <br />
@@ -345,14 +345,14 @@ const GridTransferencia = (props) => {
   //     generarSnackBar("¡Introduzca carnet de identidad!", "info");
   //   }
   // };
-
+  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
+  const handleSelectAllClick = (event) => {//Aqui seleccionamos todos.
     if (event.target.checked) {
       const newSelecteds = list.map((n) => n.nombreDeCliente);
       setSelected(newSelecteds);
@@ -387,7 +387,7 @@ const GridTransferencia = (props) => {
   const error = (message) => {
     dispatch(ActionMensaje.showMessage({ message: message, variant: "info" }));
   };
-
+  const [check_in, setCheck_in] = React.useState(true)
   return (
     <Core.Dialog
       fullScreen
