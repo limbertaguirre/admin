@@ -342,23 +342,13 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
-        {
-            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.empresaId}");
-            for (int i=0; i < body.rechazados.Count; i++ ) {
-                var a = body.rechazados[i];
-                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
-                    }
-            return 0;
-        }
-
         public object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body)
         {
             try
             {
 
-                Logger.LogWarning($" usuario: {body.user} inicio el repository handleObtenerPagosTransferencias() ");
-                Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
+                Logger.LogInformation($" usuario: {body.user} inicio el repository handleObtenerPagosTransferencias() ");
+                Logger.LogInformation($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
                 int cicloId = Convert.ToInt32(body.cicloId);
                 int tipoPagoTransferencia = 2;
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
@@ -374,9 +364,26 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param)
+        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
         {
-            throw new NotImplementedException();
+            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.idComisionDetalle}");
+            for (int i = 0; i < body.confirmados.Count; i++)
+            {
+                var a = body.confirmados[i];
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+            }
+            return 0;
+        }
+
+        public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        {
+            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.empresaId}");
+            for (int i = 0; i < body.rechazados.Count; i++)
+            {
+                var a = body.rechazados[i];
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+            }
+            return 0;
         }
     }
 }
