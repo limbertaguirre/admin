@@ -515,6 +515,7 @@ go
 	  --insert into BDMultinivel.dbo.BANCO values( 14,'E-EFECTIVO S.A','',53001, 1,GETDATE(), GETDATE() )
 	  --insert into BDMultinivel.dbo.BANCO values( 15,'BANCO PYME ECOFUTURO S.A.A.','',74002, 1,GETDATE(), GETDATE() )
 	  --insert into BDMultinivel.dbo.BANCO values( 16,'BANCO PYME DE LA COMUNIDAD','',74003, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 17,'BANCO GANADERO','',0, 1,GETDATE(), GETDATE() )
 go
 create table FICHA
 (
