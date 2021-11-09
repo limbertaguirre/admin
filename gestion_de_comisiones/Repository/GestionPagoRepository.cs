@@ -357,7 +357,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
 
-                Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
+                Logger.LogWarning($" usuario: {body.user} inicio el repository handleObtenerPagosTransferencias() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
                 int cicloId = Convert.ToInt32(body.cicloId);
                 int tipoPagoTransferencia = 2;
@@ -368,7 +368,7 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                Logger.LogWarning($" usuario: {body.user} error catch handleObtenerPagosTransferencias() mensaje : {ex}");
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 return list;
             }
