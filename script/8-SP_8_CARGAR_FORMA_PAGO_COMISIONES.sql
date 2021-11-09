@@ -32,7 +32,7 @@ BEGIN TRY
    SET @ESTADO_DETALLE_COMISION_NO_PRESENTA_FACTURA=6;
    SET @ESTADO_DETALLE_COMISION_SI_FACTURO= 2;
    SET @ESTADO_HABILITADO = 1;
-   SET @ESTADO_COMISION_DETALLE_PROCESADO= 2;
+   SET @ESTADO_COMISION_DETALLE_PROCESADO= 1;
    SET @SI_FACTURO= 1;
    SET @NO_FACTURO= 0;
 
@@ -191,7 +191,7 @@ BEGIN TRY
 									    INSERT INTO BDMultinivel.dbo.COMISION_DETALLE_EMPRESA(monto, estado,respaldo_path, nro_autorizacion, monto_a_facturar, monto_total_facturar, id_comision_detalle,id_empresa,id_usuario,ventas_personales,ventas_grupales,residual,retencion,monto_neto,si_facturo)
 										values(
 											@item_total,--monto
-											@ESTADO_COMISION_DETALLE_PROCESADO, --estado pendiente 2
+											@ESTADO_COMISION_DETALLE_PROCESADO, --estado pendiente 1
 											'', --path-respaldo vacio
 											CAST(@item_facturaId as varchar(10)), --nro autirizacion
 											@item_total, --montoa facturar
