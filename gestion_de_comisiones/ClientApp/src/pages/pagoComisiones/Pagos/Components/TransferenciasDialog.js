@@ -205,7 +205,8 @@ const TransferenciasDialog = ({
             variant: "info"
           })
         );
-        // setStatusBusqueda(true);
+        setEnabledConfirmarTodosInput(false);
+        setEnabledConfirmarSeleccionInput(false);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -213,6 +214,8 @@ const TransferenciasDialog = ({
             variant: "error"
           })
         );
+        setEnabledConfirmarTodosInput(true);
+        setEnabledConfirmarSeleccionInput(true);
       }
     }
   };
@@ -226,7 +229,7 @@ const TransferenciasDialog = ({
         dispatch
       );
       console.log(
-        "TransferenciasDialog.js handleConfirmarPagosTransferenciasTodos response ",
+        "TransferenciasDialog.js handleVerificarPagosTransferenciasTodos response ",
         response
       );
       if (response && response.code == 0) {
@@ -238,6 +241,11 @@ const TransferenciasDialog = ({
         );
         setEnabledConfirmarTodosInput(false);
         setEnabledDownloadInput(true);
+        setEnabledConfirmarSeleccionInput(false);
+      } else if (response && response.code == 2) {
+        setEnabledConfirmarTodosInput(true);
+        setEnabledDownloadInput(true);
+        setEnabledConfirmarSeleccionInput(true);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -246,6 +254,7 @@ const TransferenciasDialog = ({
           })
         );
         setEnabledConfirmarTodosInput(true);
+        setEnabledConfirmarSeleccionInput(true);
       }
     }
   };

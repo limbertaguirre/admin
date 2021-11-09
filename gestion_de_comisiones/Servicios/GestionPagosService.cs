@@ -209,7 +209,7 @@ namespace gestion_de_comisiones.Servicios
                 }
                 else
                 {
-                    return Respuesta.ReturnResultdo(1, "Falta confirmaci[on de transferencia para el pago para esta empresa en este ciclo", "");
+                    return Respuesta.ReturnResultdo(2, "Falta confirmar transferencias de pago para esta empresa en este ciclo", "");
                 }
             }
             catch (Exception ex)

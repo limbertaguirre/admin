@@ -79,7 +79,7 @@ namespace gestion_de_comisiones.Repository
 
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
-                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.Estado, p.Icono)).ToList();               
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.Estado??false, p.Icono)).ToList();               
                 foreach (var item in LisFormaPagos)
                 {
                     if (ListComisiones != null) {
@@ -276,9 +276,9 @@ namespace gestion_de_comisiones.Repository
             try {
 
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
-                Logger.LogWarning($" usuario: {body.user} parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("dd/MM/yyyy")}");
+                Logger.LogWarning($" usuario: {body.user} handleDownloadFileEmpresas parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("yyyyMMdd")}");
 
-                /*Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                Logger.LogInformation($" usuario: {body.user}, inicio repository handleDownloadFileEmpresas(): idciclo {body.cicloId}  ");
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
                     .Select(u => new
@@ -286,7 +286,7 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
-                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasTodos()");
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleDownloadFileEmpresas()");
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -313,15 +313,15 @@ namespace gestion_de_comisiones.Repository
                               },
                                new SqlParameter() {
                                             ParameterName = "@FechaPago",
-                                            SqlDbType =  System.Data.SqlDbType.DateTime,
+                                            SqlDbType =  System.Data.SqlDbType.VarChar,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = body.date
+                                            Value = body.date.ToString("yyyyMMdd")
                               }
                            };
-
+                Logger.LogInformation($" usuarioId: {usuarioId}, handleDownloadFileEmpresas inicio SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS parameterReturn: {parameterReturn}");
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS] @CicloId,  @EmpresaId, @UsuarioId, @FechaPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
+                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS returnValue {returnValue}  ");
                 if (returnValue == 1)
                 {
                     //throw new Exception("Pas[o algo inesperado, no se pudo realizar la actualizacion.");
@@ -330,7 +330,7 @@ namespace gestion_de_comisiones.Repository
                 else if (returnValue == 2)
                 {
                     return postEvent(GestionPagosEvent.ROLLBACK_ERROR, "Hubo problemas de conexion, por favor intenta mas tarde.");
-                }*/
+                }
 
                 int cicloId = Convert.ToInt32(body.cicloId);
                 int tipoPagoTransferencia = 2;
@@ -340,6 +340,10 @@ namespace gestion_de_comisiones.Repository
                     .ToList();
 
                 Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
+                if(info.Count == 0)
+                {
+
+                }
                 using (var p = new ExcelPackage())
                 {
                     var ws = p.Workbook.Worksheets.Add($"{info[0].Empresa}");
@@ -373,7 +377,8 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 5].AutoFitColumns(1);
                         ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".", ",");
                         //ws.Cells[i, 6].AutoFitColumns(1);
-                        ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
+                        //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 7].Value = f.FechaDePago;
                         ws.Cells[i, 7].AutoFitColumns(1);
                         ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
                         //ws.Cells[i, 8].AutoFitColumns(1);
@@ -381,7 +386,7 @@ namespace gestion_de_comisiones.Repository
                         //ws.Cells[i, 9].AutoFitColumns(1);
                         ws.Cells[i, 10].Value = Convert.ToString(f.EntidadDestino);
                         //ws.Cells[i, 10].AutoFitColumns(1);
-                        ws.Cells[i, 11].Value = "";
+                        ws.Cells[i, 11].Value = f.SucursalDestino;
                         ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
                         ws.Cells[i, 12].AutoFitColumns(1);
                         ws.Cells[i, 13].Value = "";
@@ -467,7 +472,7 @@ namespace gestion_de_comisiones.Repository
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa != 2).Count();
                 if(cantidad > 0)
                 {
-                    // Se confirmo todas las transacciones para esta empresa en este ciclo
+                    // No se confirmo TODAS las transacciones para esta empresa en este ciclo
                     return false;
                 } else
                 {
