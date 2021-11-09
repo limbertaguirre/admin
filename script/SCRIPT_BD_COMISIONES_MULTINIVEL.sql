@@ -1617,8 +1617,8 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 		f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
 		f.ci as [DOC_DE_IDENTIDAD],
 		sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
-		l.monto_neto as [IMPORTE_NETO],
-		CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
+		l.monto_neto as [IMPORTE_NETO],		
+		CAST(DATEPART(DAY,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  cde.fecha_pago) as VARCHAR) as [FECHA_DE_PAGO],
 		-- id_banco = 17 BANCO GANADERO
 		 case when isnull(b.id_banco, 0) = 17 then 1 else 3 end FORMA_DE_PAGO,
 		 case when isnull(b.id_banco, 0) = 17 then '' else '2' end MONEDA_DESTINO,

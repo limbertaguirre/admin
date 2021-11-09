@@ -199,7 +199,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 																 --  @subject = @IMPSUBJECT ;
 													   	END CATCH
 													-- --ACTUALIZAR DETALLE EMPRESA MULTINIVEL: IDMOVIMIENTO, Y COMPROBANT @IDCOMPROBANTE_NEW_GENERICO
-													update  BDMultinivel.dbo.COMISION_DETALLE_EMPRESA set id_movimiento = @IDMOVIMIENTO_GENERIC, id_comprobante_generico= @IDCOMPROBANTE_NEW_GENERICO, fecha_actualizacion= GETDATE() where id_comision_detalle_empresa= @2_IDCOMISIONEMPRESA_item
+													update  BDMultinivel.dbo.COMISION_DETALLE_EMPRESA set id_movimiento = @IDMOVIMIENTO_GENERIC, id_comprobante_generico= @IDCOMPROBANTE_NEW_GENERICO, fecha_pago= GETDATE() where id_comision_detalle_empresa= @2_IDCOMISIONEMPRESA_item
 
 											   END
 											END																							
