@@ -21,8 +21,9 @@ namespace gestion_de_comisiones.MultinivelModel
         public decimal ImporteNeto { get; set; }
         public string FechaDePago { get; set; }
         public int FormaDePago { get; set; }
-        public int MonedaDestino { get; set; }
-        public int EntidadDestino { get; set; }
+        public string MonedaDestino { get; set; }
+        public string EntidadDestino { get; set; }
+        public string SucursalDestino { get; set; }
         public string Glosa { get; set; }
         public int IdTipoPago { get; set; }
     }
