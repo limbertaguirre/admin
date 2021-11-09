@@ -73,6 +73,7 @@ create table CIUDAD
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	codigo varchar(50) default '',
 );
 
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria  de la tabla CIUDAD.', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'id_ciudad'
@@ -83,6 +84,21 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizaci
 go
       ----- correr insert primera vej, PAIS  Y CIUADAD	 
      -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 3
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 4
+		--update CIUDAD set codigo = 'POT' where id_ciudad = 5
+		--update CIUDAD set codigo = 'ORU' where id_ciudad = 6
+		--update CIUDAD set codigo = 'SUC' where id_ciudad = 7
+		--update CIUDAD set codigo = 'TRI' where id_ciudad = 8
+		--update CIUDAD set codigo = 'COB' where id_ciudad = 9
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 10
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 11
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 4084
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 4086
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 10000
 
 go
 create table SUCURSAL
@@ -497,7 +513,25 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'fecha_actualizacion'
 go
     -- -- obtener bancos de bd comisiones
-    -- insert BDMultinivel.dbo.banco select B.IDENTIDAD, B.DESCRIPCION, '',0,1,GETDATE(), GETDATE()  from  BDComisiones.dbo.INENTIDAD_FIN B 
+      --insert into BDMultinivel.dbo.BANCO values( 1,'BANCO NACIONAL DE BOLIVIA','',1001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 2,'BANCO MERCANTIL SANTA CRUZ','',1003, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 3,'BANCO DE CRÉDITO DE BOLIVIA','',1005, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 4,'BANCO DO BRASIL','',1008, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 5,'BANCO BISA','',1009, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 6,'BANCO UNION','',1014, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 7,'BANCO ECONOMICO','',1016, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 8,'BANCO SOLIDARIO','',1017, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 9,'BANCO FIE','',1033, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 10,'BANCO FORTALEZA','',1034, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 11,'BANCO FASSIL','',1035, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 12,'BANCO PRODEM S.A','',1036, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 13,'COOPERATIVA JESUS NAZARENO','',3001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 14,'E-EFECTIVO S.A','',53001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 15,'BANCO PYME ECOFUTURO S.A.A.','',74002, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 16,'BANCO PYME DE LA COMUNIDAD','',74003, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 17,'BANCO GANADERO','',0, 1,GETDATE(), GETDATE() )
 go
 create table FICHA
 (
@@ -766,7 +800,7 @@ create table COMISION_DETALLE_EMPRESA
 (
     id_comision_detalle_empresa int not null primary key IDENTITY,
     monto decimal(18,2) not null,
-	estado TINYINT not null,
+	estado TINYINT,
 	respaldo_path varchar(500),
 	nro_autorizacion varchar,
 	monto_a_facturar decimal(18,2),
@@ -784,6 +818,7 @@ create table COMISION_DETALLE_EMPRESA
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	fecha_pago datetime,
 );
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comision_detalle_empresa'
@@ -1241,6 +1276,7 @@ GO
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
 AS
 	 select 
+	     GPDE.id_comision as 'idComision',
 	     ComiEmp.id_comision_detalle_empresa,
 		 ComiEmp.id_comision_detalle,
 	     Emp.nombre AS 'empresa',
@@ -1250,6 +1286,7 @@ AS
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
 		 Emp.id_empresa AS 'idEmpresa',
+		 Emp.estado AS 'estadoEmpresa',
 		 ComiEmp.estado As 'estadoDetalleEmpresa',
 		 ComiEmp.ventas_personales,
 		 ComiEmp.ventas_grupales,
@@ -1565,110 +1602,78 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	where UA.estado='True' 
 
 
-	----- correr insert primera vej, PAIS  Y CIUADAD
-	 -- insert BDMultinivel.dbo.PAIS select pa.IDPAIS, pa.DESCRIPCION, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PEPAIS pa  
-     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
-GO
-CREATE TABLE [dbo].[ASIGNACION_EMPRESA_PAGO](
-	[id_asignacion_empresa_pago] [int] IDENTITY(1,1) NOT NULL,
-	[id_usuario] [int] NULL,
-	[id_empresa] [int] NULL,
-	[id_tipo_pago] [int] NULL,
-	[descripcion] [varchar](250) NULL,
-	[usuario_id] [int] NULL,
-	[fecha_creacion] [datetime] NULL DEFAULT GETDATE(),
-	[fecha_actualizacion] [datetime] NULL DEFAULT GETDATE()
-)
-GO
-CREATE VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
-as
-    select 
-    c.id_ciclo,
-    cde.id_empresa,
-    TRIM(e.nombre) as empresa,
-    l.id_comisiones_detalle,
-    cde.id_comision_detalle_empresa,
-    f.codigo_cnx as [CODIGO_DE_CLIENTE],
-    f.cuenta_bancaria AS [NRO_DE_CUENTA],
-    f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
-    f.ci as [DOC_DE_IDENTIDAD],
-    sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
-    l.monto_neto as [IMPORTE_NETO],
-    CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
-    1 as [FORMA_DE_PAGO],
-    2 AS [MONEDA_DESTINO],
-    1014 AS [ENTIDAD_DESTINO],
-    ci.nombre as GLOSA,
-    l.id_tipo_pago
-    from LISTADO_FORMAS_PAGO l
-    inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-    inner join GP_COMISION c on c.id_comision = cd.id_comision
-    inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
-    inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-    inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-    inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
-    where cde.monto_neto <> 0
-    and c.id_tipo_comision = 1
-    and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
-GO
-CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
-as
-select c.id_ciclo
-, cde.id_empresa
-, TRIM(e.nombre) as empresa
-, c.id_tipo_comision
-, l.id_tipo_pago
-, sum(cde.monto_neto) monto_transferir
-from LISTADO_FORMAS_PAGO l
-inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-inner join GP_COMISION c on c.id_comision = cd.id_comision
-inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-where l.monto_neto <> 0
-and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision
-, l.id_tipo_pago
-GO
-CREATE proc [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS]
-    @CicloId    int,
-    @EmpresaId  int,
-    @UsuarioId  int
-AS
-BEGIN
-    DECLARE @Resp   int;
-    BEGIN TRY
-        DECLARE @IMPBODY        VARCHAR (500);
-        DECLARE @IMPSUBJECT     VARCHAR (500);
-        DECLARE @EstadoPendiente        int,
-                @EstadoConfirmado       int,
-                @TipoPagoTransferencia  int;
-                
-        SET @EstadoPendiente    = 1;
-        SET @EstadoConfirmado   = 2;
-        SET @TipoPagoTransferencia = 2;
-        SET @Resp = 0; 
-        BEGIN TRANSACTION
-            update COMISION_DETALLE_EMPRESA set estado = @EstadoConfirmado, fecha_actualizacion = GETDATE(), id_usuario = @UsuarioId
-            where   id_empresa = @EmpresaId and estado = @EstadoPendiente and
-                    id_comision_detalle_empresa in (select i.id_comision_detalle_empresa from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
-                                            where i.id_empresa = @EmpresaId and i.id_ciclo = @CicloId and i.id_tipo_pago = @TipoPagoTransferencia)
-        COMMIT TRANSACTION
-        RETURN @Resp;
-    END TRY
-    BEGIN CATCH   
-        SET @Resp = 1;          
-        IF @@TRANCOUNT > 0
-            BEGIN
-                SET @IMPBODY = concat ('SP_CONFIRMAR_TRANSFERENCIAS_TODOS ', ' ');
-                SET @IMPSUBJECT = 'ALERTA PRODUCCION : No se pudo actualizar los estados de las comisiones en sion pay';
-                --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
-                --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
-                --                                @body           = @IMPBODY,
-                --                                @subject        = @IMPSUBJECT;
-                ROLLBACK TRANSACTION;        
-                RETURN 1
-            END
-    END CATCH;    
-END
-GO
+	go
+	CREATE VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
+		as
+		select 
+		c.id_ciclo,
+		cde.id_empresa,
+		TRIM(e.nombre) as empresa,
+		l.id_comisiones_detalle,
+		cde.id_comision_detalle_empresa,
+		cde.estado as id_estado_comision_detalle_empresa,
+		f.codigo_cnx as [CODIGO_DE_CLIENTE],
+		f.cuenta_bancaria AS [NRO_DE_CUENTA],
+		f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
+		f.ci as [DOC_DE_IDENTIDAD],
+		sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
+		l.monto_neto as [IMPORTE_NETO],		
+		CAST(DATEPART(DAY,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  cde.fecha_pago) as VARCHAR) as [FECHA_DE_PAGO],
+		-- id_banco = 17 BANCO GANADERO
+		 case when isnull(b.id_banco, 0) = 17 then 1 else 3 end FORMA_DE_PAGO,
+		 case when isnull(b.id_banco, 0) = 17 then '' else '2' end MONEDA_DESTINO,
+		 case when isnull(b.id_banco, 0) = 17 then '' else b.codigo end ENTIDAD_DESTINO,
+		-- Sucursal
+		 case when isnull(b.id_banco, 0) = 17 then '' else case when isnull(ciu.id_pais, -1) = 1 then ciu.codigo else '' end end SUCURSAL_DESTINO,
+		 ci.nombre as GLOSA,
+		 l.id_tipo_pago
+		from BDMultinivel.dbo.LISTADO_FORMAS_PAGO l
+		inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+		inner join BDMultinivel.dbo.GP_COMISION c on c.id_comision = cd.id_comision
+		inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
+		inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
+		inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
+		inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
+		inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
+		inner join BDMultinivel.dbo.CIUDAD ciu on ciu.id_ciudad = f.id_ciudad
+		left join BDMultinivel.dbo.BANCO b on b.id_banco = f.id_banco
+		where cde.monto_neto <> 0
+		and c.id_tipo_comision = 1
+		and cec.id_estado_comision = 10 -- CERRADO FORMA DE PAGO
+		and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
+		group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo
+		GO
+
+
+	---------------------------------------------------------------------------------------------------------------------------------------------
+	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
+		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
+
+		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
+				--values(1,1,7,1,GETDATE(),GETDATE())
+		  --INSERTAR PERMISO VISUALIZAR-----------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 1, 1, GETDATE(), GETDATE())
+		  ---- INSERTAR PERMISO CREAR----------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 2, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ACTUALIZAR------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 3, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ELIMINAR--------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 4, 1, GETDATE(), GETDATE())
+
+		 --ASIGNAR ROL A USUARIO
+	
+			 --insert into BDMultinivel.dbo.USUARIOS_ROLES(id_usuario, id_rol,estado, usuario_id, fecha_creacion, fecha_actualizacion)
+			 --values(1, --id_usuario
+				--	1, --id_rol
+				--	1,-- estado
+				--	1,--usuario_id
+				--	GETDATE(), 
+				--GETDATE()
+				--); 
+	---------------------------------------------------------------------------------------------------------------------------------------------------
