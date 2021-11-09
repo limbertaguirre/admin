@@ -84,6 +84,21 @@ go
       ----- correr insert primera vej, PAIS  Y CIUADAD	 
      -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
 
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 3
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 4
+		--update CIUDAD set codigo = 'POT' where id_ciudad = 5
+		--update CIUDAD set codigo = 'ORU' where id_ciudad = 6
+		--update CIUDAD set codigo = 'SUC' where id_ciudad = 7
+		--update CIUDAD set codigo = 'TRI' where id_ciudad = 8
+		--update CIUDAD set codigo = 'COB' where id_ciudad = 9
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 10
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 11
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 4084
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 4086
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 10000
+
 go
 create table SUCURSAL
 (
