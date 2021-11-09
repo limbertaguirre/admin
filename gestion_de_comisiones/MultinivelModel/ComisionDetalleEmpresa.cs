@@ -27,5 +27,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public int? IdUsuario { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+        public DateTime? FechaPago { get; set; }
     }
 }

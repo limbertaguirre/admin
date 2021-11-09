@@ -587,6 +587,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasDefaultValueSql("(getdate())")
                     .HasComment("Es el timestamp de creación del registro");
 
+                entity.Property(e => e.FechaPago)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_pago");
+
                 entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
 
                 entity.Property(e => e.IdComprobanteGenerico)
