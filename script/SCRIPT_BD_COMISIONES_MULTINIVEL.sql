@@ -817,6 +817,7 @@ create table COMISION_DETALLE_EMPRESA
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	fecha_pago datetime,
 );
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comision_detalle_empresa'
