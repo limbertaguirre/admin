@@ -11,6 +11,10 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         {
         }
 
+        public FormaPagoModel(int idTipoPago)
+        {
+        }
+
         public FormaPagoModel(int idTipoPago, string nombre, string descripcion, int idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion, bool estado, string icono)
         {
             IdTipoPago = idTipoPago;

@@ -1,6 +1,6 @@
 
 ## base de datos correr primera vez
-   Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel   
+   Scaffold-DbContext "Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel   
 
 ## tablas guardian correr primera vez
   Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=grdsion; SslMode = none;Command Timeout=3000" MySql.EntityFrameworkCore -OutputDir GuardianModels -Tables administraciondescuentociclo, administraciondescuentociclodetalle, administracionciclopresentafactura  empresa_complejo, proyecto_conexion_sufijo, administracionciclo
@@ -11,7 +11,7 @@ Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=gr
 
 ## base de datos Actualizar modelo
 
-Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
+Scaffold-DbContext "Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
 
 ## se instalo package nuGet un nuevo SeriLog.Extensions.Loggin.File
 ## reemplazar <aspNetCore> en el web config, al ser compilado para ser, PARA QUE PUEDA IMPRIMIR logs Y ASEGURARSE QUE LA PUBLICACION EN EL IIS ESTE EN EL GRUPO DE "DefaultAppPool" YA QUE ESTE TIENE ACCESO DE LECTURA Y ESCRITURA. 
