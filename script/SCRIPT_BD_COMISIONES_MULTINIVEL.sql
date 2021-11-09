@@ -73,6 +73,7 @@ create table CIUDAD
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	codigo varchar(50) default '',
 );
 
 EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria  de la tabla CIUDAD.', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'id_ciudad'
