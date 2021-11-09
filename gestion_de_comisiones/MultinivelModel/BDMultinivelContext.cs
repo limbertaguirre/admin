@@ -528,6 +528,12 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("id_ciudad")
                     .HasComment("Llave primaria  de la tabla CIUDAD.");
 
+                entity.Property(e => e.Codigo)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("codigo")
+                    .HasDefaultValueSql("(N'')");
+
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fecha_actualizacion")
@@ -3079,7 +3085,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("empresa");
 
-                entity.Property(e => e.EntidadDestino).HasColumnName("ENTIDAD_DESTINO");
+                entity.Property(e => e.EntidadDestino)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ENTIDAD_DESTINO");
 
                 entity.Property(e => e.FechaDePago)
                     .HasMaxLength(92)
@@ -3113,7 +3122,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnType("decimal(38, 2)")
                     .HasColumnName("IMPORTE_POR_EMPRESA");
 
-                entity.Property(e => e.MonedaDestino).HasColumnName("MONEDA_DESTINO");
+                entity.Property(e => e.MonedaDestino)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("MONEDA_DESTINO");
 
                 entity.Property(e => e.NombreDeCliente)
                     .IsRequired()
@@ -3125,6 +3138,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("NRO_DE_CUENTA");
+
+                entity.Property(e => e.SucursalDestino)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SUCURSAL_DESTINO");
             });
 
             modelBuilder.Entity<VwObtenerProyectoxProducto>(entity =>
