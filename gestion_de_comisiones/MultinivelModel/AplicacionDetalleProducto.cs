@@ -15,10 +15,10 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdProyecto { get; set; }
         public string CodigoProducto { get; set; }
         public int IdComisionesDetalle { get; set; }
+        public int IdBdqishur { get; set; }
+        public int IdTipoAplicaciones { get; set; }
         public int IdUsuario { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
-        public int IdBdqishur { get; set; }
-        public int IdTipoAplicaciones { get; set; }
     }
 }

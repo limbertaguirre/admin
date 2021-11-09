@@ -497,7 +497,24 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación d
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BANCO', N'COLUMN', N'fecha_actualizacion'
 go
     -- -- obtener bancos de bd comisiones
-    -- insert BDMultinivel.dbo.banco select B.IDENTIDAD, B.DESCRIPCION, '',0,1,GETDATE(), GETDATE()  from  BDComisiones.dbo.INENTIDAD_FIN B 
+      --insert into BDMultinivel.dbo.BANCO values( 1,'BANCO NACIONAL DE BOLIVIA','',1001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 2,'BANCO MERCANTIL SANTA CRUZ','',1003, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 3,'BANCO DE CRÉDITO DE BOLIVIA','',1005, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 4,'BANCO DO BRASIL','',1008, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 5,'BANCO BISA','',1009, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 6,'BANCO UNION','',1014, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 7,'BANCO ECONOMICO','',1016, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 8,'BANCO SOLIDARIO','',1017, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 9,'BANCO FIE','',1033, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 10,'BANCO FORTALEZA','',1034, 1,GETDATE(), GETDATE() )
+
+	  --insert into BDMultinivel.dbo.BANCO values( 11,'BANCO FASSIL','',1035, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 12,'BANCO PRODEM S.A','',1036, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 13,'COOPERATIVA JESUS NAZARENO','',3001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 14,'E-EFECTIVO S.A','',53001, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 15,'BANCO PYME ECOFUTURO S.A.A.','',74002, 1,GETDATE(), GETDATE() )
+	  --insert into BDMultinivel.dbo.BANCO values( 16,'BANCO PYME DE LA COMUNIDAD','',74003, 1,GETDATE(), GETDATE() )
 go
 create table FICHA
 (
@@ -766,7 +783,7 @@ create table COMISION_DETALLE_EMPRESA
 (
     id_comision_detalle_empresa int not null primary key IDENTITY,
     monto decimal(18,2) not null,
-	estado bit not null,
+	estado TINYINT,
 	respaldo_path varchar(500),
 	nro_autorizacion varchar,
 	monto_a_facturar decimal(18,2),
@@ -1241,6 +1258,7 @@ GO
 CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
 AS
 	 select 
+	     GPDE.id_comision as 'idComision',
 	     ComiEmp.id_comision_detalle_empresa,
 		 ComiEmp.id_comision_detalle,
 	     Emp.nombre AS 'empresa',
@@ -1250,6 +1268,7 @@ AS
 		 ComiEmp.respaldo_path,
 		 ComiEmp.nro_autorizacion,
 		 Emp.id_empresa AS 'idEmpresa',
+		 Emp.estado AS 'estadoEmpresa',
 		 ComiEmp.estado As 'estadoDetalleEmpresa',
 		 ComiEmp.ventas_personales,
 		 ComiEmp.ventas_grupales,
@@ -1564,7 +1583,35 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
 	where UA.estado='True' 
 
+	---------------------------------------------------------------------------------------------------------------------------------------------
+	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
+		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
 
-	----- correr insert primera vej, PAIS  Y CIUADAD
-	 -- insert BDMultinivel.dbo.PAIS select pa.IDPAIS, pa.DESCRIPCION, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PEPAIS pa  
-     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
+				--values(1,1,7,1,GETDATE(),GETDATE())
+		  --INSERTAR PERMISO VISUALIZAR-----------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 1, 1, GETDATE(), GETDATE())
+		  ---- INSERTAR PERMISO CREAR----------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 2, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ACTUALIZAR------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 3, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ELIMINAR--------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 4, 1, GETDATE(), GETDATE())
+
+		 --ASIGNAR ROL A USUARIO
+	
+			 --insert into BDMultinivel.dbo.USUARIOS_ROLES(id_usuario, id_rol,estado, usuario_id, fecha_creacion, fecha_actualizacion)
+			 --values(1, --id_usuario
+				--	1, --id_rol
+				--	1,-- estado
+				--	1,--usuario_id
+				--	GETDATE(), 
+				--GETDATE()
+				--); 
+	---------------------------------------------------------------------------------------------------------------------------------------------------
