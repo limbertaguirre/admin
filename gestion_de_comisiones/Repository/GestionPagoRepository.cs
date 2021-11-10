@@ -547,10 +547,10 @@ namespace gestion_de_comisiones.Repository
                 }
 
                 int tipoPagoTransferencia = 2;
-                int idEstadoComisionDetalleEmpresaPendiente = 1;
+                int idEstadoComisionDetalleEmpresaConfirmado = 2;
                 List<VwObtenerInfoExcelFormatoBanco> l = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == body.cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
-                            x.IdEstadoComisionDetalleEmpresa == idEstadoComisionDetalleEmpresaPendiente)
+                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
                     .ToList();
 
                 if (!confirmarTransferidosNoSeleccionados(body, usuarioId, l))

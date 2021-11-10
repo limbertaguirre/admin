@@ -91,7 +91,7 @@ const headCells = [
     label: "Empresa",
   },
   {
-    id: "estado",
+    id: "idEstadoComisionDetalleEmpresa",
     numeric: false,
     disablePadding: true,
     label: "Estado",
@@ -415,7 +415,8 @@ const GridTransferencia = (props) => {
           variant: "success",
         })
       );
-      handleOnGetPagos();
+      closeFullScreenModal();
+      //handleOnGetPagos();
     } else {
       dispatch(
         ActionMensaje.showMessage({
@@ -579,6 +580,7 @@ async function cargarComisionesPagos(userNa, cicloId){
                         >
                           <Core.TableCell padding="Checkbox">
                             <Core.Checkbox
+                              disabled={row.idEstadoComisionDetalleEmpresa === 2? true:false}
                               checked={isItemSelected}
                               inputProps={{ "aria-labelledby": labelId }}
                             />
@@ -604,17 +606,23 @@ async function cargarComisionesPagos(userNa, cicloId){
                           </Core.TableCell>
                           {/* <Core.TableCell align="center">{row.formaPago}</Core.TableCell> */}
                           <Core.TableCell align="center">
-                            {row.estado ? (
+                            {row.idEstadoComisionDetalleEmpresa === 2 ? (
                               <Core.Chip
                                 label="Pagado"
                                 color="primary"
-                                variant="outlined"
+                                variant="default"
                               />
-                            ) : (
+                            ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
                               <Core.Chip
                                 label="Pendiente"
                                 color="secondary"
-                                variant="outlined"
+                                variant="default"
+                              />
+                            ) : (
+                              <Core.Chip
+                                label="Rechazado"
+                                color="secondary"
+                                variant="default"
                               />
                             )}
                           </Core.TableCell>
