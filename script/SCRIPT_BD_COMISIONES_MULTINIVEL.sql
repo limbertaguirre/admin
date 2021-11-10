@@ -822,7 +822,7 @@ create table COMISION_DETALLE_EMPRESA
 go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la llave primaria de la tabla', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'id_comision_detalle_empresa'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'es el monto comision por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto'
-	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla activo (1) e inactico (0)', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'estado'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado que pueda tener la tupla (1 Pendiente, 2 Confirmado, 3 Rechazado/Anulado)', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'estado'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de autorizacion de la factura', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'nro_autorizacion'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_a_facturar'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'El monto total a facturar por empresa', 'SCHEMA', 'dbo', 'TABLE', 'COMISION_DETALLE_EMPRESA', N'COLUMN', N'monto_total_facturar'
@@ -1655,8 +1655,8 @@ select * from BDMultinivel.dbo.USUARIOS_ROLES
 		f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
 		f.ci as [DOC_DE_IDENTIDAD],
 		sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
-		l.monto_neto as [IMPORTE_NETO],
-		CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
+		l.monto_neto as [IMPORTE_NETO],		
+		CAST(DATEPART(DAY,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  cde.fecha_pago) as VARCHAR) as [FECHA_DE_PAGO],
 		-- id_banco = 17 BANCO GANADERO
 		 case when isnull(b.id_banco, 0) = 17 then 1 else 3 end FORMA_DE_PAGO,
 		 case when isnull(b.id_banco, 0) = 17 then '' else '2' end MONEDA_DESTINO,

@@ -129,7 +129,7 @@ export async function handleTransferenciasEmpresas(user, cicloId, dispatch) {
     const data = {
       usuarioLogin: user,
       idCiclo: cicloId,
-      tipoPagoId: 1,
+      tipoPagoId: 1
     };
     // console.log('handleTransferenciasEmpresas data: ', data);
     requestPost(
@@ -146,13 +146,15 @@ export async function handleDownloadFileEmpresas(
   user,
   cicloId,
   empresaId,
+  date,
   dispatch
 ) {
   return new Promise((resolve) => {
     const data = {
-      user: user,
-      cicloId: cicloId,
-      empresaId: empresaId,
+      user,
+      cicloId,
+      empresaId,
+      date
     };
     console.log("handleDownloadFileEmpresas data: ", data);
     requestPost("gestionPagos/handleDownloadFileEmpresas", data, dispatch).then(
@@ -163,7 +165,7 @@ export async function handleDownloadFileEmpresas(
   });
 }
 
-export async function handleConfirmarPagosTransferencias(
+export async function handleConfirmarPagosTransferenciasTodos(
   user,
   cicloId,
   empresaId,
@@ -173,18 +175,20 @@ export async function handleConfirmarPagosTransferencias(
     const data = {
       user: user,
       cicloId: cicloId,
-      empresaId: empresaId,
+      empresaId: empresaId
     };
-    console.log("handleConfirmarPagosTransferencias data: ", data);
-    requestPost("gestionPagos/handleConfirmarPagosTransferencias", data, dispatch).then(
-      (response) => {
-        resolve(response);
-      }
-    );
+    console.log("handleConfirmarPagosTransferenciasTodos data: ", data);
+    requestPost(
+      "gestionPagos/handleConfirmarPagosTransferenciasTodos",
+      data,
+      dispatch
+    ).then((response) => {
+      resolve(response);
+    });
   });
 }
 
-export async function handleObtenerPagosTransferencias(
+export async function handleVerificarPagosTransferenciasTodos(
   user,
   cicloId,
   empresaId,
@@ -194,13 +198,15 @@ export async function handleObtenerPagosTransferencias(
     const data = {
       user: user,
       cicloId: cicloId,
-      empresaId: empresaId,
+      empresaId: empresaId
     };
-    console.log("handleObtenerPagosTransferencias data: ", data);
-    requestPost("gestionPagos/handleObtenerPagosTransferencias", data, dispatch).then(
-      (response) => {
-        resolve(response);
-      }
-    );
+    console.log("handleVerificarPagosTransferenciasTodos data: ", data);
+    requestPost(
+      "gestionPagos/handleVerificarPagosTransferenciasTodos",
+      data,
+      dispatch
+    ).then((response) => {
+      resolve(response);
+    });
   });
 }
