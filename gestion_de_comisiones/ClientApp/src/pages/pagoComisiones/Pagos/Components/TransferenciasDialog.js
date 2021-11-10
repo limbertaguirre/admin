@@ -179,6 +179,7 @@ const TransferenciasDialog = ({
     }
   };
 
+
   const handleEmpresasSelectChange = (event) => {
     setEmpresaId(event.target.value);
     console.log("handleEmpresasSelectChange ", event.target.value);
@@ -192,19 +193,19 @@ const TransferenciasDialog = ({
       setEnabledInputs(true);
     }
   };
-  // const handleObtenerPagosTransferencias = async (user, empresaId) =>{
-  //   if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
-  //     let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
-  //     console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
-  //     if(response && response.code == 0) { 
-  //       setList(response.data);
-  //       setOpenModalFullScreen(true);
-  //     } else {
-  //       dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
-  //     }
-  //   }
-  // }
-
+  const handleObtenerPagosTransferencias = async (user, empresaId) =>{
+    if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
+      let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
+      console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
+      if(response && response.code == 0) { 
+        setList(response.data);
+        setOpenModalFullScreen(true);
+      } else {
+        dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+      }
+    }
+  }
+   
 
   const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
@@ -239,7 +240,6 @@ const TransferenciasDialog = ({
       }
     }
   };
-
 
   const handleVerificarPagosTransferenciasTodos = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
@@ -279,6 +279,7 @@ const TransferenciasDialog = ({
       }
     }
   };
+
 
   return (
     <Dialog
@@ -363,8 +364,8 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Confimar todos</Button>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confirmar seleccion</Button>
+            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confimar todos</Button>
+            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         
         <GridTransferenciaModal list= {list} empresaId={empresaId} openModalFullScreen={openModalFullScreen} closeFullScreenModal ={closeFullScreenModal }/>   

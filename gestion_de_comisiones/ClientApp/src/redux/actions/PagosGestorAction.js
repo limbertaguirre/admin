@@ -165,6 +165,27 @@ export async function handleDownloadFileEmpresas(
   });
 }
 
+export async function handleObtenerPagosTransferencias(
+  user,
+  cicloId,
+  empresaId,
+  dispatch
+) {
+  return new Promise((resolve) => {
+    const data = {
+      user,
+      cicloId,
+      empresaId
+    };
+    console.log("handleObtenerPagosTransferencias data: ", data);
+    requestPost("gestionPagos/handleObtenerPagosTransferencias", data, dispatch).then(
+      (response) => {
+        resolve(response);
+      }
+    );
+  });
+}
+
 export async function handleConfirmarPagosTransferenciasTodos(
   user,
   cicloId,
