@@ -364,8 +364,8 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confimar todos</Button>
-            <Button disabled={!enabledInputs} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
+            <Button disabled={!enabledInputs && !enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confimar todos</Button>
+            <Button disabled={!enabledInputs && !enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         
         <GridTransferenciaModal list= {list} empresaId={empresaId} openModalFullScreen={openModalFullScreen} closeFullScreenModal ={closeFullScreenModal }/>   
