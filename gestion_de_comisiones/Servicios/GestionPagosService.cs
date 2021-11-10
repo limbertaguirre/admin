@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Dtos;
+﻿using gestion_de_comisiones.Controllers.Events;
+using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
@@ -160,12 +161,38 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
-                var file = Repository.handleDownloadFileEmpresas(body);
-                return Respuesta.ReturnResultdo(0, "ok", file);
+                GestionPagosEvent r = (GestionPagosEvent) Repository.handleDownloadFileEmpresas(body);
+                if(r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
+                {
+                    throw new Exception(r.errorMessage);
+                } 
+                return Respuesta.ReturnResultdo(0, "ok", r.file);
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);                
+                if (confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No se pudo realizar la confirmacion de las transferencias.", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleConfirmarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
@@ -211,6 +238,27 @@ namespace gestion_de_comisiones.Servicios
             catch (Exception ex)
             {
                 Logger.LogInformation($"usuario : {param.user} error catch handleRechazadosPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                var confirm = Repository.handleVerificarPagosTransferenciasTodos(body);
+                if (confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Ya se confirmaron el pago de la transferencia para esta empresa en este ciclo.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(2, "Falta confirmar transferencias de pago para esta empresa en este ciclo", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleVerificarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
