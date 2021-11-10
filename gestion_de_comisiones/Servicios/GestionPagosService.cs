@@ -202,20 +202,19 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.user} inicio el servicio handleConfirmarPagosTransferencias() ");
-                var confirm = Repository.handleConfirmarPagosTransferencias(param);
-                if ((bool)confirm)
+                GestionPagosEvent r = Repository.handleConfirmarPagosTransferencias(param);
+                if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
+                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
+                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS)
                 {
-                    return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
-                }
-                else
-                {
-                    return Respuesta.ReturnResultdo(1, "No se pudo realizar la confirmacion de las transferencias.", "");
-                }
+                    throw new Exception(r.errorMessage);
+                }                                
+                return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");                                
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {param.user} error catch handleConfirmarPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
-                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+                Logger.LogInformation($"usuario : {param.user} CATCH handleConfirmarPagosTransferencias(), error {ex}");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
             }
         }
 
