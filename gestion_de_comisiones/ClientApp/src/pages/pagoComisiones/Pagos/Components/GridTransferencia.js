@@ -297,13 +297,13 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { list, empresaId, openModalFullScreen, closeFullScreenModal } = props;
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [selected, setSelected] = React.useState([]);
   const [dense, setDense] = React.useState(false);
   const [txtBusqueda, setTxtBusqueda] = React.useState("");
-  const [idCiclo, setIdCiclo] = React.useState(0);
+ // const [idCiclo, setIdCiclo] = React.useState(0);
   const [idCicloSelected, setIdCicloSelected] = React.useState(0);
   const [statusBusqueda, setStatusBusqueda] = React.useState(false);
   const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -321,16 +321,18 @@ const GridTransferencia = (props) => {
   //   setMensajeSnackbar(mensaje);
   //   settipTSnackbar(tipo);
   // };
-  const onChangeSelectCiclo = (e) => {
-    const texfiel = e.target.nombreCompleto;
-    const value = e.target.value;
-    if (texfiel === "idCiclo") {
-      setIdCiclo(value);
-    }
-    if (texfiel === "txtBusqueda") {
-      setTxtBusqueda(value);
-    }
-  };
+
+   /*  const onChangeSelectCiclo = (e) => {
+      const texfiel = e.target.nombreCompleto;
+      const value = e.target.value;
+      if (texfiel === "idCiclo") {
+        setIdCiclo(value);
+      }
+      if (texfiel === "txtBusqueda") {
+        setTxtBusqueda(value);
+      }
+    }; */
+
   // const buscarFreelanzer = () => {
   //   if (txtBusqueda != "") {
   //     buscarFrelancerPorCi();
@@ -346,13 +348,13 @@ const GridTransferencia = (props) => {
   };
 
   const handleSelectAllClick = (event) => {
-    //Aqui seleccionamos todos.
+    //Aqui seleccionamos todos.    
     if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.nombreDeCliente);
+      const newSelecteds = list.map((n) => n.idComisionDetalleEmpresa);      
       setSelected(newSelecteds);
       return;
     }
-    setSelected([]);
+    setSelected([]);    
   };
 
   const handleClick = (event, nombreDeCliente) => {
@@ -371,7 +373,7 @@ const GridTransferencia = (props) => {
         selected.slice(selectedIndex + 1)
       );
     }
-
+        
     setSelected(newSelected);
   };
 
@@ -386,18 +388,23 @@ const GridTransferencia = (props) => {
   const closeModalMessage = () => {
     setOpenModalConfirmation(false);
   };
-
-  const confirmarModal = () => {
-    if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia(userName, idUsuario, idCiclo);
-    }
+  const abrirModalCormarPagos = () => {
+    setOpenModalConfirmation(true);
   };
 
-  async function prosesarConfirmarTransferencia(userN, usuarioId, cicloId) {
-    let response = await Actions.handleObtenerPagosTransferencias(
+  const confirmarModal = () => {    
+    if (idCiclo && idCiclo !== 0) {  
+      prosesarConfirmarTransferencia(userName, idUsuario, idCiclo,selected, empresaId );
+   }
+  };
+
+  async function prosesarConfirmarTransferencia(userN, usuarioId, cicloId, list, idEmpresa) {    
+    let response = await Actions.handleConfirmarPagosTransferencias(
       userN,
       usuarioId,
       cicloId,
+      list,
+      idEmpresa,
       dispatch
     );
     if (response && response.code == 0) {
@@ -432,8 +439,7 @@ const GridTransferencia = (props) => {
     }      
 }
 async function cargarComisionesPagos(userNa, cicloId){      
-  let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);
-  console.log('comisiones pagos: ',respuesta);
+  let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);  
   if(respuesta && respuesta.code == 0){ 
     setListaComisionesAPagar(respuesta.data);
     setStatusBusqueda(true);    
@@ -517,16 +523,16 @@ async function cargarComisionesPagos(userNa, cicloId){
               variant="contained"
               color="primary"
               className={classes.submitCargar}
-              onClick={() =>
+              onClick={                
+                () =>
                 selected.length > 0
-                  ? confirmarModal()
+                  ? abrirModalCormarPagos()
                   : error(
                       "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!"
-                    )
+                    ) 
               }
             >
-              {"Confirmar transferencias "}{" "}
-              <GeneralIcons.CloudUpload style={{ marginLeft: "12px" }} />
+              {"Confirmar transferencias "}{" "}             
             </Core.Button>
           </Core.Grid>
         </Core.Grid>
@@ -556,14 +562,14 @@ async function cargarComisionesPagos(userNa, cicloId){
                 <Core.TableBody>
                   {stableSort(list, getComparator(order, orderBy)).map(
                     (row, index) => {
-                      const isItemSelected = isSelected(row.nombreDeCliente);
+                      const isItemSelected = isSelected(row.idComisionDetalleEmpresa);
                       const labelId = `enhanced-table-checkbox-${index}`;
 
                       return (
                         <Core.TableRow
                           hover
                           onClick={(event) =>
-                            handleClick(event, row.nombreDeCliente)
+                            handleClick(event, row.idComisionDetalleEmpresa)
                           }
                           role="checkbox"
                           aria-checked={isItemSelected}

@@ -213,15 +213,18 @@ export async function handleConfirmarPagosTransferencias(
   userName,
   usuarioId,
   idCiclo,
+  lista,
+  empresaId,
   dispatch
 ) {
   return new Promise((resolve) => {
     const data = {
-      usuarioLogin: userName,
+      user: userName,
       idUsuario: parseInt(usuarioId),
-      idCiclo: parseInt(idCiclo),
-    };
-    //console.log('llego a', data);
+      cicloId: parseInt(idCiclo),
+      confirmados:lista,
+      empresaId:empresaId
+    };    
     requestPost("gestionPagos/handleConfirmarPagosTransferencias", data, dispatch).then(
       (response) => {
         resolve(response);
