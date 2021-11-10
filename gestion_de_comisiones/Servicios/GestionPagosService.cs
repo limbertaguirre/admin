@@ -197,17 +197,24 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param)
         {
             try
             {
-                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferencias() ");
-                var file = Repository.handleConfirmarPagosTransferencias(body);
-                return Respuesta.ReturnResultdo(0, "ok", file);
+                Logger.LogInformation($"usuario : {param.user} inicio el servicio handleConfirmarPagosTransferencias() ");
+                var confirm = Repository.handleConfirmarPagosTransferencias(param);
+                if ((bool)confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No se pudo realizar la confirmacion de las transferencias.", "");
+                }
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {body.user} error catch handleConfirmarPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                Logger.LogInformation($"usuario : {param.user} error catch handleConfirmarPagosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }

@@ -530,13 +530,62 @@ namespace gestion_de_comisiones.Repository
 
         public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
         {
-            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.idComisionDetalle}");
-            for (int i = 0; i < body.confirmados.Count; i++)
+            try
             {
-                var a = body.confirmados[i];
-                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+                Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferencias(): idciclo {body.cicloId}  ");
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferencias()");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              }
+                           };
+
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS] @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferencias(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
+                if (returnValue == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                //return 0;
             }
-            return 0;
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return false;
+            }
         }
 
         public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput body)

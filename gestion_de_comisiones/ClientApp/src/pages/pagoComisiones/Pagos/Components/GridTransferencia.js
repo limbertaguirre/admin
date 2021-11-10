@@ -84,17 +84,17 @@ const headCells = [
     disablePadding: false,
     label: "Comision detalle",
   },
-  { 
+  {
     id: "empresa",
     numeric: false,
-    disablePadding: true, 
-    label: "Empresa"
+    disablePadding: true,
+    label: "Empresa",
   },
-  { 
+  {
     id: "estado",
     numeric: false,
-    disablePadding: false, 
-    label: "Estado"
+    disablePadding: true,
+    label: "Estado",
   },
 ];
 
@@ -106,12 +106,12 @@ function EnhancedTableHead(props) {
     orderBy,
     numSelected,
     rowCount,
-    onRequestSort
+    onRequestSort,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  
+
   return (
     <>
       <br />
@@ -316,13 +316,6 @@ const GridTransferencia = (props) => {
   const [openModalConfirmation, setOpenModalConfirmation] =
     React.useState(false);
 
-  const openModalMessage = () => {
-    setOpenModalConfirmation(true);
-  };
-  const closeModalMessage = () => {
-    setOpenModalConfirmation(false);
-  };
-
   // const generarSnackBar = (mensaje, tipo) => {
   //   setOpenSnackbar(true);
   //   setMensajeSnackbar(mensaje);
@@ -345,14 +338,15 @@ const GridTransferencia = (props) => {
   //     generarSnackBar("¡Introduzca carnet de identidad!", "info");
   //   }
   // };
-  
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {//Aqui seleccionamos todos.
+  const handleSelectAllClick = (event) => {
+    //Aqui seleccionamos todos.
     if (event.target.checked) {
       const newSelecteds = list.map((n) => n.nombreDeCliente);
       setSelected(newSelecteds);
@@ -387,7 +381,44 @@ const GridTransferencia = (props) => {
   const error = (message) => {
     dispatch(ActionMensaje.showMessage({ message: message, variant: "info" }));
   };
-  const [check_in, setCheck_in] = React.useState(true)
+  const [check_in, setCheck_in] = React.useState(true);
+  
+  const closeModalMessage = () => {
+    setOpenModalConfirmation(false);
+  };
+
+  const confirmarModal = () => {
+    if (idCiclo && idCiclo !== 0) {
+      prosesarConfirmarTransferencia(userName, idUsuario, idCiclo);
+    }
+  };
+
+  async function prosesarConfirmarTransferencia(userN, usuarioId, cicloId) {
+    let response = await Actions.handleConfirmarPagosTransferenciasTodos(
+      userN,
+      usuarioId,
+      cicloId,
+      dispatch
+    );
+    if (response && response.code == 0) {
+      setOpenModalConfirm(false);
+      dispatch(
+        ActionMensaje.showMessage({
+          message: response.message,
+          variant: "success",
+        })
+      );
+      handleOnGetPagos();
+    } else {
+      dispatch(
+        ActionMensaje.showMessage({
+          message: response.message,
+          variant: "error",
+        })
+      );
+    }
+  }
+
   return (
     <Core.Dialog
       fullScreen
@@ -574,7 +605,7 @@ const GridTransferencia = (props) => {
         mensaje={
           "Al aceptar esta selección, confirmo que los Freelancers han recibido su transferencia."
         }
-        handleCloseConfirm={openModalMessage}
+        handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />
     </Core.Dialog>

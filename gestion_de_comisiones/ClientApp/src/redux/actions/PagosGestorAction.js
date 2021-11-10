@@ -209,4 +209,25 @@ export async function handleVerificarPagosTransferenciasTodos(
       resolve(response);
     });
   });
+
+  export async function handleConfirmarPagosTransferencias(
+    userName,
+    usuarioId,
+    idCiclo,
+    dispatch
+  ) {
+    return new Promise((resolve) => {
+      const data = {
+        usuarioLogin: userName,
+        idUsuario: parseInt(usuarioId),
+        idCiclo: parseInt(idCiclo),
+      };
+      //console.log('llego a', data);
+      requestPost("gestionPagos/handleConfirmarPagosTransferencias", data, dispatch).then(
+        (response) => {
+          resolve(response);
+        }
+      );
+    });
+  }
 }
