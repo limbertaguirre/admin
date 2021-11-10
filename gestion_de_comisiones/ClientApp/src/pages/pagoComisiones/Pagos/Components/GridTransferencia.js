@@ -401,7 +401,7 @@ const GridTransferencia = (props) => {
       dispatch
     );
     if (response && response.code == 0) {
-      setOpenModalConfirm(false);
+      setOpenModalConfirmation(false);
       dispatch(
         ActionMensaje.showMessage({
           message: response.message,
@@ -418,6 +418,31 @@ const GridTransferencia = (props) => {
       );
     }
   }
+
+  const handleOnGetPagos=()=>{         
+    if(idCiclo && idCiclo !== 0){  
+        setIdCicloSelected(idCiclo);     
+        cargarComisionesPagos(userName, idCiclo)
+
+    }else{
+      // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
+     /*  setOpenSnackbar(true);
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
+      settipTSnackbar('warning'); */
+    }      
+}
+async function cargarComisionesPagos(userNa, cicloId){      
+  let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);
+  console.log('comisiones pagos: ',respuesta);
+  if(respuesta && respuesta.code == 0){ 
+    setListaComisionesAPagar(respuesta.data);
+    setStatusBusqueda(true);    
+  }else{
+    dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
+  }
+}
+
+
 
   return (
     <Core.Dialog
@@ -494,7 +519,7 @@ const GridTransferencia = (props) => {
               className={classes.submitCargar}
               onClick={() =>
                 selected.length > 0
-                  ? openModalMessage()
+                  ? confirmarModal()
                   : error(
                       "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!"
                     )
