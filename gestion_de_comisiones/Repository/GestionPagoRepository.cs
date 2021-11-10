@@ -541,7 +541,9 @@ namespace gestion_de_comisiones.Repository
                     }).FirstOrDefault();
 
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferencias()");
-                var parameterReturn = new SqlParameter[] {
+                for (int i = 0; i < body.confirmados.Count; i++)
+                {
+                    var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
                                             SqlDbType = System.Data.SqlDbType.Int,
@@ -564,21 +566,31 @@ namespace gestion_de_comisiones.Repository
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = usuarioId.usuarioId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@ComisionDetalleEmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.confirmados[i]
                               }
                            };
 
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS] @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
-                int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferencias(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
-                if (returnValue == 0)
-                {
-                    return true;
+                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository handleConfirmarPagosTransferencias():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {body.confirmados[i]}  ");
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    int returnValue = (int)parameterReturn[0].Value;
+
+                    Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferencias():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue}  ");
+                    if (returnValue == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    //return 0;
                 }
-                else
-                {
-                    return false;
-                }
-                //return 0;
+                return true;
             }
             catch (Exception ex)
             {
