@@ -528,7 +528,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        public GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
         {
             try
             {
@@ -539,11 +539,39 @@ namespace gestion_de_comisiones.Repository
                     {
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
-
+               
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferencias()");
-                for (int i = 0; i < body.confirmados.Count; i++)
+
+                if(!confirmarTransferidosSeleccionados(body, usuarioId) || !confirmarTransferidosNoSeleccionados(body, usuarioId))
                 {
-                    var parameterReturn = new SqlParameter[] {
+                    return postEvent(GestionPagosEvent.ERROR, "No se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente.");
+                }
+                return postEvent(GestionPagosEvent.SUCCESS, "Se realizó la confirmación de los pagos por transferencia exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() mensaje : {ex}");
+                return postEvent(GestionPagosEvent.ERROR, $"NO se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
+            }
+        }
+
+        public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        {
+            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.empresaId}");
+            for (int i = 0; i < body.rechazados.Count; i++)
+            {
+                var a = body.rechazados[i];
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+            }
+            return 0;
+        }
+
+        private bool confirmarTransferidosSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId)
+        {
+            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosSeleccionados() body.confirmados.Count: {body.confirmados.Count}");
+            for (int i = 0; i < body.confirmados.Count; i++)
+            {
+                var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
                                             SqlDbType = System.Data.SqlDbType.Int,
@@ -575,40 +603,67 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
 
-                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository handleConfirmarPagosTransferencias():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {body.confirmados[i]}  ");
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
-                    int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferencias():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue}  ");
-                    if (returnValue == 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                    //return 0;
-                }
-                return true;
+                Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue} ");
+                if (returnValue == 1)
+                {
+                    return false;
+                }                
             }
-            catch (Exception ex)
-            {
-                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() mensaje : {ex}");
-                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
-                return false;
-            }
+            return true;
         }
 
-        public object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        private bool confirmarTransferidosNoSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId)
         {
-            Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idEmpresa : {body.empresaId}");
+            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() body.rechazados.Count: {body.rechazados.Count}");
             for (int i = 0; i < body.rechazados.Count; i++)
             {
-                var a = body.rechazados[i];
-                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferencias() idComisionDetalleEmpresa : {a}");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@ComisionDetalleEmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.confirmados[i]
+                              }
+                           };
+
+                Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosNoSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+
+                Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosNoSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue} ");
+                if (returnValue == 1)
+                {
+                    return false;
+                }
             }
-            return 0;
+            return true;
         }
     }
 }

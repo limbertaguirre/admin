@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Modelos.GestionPagos;
+﻿using gestion_de_comisiones.Controllers.Events;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
         bool handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
-        object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
+        GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body);
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
     }
