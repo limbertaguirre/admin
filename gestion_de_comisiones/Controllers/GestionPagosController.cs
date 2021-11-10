@@ -101,7 +101,6 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
-
         // POST: Pagos/VerificarPagosSionPayFormaPago 
         [HttpPost]
         public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
@@ -148,5 +147,81 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
+        // POST: Pagos/handleConfirmarPagosTransferencias
+        [HttpPost]
+        public ActionResult handleConfirmarPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleConfirmarPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleConfirmarPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+        // POST: Pagos/handleRechazadosPagosTransferencias
+        [HttpPost]
+        public ActionResult handleRechazadosPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleRechazadosPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleRechazadosPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+        [HttpPost]
+        public ActionResult handleObtenerPagosTransferencias([FromBody] DownloadFileTransferenciaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleObtenerPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.handleObtenerPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleObtenerPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+        [HttpPost]
+        public ActionResult handleConfirmarPagosTransferenciasTodos([FromBody] DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el controller handleConfirmarTodos() parametro: cicloId: {body.cicloId}");
+                return Ok(Service.handleConfirmarPagosTransferenciasTodos(body));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {body.user} error catch  handleConfirmarTodos() controller ");
+                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult handleVerificarPagosTransferenciasTodos([FromBody] DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el controller handleConfirmarTodos() parametro: cicloId: {body.cicloId}");
+                return Ok(Service.handleVerificarPagosTransferenciasTodos(body));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {body.user} error catch  handleConfirmarTodos() controller ");
+                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
+
     }
 }

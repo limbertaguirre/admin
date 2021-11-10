@@ -1,4 +1,5 @@
-﻿using gestion_de_comisiones.Modelos.GestionPagos;
+﻿using gestion_de_comisiones.Controllers.Events;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,12 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListPagos(BuscarComisionInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
         public bool PagarSionPayComision(PagarSionPayInput param);
         public int VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision, int idTipoFormaPagoSionPay);
-        public object handleTransferenciasEmpresas(ComisionesPagosInput param);
+        public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
+        bool handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
+        GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
+        object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body);
+        object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
     }
 }
