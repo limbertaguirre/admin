@@ -394,7 +394,7 @@ const GridTransferencia = (props) => {
   };
 
   async function prosesarConfirmarTransferencia(userN, usuarioId, cicloId) {
-    let response = await Actions.handleConfirmarPagosTransferenciasTodos(
+    let response = await Actions.handleObtenerPagosTransferencias(
       userN,
       usuarioId,
       cicloId,
