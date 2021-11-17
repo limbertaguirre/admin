@@ -465,7 +465,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           className={style.submitSAVE}
                           onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
-                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO s
+                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
                           </Button> 
                           :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
