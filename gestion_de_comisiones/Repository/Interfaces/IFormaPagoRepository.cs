@@ -20,7 +20,8 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
         public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param);
         public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo);
-        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param);
-        public bool CerrarFormaDePago(CierreformaPagoInput param);
+        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
+        public bool CerrarFormaDePago(CierreformaPagoInput param);        
+
     }
 }

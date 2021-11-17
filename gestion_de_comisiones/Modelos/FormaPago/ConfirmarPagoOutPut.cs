@@ -9,5 +9,6 @@ namespace gestion_de_comisiones.Modelos.FormaPago
     {
         public bool Habilitado { get; set; }
         public List<AutorizacionAreaModel> ListaPorAreas { get; set; }
+        public List<FormaPagoDisponiblesModel> ListSeleccionados { get; set; }
     } 
 }
