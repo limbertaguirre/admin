@@ -118,6 +118,8 @@ namespace gestion_de_comisiones
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+           // app.UseAuthentication();
+           // app.UseAuthorization(); descomentar para que funcione el leer el token
 
             app.UseEndpoints(endpoints =>
             {

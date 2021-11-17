@@ -814,6 +814,7 @@ create table COMISION_DETALLE_EMPRESA
 	monto_neto decimal(18,2) default 0 not null,
 	si_facturo bit default 0 not null,	
 	id_comprobante_generico bigint,
+	id_movimiento int NOT NULL default 0,
     id_usuario int,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
@@ -1237,27 +1238,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'id_usuario'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
-GO
-create table ASIGNACION_EMPRESA_PAGO
-(
-    id_asignacion_empresa_pago int not null primary key IDENTITY,
-    id_usuario int,
-    id_empresa int,
-    id_tipo_pago int,
-    descripcion VARCHAR(250),
-    usuario_id int,
-    fecha_creacion datetime default GETDATE(),
-    fecha_actualizacion datetime default GETDATE(),
-);
 
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla ASIGNACION_EMPRESA_PAGO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_asignacion_empresa_pago'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla USUARIO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_usuario'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla EMPRESA.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_empresa'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla TIPO DE PAGO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_tipo_pago'
-
-EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_usuario'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_creacion'
-EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_actualizacion'
 go
 CREATE VIEW [dbo].[vwObtenercomisiones]
 AS
@@ -1376,7 +1357,36 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_DETALLE_COMISION_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 go
+ CREATE TABLE LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL(
+  id_sion_pay_comisio_empresa_fail int NOT NULL PRIMARY KEY identity,
+  id_ciclo int not null,
+  id_ficha int not null, 
+  carnet varchar(100) not null, 
+  cuenta_sion_pay varchar(100) not null, 
+  id_detalle_comision int not null,
+  id_detalle_comision_empresa int default 0,
+  monto decimal(18,2) default 0,
+  descripcion varchar(max),
+  id_empresa_cnx INT NOT NULL default 0,
+  nombre_empresa varchar(100) NOT NULL default '',
+  fecha_creacion datetime default CURRENT_TIMESTAMP,
+  fecha_actualizacion datetime default CURRENT_TIMESTAMP,
+)
+go
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla autoincremental.', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_sion_pay_comisio_empresa_fail'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'El idciclo es la llave foranea de comision ciclo', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_ciclo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id ficha de la tabla comisiones', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_ficha'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es carnet de identidad del freelancers', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'carnet'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el nro de cuenta en sion pay del freelancer', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'cuenta_sion_pay'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla detalle comision se registrara em caso de no existir su detalle por empresa', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comision'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el id de la tabla detalle_comision_empresa que se registrara en caso de haya un pago con monto cero por default cero', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'id_detalle_comision_empresa'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'es el monto de la transaccion datos por default cero', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'monto'   
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es la descripcion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'descripcion'   
 
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'fecha_creacion'
+    EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
+
+go
 create VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
 AS
 	 select
@@ -1406,7 +1416,7 @@ AS
 
  CREATE VIEW [dbo].[vwObtenercomisionesFormaPago]
  AS
-     select 
+        select 
 	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
 	        GPCOMI.id_comision AS 'idComision', 
 			GPCOMI.id_tipo_comision,
@@ -1428,7 +1438,10 @@ AS
 			GPDETA.monto_aplicacion,
 			CASE WHEN LISTFO.id_lista_formas_pago IS NULL THEN 0 ELSE LISTFO.id_lista_formas_pago END As 'id_lista_formas_pago',
 			CASE WHEN LISTFO.id_tipo_pago IS NULL THEN 0 ELSE LISTFO.id_tipo_pago END As 'id_tipo_pago',			
-			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion'
+			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion',
+			CASE WHEN FPAGO.id IS NULL THEN 0 ELSE FPAGO.id END As 'id_detalle_estado_forma_pago',
+			CASE WHEN FPAGO.habilitado IS NULL THEN 'False' ELSE FPAGO.habilitado END As 'pago_detalle_habilitado',		
+			CASE WHEN FPAGO.id_estado_listado_forma_pago IS NULL THEN 0 ELSE FPAGO.id_estado_listado_forma_pago END As 'id_estado_listado_forma_pago'			
 	        from BDMultinivel.dbo.GP_COMISION GPCOMI
 	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
 			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
@@ -1439,6 +1452,7 @@ AS
 			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
 			left join BDMultinivel.dbo.LISTADO_FORMAS_PAGO LISTFO ON  LISTFO.id_comisiones_detalle = GPDETA.id_comision_detalle
 			left join BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago= LISTFO.id_tipo_pago
+			LEFT join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL FPAGO ON FPAGO.id_lista_formas_pago = LISTFO.id_lista_formas_pago
 			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
 go
 
@@ -1587,58 +1601,6 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
 	where UA.estado='True' 
 
-GO
-ALTER VIEW dbo.vwObtenerInfoExcelFormatoBanco
-as
-select 
-c.id_ciclo,
-cde.id_empresa,
-TRIM(e.nombre) as empresa,
-l.id_comisiones_detalle,
-f.codigo_cnx as [CODIGO_DE_CLIENTE],
-f.cuenta_bancaria AS [NRO_DE_CUENTA],
-f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
-f.ci as [DOC_DE_IDENTIDAD],
-sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
-l.monto_neto as [IMPORTE_NETO],
-CAST(DATEPART(DAY,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  GETDATE()) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  GETDATE()) as VARCHAR) as [FECHA_DE_PAGO],
- 1 as [FORMA_DE_PAGO],
- 2 AS [MONEDA_DESTINO],
- 1014 AS [ENTIDAD_DESTINO],
- ci.nombre as GLOSA,
- l.id_tipo_pago
-from LISTADO_FORMAS_PAGO l
-inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-inner join GP_COMISION c on c.id_comision = cd.id_comision
-inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
-inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
-where cde.monto_neto <> 0
-and c.id_tipo_comision = 1
-and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-group by l.id_comisiones_detalle, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago
-GO
-
-CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
-as
-select c.id_ciclo
-, cde.id_empresa
-, TRIM(e.nombre) as empresa
-, c.id_tipo_comision
-, l.id_tipo_pago
-, sum(cde.monto_neto) monto_transferir
-from LISTADO_FORMAS_PAGO l
-inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-inner join GP_COMISION c on c.id_comision = cd.id_comision
-inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-where l.monto_neto <> 0
-and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision
-, l.id_tipo_pago
-GO
-select * from BDMultinivel.dbo.USUARIOS_ROLES
 
 	go
 	CREATE VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
@@ -1680,8 +1642,52 @@ select * from BDMultinivel.dbo.USUARIOS_ROLES
 		and cec.id_estado_comision = 10 -- CERRADO FORMA DE PAGO
 		and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
 		group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo
+
 		GO
 
+        create table ASIGNACION_EMPRESA_PAGO
+        (
+            id_asignacion_empresa_pago int not null primary key IDENTITY,
+            id_usuario int,
+            id_empresa int,
+            id_tipo_pago int,
+            descripcion VARCHAR(250),
+            usuario_id int,
+            fecha_creacion datetime default GETDATE(),
+            fecha_actualizacion datetime default GETDATE(),
+        );
+
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria incremental de la tabla ASIGNACION_EMPRESA_PAGO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_asignacion_empresa_pago'
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla USUARIO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_usuario'
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla EMPRESA.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_empresa'
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Llave foranea a la tabla TIPO DE PAGO.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_tipo_pago'
+
+        EXECUTE sp_addextendedproperty 'MS_Description', 'El usuario_id es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'id_usuario'
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_creacion'
+        EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_actualizacion'
+        go
+
+        CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
+        as
+        select c.id_ciclo
+        , cde.id_empresa
+        , TRIM(e.nombre) as empresa
+        , c.id_tipo_comision
+        , l.id_tipo_pago
+        , sum(cde.monto_neto) monto_transferir
+        from LISTADO_FORMAS_PAGO l
+        inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+        inner join GP_COMISION c on c.id_comision = cd.id_comision
+        inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
+        inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
+        where l.monto_neto <> 0
+        and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
+        group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision
+        , l.id_tipo_pago
+        GO
+
+
+        
 
 	---------------------------------------------------------------------------------------------------------------------------------------------
 	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
