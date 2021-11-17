@@ -60,8 +60,6 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller GetFiltroFormaPagosDisponibles()  ");
-                //var ciclos = Service.GetFormaPagosDisponibles(param);
-                //Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller GetFiltroFormaPagosDisponibles()  ");
                 return Ok(Service.GetFormaPagosDisponibles(param));
             }
             catch
@@ -219,7 +217,6 @@ namespace gestion_de_comisiones.Controllers
             catch
             {
                 Logger.LogError($"usuario : {body.user} error catch  handleConfirmarTodos() controller ");
-                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }

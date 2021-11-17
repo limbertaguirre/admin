@@ -536,12 +536,7 @@ namespace gestion_de_comisiones.Repository
 
         public bool CerrarFormaDePago(CierreformaPagoInput param)
         {
-            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
-            int idTipoComisionPagoComisionTable = 1;  //table estado
-            int idTipoComisionPagoRezagadoTable = 2;  //table estado
-            int idEstadoDetalleComisionSiFacturoTable = 2;
-            int idEstadoDetalleComisionNoPresentaFacturaTable = 6;
-
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");         
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
