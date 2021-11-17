@@ -215,7 +215,11 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarCierreFormaPago() ");
-                return Respuesta.ReturnResultdo(0, "ok", Repository.VerificarCierreFormaPago(param));
+                int idEstadoComision = 8; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                int idTipoComisionPagoComision = 1; //parametro
+                return Respuesta.ReturnResultdo(0, "ok", Repository.VerificarCierreFormaPago(param, idEstadoComision, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision));
 
             }
             catch (Exception ex) {
@@ -240,7 +244,6 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al verificar la forma de pago", "");
             }
         }
-
 
 
 

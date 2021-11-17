@@ -104,12 +104,24 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: '100%',
         maxHeight: '100%',
     },
+    centrarDiv: {
+       /*  width: '100%',
+        '& > * + *': {
+          marginTop: theme.spacing(2),
+        }, */
+       // display:'flex',
+        alignItems:'center',
+       
+        backgroundColor:'#E3F2F7',
+       // borderRadius: "3px",    
+      //  marginBottom: theme.spacing(1)
+      },
     
   }));
 
 
 const ConfirmarCierrePagoModal = (props) => {
-   const { open , closeHandelModal,confirmarPago, listado, habilitado }= props;
+   const { open , closeHandelModal,confirmarPago, listado, habilitado, listadoSeleccionado }= props;
    const classes = useStyles();
 
   return (
@@ -121,17 +133,30 @@ const ConfirmarCierrePagoModal = (props) => {
         >            
             <DialogContent>
                         <Alert severity={"warning"}>                                               
-                              <AlertTitle>  {habilitado? 'CONFIRMAR CIERRE PAGO ':'PENDIENTE AUTORIZAR '}</AlertTitle>
+                              <AlertTitle>  {habilitado? 'CONFIRMACION CIERRE DE PAGO':'PENDIENTE AUTORIZAR '}</AlertTitle>
                                 <br /> 
-                                 {habilitado&&                          
-                                <Typography variant="caption" display="block" gutterBottom>
-                                    <strong>NOTA :</strong> {'Esta seguro que desea cerrar el pago.'} 
-                                </Typography>
+                                 {habilitado&&
+                                 <div >        
+                                    <ul>
+                                        {listadoSeleccionado.map((valu, index) => ( 
+                                            <li key={index}> <b>{valu.nombre.toUpperCase()} {valu.cantidad} </b> ACI </li>
+                                        ))}                                                                        
+                                    </ul>    
+                                               
+                                    <Typography variant="caption" display="block" gutterBottom>
+                                        <strong>NOTA :</strong> {'¿Está seguro de que desea cerrar la planilla?'} 
+                                    </Typography>                                                                      
+                                </ div>
                                  }                                                                                                                               
                         </Alert>                    
-                        <br />             
+                                 
                         {listado.length >0 &&
+                        <>
+                            <br/>
                             <div className={classes.root2}>
+                                <Typography gutterBottom variant="subtitle1">
+                                    <b> {'AREAS QUE AUTORIZAN'} </b>
+                                </Typography>
                                 <Paper className={classes.paper}>
                                   {listado.map((valu, index) => ( 
                                       <div key={index} >
@@ -163,6 +188,7 @@ const ConfirmarCierrePagoModal = (props) => {
                                    ))}
                                 </Paper>                                                                                             
                             </div>
+                        </>
                         }
                     <Grid  container item xs={12}  justify="flex-end"  >
                         <Button  onClick={closeHandelModal} variant="contained" color="primary" className={classes.botonesSecondary}  >

@@ -344,6 +344,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
    const[openCierrePagoModal, setOpenCierrePagoModal] = useState(false);
    const[habilitadoCierrePago, setHabilitadoCierrePago]= useState(false);
    const[listadoConfirm,setListadoConfirm ]= useState([]);
+   const[listadoSeleccionado,setListadoSeleccionado ]= useState([]);
 
   const verificarConfirmarFomaPago =()=>{
     ApiVerificarConfirmarFormaPago(userName, idUsuario,idCiclo);
@@ -357,6 +358,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             setOpenCierrePagoModal(true);
             setHabilitadoCierrePago(data.habilitado);
             setListadoConfirm(data.listaPorAreas);
+            setListadoSeleccionado(data.listSeleccionados)
           }else{
               dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
           }
@@ -463,7 +465,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                           className={style.submitSAVE}
                           onClick = {()=> verificarConfirmarFomaPago()}                                         
                           >
-                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
+                            <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO s
                           </Button> 
                           :
                             <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
@@ -539,7 +541,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
             <GridFormaPagos listaComisionesAPagar={listaComisionesAPagar} selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} pendienteFormaPago={pendienteFormaPago} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
             <TipoPagosModal open={openTipoPago} closeHandelModal={cerrarModalTipoPagoModal} confirmarTipoPago={confirmarTipoPago} listTipoPagos={listTipoPagos} idtipoPagoSelect={idtipoPagoSelect} handleChangeRadio={handleChangeRadio}  />  
             <VistaListaAutorizados open={openModalAutorizadores} objList={autorizadorObjeto} nameComboSeleccionado={nameComboSeleccionado} closeHandelModal={cerrarModalListaAutorizadosConfirm} confirmarModalAutorizacion={confirmarModalAutorizacion} />
-            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilitado={habilitadoCierrePago} />
+            <ConfirmarCierrePagoModal open={openCierrePagoModal} closeHandelModal={cancelarModalConfirmarCierre} confirmarPago={confirmarCierrePagoModal} listado={listadoConfirm} habilitado={habilitadoCierrePago} listadoSeleccionado={listadoSeleccionado} />
 
       </>
     );
