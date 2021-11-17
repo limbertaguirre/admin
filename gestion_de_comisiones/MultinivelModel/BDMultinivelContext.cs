@@ -3132,6 +3132,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("MONEDA_DESTINO");
 
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.NombreDeCliente)
                     .IsRequired()
                     .HasMaxLength(511)

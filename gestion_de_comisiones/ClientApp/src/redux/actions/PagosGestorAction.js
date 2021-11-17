@@ -19,7 +19,6 @@ export async function ObtenerComisionesPagos(userName, cicloId, dispatch) {
       usuarioLogin: userName,
       idCiclo: cicloId,
     };
-    console.log("parametros :", data);
     requestPost("gestionPagos/GetComisionesPagos", data, dispatch).then(
       (response) => {
         resolve(response);
