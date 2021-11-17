@@ -23,5 +23,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body);
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInput param, int idEstadoComision, int idTipoComisionPagoComision);
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo);
     }
 }
