@@ -350,13 +350,13 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
 
                           <TableRow key={100000000000000}>
                             <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="right"><b>TOTAL</b></TableCell>
+                              <TableCell align="right"><b></b></TableCell>
                               {/* <TableCell align="center"><b></b></TableCell>
                               <TableCell align="center"><b></b></TableCell>*/}
                                
-                              <TableCell align="center"><b> {totalBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b> </TableCell>
-                              <TableCell align="center"><b> {totalRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
-                              <TableCell align="center"><b> {totalDescuento.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
+                              <TableCell align="center"><b></b> </TableCell>
+                              <TableCell align="center"><b>  </b></TableCell>
+                              <TableCell align="center"><b> TOTAL</b></TableCell>
                               <TableCell align="center"><b> {totalNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })} </b></TableCell>
                              
                               <TableCell align="center"></TableCell>

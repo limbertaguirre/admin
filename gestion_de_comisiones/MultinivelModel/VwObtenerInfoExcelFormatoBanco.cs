@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -14,6 +14,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdComisionDetalleEmpresa { get; set; }
         public byte? IdEstadoComisionDetalleEmpresa { get; set; }
         public string CodigoDeCliente { get; set; }
+        public string NombreBanco { get; set; }
         public string NroDeCuenta { get; set; }
         public string NombreDeCliente { get; set; }
         public string DocDeIdentidad { get; set; }

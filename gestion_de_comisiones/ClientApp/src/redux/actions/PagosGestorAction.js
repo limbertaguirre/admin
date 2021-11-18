@@ -19,7 +19,6 @@ export async function ObtenerComisionesPagos(userName, cicloId, dispatch) {
       usuarioLogin: userName,
       idCiclo: cicloId,
     };
-    console.log("parametros :", data);
     requestPost("gestionPagos/GetComisionesPagos", data, dispatch).then(
       (response) => {
         resolve(response);
@@ -56,7 +55,7 @@ export async function ListarFiltrada(userName, idCiclo, idTipoPago, dispatch) {
       idTipoPago: parseInt(idTipoPago),
     };
     // console.log('data : ', data);
-    requestPost("pagos/FiltrarComisionPagoPorTipoPago", data, dispatch).then(
+    requestPost("gestionPagos/FiltrarComisionPagoPorTipoPago", data, dispatch).then(
       (response) => {
         resolve(response);
       }

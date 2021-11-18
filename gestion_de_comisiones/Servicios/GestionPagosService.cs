@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
@@ -119,15 +120,15 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarPagoSionPayCiclo() ");
-                int idEstadoComisionSiFacturo = 2; //VARIABLE
+                int idEstadoComisionSiFacturo = 10; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
                 int idTipoComisionPagoComision = 1; //parametro
                 int idTipoFormaPagoSionPay = 1; //parametro
-                var comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
-                if (comisiones == -1)
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (comisiones.CodigoRespuesta == -1)
                  return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
-                if (comisiones > 0 )
+                if (comisiones.Cantidad > 0 )
                  return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
                  return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);                              
             } catch (Exception ex) {
@@ -276,5 +277,25 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();
+                int idEstadoComision = 10; //VARIABLE           
+                int idTipoComisionPagoComision = 1; //parametro
+                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param, idEstadoComision, idTipoComisionPagoComision);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                obj.lista = comisiones;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
     }
 }
