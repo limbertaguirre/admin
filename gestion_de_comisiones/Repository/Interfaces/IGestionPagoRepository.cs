@@ -15,7 +15,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object GetFiltroComisionesPorFormaPago(FiltroFormaPagosInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
         public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListPagos(BuscarComisionInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision);
         public bool PagarSionPayComision(PagarSionPayInput param);
-        public int VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision, int idTipoFormaPagoSionPay);
+        public RespuestaSionPayModel VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision, int idTipoFormaPagoSionPay);
         public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
@@ -23,5 +23,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body);
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInput param, int idEstadoComision, int idTipoComisionPagoComision);
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo);
     }
 }

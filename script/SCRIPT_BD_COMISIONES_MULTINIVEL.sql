@@ -923,8 +923,8 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'fecha_actualizacion'
 
 go
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'transfer')
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'sionpay')
+   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'sionpay')
+   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'transfer')
    
 go
 CREATE TABLE EMPRESA(

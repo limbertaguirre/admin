@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -59,8 +60,6 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller GetFiltroFormaPagosDisponibles()  ");
-                //var ciclos = Service.GetFormaPagosDisponibles(param);
-                //Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller GetFiltroFormaPagosDisponibles()  ");
                 return Ok(Service.GetFormaPagosDisponibles(param));
             }
             catch
@@ -70,7 +69,7 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
-        // POST: Pagos/BuscarComisionCarnetFormaPago
+        // POST: gestionPagos/BuscarComisionCarnetFormaPago
         [HttpPost]
         public ActionResult BuscarComisionCarnetFormaPago([FromBody] BuscarComisionInput param)
         {
@@ -86,7 +85,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-        // POST: Pagos/BuscarComisionCarnetFormaPago
+        // POST: gestionPagos/BuscarComisionCarnetFormaPago
         [HttpPost]
         public ActionResult PagarComisionSionPay([FromBody] PagarSionPayInput param)
         {
@@ -101,7 +100,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
-        // POST: Pagos/VerificarPagosSionPayFormaPago 
+        // POST: gestionPagos/VerificarPagosSionPayFormaPago 
         [HttpPost]
         public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
         {
@@ -147,7 +146,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
-        // POST: Pagos/handleConfirmarPagosTransferencias
+        // POST: gestionPagos/handleConfirmarPagosTransferencias
         [HttpPost]
         public ActionResult handleConfirmarPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
         {
@@ -162,7 +161,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
-        // POST: Pagos/handleRechazadosPagosTransferencias
+        // POST: gestionPagos/handleRechazadosPagosTransferencias
         [HttpPost]
         public ActionResult handleRechazadosPagosTransferencias([FromBody] ConfirmarPagosTransferenciasInput param)
         {
@@ -218,10 +217,21 @@ namespace gestion_de_comisiones.Controllers
             catch
             {
                 Logger.LogError($"usuario : {body.user} error catch  handleConfirmarTodos() controller ");
-                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
-
+        // POST: gestionPagos/FiltrarComisionPagoPorTipoPago
+        [HttpPost]
+        public ActionResult FiltrarComisionPagoPorTipoPago([FromBody] FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+                return Ok(Service.FiltrarComisionesPorTipoPago(param));
+            } catch (Exception ex){
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller mensaje:  {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por filtro tipo de pago" });
+            }
+        }
     }
 }

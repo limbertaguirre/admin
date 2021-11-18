@@ -55,7 +55,7 @@ export async function ListarFiltrada(userName, idCiclo, idTipoPago, dispatch) {
       idTipoPago: parseInt(idTipoPago),
     };
     // console.log('data : ', data);
-    requestPost("pagos/FiltrarComisionPagoPorTipoPago", data, dispatch).then(
+    requestPost("gestionPagos/FiltrarComisionPagoPorTipoPago", data, dispatch).then(
       (response) => {
         resolve(response);
       }

@@ -172,7 +172,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
 
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision  && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision== idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
                 var lista = ListComisiones.Where(x =>  x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                 return lista;
             }
@@ -193,7 +193,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
                 
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision== idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
 
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
@@ -228,7 +228,8 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository FiltrarComisionPagoPorTipoPago() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision || (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura) && x.IdTipoPago == param.idTipoPago).ToList();
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision && x.IdTipoPago == param.idTipoPago).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -391,7 +392,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param)
+        public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision)
         {
             try
             {
@@ -403,6 +404,7 @@ namespace gestion_de_comisiones.Repository
                 obj.Habilitado = VerificarAutorizacionPorArea(lista, tipoAutorizacionFormaPago, param.idCiclo, param.usuarioLogin);
                 var detalle = ListarAutorizadoresPorAreas(lista, param.usuarioLogin);
                 obj.ListaPorAreas = detalle.ListaPorAreas;
+                obj.ListSeleccionados = ConsultarCierreInfoFormaPagos(param.idCiclo, param.usuarioLogin, idEstadoComision, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision);
                 return obj;
 
             }
@@ -535,12 +537,7 @@ namespace gestion_de_comisiones.Repository
 
         public bool CerrarFormaDePago(CierreformaPagoInput param)
         {
-            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
-            int idTipoComisionPagoComisionTable = 1;  //table estado
-            int idTipoComisionPagoRezagadoTable = 2;  //table estado
-            int idEstadoDetalleComisionSiFacturoTable = 2;
-            int idEstadoDetalleComisionNoPresentaFacturaTable = 6;
-
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");         
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
@@ -584,6 +581,45 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
+
+        private List<FormaPagoDisponiblesModel> ConsultarCierreInfoFormaPagos(int idCiclo, string usuarioLogin, int idEstadoComision, int idEstadoDetalleSifacturo, int idEstadoDetalleNoPresentaFactura, int idTipoComisionPagoComision)
+        {
+            try
+            {
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el repository ConsultarCierreInfoFormaPagos() ");
+                Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
+                FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Sin Asignar", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
+                LisFormaPagos.Add(nuevoNinguno);
+                foreach (var item in LisFormaPagos)
+                {
+                    if (ListComisiones != null)
+                    {
+                        FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
+                        obj.idTipoPago = item.IdTipoPago;
+                        obj.nombre = item.Nombre;
+                        obj.icono = item.Icono;
+                        int canti = ListComisiones.Where(x => x.IdTipoPago == item.IdTipoPago).Count();
+                        obj.cantidad = canti;
+                        list.Add(obj);
+                    }
+                }
+
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch ConsultarCierreInfoFormaPagos() mensaje : {ex}");
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                return list;
+            }
+        }
+
 
 
     }
