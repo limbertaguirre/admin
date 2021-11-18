@@ -101,6 +101,7 @@ const TransferenciasDialog = ({
   const [openModalCancel, setOpenModalCancel]= useState(false);
   const [isConfirmDialogType, setIsConfirmDialogType]= useState(false);
   const [selected, setSelected] = React.useState([]);
+  const [transferenciaSeleccionData, setTransferenciaSeleccionData] = React.useState(null);
 
   const downloadExcel = (base64, fileName) => {
     // const contentType = "application/vnd.ms-excel";
@@ -176,10 +177,17 @@ const TransferenciasDialog = ({
     if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
       let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
       console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
-      if(response && response.code == 0) { 
-        setList(response.data);
-        seleccionarTodo(response.data);
-        setOpenModalFullScreen(true);
+      if(!response || !response.data) {
+        dispatch(ActionMensaje.showMessage({
+            message: "Hubo inconvenientes al recuperar la información. Intente nuevamente por favor.",
+            variant: "error"}));
+        return;
+      }
+      if(response.code == 0) { 
+        setTransferenciaSeleccionData(response.data);
+        setList(response.data.list);
+        seleccionarTodo(response.data.list);
+        setOpenModalFullScreen(true);      
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -407,16 +415,17 @@ const TransferenciasDialog = ({
             <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>handleCloseTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         
-        <GridTransferenciaModal
+        {transferenciaSeleccionData && (<GridTransferenciaModal
           idCiclo={cicloId}
           list={list}
+          data={transferenciaSeleccionData}
           empresaId={empresaId}
           openModalFullScreen={openModalFullScreen}
           closeFullScreenModal={closeFullScreenModal}
           seleccionarTodo={seleccionarTodo}
           selected={selected}
           setSelected={setSelected}
-        />
+        />)}
         {detalleTransferencia && empresaId && (
           <PagosTransferenciaDetalleDialog
             isConfirm={isConfirmDialogType}

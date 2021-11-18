@@ -608,7 +608,15 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .ToList();
-                return info;
+
+                var montoTotal = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                ObtenerPagosTransferenciasOutput o = new ObtenerPagosTransferenciasOutput();
+                o.list = info;
+                o.montoTotal = montoTotal.ToString();
+                return o;
             }
             catch (Exception ex)
             {

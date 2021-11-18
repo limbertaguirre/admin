@@ -10,6 +10,7 @@ import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
 import { Button } from "bootstrap";
 import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
+import {formatearNumero} from '../../../../lib/utility'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
@@ -320,13 +321,14 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected } = props;
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [dense, setDense] = React.useState(false);
   const { userName, idUsuario } = Redux.useSelector((stateSelector) => {return stateSelector.load;});
   const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
-  const [totalPagar, setTotalPagar] = React.useState(0);
+  const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
+  const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -343,7 +345,8 @@ const GridTransferencia = (props) => {
     setSelected([]);
   };
 
-  const handleClick = (event, idComisionDetalleEmpresa) => {
+  const handleClick = (event, freelacerObject) => {
+    let idComisionDetalleEmpresa = freelacerObject.idComisionDetalleEmpresa;
     const selectedIndex = selected.indexOf(idComisionDetalleEmpresa);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -359,6 +362,7 @@ const GridTransferencia = (props) => {
       );
     }
     setSelected(newSelected);
+    handleSum(freelacerObject);
   };
 
   const isSelected = (idComisionDetalleEmpresa) =>
@@ -405,16 +409,6 @@ const GridTransferencia = (props) => {
     }
   }
 
-  React.useEffect(()=>{    
-    if(list.length > 0){
-        let ptotalPagar=0;
-        list.forEach(function (value) {
-         ptotalPagar = ptotalPagar + value.importePorEmpresa;
-        }); 
-        setTotalPagar(ptotalPagar);
-    }
-  },[list])
-
   // const handleOnGetPagos = () => {
   //   if (idCiclo && idCiclo !== 0) {
   //     setIdCicloSelected(idCiclo);
@@ -448,6 +442,24 @@ const GridTransferencia = (props) => {
 
   // const importe = list.map((row)=> [row.idComisionDetalleEmpresa, row.importePorEmpresa]);
   // console.log("Listado? importe: ",importe)
+
+  const handleSum = (data) => {
+    const isItemSelected = isSelected(
+      data.idComisionDetalleEmpresa
+    );
+    if(!isItemSelected) {
+      let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
+      let t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
+    } else {
+      let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
+      let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
+    }
+  }
+
   return (
     <Core.Dialog
       fullScreen
@@ -471,19 +483,6 @@ const GridTransferencia = (props) => {
         </Core.Toolbar>
       </Core.AppBar>
       {/* --------------------------------------------------------------CABECERA-------------------------------------------------------------------- */}
-      <div
-        style={{ paddingLeft: "0px", paddingRight: "0px", paddingTop: "10px" }}
-      >
-        <Core.Breadcrumbs aria-label="breadcrumb">
-          <StyledBreadcrumb
-            key={1}
-            component="a"
-            label="Confirmar selección"
-            icon={<GeneralIcons.Home fontSize="small" />}
-          />
-        </Core.Breadcrumbs>
-      </div>
-      <br />
 
       <Core.Card style={{ overflow: "initial" }}>
         <Core.Grid container className={classes.gridContainer}>
@@ -568,7 +567,7 @@ const GridTransferencia = (props) => {
                         <Core.TableRow
                           hover
                           onClick={(event) =>
-                            handleClick(event, row.idComisionDetalleEmpresa)
+                            handleClick(event, row)
                           }
                           role="checkbox"
                           aria-checked={isItemSelected}
@@ -642,7 +641,7 @@ const GridTransferencia = (props) => {
                     <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
                     <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
                     <Core.TableCell align="center"><b>{"TOTAL: "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="left"><b>{totalPagar.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></Core.TableCell>
+                    <Core.TableCell align="left"><b>{formatearNumero(data.montoTotal)}</b></Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
                 </Core.TableBody>
@@ -660,8 +659,10 @@ const GridTransferencia = (props) => {
         mensaje={
           <div>
             <p>Se realizará la transferencia a:</p>  
-            <b>Seleccionados: </b>{selected.length}  <br />
-            <b>Con monto total: </b>{totalPagar.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}<br />
+            <b>Seleccionados para confirmar: </b>{selected.length}  <br />
+            <b>Monto total a confirmar: </b>{formatearNumero(totalPagar)}<br />
+            <b>Seleccionados rechazados: </b>{selected.length}  <br />
+            <b>Monto total rechazados: </b>{formatearNumero(totalMontoRechazados)}<br />
             {/* Para la empresa: {empresaId}<br /> */}
           </div>
         }
@@ -669,7 +670,7 @@ const GridTransferencia = (props) => {
         handleCloseCancel={closeModalMessage}
       />
     </Core.Dialog>
-  );
+  );  
   //-------------------------------------------------------------------------------------
 };
 export default GridTransferencia;
