@@ -125,10 +125,10 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
                 int idTipoComisionPagoComision = 1; //parametro
                 int idTipoFormaPagoSionPay = 1; //parametro
-                var comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
-                if (comisiones == -1)
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (comisiones.CodigoRespuesta == -1)
                  return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
-                if (comisiones > 0 )
+                if (comisiones.Cantidad > 0 )
                  return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
                  return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);                              
             } catch (Exception ex) {
