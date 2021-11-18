@@ -277,12 +277,9 @@ const TransferenciasDialog = ({
         setDetalleTransferencia(data);
         setIsConfirmDialogType(true);
       } else if (response && response.code == responseCodes.EXISTEN_RECHAZADOS) {
-        setEnabledConfirmarTodosInput(false);
-        setEnabledDownloadInput(true);
-        setEnabledConfirmarSeleccionInput(true);
-        setEnabledDatePickerInput(true);
+        setInputs(false);
         setDetalleTransferencia(data);
-        setOpenPagosTransferenciaDetalleDialog(true);
+        setOpenPagosTransferenciaDetalleDialog(true);        
         setIsConfirmDialogType(false);
       } else {
         dispatch(
