@@ -143,6 +143,10 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {fichaClient.usuarioNameLogueado} inicio el servicio ActualizarFichaCliente() ");
+                if (fichaClient.tieneCuenta){                  
+                    if (!fichaClient.cuentaBancaria.All(char.IsDigit))
+                    return Respuesta.ReturnResultdo(1, "¡El número de cuanta bancaria  debe ser valor Numérico!", "");
+                }
                 var verificarData = Repository.ValidarRegistros(fichaClient);
                 if (verificarData.Code == 1)
                 {
