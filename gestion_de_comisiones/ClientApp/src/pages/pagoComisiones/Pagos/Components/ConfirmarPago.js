@@ -61,7 +61,7 @@ let ConfirmarPago = ({ open, titulo,subTituloModal, tipoModal, mensaje, handleCl
                                 <br />  
                                 <br />                           
                                 <Typography variant="caption" display="block" gutterBottom>
-                                    <strong>NOTA :</strong> {mensaje} 
+                                    {mensaje} 
                                 </Typography>
                                 <br />                            
                             </Alert>
