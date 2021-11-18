@@ -421,7 +421,7 @@ const useStyles = makeStyles((theme) => ({
               idCiclo={idCiclo} 
              
                permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
-               <MessageConfirm open={openModalConfirm} titulo={"CONFIRMAR TODO"} subTituloModal={"Pagar por sion pay"} tipoModal={"warning"} mensaje={"Al confirmar se procesaran todas los pagos por sion pay."} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
+               <MessageConfirm open={openModalConfirm} titulo={"Confirmación de pagos por SION PAY."} subTituloModal={"Pagar por sion pay"} tipoModal={"warning"} mensaje={"¿Desea confirmar el pago a través de SION PAY? "} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
       </>
     );
 
