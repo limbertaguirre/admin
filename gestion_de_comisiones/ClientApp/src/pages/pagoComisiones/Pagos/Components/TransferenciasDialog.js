@@ -128,6 +128,9 @@ const TransferenciasDialog = ({
 
   const closeFullScreenModal = () => {
     setOpenModalFullScreen(false);
+    if(userName && empresaId) {
+      handleVerificarPagosTransferenciasTodos(userName, empresaId);
+    }
   };
 
   const handleDownloadFileEmpresas = async (user, empresaId) => {
