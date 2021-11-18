@@ -164,7 +164,7 @@ namespace gestion_de_comisiones.Servicios
                 GestionPagosEvent r = (GestionPagosEvent) Repository.handleDownloadFileEmpresas(body);
                 if(r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
                 {
-                    throw new Exception(r.errorMessage);
+                    throw new Exception(r.message);
                 } 
                 return Respuesta.ReturnResultdo(0, "ok", r.file);
             }
@@ -207,7 +207,7 @@ namespace gestion_de_comisiones.Servicios
                     r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
                     r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS)
                 {
-                    throw new Exception(r.errorMessage);
+                    throw new Exception(r.message);
                 }                                
                 return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");                                
             }
@@ -252,19 +252,27 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
-                var confirm = Repository.handleVerificarPagosTransferenciasTodos(body);
-                if (confirm)
+                GestionPagosEvent @event = Repository.handleVerificarPagosTransferenciasTodos(body);
+                Logger.LogInformation($"handleConfirmarPagosTransferenciasTodos() response @event {@event}");
+                if (@event.eventType == GestionPagosEvent.EXISTEN_PENDIENTES)
                 {
-                    return Respuesta.ReturnResultdo(0, "Ya se confirmaron el pago de la transferencia para esta empresa en este ciclo.", "");
+                    return Respuesta.ReturnResultdo(2, @event.message, @event.dataVerify);
                 }
-                else
+                else if (@event.eventType == GestionPagosEvent.EXISTEN_RECHAZADOS)
                 {
-                    return Respuesta.ReturnResultdo(2, "Falta confirmar transferencias de pago para esta empresa en este ciclo", "");
+                    return Respuesta.ReturnResultdo(3, @event.message, @event.dataVerify);
+                }
+                else if (@event.eventType == GestionPagosEvent.NO_EXISTEN_PENDIENTES_NI_RECHAZADOS)
+                {
+                    return Respuesta.ReturnResultdo(0, @event.message, @event.dataVerify);
+                } else
+                {
+                    throw new Exception(@event.message);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {body.user} error catch handleVerificarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                Logger.LogInformation($"usuario : {body.user} error catch handleVerificarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }

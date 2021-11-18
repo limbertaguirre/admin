@@ -32,6 +32,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import GridTransferenciaModal from '../Components/GridTransferencia'
+import PagosTransferenciaDetalleDialog from '../Components/PagosTransferenciaDetalleDialog'
+import MessageConfirm from '../../../../components/mesageModal/MessageConfirm'
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -45,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "12px"
   },
   dialgoTitle: {
-    backgroundColor: theme.palette.primary.main,
+    // backgroundColor: theme.palette.primary.main,
+    backgroundColor: "#1872b8",
     color: "white",
     "& .MuiTypography-root": {
       color: "white"
@@ -105,15 +108,17 @@ const TransferenciasDialog = ({
     const dispatch = useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
     const [empresaId, setEmpresaId] = useState(-1);
-    const [enabledInputs, setEnabledInputs] = useState(false);
     const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
     const [list, setList] = useState([]);
   const [enabledDownloadInput, setEnabledDownloadInput] = useState(false);
-  const [enabledConfirmarTodosInput, setEnabledConfirmarTodosInput] =
-    useState(false);
-  const [enabledConfirmarSeleccionInput, setEnabledConfirmarSeleccionInput] =
-    useState(false);
+  const [enabledConfirmarTodosInput, setEnabledConfirmarTodosInput] = useState(false);
+  const [enabledConfirmarSeleccionInput, setEnabledConfirmarSeleccionInput] = useState(false);
+  const [enabledDatePickerInput, setEnabledDatePickerInput] = useState(false);
   const [selectedDate, handleDateChange] = useState(new Date());
+  const [detalleTransferencia, setDetalleTransferencia] = useState(null);
+  const [openPagosTransferenciaDetalleDialog, setOpenPagosTransferenciaDetalleDialog] = useState(false);
+  const [openModalCancel, setOpenModalCancel]= useState(false);
+  const [isConfirmDialogType, setIsConfirmDialogType]= useState(false);
 
   const downloadExcel = (base64, fileName) => {
     // const contentType = "application/vnd.ms-excel";
@@ -139,9 +144,7 @@ const TransferenciasDialog = ({
 
     URL.revokeObjectURL(objectURL);
   };
-  const openFullScreenModal = () => {
-    setOpenModalFullScreen(true);
-  }
+
   const closeFullScreenModal = () => {
     setOpenModalFullScreen(false);
   }
@@ -167,7 +170,7 @@ const TransferenciasDialog = ({
       );
       if (response && response.code == 0) {
         downloadExcel(response.data.file, response.data.fileName);
-        // setStatusBusqueda(true);
+        handleVerificarPagosTransferenciasTodos(userName, empresaId);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -184,15 +187,8 @@ const TransferenciasDialog = ({
     setEmpresaId(event.target.value);
     console.log("handleEmpresasSelectChange ", event.target.value);
     handleVerificarPagosTransferenciasTodos(userName, event.target.value);
-  };
+  };  
 
-  const setInputs = (empresaId) => {
-    if (empresaId == -1) {
-      setEnabledInputs(false);
-    } else {
-      setEnabledInputs(true);
-    }
-  };
   const handleObtenerPagosTransferencias = async (user, empresaId) =>{
     if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
       let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
@@ -204,8 +200,7 @@ const TransferenciasDialog = ({
         dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }
     }
-  }
-   
+  }   
 
   const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
@@ -238,10 +233,19 @@ const TransferenciasDialog = ({
         setEnabledConfirmarTodosInput(true);
         setEnabledConfirmarSeleccionInput(true);
       }
+    } else {
+      console.log('handleConfirmarPagosTransferenciasTodos empresaId undefined ', empresaId);
     }
   };
 
   const handleVerificarPagosTransferenciasTodos = async (user, empresaId) => {
+
+    const responseCodes = {
+      NO_EXISTEN_PENDIENTES_NI_RECHAZADOS: 0,
+      EXISTEN_PENDIENTES: 2,
+      EXISTEN_RECHAZADOS: 3
+    };
+
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
       let response = await Actions.handleVerificarPagosTransferenciasTodos(
         user,
@@ -253,20 +257,47 @@ const TransferenciasDialog = ({
         "TransferenciasDialog.js handleVerificarPagosTransferenciasTodos response ",
         response
       );
-      if (response && response.code == 0) {
+      let data = {
+        ...response.data,
+        message: response.message
+      }
+      handleDateChange(new Date());
+      if (response && response.code == responseCodes.NO_EXISTEN_PENDIENTES_NI_RECHAZADOS) {
         dispatch(
           ActionMensaje.showMessage({
             message: response.message,
             variant: "info"
           })
-        );
+        );        
+        setInputs(false);
+        setDetalleTransferencia(data);
+        setOpenPagosTransferenciaDetalleDialog(true);
+        setIsConfirmDialogType(false);
+      } else if (response && response.code == responseCodes.EXISTEN_PENDIENTES) {
+        if(!data.descargarExcel) {
+          setInputs(false);
+          setEnabledDownloadInput(true);
+          setEnabledDatePickerInput(true);
+        } else {
+          let d = data.descargarExcel.split('/');
+          let s = ''.concat(d[1],'/', d[0],'/', d[2]);
+          console.log('FECHA d ', d);
+          console.log('FECHA s ', s);
+          handleDateChange(s);
+          setInputs(true);
+          setEnabledDownloadInput(false);
+          setEnabledDatePickerInput(false);
+        }
+        setDetalleTransferencia(data);
+        setIsConfirmDialogType(true);
+      } else if (response && response.code == responseCodes.EXISTEN_RECHAZADOS) {
         setEnabledConfirmarTodosInput(false);
         setEnabledDownloadInput(true);
-        setEnabledConfirmarSeleccionInput(false);
-      } else if (response && response.code == 2) {
-        setEnabledConfirmarTodosInput(true);
-        setEnabledDownloadInput(true);
         setEnabledConfirmarSeleccionInput(true);
+        setEnabledDatePickerInput(true);
+        setDetalleTransferencia(data);
+        setOpenPagosTransferenciaDetalleDialog(true);
+        setIsConfirmDialogType(false);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -274,12 +305,27 @@ const TransferenciasDialog = ({
             variant: "error"
           })
         );
-        setEnabledConfirmarTodosInput(true);
-        setEnabledConfirmarSeleccionInput(true);
+        setInputs(false);
       }
     }
   };
+  
+  const setInputs = b => {
+    setEnabledConfirmarTodosInput(b);
+    setEnabledDownloadInput(b);
+    setEnabledConfirmarSeleccionInput(b);
+    setEnabledDatePickerInput(b);
+  };
 
+  const handleCloseTransferenciasDialog = () => {
+    setInputs(false);
+    setEmpresaId(-1);
+    closeTransferenciasDialog();
+  }
+
+  const handleClosePagosTransferenciaDetalleDialog = () => {
+    setOpenPagosTransferenciaDetalleDialog(false);
+  }
 
   return (
     <Dialog
@@ -313,7 +359,7 @@ const TransferenciasDialog = ({
             flex="1"
             direction="row"
           >
-            <Grid item xs={6} sm={6}>
+            <Grid item xs={6} sm={6}>              
               <TextField
                 className={style.businessSelect}
                 id="outlined-select-currency"
@@ -321,7 +367,7 @@ const TransferenciasDialog = ({
                 label="Seleccione una empresa"
                 value={empresaId ? empresaId : -1}
                 onChange={handleEmpresasSelectChange}
-                helperText="El archivo se generará a partir de la empresa seleccionada."
+                helperText="El archivo se generará a partir de la empresa seleccionada.<br/>"
                 variant="outlined"
                 fullWidth
               >
@@ -331,11 +377,12 @@ const TransferenciasDialog = ({
                     return <MenuItem value={x.idEmpresa}>{x.empresa}</MenuItem>;
                   })}
               </TextField>
-            </Grid>
-            <Grid item xs={6} sm={6}>
+            </Grid>            
+            <Grid item xs={6} sm={6}>              
               <MuiPickersUtilsProvider locale={esLocale} utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   autoOk
+                  disabled={!enabledDatePickerInput}
                   variant="inline"
                   inputVariant="outlined"
                   label="Seleccione una fecha"
@@ -350,7 +397,7 @@ const TransferenciasDialog = ({
             </Grid>
             <Grid item xs={12} sm={12} className={style.btnContainerDescargar}>
               <Button
-                disabled={!enabledInputs && !enabledDownloadInput}
+                disabled={!enabledDownloadInput}
                 className={style.downloadButton}
                 variant="outlined"
                 color="primary"
@@ -364,11 +411,21 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledInputs && !enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleConfirmarPagosTransferenciasTodos(userName, empresaId)}>Confimar todos</Button>
-            <Button disabled={!enabledInputs && !enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
-            <Button className={style.dialogConfirmButton} onClick={()=>closeTransferenciasDialog()}>Cerrar</Button>
+            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={() => setOpenPagosTransferenciaDetalleDialog(true)/*setOpenModalCancel(true)/*setOpenModalCancel(true)*/}>Confimar todos</Button>
+            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
+            <Button className={style.dialogConfirmButton} onClick={()=>handleCloseTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         
         <GridTransferenciaModal idCiclo={cicloId} list= {list} empresaId={empresaId} openModalFullScreen={openModalFullScreen} closeFullScreenModal ={closeFullScreenModal }/>   
+        {detalleTransferencia && empresaId && (
+          <PagosTransferenciaDetalleDialog
+            isConfirm={isConfirmDialogType}
+            open={openPagosTransferenciaDetalleDialog}
+            empresaId={empresaId}
+            handleConfirm={handleConfirmarPagosTransferenciasTodos}
+            close={handleClosePagosTransferenciaDetalleDialog}
+            data={detalleTransferencia}
+          />
+        )}
       </Dialog>
     );
 }

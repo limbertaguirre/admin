@@ -10,9 +10,13 @@ namespace gestion_de_comisiones.Controllers.Events
         public static int ROLLBACK_ERROR = 2;
         public static int ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS = 3;
         public static int ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS = 4;
+        public static int EXISTEN_PENDIENTES = 5;
+        public static int EXISTEN_RECHAZADOS = 6;
+        public static int NO_EXISTEN_PENDIENTES_NI_RECHAZADOS = 7;
 
         public int eventType { get; set; }
-        public string errorMessage { get; set; }
+        public string message { get; set; }
         public DownloadFileTransferenciaOutput file { get; set; }
+        public VerificarPagosTransferenciasOutput dataVerify { get; set; }
     }
 }
