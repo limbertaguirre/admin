@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import SnackbarSion from "../../../components/message/SnackbarSion";
 import * as permiso from '../../../routes/permiso'; 
 import { verificarAcceso, validarPermiso} from '../../../lib/accesosPerfiles';
-import MessageConfirm from '../../../components/mesageModal/MessageConfirm';
+import MessageConfirm from './Components/ConfirmarPago';
 
 import GridPagos from './Components/GridPagos'
 import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
@@ -160,10 +160,7 @@ const useStyles = makeStyles((theme) => ({
             cargarComisionesPagos(userName, idCiclo)
 
         }else{
-          generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-         /*  setOpenSnackbar(true);
-          setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-          settipTSnackbar('warning'); */
+          generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning') 
         }      
     }
 
@@ -202,8 +199,7 @@ const useStyles = makeStyles((theme) => ({
           let response= await Actions.ListarFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
           console.log('busqueda por filtro',response)          
           if(response && response.code == 0){
-              let data= response.data;
-             // setPendienteFormaPago(data.pendienteFormaPago);
+              let data= response.data;        
               setListaComisionesAPagar(data.lista);  
           }       
       }else{
@@ -234,15 +230,17 @@ const useStyles = makeStyles((theme) => ({
    },[])
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
+    const [subtitulo, setSubtitulo] = useState('');
    const abrirModal = ()=> {
-    verificarConfirmarSionPay(userName,idCiclo);
-      //setOpenModalConfirm(true);
+    verificarConfirmarSionPay(userName,idCiclo);    
    }
    async function verificarConfirmarSionPay(userN, cicloId){   
 
     let response= await Actions.verificarPagoSionPayXCiclo(userN, cicloId, dispatch)               
-      if(response && response.code == 0){           
+      if(response && response.code == 0){   
+          var body= response.data;        
           setOpenModalConfirm(true);    
+          setSubtitulo('Se pagará a '+body.cantidad+' ACI con un monto total de '+ body.totalPagoSionPay +' puntos.')
       } else{
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
@@ -421,7 +419,7 @@ const useStyles = makeStyles((theme) => ({
               idCiclo={idCiclo} 
              
                permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
-               <MessageConfirm open={openModalConfirm} titulo={"Confirmación de pagos por SION PAY."} subTituloModal={"Pagar por sion pay"} tipoModal={"warning"} mensaje={"¿Desea confirmar el pago a través de SION PAY? "} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
+               <MessageConfirm open={openModalConfirm} titulo={"Confirmación de pagos por SION PAY."} nombreCiclo={nameComboSeleccionado} subTituloModal={subtitulo} tipoModal={"warning"} mensaje={"¿Desea confirmar el pago a través de SION PAY? "} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
       </>
     );
 
