@@ -370,7 +370,7 @@ const TransferenciasDialog = ({
                 label="Seleccione una empresa"
                 value={empresaId ? empresaId : -1}
                 onChange={handleEmpresasSelectChange}
-                helperText="El archivo se generará a partir de la empresa seleccionada.<br/>"
+                helperText="El archivo se generará a partir de la empresa seleccionada."
                 variant="outlined"
                 fullWidth
               >
