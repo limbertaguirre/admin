@@ -248,7 +248,7 @@ const useStyles = makeStyles((theme) => ({
       if(response && response.code == 0){   
           var body= response.data;        
           setOpenModalConfirm(true);    
-          setSubtitulo('Se pagará a '+body.cantidad+' ACI con un monto total de '+ body.totalPagoSionPay +' puntos.')
+          setSubtitulo('Se pagará a '+body.cantidad+' ACI con un monto total de '+ body.totalPagoSionPay.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }) +' Puntos.')
       } else{
          dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
       }      
