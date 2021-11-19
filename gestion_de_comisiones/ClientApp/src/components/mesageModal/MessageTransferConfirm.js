@@ -1,11 +1,5 @@
 import React, { Fragment } from "react";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  Typography,
-  Grid,
-} from "@material-ui/core";
+import { Paper , Button, Dialog, DialogContent, DialogTitle, DialogContentText, Typography, Grid, TableContainer, Table, TableHead,TableRow, TableBody, TableCell  } from "@material-ui/core";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import CancelIcon from "@material-ui/icons/Cancel";
@@ -37,56 +31,96 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
   },
+  dialogContainer: {
+    "& .MuiPaper-root": {
+      [theme.breakpoints.down("lg")]: {
+        minWidth: "740px"
+      },
+      [theme.breakpoints.down("md")]: {
+        minWidth: "500px"
+      },
+      [theme.breakpoints.down("xs")]: {
+        minWidth: "550px"
+      }
+    }
+  },dialgoTitle: {
+      backgroundColor: theme.palette.primary.main,
+      backgroundColor: "#1872b8",
+      color: "white",
+      "& .MuiTypography-root": {
+        color: "white"
+      }
+    },
+    table: {
+      minWidth: 300,
+    },
 }));
 
-let MessageTransferConfirm = ({ open, titulo, subTituloModal, tipoModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
+// let MessageTransferConfirm = ({ open, titulo, subTituloModal, tipoModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
+  let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
   //tipoModal : info, error, warning, success
   const classes = useStyles();
   let cerrarModal = () => {
     handleCloseConfirm();
   };
-
+  if(mensaje !== null){
   return (
-    <Fragment>
-      <Dialog
+    
+    <Dialog
         fullWidth={true}
         open={open}
+        maxWidth="sm"
         aria-labelledby="customized-dialog-title"
+        className={classes.dialogContainer}
       >
-          
+      <DialogTitle className={classes.dialgoTitle}>{titulo}</DialogTitle>
+      
         <DialogContent>
           <div className={classes.root}>
-            <Alert severity={tipoModal}>
-              <AlertTitle>{titulo}</AlertTitle>
+            <DialogContentText>
               <strong>{subTituloModal}</strong>
-              <br />
-              <Typography variant="caption" display="block" gutterBottom>
-                <strong>NOTA : </strong>{mensaje}
-              </Typography>
-              <br />
-            </Alert>
+              <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><b>{""}</b></TableCell>
+                      <TableCell align="center"><b>CANTIDAD (ACI)</b></TableCell>
+                      <TableCell align="center"><b>MONTOS</b></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell><b>CONFIRMADOS: </b></TableCell>
+                      <TableCell align="center">{mensaje.confirmados}</TableCell>
+                      <TableCell align="center">{mensaje.montoAPagar}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell><b>RECHAZADOS: </b></TableCell>
+                      <TableCell align="center">{mensaje.rechazados}</TableCell>
+                      <TableCell align="center">{mensaje.montoAPagarRechazados}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell><b>TOTALES: </b></TableCell>
+                      <TableCell align="center">{mensaje.totalLista}</TableCell>
+                      <TableCell align="center">{mensaje.montoTotal}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Typography> ACI = Asesor Comercial Independiente</Typography>
+            </DialogContentText>
           </div>
           <Grid container item xs={12} justify="flex-end">
-            <Button
-              onClick={handleCloseCancel}
-              variant="contained"
-              color="primary"
-              className={classes.botonesSecondary}
-            >
+            <Button onClick={handleCloseCancel} variant="contained" color="primary" className={classes.botonesSecondary}>
               <CancelIcon /> Cancelar
             </Button>
-            <Button
-              onClick={cerrarModal}
-              variant="contained"
-              className={classes.botones}
-              color="secondary"
-            >
+            <Button onClick={cerrarModal} variant="contained" className={classes.botones} color="secondary">
               <CheckCircleIcon /> Aceptar
             </Button>
           </Grid>
         </DialogContent>
       </Dialog>
-    </Fragment>
-  );
+  )}
+  else return("Ocurrió un error inesperado al obtener datos.");
 };
 export default MessageTransferConfirm;

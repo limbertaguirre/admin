@@ -156,6 +156,7 @@ function EnhancedTableHead(props) {
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
+                style={{color:"white"}}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
@@ -257,6 +258,11 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   appBar: {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    background: "linear-gradient(90deg, #2E3B55, #1872b8)",
     position: "relative",
   },
   paper: {
@@ -276,6 +282,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
+    color:"white"
   },
   gridContainer: {
     paddingLeft: theme.spacing(1),
@@ -339,9 +346,13 @@ const GridTransferencia = (props) => {
   const handleSelectAllClick = (event) => {
     //Aqui seleccionamos todos.
     if (event.target.checked) {
+      setTotalPagar(data.montoTotal);
+      setTotalMontoRechazados(0);
       seleccionarTodo();
       return;
     }
+    setTotalPagar(0);
+    setTotalMontoRechazados(data.montoTotal);
     setSelected([]);
   };
 
@@ -363,6 +374,7 @@ const GridTransferencia = (props) => {
     }
     setSelected(newSelected);
     handleSum(freelacerObject);
+    console.log("handleClick newSelected: ",newSelected);
   };
 
   const isSelected = (idComisionDetalleEmpresa) =>
@@ -409,54 +421,28 @@ const GridTransferencia = (props) => {
     }
   }
 
-  // const handleOnGetPagos = () => {
-  //   if (idCiclo && idCiclo !== 0) {
-  //     setIdCicloSelected(idCiclo);
-  //     cargarComisionesPagos(userName, idCiclo);
-  //   } else {
-  //     // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-  //     /*  setOpenSnackbar(true);
-  //     setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-  //     settipTSnackbar('warning'); */
-  //   }
-  // };
-  // async function cargarComisionesPagos(userNa, cicloId) {
-  //   let respuesta = await Actions.ObtenerComisionesPagos(
-  //     userNa,
-  //     cicloId,
-  //     dispatch
-  //   );
-  //   console.log('cargarComisionesPagos: ',respuesta);
-  //   if (respuesta && respuesta.code == 0) {
-  //     setListaComisionesAPagar(respuesta.data);
-  //     setStatusBusqueda(true);
-  //   } else {
-  //     dispatch(
-  //       ActionMensaje.showMessage({
-  //         message: respuesta.message,
-  //         variant: "error",
-  //       })
-  //     );
-  //   }
-  // }
-
-  // const importe = list.map((row)=> [row.idComisionDetalleEmpresa, row.importePorEmpresa]);
-  // console.log("Listado? importe: ",importe)
-
   const handleSum = (data) => {
     const isItemSelected = isSelected(
       data.idComisionDetalleEmpresa
     );
+    let t=0;
     if(!isItemSelected) {
       let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
-      let t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      if(totalMontoRechazados > 0){
+        t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      }
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
-    } else {
+      console.log("!isItemSelected s: ", s)
+      console.log("!isItemSelected t :", t)
+     } 
+    else {
       let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
       let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
+      console.log("isItemSelected s: ", s)
+      console.log("isItemSelected s: ", t)
     }
   }
 
@@ -477,7 +463,7 @@ const GridTransferencia = (props) => {
           >
             <GeneralIcons.Close />
           </Core.IconButton>
-          <Core.Typography variant="h6" className={classes.title}>
+          <Core.Typography variant="h6" className={classes.appBar}>
             CONFIRMAR TRANSFERENCIA
           </Core.Typography>
         </Core.Toolbar>
@@ -609,7 +595,6 @@ const GridTransferencia = (props) => {
                           <Core.TableCell align="center">
                             {row.empresa}
                           </Core.TableCell>
-                          {/* <Core.TableCell align="center">{row.formaPago}</Core.TableCell> */}
                           <Core.TableCell align="center">
                             {row.idEstadoComisionDetalleEmpresa === 2 ? (
                               <Core.Chip
@@ -653,19 +638,17 @@ const GridTransferencia = (props) => {
 
       <MessageTransferConfirm
         open={openModalConfirmation}
-        titulo={"CONFIRMAR"}
-        subTituloModal={"PAGO POR TRANSFERENCIA"}
-        tipoModal={"info"}
-        mensaje={
-          <div>
-            <p>Se realizará la transferencia a:</p>  
-            <b>Seleccionados para confirmar: </b>{selected.length}  <br />
-            <b>Monto total a confirmar: </b>{formatearNumero(totalPagar)}<br />
-            <b>Seleccionados rechazados: </b>{selected.length}  <br />
-            <b>Monto total rechazados: </b>{formatearNumero(totalMontoRechazados)}<br />
-            {/* Para la empresa: {empresaId}<br /> */}
-          </div>
-        }
+        titulo= {<b>DETALLE DE TRANSFERENCIA</b>}
+        subTituloModal={""}
+        // tipoModal={"info"}
+        mensaje={{
+            confirmados: selected.length,
+            montoAPagar: formatearNumero(totalPagar),
+            rechazados: list.length - selected.length,
+            montoAPagarRechazados: formatearNumero(totalMontoRechazados),
+            totalLista: list.length,
+            montoTotal: formatearNumero(data.montoTotal)
+          }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />
