@@ -61,7 +61,7 @@ let MessageTransferConfirm = ({ open, titulo, subTituloModal, tipoModal, mensaje
               <strong>{subTituloModal}</strong>
               <br />
               <Typography variant="caption" display="block" gutterBottom>
-                <strong>NOTA : </strong>{mensaje}
+                <strong></strong>{mensaje}
               </Typography>
               <br />
             </Alert>

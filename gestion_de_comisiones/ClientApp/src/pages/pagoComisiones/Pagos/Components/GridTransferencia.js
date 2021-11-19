@@ -320,7 +320,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected } = props;
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected} = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [dense, setDense] = React.useState(false);
@@ -407,11 +407,10 @@ const GridTransferencia = (props) => {
 
   React.useEffect(()=>{    
     if(list.length > 0){
-        let ptotalPagar=0;
-        list.forEach(function (value) {
-         ptotalPagar = ptotalPagar + value.importePorEmpresa;
-        }); 
-        setTotalPagar(ptotalPagar);
+        let neutro = 0;
+        
+         console.log("QUE ES ESTO?: ",neutro)
+        setTotalPagar(neutro);
     }
   },[list])
 
@@ -475,12 +474,12 @@ const GridTransferencia = (props) => {
         style={{ paddingLeft: "0px", paddingRight: "0px", paddingTop: "10px" }}
       >
         <Core.Breadcrumbs aria-label="breadcrumb">
-          <StyledBreadcrumb
+          {/* <StyledBreadcrumb
             key={1}
             component="a"
             label="Confirmar selección"
             icon={<GeneralIcons.Home fontSize="small" />}
-          />
+          /> */}
         </Core.Breadcrumbs>
       </div>
       <br />
@@ -663,6 +662,7 @@ const GridTransferencia = (props) => {
             <b>Seleccionados: </b>{selected.length}  <br />
             <b>Con monto total: </b>{totalPagar.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}<br />
             {/* Para la empresa: {empresaId}<br /> */}
+            
           </div>
         }
         handleCloseConfirm={confirmarModal}

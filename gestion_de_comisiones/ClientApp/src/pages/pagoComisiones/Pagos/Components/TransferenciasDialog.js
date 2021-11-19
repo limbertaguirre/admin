@@ -101,6 +101,7 @@ const TransferenciasDialog = ({
   const [openModalCancel, setOpenModalCancel]= useState(false);
   const [isConfirmDialogType, setIsConfirmDialogType]= useState(false);
   const [selected, setSelected] = React.useState([]);
+  const [amount, setAmount] = React.useState([]);
 
   const downloadExcel = (base64, fileName) => {
     // const contentType = "application/vnd.ms-excel";
