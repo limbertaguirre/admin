@@ -77,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "24px",
     paddingLeft: "24px",
   },
+  alturaGrid:{
+    height:'160px'
+  }
 }));
 
 const TransferenciasDialog = ({
@@ -359,7 +362,7 @@ const TransferenciasDialog = ({
             flex="1"
             direction="row"
           >
-            <Grid item xs={6} sm={6}>              
+            <Grid item xs={6} sm={6}  className={style.alturaGrid}>              
               <TextField
                 className={style.businessSelect}
                 id="outlined-select-currency"
@@ -378,7 +381,7 @@ const TransferenciasDialog = ({
                   })}
               </TextField>
             </Grid>            
-            <Grid item xs={6} sm={6}>              
+            <Grid item xs={6} sm={6}  className={style.alturaGrid}>              
               <MuiPickersUtilsProvider locale={esLocale} utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   autoOk
