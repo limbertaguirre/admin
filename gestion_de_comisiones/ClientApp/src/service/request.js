@@ -61,8 +61,8 @@ const _hanldeCatch = (error, dispatch) => {
 
 export const requestGet = (url, data, dispatch) => {    
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
-  const headers = { ...data, headers: { ...data } };  
+   const token = localStorage.getItem("token");
+  const headers = { ...data, headers: { ...data, token: token  } };  
   return apiComerce.get(url, headers)
     .then((response) => {
       return _hanldeThen(response, dispatch);
@@ -74,9 +74,10 @@ export const requestGet = (url, data, dispatch) => {
 
 export const requestPost = (url, data, dispatch) => {
   dispatch(loadingRequest());
-  const config = { headers: { "Content-Type": "application/json"
-                          //  ,"token":token 
-                 } };
+  const token = localStorage.getItem("token");
+  const config = {
+                  headers: { "Content-Type": "application/json" ,"token":token  }
+                 };
   
   return apiComerce.post(url, data, config)
     .then((response) => {
@@ -89,9 +90,9 @@ export const requestPost = (url, data, dispatch) => {
 
 export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
   const headers = { ...data, headers: { ...header
-                //   , token: token
+                  , token: token
                    } };
   return apiComerce.get(url, headers).then((response) => {
          return _hanldeThen(response, dispatch);
@@ -104,9 +105,9 @@ export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
 
 export const requestPostWhithHeaders = (url, data,headerParam, dispatch) => {
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
   const config = { headers: {...headerParam, "Content-Type": "application/json"
-                //   ,"token":token 
+                  ,"token":token 
                  } };
   return apiComerce.post(url, data, config).then((response) => {
           return _hanldeThen(response, dispatch);

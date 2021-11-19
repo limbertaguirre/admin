@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
@@ -29,7 +30,8 @@ namespace gestion_de_comisiones.Controllers
         public ActionResult GetCiclos([FromHeader] string usuarioLogin)
         {
             try
-            {
+            {               
+                var r = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
                 Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerCiclos()  ");
                 return Ok(Service.GetCiclos(usuarioLogin));
 
