@@ -10,7 +10,7 @@ import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
 import { Button } from "bootstrap";
 import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
-import {formatearNumero} from '../../../../lib/utility'
+import { formatearNumero } from "../../../../lib/utility";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
@@ -156,7 +156,7 @@ function EnhancedTableHead(props) {
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
-                style={{color:"white"}}
+                style={{ color: "white" }}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
@@ -282,7 +282,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
-    color:"white"
+    color: "white",
   },
   gridContainer: {
     paddingLeft: theme.spacing(1),
@@ -328,12 +328,25 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
+  const {
+    idCiclo,
+    list,
+    empresaId,
+    openModalFullScreen,
+    closeFullScreenModal,
+    seleccionarTodo,
+    selected,
+    setSelected,
+    data,
+  } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [dense, setDense] = React.useState(false);
-  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {return stateSelector.load;});
-  const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
+  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
+    return stateSelector.load;
+  });
+  const [openModalConfirmation, setOpenModalConfirmation] =
+    React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 
@@ -374,7 +387,6 @@ const GridTransferencia = (props) => {
     }
     setSelected(newSelected);
     handleSum(freelacerObject);
-    console.log("handleClick newSelected: ",newSelected);
   };
 
   const isSelected = (idComisionDetalleEmpresa) =>
@@ -394,13 +406,31 @@ const GridTransferencia = (props) => {
 
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId);
+      prosesarConfirmarTransferencia(
+        userName,
+        idUsuario,
+        idCiclo,
+        selected,
+        empresaId
+      );
     }
   };
 
-  async function prosesarConfirmarTransferencia( userN, usuarioId, cicloId, list, idEmpresa ) 
-  {
-    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch );
+  async function prosesarConfirmarTransferencia(
+    userN,
+    usuarioId,
+    cicloId,
+    list,
+    idEmpresa
+  ) {
+    let response = await Actions.handleConfirmarPagosTransferencias(
+      userN,
+      usuarioId,
+      cicloId,
+      list,
+      idEmpresa,
+      dispatch
+    );
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
@@ -410,7 +440,6 @@ const GridTransferencia = (props) => {
         })
       );
       closeFullScreenModal();
-      //handleOnGetPagos();
     } else {
       dispatch(
         ActionMensaje.showMessage({
@@ -422,29 +451,24 @@ const GridTransferencia = (props) => {
   }
 
   const handleSum = (data) => {
-    const isItemSelected = isSelected(
-      data.idComisionDetalleEmpresa
-    );
-    let t=0;
-    if(!isItemSelected) {
+    const isItemSelected = isSelected(data.idComisionDetalleEmpresa);
+    let t = 0;
+    if (!isItemSelected) {
       let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
-      if(totalMontoRechazados > 0){
-        t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      if (totalMontoRechazados > 0) {
+        t =
+          parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
       }
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
-      console.log("!isItemSelected s: ", s)
-      console.log("!isItemSelected t :", t)
-     } 
-    else {
+    } else {
       let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
-      let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+      let t =
+        parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
-      console.log("isItemSelected s: ", s)
-      console.log("isItemSelected s: ", t)
     }
-  }
+  };
 
   return (
     <Core.Dialog
@@ -552,9 +576,7 @@ const GridTransferencia = (props) => {
                       return (
                         <Core.TableRow
                           hover
-                          onClick={(event) =>
-                            handleClick(event, row)
-                          }
+                          onClick={(event) => handleClick(event, row)}
                           role="checkbox"
                           aria-checked={isItemSelected}
                           tabIndex={-1}
@@ -621,12 +643,22 @@ const GridTransferencia = (props) => {
                     }
                   )}
                   <Core.TableRow key={100000000000000}>
-                    <Core.TableCell align="center"><b></b></Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b></b>
+                    </Core.TableCell>
                     <Core.TableCell align="right"></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{"TOTAL: "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="left"><b>{formatearNumero(data.montoTotal)}</b></Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b> </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b> </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b>{"TOTAL: "} </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="left">
+                      <b>{formatearNumero(data.montoTotal)}</b>
+                    </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
                 </Core.TableBody>
@@ -638,22 +670,22 @@ const GridTransferencia = (props) => {
 
       <MessageTransferConfirm
         open={openModalConfirmation}
-        titulo= {<b>DETALLE DE TRANSFERENCIA</b>}
+        titulo={<b>DETALLE DE TRANSFERENCIA</b>}
         subTituloModal={""}
         // tipoModal={"info"}
         mensaje={{
-            confirmados: selected.length,
-            montoAPagar: formatearNumero(totalPagar),
-            rechazados: list.length - selected.length,
-            montoAPagarRechazados: formatearNumero(totalMontoRechazados),
-            totalLista: list.length,
-            montoTotal: formatearNumero(data.montoTotal)
-          }}
+          confirmados: selected.length,
+          montoAPagar: formatearNumero(totalPagar),
+          rechazados: list.length - selected.length,
+          montoAPagarRechazados: formatearNumero(totalMontoRechazados),
+          totalLista: list.length,
+          montoTotal: formatearNumero(data.montoTotal),
+        }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />
     </Core.Dialog>
-  );  
+  );
   //-------------------------------------------------------------------------------------
 };
 export default GridTransferencia;
