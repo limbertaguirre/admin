@@ -19,7 +19,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
         bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
-        bool handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
+        GestionPagosEvent handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
         GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput body);
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);

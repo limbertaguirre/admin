@@ -465,34 +465,120 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public bool handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        public GestionPagosEvent handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
         {
             try
             {
                 List<VwObtenerInfoExcelFormatoBanco> list = new List<VwObtenerInfoExcelFormatoBanco>();
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleVerificarPagosTransferenciasTodos() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo:{body.cicloId} empresaId: {body.empresaId}");
-                var cantidad = ContextMulti.VwObtenerInfoExcelFormatoBancoes
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa != 2).Count();
-                if(cantidad > 0)
+                var cantidadPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1).Count();
+                var cantidadRechazados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 3).Count();
+                var cantidadConfirmados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 2).Count();
+
+                var sumaTotalConfirmados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 2)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                var sumaTotalRechazados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 3)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                var sumaTotalPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                var cantidadFechasPagosNull = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1 && x.FechaDePago == null).Count();
+
+                var fechaPagosExcel = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1)
+                    .Select(x => new { x.FechaDePago })
+                    .FirstOrDefault();
+
+                var empresa = (ContextMulti.Empresas
+                    .Where(x => x.IdEmpresa == body.empresaId)
+                    .Select(u => new {
+                        u.Nombre
+                    }).FirstOrDefault()).Nombre;
+
+                int tipoPagoComisiones = 1;
+                var ciclo = (ContextMulti.Cicloes
+                    .Join(ContextMulti.GpComisions,
+                        p => p.IdCiclo,
+                        e => e.IdCiclo,
+                        (p, e) => new
+                        {
+                            p.IdCiclo,
+                            p.Nombre,
+                            e.IdTipoComision
+                        }
+                    )
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoComision == tipoPagoComisiones)
+                    .Select(u => new {
+                        u.Nombre
+                    }).FirstOrDefault()).Nombre;
+
+                VerificarPagosTransferenciasOutput o = new VerificarPagosTransferenciasOutput();
+
+                if(cantidadPendientes > 0)
+                {
+                    o.type = VerificarPagosTransferenciasOutput.PENDIENTES;
+                    o.ciclo = ciclo;
+                    o.empresa = empresa;
+                    o.totalPendientes = cantidadPendientes;
+                    o.montoTotalPendientes = sumaTotalPendientes.ToString();
+                } else if(cantidadPendientes == 0 && (cantidadRechazados > 0 || cantidadConfirmados > 0))
+                {
+                    o.type = VerificarPagosTransferenciasOutput.CONFIRMADOS_O_RECHAZADOS;
+                    o.ciclo = ciclo;
+                    o.empresa = empresa;
+                    o.totalConfirmados = cantidadConfirmados;
+                    o.totalRechazados = cantidadRechazados;
+                    o.totalEnviadosConfirmar = cantidadRechazados + cantidadConfirmados;
+                    o.montoTotalConfirmados = sumaTotalConfirmados.ToString();
+                    o.montoTotalRechazados = sumaTotalRechazados.ToString();                    
+                }
+                o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();      
+                Logger.LogWarning($"handleVerificarPagosTransferenciasTodos() cantidadPendientes: {cantidadPendientes}, cantidadConfirmados: {cantidadConfirmados}, cantidadRechazados: {cantidadRechazados}");
+
+                if (cantidadPendientes > 0)
                 {
                     // No se confirmo TODAS las transacciones para esta empresa en este ciclo
-                    return false;
+                    return postEvent(GestionPagosEvent.EXISTEN_PENDIENTES, o, $"Hay pendientes para confirmar el pago por transferencia de este ciclo ({ciclo}) para la empresa {empresa}.");
+                } else if (cantidadRechazados > 0)
+                {
+                    return postEvent(GestionPagosEvent.EXISTEN_RECHAZADOS, o, $"Hay rechazados en este ciclo ({ciclo}) para la empresa {empresa}.");
                 } else
                 {
-                    return true;
-                }                
+                    return postEvent(GestionPagosEvent.NO_EXISTEN_PENDIENTES_NI_RECHAZADOS, o, $"Se confirmaron todos los pagos por transferencia de este ciclo ({ciclo}) para la empresa {empresa}.");
+                }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} error catch handleVerificarPagosTransferenciasTodos() mensaje : {ex}");
-                return false;
+                return postEvent(GestionPagosEvent.ERROR, ex.Message);
             }
         }
 
-        private GestionPagosEvent postEvent(int type, string errorMessage)
+        private GestionPagosEvent postEvent(int type, string errorMessage) => postEvent(type, new DownloadFileTransferenciaOutput(), errorMessage);
+
+        private GestionPagosEvent postEvent(int type, VerificarPagosTransferenciasOutput data, string message)
         {
-            return postEvent(type, null, errorMessage);
+            GestionPagosEvent e = new GestionPagosEvent();
+            e.eventType = type;
+            if (data != null)
+            {
+                e.dataVerify = data;
+            }
+            if (message != null)
+            {
+                e.message = message;
+            }
+            return e;
         }
 
         private GestionPagosEvent postEvent(int type, DownloadFileTransferenciaOutput file, string errorMessage)
@@ -505,7 +591,7 @@ namespace gestion_de_comisiones.Repository
             }
             if(errorMessage != null)
             {
-                e.errorMessage = errorMessage;
+                e.message = errorMessage;
             }
             return e;
         }
@@ -522,7 +608,15 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerInfoExcelFormatoBanco> info = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .ToList();
-                return info;
+
+                var montoTotal = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                ObtenerPagosTransferenciasOutput o = new ObtenerPagosTransferenciasOutput();
+                o.list = info;
+                o.montoTotal = montoTotal.ToString();
+                return o;
             }
             catch (Exception ex)
             {

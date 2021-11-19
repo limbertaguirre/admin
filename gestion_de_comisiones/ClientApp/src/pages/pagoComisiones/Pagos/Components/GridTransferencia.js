@@ -10,6 +10,7 @@ import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
 import { Button } from "bootstrap";
 import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
+import {formatearNumero} from '../../../../lib/utility'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
@@ -63,39 +64,44 @@ const headCells = [
     id: "nombreDeCliente",
     numeric: false,
     disablePadding: true,
-    label: "Nombre completo",
+    label: <b>Nombre completo</b>,
   },
   {
     id: "docDeIdentidad",
     numeric: false,
     disablePadding: true,
-    label: "Cédula identidad",
+    label: <b>Cédula identidad</b>,
   },
-  { id: "nombreBanco", numeric: false, disablePadding: true, label: "Banco" },
+  {
+    id: "nombreBanco",
+    numeric: false,
+    disablePadding: true,
+    label: <b>Banco</b>,
+  },
   {
     id: "nroDeCuenta",
     numeric: false,
     disablePadding: true,
-    label: "Nro. de Cuenta",
+    label: <b>Nro. de Cuenta</b>,
   },
 
   {
     id: "importePorEmpresa",
     numeric: true,
     disablePadding: false,
-    label: "Monto ($us.)",
+    label: <b>Monto ($us.)</b>,
   },
   {
     id: "empresa",
     numeric: false,
     disablePadding: true,
-    label: "Empresa",
+    label: <b>Empresa</b>,
   },
   {
     id: "idEstadoComisionDetalleEmpresa",
     numeric: false,
     disablePadding: true,
-    label: "Estado",
+    label: <b>Estado</b>,
   },
 ];
 
@@ -125,7 +131,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
   return (
     <>
       <br />
@@ -316,55 +321,14 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const {
-    idCiclo,
-    list,
-    empresaId,
-    openModalFullScreen,
-    closeFullScreenModal,
-  } = props;
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
-  const [selected, setSelected] = React.useState([]);
   const [dense, setDense] = React.useState(false);
-  const [txtBusqueda, setTxtBusqueda] = React.useState("");
-  // const [idCiclo, setIdCiclo] = React.useState(0);
-  const [idCicloSelected, setIdCicloSelected] = React.useState(0);
-  const [statusBusqueda, setStatusBusqueda] = React.useState(false);
-  const [openSnackbar, setOpenSnackbar] = React.useState(false);
-  const [mensajeSnackbar, setMensajeSnackbar] = React.useState("");
-  const [tipoSnackbar, settipTSnackbar] = React.useState(true);
-  const [listaComisionesAPagar, setListaComisionesAPagar] = React.useState([]);
-  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
-    return stateSelector.load;
-  });
-  const [openModalConfirmation, setOpenModalConfirmation] =
-    React.useState(false);
-
-  // const generarSnackBar = (mensaje, tipo) => {
-  //   setOpenSnackbar(true);
-  //   setMensajeSnackbar(mensaje);
-  //   settipTSnackbar(tipo);
-  // };
-
-  /*  const onChangeSelectCiclo = (e) => {
-      const texfiel = e.target.nombreCompleto;
-      const value = e.target.value;
-      if (texfiel === "idCiclo") {
-        setIdCiclo(value);
-      }
-      if (texfiel === "txtBusqueda") {
-        setTxtBusqueda(value);
-      }
-    }; */
-
-  // const buscarFreelanzer = () => {
-  //   if (txtBusqueda != "") {
-  //     buscarFrelancerPorCi();
-  //   } else {
-  //     generarSnackBar("¡Introduzca carnet de identidad!", "info");
-  //   }
-  // };
+  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {return stateSelector.load;});
+  const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
+  const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
+  const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -375,16 +339,14 @@ const GridTransferencia = (props) => {
   const handleSelectAllClick = (event) => {
     //Aqui seleccionamos todos.
     if (event.target.checked) {
-      const newSelecteds = list.map((n) => n.idComisionDetalleEmpresa);
-      setSelected(newSelecteds);
-
-      console.log("que es esto?, setSelected: " , newSelecteds)
+      seleccionarTodo();
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, idComisionDetalleEmpresa) => {
+  const handleClick = (event, freelacerObject) => {
+    let idComisionDetalleEmpresa = freelacerObject.idComisionDetalleEmpresa;
     const selectedIndex = selected.indexOf(idComisionDetalleEmpresa);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -400,8 +362,9 @@ const GridTransferencia = (props) => {
       );
     }
     setSelected(newSelected);
+    handleSum(freelacerObject);
   };
-  
+
   const isSelected = (idComisionDetalleEmpresa) =>
     selected.indexOf(idComisionDetalleEmpresa) !== -1;
 
@@ -419,31 +382,13 @@ const GridTransferencia = (props) => {
 
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia(
-        userName,
-        idUsuario,
-        idCiclo,
-        selected,
-        empresaId
-      );
+      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId);
     }
   };
 
-  async function prosesarConfirmarTransferencia(
-    userN,
-    usuarioId,
-    cicloId,
-    list,
-    idEmpresa
-  ) {
-    let response = await Actions.handleConfirmarPagosTransferencias(
-      userN,
-      usuarioId,
-      cicloId,
-      list,
-      idEmpresa,
-      dispatch
-    );
+  async function prosesarConfirmarTransferencia( userN, usuarioId, cicloId, list, idEmpresa ) 
+  {
+    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch );
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
@@ -464,39 +409,56 @@ const GridTransferencia = (props) => {
     }
   }
 
-  const handleOnGetPagos = () => {
-    if (idCiclo && idCiclo !== 0) {
-      setIdCicloSelected(idCiclo);
-      cargarComisionesPagos(userName, idCiclo);
-    } else {
-      // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-      /*  setOpenSnackbar(true);
-      setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-      settipTSnackbar('warning'); */
-    }
-  };
-  async function cargarComisionesPagos(userNa, cicloId) {
-    let respuesta = await Actions.ObtenerComisionesPagos(
-      userNa,
-      cicloId,
-      dispatch
-    );
-    console.log('cargarComisionesPagos: ',respuesta);
-    if (respuesta && respuesta.code == 0) {
-      setListaComisionesAPagar(respuesta.data);
-      setStatusBusqueda(true);
-    } else {
-      dispatch(
-        ActionMensaje.showMessage({
-          message: respuesta.message,
-          variant: "error",
-        })
-      );
-    }
-  }
+  // const handleOnGetPagos = () => {
+  //   if (idCiclo && idCiclo !== 0) {
+  //     setIdCicloSelected(idCiclo);
+  //     cargarComisionesPagos(userName, idCiclo);
+  //   } else {
+  //     // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
+  //     /*  setOpenSnackbar(true);
+  //     setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
+  //     settipTSnackbar('warning'); */
+  //   }
+  // };
+  // async function cargarComisionesPagos(userNa, cicloId) {
+  //   let respuesta = await Actions.ObtenerComisionesPagos(
+  //     userNa,
+  //     cicloId,
+  //     dispatch
+  //   );
+  //   console.log('cargarComisionesPagos: ',respuesta);
+  //   if (respuesta && respuesta.code == 0) {
+  //     setListaComisionesAPagar(respuesta.data);
+  //     setStatusBusqueda(true);
+  //   } else {
+  //     dispatch(
+  //       ActionMensaje.showMessage({
+  //         message: respuesta.message,
+  //         variant: "error",
+  //       })
+  //     );
+  //   }
+  // }
 
   // const importe = list.map((row)=> [row.idComisionDetalleEmpresa, row.importePorEmpresa]);
   // console.log("Listado? importe: ",importe)
+
+  const handleSum = (data) => {
+    const isItemSelected = isSelected(
+      data.idComisionDetalleEmpresa
+    );
+    if(!isItemSelected) {
+      let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
+      let t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
+    } else {
+      let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
+      let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
+    }
+  }
 
   return (
     <Core.Dialog
@@ -521,25 +483,12 @@ const GridTransferencia = (props) => {
         </Core.Toolbar>
       </Core.AppBar>
       {/* --------------------------------------------------------------CABECERA-------------------------------------------------------------------- */}
-      <div
-        style={{ paddingLeft: "0px", paddingRight: "0px", paddingTop: "10px" }}
-      >
-        <Core.Breadcrumbs aria-label="breadcrumb">
-          <StyledBreadcrumb
-            key={1}
-            component="a"
-            label="Confirmar selección"
-            icon={<GeneralIcons.Home fontSize="small" />}
-          />
-        </Core.Breadcrumbs>
-      </div>
-      <br />
 
       <Core.Card style={{ overflow: "initial" }}>
         <Core.Grid container className={classes.gridContainer}>
           <Core.Grid item xs={12} md={4}></Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-            {/* {statusBusqueda&& */}
+            {/* {statusBusqueda&&
             <Core.TextField
               label="Buscar freelancer"
               type={"text"}
@@ -562,7 +511,7 @@ const GridTransferencia = (props) => {
                 ),
               }}
             />
-            {/* } */}
+            } */}
           </Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
             <Core.Button
@@ -618,7 +567,7 @@ const GridTransferencia = (props) => {
                         <Core.TableRow
                           hover
                           onClick={(event) =>
-                            handleClick(event, row.idComisionDetalleEmpresa)
+                            handleClick(event, row)
                           }
                           role="checkbox"
                           aria-checked={isItemSelected}
@@ -634,6 +583,7 @@ const GridTransferencia = (props) => {
                                   : false
                               }
                               checked={isItemSelected}
+                              value={isItemSelected}
                               inputProps={{ "aria-labelledby": labelId }}
                             />
                           </Core.TableCell>
@@ -644,7 +594,7 @@ const GridTransferencia = (props) => {
                           >
                             {row.nombreDeCliente}
                           </Core.TableCell>
-                          <Core.TableCell align="left">
+                          <Core.TableCell align="center">
                             {row.docDeIdentidad}
                           </Core.TableCell>
                           <Core.TableCell align="left">
@@ -685,30 +635,42 @@ const GridTransferencia = (props) => {
                       );
                     }
                   )}
+                  <Core.TableRow key={100000000000000}>
+                    <Core.TableCell align="center"><b></b></Core.TableCell>
+                    <Core.TableCell align="right"></Core.TableCell>
+                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
+                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
+                    <Core.TableCell align="center"><b>{"TOTAL: "}{" "}</b></Core.TableCell>
+                    <Core.TableCell align="left"><b>{formatearNumero(data.montoTotal)}</b></Core.TableCell>
+                    <Core.TableCell align="center"></Core.TableCell>
+                  </Core.TableRow>
                 </Core.TableBody>
               </Core.Table>
             </Core.TableContainer>
           </Core.Paper>
         </Core.Grid>
       </Core.Grid>
-      
-      <MessageTransferConfirm 
-        open={openModalConfirmation} 
-        titulo={"CONFIRMAR"} 
-        subTituloModal={"PAGO POR TRANSFERENCIA"} 
+
+      <MessageTransferConfirm
+        open={openModalConfirmation}
+        titulo={"CONFIRMAR"}
+        subTituloModal={"PAGO POR TRANSFERENCIA"}
         tipoModal={"info"}
-        mensaje={<div>Se realizara el pago por transferencia de: {selected.length} cuentas de Acesor Comercial Independiente (ACI)<br/>
-                      Con un monto de:   {console.log("ESTE ES EL SELECCIONADO: ", selected)}<br/>
-                      Para la empresa: {empresaId}<br/>
-                </div>
-                  
-                  
+        mensaje={
+          <div>
+            <p>Se realizará la transferencia a:</p>  
+            <b>Seleccionados para confirmar: </b>{selected.length}  <br />
+            <b>Monto total a confirmar: </b>{formatearNumero(totalPagar)}<br />
+            <b>Seleccionados rechazados: </b>{selected.length}  <br />
+            <b>Monto total rechazados: </b>{formatearNumero(totalMontoRechazados)}<br />
+            {/* Para la empresa: {empresaId}<br /> */}
+          </div>
         }
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />
     </Core.Dialog>
-  );
+  );  
   //-------------------------------------------------------------------------------------
 };
 export default GridTransferencia;

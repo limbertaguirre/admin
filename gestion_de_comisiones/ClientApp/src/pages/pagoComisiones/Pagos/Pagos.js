@@ -7,7 +7,7 @@ import MessageConfirm from './Components/ConfirmarPago';
 import GridPagos from './Components/GridPagos'
 import {Container,Tooltip ,Zoom, Chip, InputAdornment,Card, Button,
   Grid, TextField, Typography,FormControl,
-   InputLabel, Select,MenuItem, Breadcrumbs } from "@material-ui/core";
+   InputLabel, Select, Menu, MenuItem, Breadcrumbs, IconButton } from "@material-ui/core";
 import HomeIcon from '@material-ui/icons/Home';
 import {emphasize, withStyles} from '@material-ui/core';
 import {  makeStyles } from '@material-ui/core/styles';
@@ -21,6 +21,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import * as Actions from '../../../redux/actions/PagosGestorAction';
 import * as ActionMensaje from '../../../redux/actions/messageAction';
 import TransferenciasDialog from './Components/TransferenciasDialog'
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -97,7 +98,12 @@ const useStyles = makeStyles((theme) => ({
     alignContent:'center',
     alignItems:'center',
     justifyContent:'center',
-  }
+  },
+  containerPaymentMethods:{
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center', 
+  },
 
 }));
 
@@ -232,7 +238,9 @@ const useStyles = makeStyles((theme) => ({
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
     const [subtitulo, setSubtitulo] = useState('');
    const abrirModal = ()=> {
-    verificarConfirmarSionPay(userName,idCiclo);    
+    verificarConfirmarSionPay(userName,idCiclo);
+      //setOpenModalConfirm(true);
+      handleClose();
    }
    async function verificarConfirmarSionPay(userN, cicloId){   
 
@@ -270,6 +278,7 @@ const useStyles = makeStyles((theme) => ({
 
     const handleClickOpenTransferencias = () => {
       handleTransferenciasEmpresas(userName);
+      handleClose();
     };
   
     const handleCloseTransferencias = () => {
@@ -288,6 +297,18 @@ const useStyles = makeStyles((theme) => ({
         }
       }
     }
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+
+    const handlePages = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
   
     return (
       <>
@@ -313,7 +334,16 @@ const useStyles = makeStyles((theme) => ({
 
         <Card>
              <Grid container className={style.gridContainer} >
-                 <Grid item xs={12} md={4} className={style.containerSave} >
+              {statusBusqueda ?                
+                  <>
+                    <Grid item xs={12} sm={3} md={3} className={style.containerSave} ></Grid>
+                  </>
+                  :
+                  <>
+                    <Grid item xs={12} sm={4} md={4} className={style.containerSave} ></Grid>
+                  </>                  
+              }
+                 {/* <Grid item xs={12} md={4} className={style.containerSave} >
                     {statusBusqueda&&
                       <>
                         {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
@@ -351,7 +381,7 @@ const useStyles = makeStyles((theme) => ({
                          }
                       </> 
                    }    
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={3} className={style.containerSave}>
                     {statusBusqueda&&
                         <TextField
@@ -410,6 +440,43 @@ const useStyles = makeStyles((theme) => ({
                             {'CARGAR '} <CloudUploadIcon style={{marginLeft:'12px'}} />
                           </Button>   
                     </Grid>
+                    
+                    {statusBusqueda &&
+                      <>                      
+                        {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR) &&
+                        <>
+                        <Grid item xs={12} sm={1} md={1} lg={1} className={style.containerPaymentMethods}>
+                          <IconButton aria-label="more"
+                            aria-controls="long-menu"
+                            aria-haspopup="true"
+                            onClick={handlePages}>                        
+                            <MoreVertIcon/>
+                          </IconButton>
+                          <Menu
+                            id="long-menu"
+                            anchorEl={anchorEl}
+                            keepMounted
+                            open={open}
+                            onClose={handleClose}
+                            PaperProps={{
+                              style: {
+                                maxHeight: 48 * 4.5,
+                                width: '50ch',
+                              },
+                            }}
+                          >
+                              <MenuItem key="1" onClick={() => abrirModal()}>
+                                PAGAR SION PAY
+                              </MenuItem>
+                              <MenuItem key="2" onClick={() => handleClickOpenTransferencias()}>
+                                GENERAR ARCHIVO PARA TRANSFERENCIA
+                              </MenuItem>                            
+                          </Menu>
+                        </Grid>
+                      </>
+                      }                      
+                      </>
+                    }
               </Grid>
             </Card>
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
