@@ -365,7 +365,7 @@ const GridTransferencia = (props) => {
       return;
     }
     setTotalPagar(0);
-    setTotalMontoRechazados(data.montoTotal);
+    setTotalMontoRechazados(data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
     setSelected([]);
   };
 
@@ -455,16 +455,14 @@ const GridTransferencia = (props) => {
     let t = 0;
     if (!isItemSelected) {
       let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
-      if (totalMontoRechazados > 0) {
-        t =
-          parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
-      }
+      //if (totalMontoRechazados > 0) {
+        t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      //}
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     } else {
       let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
-      let t =
-        parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+      let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     }
@@ -657,7 +655,7 @@ const GridTransferencia = (props) => {
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{formatearNumero(data.montoTotal)}</b>
+                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -675,11 +673,11 @@ const GridTransferencia = (props) => {
         // tipoModal={"info"}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: formatearNumero(totalPagar),
+          montoAPagar: totalPagar,
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: formatearNumero(totalMontoRechazados),
+          montoAPagarRechazados: totalMontoRechazados,
           totalLista: list.length,
-          montoTotal: formatearNumero(data.montoTotal),
+          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
