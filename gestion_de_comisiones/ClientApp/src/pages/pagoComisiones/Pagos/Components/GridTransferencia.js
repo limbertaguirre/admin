@@ -9,7 +9,7 @@ import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
 import { Button } from "bootstrap";
-import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
+import MessageTransferConfirm from "./MessageTransferConfirm";
 import { formatearNumero } from "../../../../lib/utility";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
