@@ -145,55 +145,55 @@ import {
             >
               {!isConfirm ? (
               <>
-                <Grid item xs={5} sm={5}>
+                <Grid item xs={6} sm={6}>
                     <Typography variant="body1" className={style.bold} gutterBottom>Total enviados a confirmar:</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>
+                <Grid item xs={6} sm={6}>
                     <Typography variant="body1" gutterBottom>{data.totalEnviadosConfirmar}</Typography>
                 </Grid>
                 
-                <Grid item xs={5} sm={5}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" className={style.bold} gutterBottom>Total confirmados:</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalConfirmados}</Typography>
                 </Grid>
             
-                <Grid item xs={5} sm={5}>
+                <Grid item xs={6} sm={6}>
                     <Typography variant="body1" className={style.bold} gutterBottom>Total rechazados:</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalRechazados}</Typography>
                 </Grid>
                
-                <Grid item xs={5} sm={5}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total confirmados ($us.):</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{formatearNumero(data.montoTotalConfirmados)}</Typography>
                 </Grid>
                 {data.montoTotalRechazados > 0 && (
                 <>
-                    <Grid item xs={5} sm={5}>              
-                        <Typography variant="body1" className={style.bold} gutterBottom>Monto total rechazados:</Typography>
+                    <Grid item xs={6} sm={6}>              
+                        <Typography variant="body1" className={style.bold} gutterBottom>Monto total rechazados ($us.):</Typography>
                     </Grid>            
-                    <Grid item xs={7} sm={7}>              
+                    <Grid item xs={6} sm={6}>              
                         <Typography variant="body1" gutterBottom>{formatearNumero(data.montoTotalRechazados)}</Typography>
                     </Grid>
                 </>)
                 }
               </>):
                   (<>
-                  <Grid item xs={5} sm={5}>              
+                  <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" className={style.bold} gutterBottom>Cantidad total pendientes:</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalPendientes}</Typography>
                 </Grid>
-                  <Grid item xs={5} sm={5}>              
+                  <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total pendientes ($us.):</Typography>
                 </Grid>            
-                <Grid item xs={7} sm={7}>              
+                <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{formatearNumero(data.montoTotalPendientes)}</Typography>
                 </Grid>
                   </>
