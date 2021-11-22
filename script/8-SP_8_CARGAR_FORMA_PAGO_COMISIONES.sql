@@ -193,7 +193,7 @@ BEGIN TRY
 											@item_total,--monto
 											@ESTADO_COMISION_DETALLE_PROCESADO, --estado pendiente 1
 											'', --path-respaldo vacio
-											CAST(@item_facturaId as varchar(10)), --nro autirizacion
+											CAST(@item_facturaId as varchar(100)), --nro autirizacion
 											@item_total, --montoa facturar
 											@item_total, --monto total a facturar
 											@COMISION_DETALLE_ID_GENERADO, --idcomisiondetalle

@@ -6,7 +6,7 @@ export const apiComerce = axios.create({
   baseURL: apiUrl,
   timeout: 90000,
   headers: {
-    token: "",
+    Authorization: "",
   },
 });
 

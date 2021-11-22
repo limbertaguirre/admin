@@ -2,6 +2,7 @@
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
+    [Authorize]
     public class GestionPagosController : Controller
     {
         private readonly ILogger<GestionPagosController> Logger;
@@ -27,6 +29,7 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
         // GET: gestionPagos/GetCiclos
+      
         public ActionResult GetCiclos([FromHeader] string usuarioLogin)
         {
             try

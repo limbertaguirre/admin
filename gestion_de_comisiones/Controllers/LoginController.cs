@@ -34,7 +34,7 @@ namespace gestion_de_comisiones.Controllers
         }
 
 
-        // POST: Login/Sesion
+        // POST: Login/Sesion        
         [HttpPost]        
         public ActionResult Sesion([FromBody] LoginInputModel model)
         {

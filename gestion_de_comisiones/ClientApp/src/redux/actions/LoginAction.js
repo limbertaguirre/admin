@@ -28,9 +28,9 @@ export const iniciarSesion= (userName,password)=>{
                     idUsuario:data.perfil.idUsuario,
                     nombre:data.perfil.nombre,
                     apellido:data.perfil.apellido,
-                    token:data.token
+                    token:'Bearer '+data.token
                 });
-                localStorage.setItem("token", data.token);    
+                localStorage.setItem("token", 'Bearer '+data.token);    
             }else if(res.code === 1){ 
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
@@ -110,6 +110,18 @@ export const iniciarSesion= (userName,password)=>{
             }   
         })
 
+    }
+  }
+  export const sesionExpirado= ()=>{
+    return (dispatch)=>{                   
+            dispatch({
+              type: Types.CLOSE_SESION
+            });
+            dispatch({
+                type: TypesHome.MENU_PAGE_CLEAR
+            })
+           // history.push("/"); 
+            window.localStorage.clear();                          
     }
   }
   
