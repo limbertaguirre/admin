@@ -9,8 +9,8 @@ import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
 import { Button } from "bootstrap";
-import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
-import {formatearNumero} from '../../../../lib/utility'
+import MessageTransferConfirm from "./MessageTransferConfirm";
+import { formatearNumero } from "../../../../lib/utility";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Core.Slide direction="up" ref={ref} {...props} />;
@@ -156,6 +156,7 @@ function EnhancedTableHead(props) {
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
+                style={{ color: "white" }}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
@@ -257,6 +258,11 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginTop: theme.spacing(2),
   },
   appBar: {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    background: "linear-gradient(90deg, #2E3B55, #1872b8)",
     position: "relative",
   },
   paper: {
@@ -276,6 +282,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
+    color: "white",
   },
   gridContainer: {
     paddingLeft: theme.spacing(1),
@@ -321,12 +328,25 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
+  const {
+    idCiclo,
+    list,
+    empresaId,
+    openModalFullScreen,
+    closeFullScreenModal,
+    seleccionarTodo,
+    selected,
+    setSelected,
+    data,
+  } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [dense, setDense] = React.useState(false);
-  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {return stateSelector.load;});
-  const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
+  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
+    return stateSelector.load;
+  });
+  const [openModalConfirmation, setOpenModalConfirmation] =
+    React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 
@@ -339,9 +359,13 @@ const GridTransferencia = (props) => {
   const handleSelectAllClick = (event) => {
     //Aqui seleccionamos todos.
     if (event.target.checked) {
+      setTotalPagar(data.montoTotal);
+      setTotalMontoRechazados(0);
       seleccionarTodo();
       return;
     }
+    setTotalPagar(0);
+    setTotalMontoRechazados(data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
     setSelected([]);
   };
 
@@ -382,13 +406,31 @@ const GridTransferencia = (props) => {
 
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId);
+      prosesarConfirmarTransferencia(
+        userName,
+        idUsuario,
+        idCiclo,
+        selected,
+        empresaId
+      );
     }
   };
 
-  async function prosesarConfirmarTransferencia( userN, usuarioId, cicloId, list, idEmpresa ) 
-  {
-    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch );
+  async function prosesarConfirmarTransferencia(
+    userN,
+    usuarioId,
+    cicloId,
+    list,
+    idEmpresa
+  ) {
+    let response = await Actions.handleConfirmarPagosTransferencias(
+      userN,
+      usuarioId,
+      cicloId,
+      list,
+      idEmpresa,
+      dispatch
+    );
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
@@ -398,7 +440,6 @@ const GridTransferencia = (props) => {
         })
       );
       closeFullScreenModal();
-      //handleOnGetPagos();
     } else {
       dispatch(
         ActionMensaje.showMessage({
@@ -409,47 +450,14 @@ const GridTransferencia = (props) => {
     }
   }
 
-  // const handleOnGetPagos = () => {
-  //   if (idCiclo && idCiclo !== 0) {
-  //     setIdCicloSelected(idCiclo);
-  //     cargarComisionesPagos(userName, idCiclo);
-  //   } else {
-  //     // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-  //     /*  setOpenSnackbar(true);
-  //     setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-  //     settipTSnackbar('warning'); */
-  //   }
-  // };
-  // async function cargarComisionesPagos(userNa, cicloId) {
-  //   let respuesta = await Actions.ObtenerComisionesPagos(
-  //     userNa,
-  //     cicloId,
-  //     dispatch
-  //   );
-  //   console.log('cargarComisionesPagos: ',respuesta);
-  //   if (respuesta && respuesta.code == 0) {
-  //     setListaComisionesAPagar(respuesta.data);
-  //     setStatusBusqueda(true);
-  //   } else {
-  //     dispatch(
-  //       ActionMensaje.showMessage({
-  //         message: respuesta.message,
-  //         variant: "error",
-  //       })
-  //     );
-  //   }
-  // }
-
-  // const importe = list.map((row)=> [row.idComisionDetalleEmpresa, row.importePorEmpresa]);
-  // console.log("Listado? importe: ",importe)
-
   const handleSum = (data) => {
-    const isItemSelected = isSelected(
-      data.idComisionDetalleEmpresa
-    );
-    if(!isItemSelected) {
+    const isItemSelected = isSelected(data.idComisionDetalleEmpresa);
+    let t = 0;
+    if (!isItemSelected) {
       let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
-      let t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      //if (totalMontoRechazados > 0) {
+        t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      //}
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     } else {
@@ -458,7 +466,7 @@ const GridTransferencia = (props) => {
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     }
-  }
+  };
 
   return (
     <Core.Dialog
@@ -477,7 +485,7 @@ const GridTransferencia = (props) => {
           >
             <GeneralIcons.Close />
           </Core.IconButton>
-          <Core.Typography variant="h6" className={classes.title}>
+          <Core.Typography variant="h6" className={classes.appBar}>
             CONFIRMAR TRANSFERENCIA
           </Core.Typography>
         </Core.Toolbar>
@@ -566,9 +574,7 @@ const GridTransferencia = (props) => {
                       return (
                         <Core.TableRow
                           hover
-                          onClick={(event) =>
-                            handleClick(event, row)
-                          }
+                          onClick={(event) => handleClick(event, row)}
                           role="checkbox"
                           aria-checked={isItemSelected}
                           tabIndex={-1}
@@ -609,7 +615,6 @@ const GridTransferencia = (props) => {
                           <Core.TableCell align="center">
                             {row.empresa}
                           </Core.TableCell>
-                          {/* <Core.TableCell align="center">{row.formaPago}</Core.TableCell> */}
                           <Core.TableCell align="center">
                             {row.idEstadoComisionDetalleEmpresa === 2 ? (
                               <Core.Chip
@@ -636,12 +641,22 @@ const GridTransferencia = (props) => {
                     }
                   )}
                   <Core.TableRow key={100000000000000}>
-                    <Core.TableCell align="center"><b></b></Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b></b>
+                    </Core.TableCell>
                     <Core.TableCell align="right"></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{"TOTAL: "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="left"><b>{formatearNumero(data.montoTotal)}</b></Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b> </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b> </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="center">
+                      <b>{"TOTAL: "} </b>
+                    </Core.TableCell>
+                    <Core.TableCell align="left">
+                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</b>
+                    </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
                 </Core.TableBody>
@@ -653,24 +668,22 @@ const GridTransferencia = (props) => {
 
       <MessageTransferConfirm
         open={openModalConfirmation}
-        titulo={"CONFIRMAR"}
-        subTituloModal={"PAGO POR TRANSFERENCIA"}
-        tipoModal={"info"}
-        mensaje={
-          <div>
-            <p>Se realizará la transferencia a:</p>  
-            <b>Seleccionados para confirmar: </b>{selected.length}  <br />
-            <b>Monto total a confirmar: </b>{formatearNumero(totalPagar)}<br />
-            <b>Seleccionados rechazados: </b>{selected.length}  <br />
-            <b>Monto total rechazados: </b>{formatearNumero(totalMontoRechazados)}<br />
-            {/* Para la empresa: {empresaId}<br /> */}
-          </div>
-        }
+        titulo={<b>DETALLE DE TRANSFERENCIA</b>}
+        subTituloModal={""}
+        // tipoModal={"info"}
+        mensaje={{
+          confirmados: selected.length,
+          montoAPagar: totalPagar,
+          rechazados: list.length - selected.length,
+          montoAPagarRechazados: totalMontoRechazados,
+          totalLista: list.length,
+          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+        }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />
     </Core.Dialog>
-  );  
+  );
   //-------------------------------------------------------------------------------------
 };
 export default GridTransferencia;
