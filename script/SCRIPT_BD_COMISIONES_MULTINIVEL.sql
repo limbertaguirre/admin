@@ -904,6 +904,7 @@ go
       insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(1, 'Para pagar',1)
       insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(2, 'Error al pagar',1)
       insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(3, 'Pago exitoso',1)
+	  insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(4, 'Rechazado en Pagos por Transferencias',1)
 go
 CREATE TABLE TIPO_PAGO(
   id_tipo_pago int NOT NULL PRIMARY KEY,
