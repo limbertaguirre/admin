@@ -29,7 +29,7 @@ BEGIN TRY
    SET @NO_TIENEBAJA_GUARDIAN=0;
 
 
-   INSERT INTO  @CLIENTES_CNX SELECT lcontacto_id,dtfechaadd, stelefonofijo, stelefonomovil,scorreoelectronico,dtfechanacimiento,sdireccion,scedulaidentidad, lpatrocinante_id, lnivel_id, snombrecompleto, scontrasena, Isnull(lcuentabanco,0) as 'lcuentabanco', lcodigobanco, cbaja, dtfechabaja,ltipobaja, smotivobaja, lnit    FROM OPENQUERY( [10.2.10.222], 'select * from administracioncontacto ') order by lcontacto_id asc 
+   INSERT INTO  @CLIENTES_CNX SELECT lcontacto_id,dtfechaadd, stelefonofijo, stelefonomovil,scorreoelectronico,dtfechanacimiento,sdireccion,scedulaidentidad, lpatrocinante_id, lnivel_id, snombrecompleto, scontrasena, Isnull(lcuentabanco,0) as 'lcuentabanco', lcodigobanco, cbaja, dtfechabaja,ltipobaja, smotivobaja, lnit    FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.administracioncontacto ') order by lcontacto_id asc 
 
 		DECLARE @CONTACTOIDitem int;
 		DECLARE @FECHAREGISTROitem DATETIME;
