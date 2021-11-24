@@ -143,7 +143,8 @@ import * as Action from './messageAction';
   }
 
   export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
-    return (dispatch, getState )=>{                
+    return (dispatch, getState )=>{  
+          console.log('fijo:',telFijo);              
           const data={
              usuarioNameLogueado:getState().load.userName,
              usuarioIDLogueado: getState().load.idUsuario,
@@ -154,9 +155,9 @@ import * as Action from './messageAction';
              nombre:nombre,
              apellido: apellido,
              ci:ci,
-             telOficina:parseInt(telOficina === ""? 0 : telOficina),
-             telMovil : parseInt(telMovil === ""? 0 : telMovil),
-             telFijo : parseInt(telFijo === ""? 0 : telFijo),
+             telOficina:parseInt(isNaN(telOficina)? telOficina:0 ),//telOficina === ""? 0 : telOficina),
+             telMovil : parseInt( isNaN(telMovil)? telMovil:0 ), //telMovil === ""? 0 : telMovil),
+             telFijo : parseInt(isNaN(telFijo)? telFijo:0 ), //telFijo === "" || telFijo === NaN? 0 : telFijo),
              direccion : (direccion),
              idCiudad : idCiudad,
              idPais :idPais,
@@ -182,7 +183,7 @@ import * as Action from './messageAction';
              fechaBaja : fechaBaja,
              motivoBaja : motivoBaja,
            };
-
+         console.log('update, ', data);
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
              console.log('actualizar cliente res:  : ', res);
                 if(res.code === 0){                        

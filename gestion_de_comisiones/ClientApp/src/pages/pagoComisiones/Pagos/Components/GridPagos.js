@@ -28,7 +28,7 @@ import * as Actions from '../../../../redux/actions/PagosGestorAction';
 import PaymentIcon from '@material-ui/icons/Payment';
 import Chip from '@material-ui/core/Chip';
 import ImageIconPagos from "../../../../components/ImageIconPagos";
-
+import * as utilidad from '../../../../lib/utility'; 
     const StyledMenu = withStyles({
       paper: {
         border: '1px solid #d3d4d5',
@@ -317,7 +317,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                             <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>  */}                             
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
-                            <TableCell align="center">{row.pagoDetalleHabilitado? 
+                            <TableCell align="center">{row.pagoDetalleHabilitado == true && row.idEstadoListadoFormaPago == utilidad.ID_ESTADO_LISTADO_FORMA_PAGO? 
                                 <Chip label="Pagado" color="primary" variant="outlined" />
                               :  <Chip label="por pagar"  color="secondary" variant="outlined"   />
                             }</TableCell> 
