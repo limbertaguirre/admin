@@ -1,6 +1,6 @@
 
 CREATE PROCEDURE [dbo].[SP_EXEC_CARGAR_CONTACTOS]
- 
+ @id_Ciclo     int
 AS
 
 BEGIN TRY
@@ -9,7 +9,7 @@ BEGIN TRY
    DECLARE @IMPBODY   VARCHAR (500);
    DECLARE @IMPSUBJECT   VARCHAR (500);
  ------------------------------------------------------------------ 
-   DECLARE @CLIENTES_CNX as table(  lcontacto_id int,dtfechaadd datetime, stelefonofijo varchar(100), stelefonomovil varchar(100),scorreoelectronico varchar(150),dtfechanacimiento datetime,sdireccion varchar(500),scedulaidentidad varchar(100), lpatrocinante_id int, lnivel_id int , snombrecompleto varchar(200), scontrasena varchar(100),lcuentabanco varchar(50), lcodigobanco int , cbaja int, dtfechabaja datetime,ltipobaja int, smotivobaja varchar(500), lnit varchar(50));
+   DECLARE @CLIENTES_CNX as table(  lcontacto_id int,dtfechaadd datetime, stelefonofijo varchar(100), stelefonomovil varchar(100),scorreoelectronico varchar(150),dtfechanacimiento datetime,sdireccion varchar(500),scedulaidentidad varchar(100), lpatrocinante_id int, lnivel_id int , snombrecompleto varchar(200), scontrasena varchar(100),lcuentabanco varchar(50), lcodigobanco int , cbaja int, dtfechabaja datetime,ltipobaja int, smotivobaja varchar(500), lnit varchar(50), ciclo_id int);
    DECLARE @USUARIO_DEFAULT int;
    DECLARE @IDCIUDAD_GESTOR_DEFAULT_SANTACRUZ int;
    DECLARE @ESTADO_FICHA_DEFAULT_HABILITADO int;
@@ -29,7 +29,8 @@ BEGIN TRY
    SET @NO_TIENEBAJA_GUARDIAN=0;
 
 
-   INSERT INTO  @CLIENTES_CNX SELECT lcontacto_id,dtfechaadd, stelefonofijo, stelefonomovil,scorreoelectronico,dtfechanacimiento,sdireccion,scedulaidentidad, lpatrocinante_id, lnivel_id, snombrecompleto, scontrasena, Isnull(lcuentabanco,0) as 'lcuentabanco', lcodigobanco, cbaja, dtfechabaja,ltipobaja, smotivobaja, lnit    FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.administracioncontacto ') order by lcontacto_id asc 
+   INSERT INTO  @CLIENTES_CNX SELECT  lcontacto_id,dtfechaadd, stelefonofijo, stelefonomovil,scorreoelectronico,dtfechanacimiento,sdireccion,scedulaidentidad, lpatrocinante_id, lnivel_id, snombrecompleto, scontrasena, Isnull(lcuentabanco,0) as 'lcuentabanco', lcodigobanco, cbaja, dtfechabaja,ltipobaja, smotivobaja, lnit, ciclo_id   
+	                          FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select co.lcontacto_id, co.dtfechaadd, co.stelefonofijo, co.stelefonomovil, co.scorreoelectronico, co.dtfechanacimiento, co.sdireccion, co.scedulaidentidad, co.lpatrocinante_id, co.lnivel_id, co.snombrecompleto, co.scontrasena, co.lcuentabanco, co.lcodigobanco, co.cbaja, co.dtfechabaja,co.ltipobaja, co.smotivobaja, co.lnit, comi.ciclo_id from grduit.administracioncontacto co inner join grduit.comision_forma_pago_view comi on co.lcontacto_id = comi.contacto_id  ') where ciclo_id= @id_Ciclo order by lcontacto_id asc 
 
 		DECLARE @CONTACTOIDitem int;
 		DECLARE @FECHAREGISTROitem DATETIME;
@@ -53,6 +54,8 @@ BEGIN TRY
 		DECLARE @MOTIVOBAJAitem VARCHAR(500);
 		DECLARE @NITitem VARCHAR(50);
 
+		IF @id_Ciclo > 79 --ciclo
+		BEGIN
 
    		DECLARE CLIENTE_CURSOR CURSOR FOR 
 		Select lcontacto_id,dtfechaadd, stelefonofijo, stelefonomovil,scorreoelectronico,dtfechanacimiento,sdireccion,scedulaidentidad, lpatrocinante_id, lnivel_id, snombrecompleto, scontrasena,lcuentabanco, lcodigobanco, cbaja, dtfechabaja,ltipobaja, smotivobaja, lnit from @CLIENTES_CNX
@@ -142,19 +145,28 @@ BEGIN TRY
 						 IF @IDCLIENTE_CNX > 0
 						 BEGIN
 						   -- -- insertar UN CLIENTE Q SI ESTA REGISTRADO
-							  select @NOMBRE1_CNX as 'existe en conexion'
+							  select @NOMBRE1_CNX, @NOMBRE2_CNX,  @CONTACTOIDitem  as 'existe en conexion'
 							   DECLARE @IDCIUDAD_VARIABLE INT;
+							   DECLARE @NOMBRE_COMPLETO VARCHAR(100);
+
 							   SET @IDCIUDAD_VARIABLE=0
 							   --IF VALIDO EL IDCIUDAD DE CNX YA QUE DEVUELVE VALORES NEGATIVOS, CASO CONTRARIO REGISTRO ID CIUDAD DEFAUL 1 SANTA CRUZ
 							   IF @IDCIUDAD_CNX > 0
 							   BEGIN SET @IDCIUDAD_VARIABLE=@IDCIUDAD_CNX END ELSE
 							   BEGIN  SET @IDCIUDAD_VARIABLE= @IDCIUDAD_GESTOR_DEFAULT_SANTACRUZ END
-							   
+							    IF @NOMBRE2_CNX != NULL
+								BEGIN
+								  SET @NOMBRE_COMPLETO =  @NOMBRE1_CNX + ' '+ @NOMBRE2_CNX;
+								END
+								  ELSE
+								BEGIN
+							    	SET @NOMBRE_COMPLETO =  @NOMBRE1_CNX;
+								END
 							   insert into BDMultinivel.dbo.FICHA(codigo, codigo_cnx, nombres, apellidos, ci, correo_electronico, fecha_registro,tel_oficina, tel_movil, tel_fijo, direccion, fecha_nacimiento, contrasena, comentario, avatar, tiene_cuenta_bancaria,id_banco, cuenta_bancaria,factura_habilitado,razon_social, nit,id_ciudad,estado, id_usuario )
 								 values(
 								   @CONTACTOIDitem, -- codigo, 
 								   @IDCLIENTE_CNX , -- codigo_cnx  
-								   @NOMBRE1_CNX + ' '+ @NOMBRE2_CNX, -- nombres, 
+								   @NOMBRE_COMPLETO, -- nombres, 
 								   @APPATERNO_CNX +' '+ @APMATERNO_CNX, -- apellidos, 
 								   @DOCID, -- ci, 
 								   @CORREOELECTRONICOitem, -- correo_electronico, 
@@ -269,18 +281,16 @@ BEGIN TRY
 		DEALLOCATE CLIENTE_CURSOR	
 
 
-	--COMMIT TRANSACTION;
+		COMMIT TRANSACTION;
 
-	-----------------------------------------------	 
-	 select * from BDComisiones.[dbo].grlCLIENTE_CCN
-	 select * from BDComisiones.[dbo].SUCURSAL_CIUDAD
-	 select * from BDComisiones.[dbo].gral_ciudad
-	 select * from BDMultinivel.dbo.ficha
-	 --apunte quitar el top 100 de obtener cliente
-	 --actualizar el insert de bajas y reiniciar contador
-	 --actualizar ciudad y reiniciar contador
-	 --inserto columna codigo_cnx ficha
-	 --actualizaar insert nivel y reiniciar el contador si lleva llave
+		END
+		 ELSE
+		BEGIN
+		  ROLLBACK TRANSACTION;
+		  SELECT -2 AS 'Ingrese un ciclo valido aparatir del 80 enero 2021'
+		END
+
+		
 
 	--------------------------------------------
 END TRY
