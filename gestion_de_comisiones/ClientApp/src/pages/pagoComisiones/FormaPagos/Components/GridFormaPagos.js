@@ -126,7 +126,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
     let style= useStyles();
     const dispatch=useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
-    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo, pendienteFormaPago, permisoActualizar, permisoCrear} = props;
+    const {listaComisionesAPagar,listaComisionPaginacionNueva,setListaComisionPaginacionNueva, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo, pendienteFormaPago, permisoActualizar, permisoCrear} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -159,6 +159,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
         const [contadorPage, setContadorPage]= useState(0)
         const handleChangePage = (event, newPage) => {
             setPage(newPage);
+            setListaComisionPaginacionNueva(false);
         };    
         const handleChangeRowsPerPage = (event) => {
             setRowsPerPage(parseInt(event.target.value, 10));
@@ -189,7 +190,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                      setTotalRetencion(ptotalRetencion);
                      setTotalDescuento(ptotalDescuento);
                      setTotalNeto(ptotalNeto);
-                 }
+                 }                
         },[listaComisionesAPagar])
         
     function verificarTipo(tipo){
@@ -203,7 +204,13 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
           return style.backgroundNinguno
         }
     }
-
+    useEffect(()=>{    
+            if(listaComisionPaginacionNueva){
+              setPage(0);
+              setRowsPerPage(30);            
+              setContadorPage( page * rowsPerPage);
+            }
+    },[listaComisionPaginacionNueva,rowsPerPage,page, contadorPage])
 
     const [anchorEl, setAnchorEl] = React.useState(false);
     const open = Boolean(anchorEl);

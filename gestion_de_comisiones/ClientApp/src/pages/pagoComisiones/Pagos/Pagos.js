@@ -133,13 +133,13 @@ const useStyles = makeStyles((theme) => ({
   const[listCiclo, setListCiclo]= useState([]);
 
   const[listaComisionesAPagar, setListaComisionesAPagar]= useState([]);
-
+  const[listaComisionPaginacionNueva, setListaComisionPaginacionNueva]= useState(false);
   const[empresasTransferencias, setEmpresasTransferencias]= useState([]);
   const [openTransferenciasDialog, setOpenTransferenciasDialog] = useState(false);
 
   async function cargarCiclo(userNa){      
       let respuesta = await Actions.ObtenerCiclosPagos(userNa, dispatch);
-      console.log('lista ciclos: ',respuesta);
+      
       if(respuesta && respuesta.code == 0){ 
         setListCiclo(respuesta.data);
       }else{
@@ -172,9 +172,10 @@ const useStyles = makeStyles((theme) => ({
 
     async function cargarComisionesPagos(userNa, cicloId){      
       let respuesta = await Actions.ObtenerComisionesPagos(userNa, cicloId, dispatch);
-      console.log('comisiones pagos: ',respuesta);
+      
       if(respuesta && respuesta.code == 0){ 
         setListaComisionesAPagar(respuesta.data);
+        setListaComisionPaginacionNueva(true);
         setStatusBusqueda(true);    
       }else{
         dispatch(ActionMensaje.showMessage({ message: respuesta.message , variant: "error" }));
@@ -203,10 +204,11 @@ const useStyles = makeStyles((theme) => ({
     async function filtrarComisionPorFormaPago(idTipoFormaPago){
       if(idCiclo && idCiclo !== 0){  
           let response= await Actions.ListarFiltrada(userName, idCiclo, idTipoFormaPago, dispatch)   
-          console.log('busqueda por filtro',response)          
+              
           if(response && response.code == 0){
               let data= response.data;        
               setListaComisionesAPagar(data.lista);  
+              setListaComisionPaginacionNueva(true);
           }       
       }else{
              generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning');
@@ -224,10 +226,10 @@ const useStyles = makeStyles((theme) => ({
 
              let response= await Actions.buscarPorCarnetFormaPago(userName, idCiclo, txtBusqueda, dispatch)               
              if(response && response.code == 0){
-               console.log('response busca ', response);
-                 let data= response.data;
-                // setPendienteFormaPago(data.pendienteFormaPago);
-                 setListaComisionesAPagar(data);                 
+               
+                 let data= response.data;                
+                 setListaComisionesAPagar(data);  
+                 setListaComisionPaginacionNueva(true);               
              }       
        }
 
@@ -238,8 +240,7 @@ const useStyles = makeStyles((theme) => ({
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
     const [subtitulo, setSubtitulo] = useState('');
    const abrirModal = ()=> {
-    verificarConfirmarSionPay(userName,idCiclo);
-      //setOpenModalConfirm(true);
+    verificarConfirmarSionPay(userName,idCiclo);      
       handleClose();
    }
    async function verificarConfirmarSionPay(userN, cicloId){   
@@ -308,7 +309,8 @@ const useStyles = makeStyles((theme) => ({
     const handleClose = () => {
       setAnchorEl(null);
     };
-  
+    useEffect(()=>{         
+    },[  listaComisionesAPagar,listaComisionPaginacionNueva]);
   
     return (
       <>
@@ -481,12 +483,7 @@ const useStyles = makeStyles((theme) => ({
               </Grid>
             </Card>
             <SnackbarSion open={openSnackbar} closeSnackbar={closeSnackbar} tipo={tipoSnackbar} duracion={2000} mensaje={mensajeSnackbar}  /> 
-            <GridPagos listaComisionesAPagar={listaComisionesAPagar}
-              selecionarDetalleFrelances={selecionarDetalleFrelances} 
-              seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} 
-              idCiclo={idCiclo} 
-             
-               permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
+            <GridPagos listaComisionesAPagar={listaComisionesAPagar} listaComisionPaginacionNueva={listaComisionPaginacionNueva} setListaComisionPaginacionNueva={setListaComisionPaginacionNueva}  selecionarDetalleFrelances={selecionarDetalleFrelances} seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda} idCiclo={idCiclo} permisoActualizar={validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)} permisoCrear={validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)} />
                <MessageConfirm open={openModalConfirm} titulo={"Confirmación de pagos por SION PAY."} nombreCiclo={nameComboSeleccionado} subTituloModal={subtitulo} tipoModal={"warning"} mensaje={"¿Desea confirmar el pago a través de SION PAY? "} handleCloseConfirm={confirmarModal} handleCloseCancel={CloseModalConfirmacion}  />
       </>
     );
