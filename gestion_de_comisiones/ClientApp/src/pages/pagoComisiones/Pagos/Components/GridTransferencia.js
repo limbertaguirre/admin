@@ -27,22 +27,6 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-const StyledBreadcrumb = Core.withStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.grey[100],
-    height: theme.spacing(3),
-    color: theme.palette.grey[800],
-    fontWeight: theme.typography.fontWeightRegular,
-    "&:hover, &:focus": {
-      backgroundColor: theme.palette.grey[300],
-    },
-    "&:active": {
-      boxShadow: theme.shadows[1],
-      backgroundColor: Core.emphasize(theme.palette.grey[300], 0.12),
-    },
-  },
-}))(Core.Chip);
-
 function getComparator(order, orderBy) {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -240,9 +224,6 @@ const EnhancedTableToolbar = (props) => {
 
       {
         numSelected > 0
-        //? (<Core.Tooltip title="Aceptar transferencias"><Core.IconButton aria-label="next">Aceptar<GeneralIcons.NavigateNext fontSize={"large"}/></Core.IconButton></Core.Tooltip>) :
-        //(<Core.Tooltip title="Filter list"><Core.IconButton aria-label="filter list"><GeneralIcons.FilterList /></Core.IconButton></Core.Tooltip>)
-        //''
       }
     </Core.Toolbar>
   );
@@ -452,17 +433,16 @@ const GridTransferencia = (props) => {
 
   const handleSum = (data) => {
     const isItemSelected = isSelected(data.idComisionDetalleEmpresa);
+    let s = 0;
     let t = 0;
     if (!isItemSelected) {
-      let s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
-      //if (totalMontoRechazados > 0) {
+        s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
         t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
-      //}
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     } else {
-      let s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
-      let t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+        s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
+        t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
       setTotalMontoRechazados(t.toFixed(2));
       setTotalPagar(s.toFixed(2));
     }
@@ -528,14 +508,7 @@ const GridTransferencia = (props) => {
               variant="contained"
               color="primary"
               className={classes.submitCargar}
-              onClick={() =>
-                selected.length > 0
-                  ? abrirModalCormarPagos()
-                  : error(
-                      "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!"
-                    )
-              }
-            >
+              onClick={() => selected.length > 0 ? abrirModalCormarPagos() : error( "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!" )}>
               {"Confirmar transferencias "}{" "}
             </Core.Button>
           </Core.Grid>
@@ -593,48 +566,15 @@ const GridTransferencia = (props) => {
                               inputProps={{ "aria-labelledby": labelId }}
                             />
                           </Core.TableCell>
-                          <Core.TableCell
-                            component="th"
-                            id={labelId}
-                            scope="row"
-                          >
-                            {row.nombreDeCliente}
-                          </Core.TableCell>
-                          <Core.TableCell align="center">
-                            {row.docDeIdentidad}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.nombreBanco}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.nroDeCuenta}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.importePorEmpresa}
-                          </Core.TableCell>
-                          <Core.TableCell align="center">
-                            {row.empresa}
-                          </Core.TableCell>
-                          <Core.TableCell align="center">
-                            {row.idEstadoComisionDetalleEmpresa === 2 ? (
-                              <Core.Chip
-                                label="Pagado"
-                                color="primary"
-                                variant="default"
-                              />
-                            ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                              <Core.Chip
-                                label="Pendiente"
-                                color="secondary"
-                                variant="default"
-                              />
-                            ) : (
-                              <Core.Chip
-                                label="Rechazado"
-                                color="secondary"
-                                variant="default"
-                              />
-                            )}
+                          <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
+                          <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
+                          <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
+                          <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
+                          <Core.TableCell align="left">{row.importePorEmpresa}</Core.TableCell>
+                          <Core.TableCell align="center">{row.empresa}</Core.TableCell>
+                          <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
+                              <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                              <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
                           </Core.TableCell>
                         </Core.TableRow>
                       );
@@ -670,7 +610,6 @@ const GridTransferencia = (props) => {
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
         subTituloModal={""}
-        // tipoModal={"info"}
         mensaje={{
           confirmados: selected.length,
           montoAPagar: totalPagar,
