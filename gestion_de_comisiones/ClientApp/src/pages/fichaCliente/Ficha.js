@@ -201,10 +201,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
-      requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        console.log('clien',res);
+      requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{         
             if(res.code === 0){              
-               let data= res.data;
+               let data= res.data;               
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
@@ -214,9 +213,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setNombre(data.nombre);
                setApellido(data.apellido);
                setCi(data.ci);
-               setTelOficina(data.telOficina);
-               setTelMovil(data.telMovil);
-               setTelFijo(data.telFijo === null? 0 : data.telFijo );
+               setTelOficina(data.telOficina === null || data.telOficina === NaN ? 0 : data.telOficina);//data.telOficina);
+               setTelMovil(data.telMovil === null || data.telMovil === NaN ? 0 : data.telMovil); //data.telMovil);
+               setTelFijo(data.telFijo === null || data.telFijo === NaN ? 0 : data.telFijo );
                setDireccion(data.direccion);
                setCorreoElectronico(data.correoElectronico);
                setFechaNacimiento(data.fechaNacimiento);

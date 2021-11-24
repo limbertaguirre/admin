@@ -28,7 +28,7 @@ import * as Actions from '../../../../redux/actions/PagosGestorAction';
 import PaymentIcon from '@material-ui/icons/Payment';
 import Chip from '@material-ui/core/Chip';
 import ImageIconPagos from "../../../../components/ImageIconPagos";
-
+import * as utilidad from '../../../../lib/utility'; 
     const StyledMenu = withStyles({
       paper: {
         border: '1px solid #d3d4d5',
@@ -126,7 +126,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
     let style= useStyles();
     const dispatch=useDispatch();
     const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});
-    const {listaComisionesAPagar, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo, permisoActualizar, permisoCrear} = props;
+    const {listaComisionesAPagar,listaComisionPaginacionNueva,setListaComisionPaginacionNueva, selecionarDetalleFrelances, seleccionarTipoFiltroBusqueda, idCiclo, permisoActualizar, permisoCrear} = props;
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
 
@@ -159,10 +159,12 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
         const [contadorPage, setContadorPage]= useState(0)
         const handleChangePage = (event, newPage) => {
             setPage(newPage);
+            setListaComisionPaginacionNueva(false);
         };    
         const handleChangeRowsPerPage = (event) => {
             setRowsPerPage(parseInt(event.target.value, 10));
             setPage(0);
+            
         };
         useEffect(()=>{     
            setContadorPage( page * rowsPerPage);
@@ -203,7 +205,14 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
           return style.backgroundNinguno
         }
     }
-
+    useEffect(()=>{    
+        if(listaComisionPaginacionNueva){
+          setPage(0);
+          setRowsPerPage(30);            
+          setContadorPage( page * rowsPerPage);
+          console.log(' ingreso : ')
+        }
+     },[listaComisionPaginacionNueva,rowsPerPage,page, contadorPage])
 
     const [anchorEl, setAnchorEl] = React.useState(false);
     const open = Boolean(anchorEl);
@@ -317,7 +326,7 @@ import ImageIconPagos from "../../../../components/ImageIconPagos";
                             <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>  */}                             
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
-                            <TableCell align="center">{row.pagoDetalleHabilitado? 
+                            <TableCell align="center">{row.pagoDetalleHabilitado == true && row.idEstadoListadoFormaPago == utilidad.ID_ESTADO_LISTADO_FORMA_PAGO? 
                                 <Chip label="Pagado" color="primary" variant="outlined" />
                               :  <Chip label="por pagar"  color="secondary" variant="outlined"   />
                             }</TableCell> 

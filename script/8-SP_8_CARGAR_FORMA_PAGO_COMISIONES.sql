@@ -56,7 +56,7 @@ BEGIN TRY
 		   SET @HEADER_PORCENTAJE=0;
 		   SET @TOTAL_HEADER =0;set @TOTAL_RETENCION_HEADER = 0;SET @TOTAL_APLICACION_HEADER=0; SET @TOTAL_PAGAR= 0;
 
-	       SELECT @TOTAL_HEADER= SUM(total),@TOTAL_RETENCION_HEADER= SUM(retencion_total) , @TOTAL_APLICACION_HEADER=SUM(total_descuento), @TOTAL_PAGAR = SUM(total_neto)  FROM OPENQUERY( [10.2.10.222], 'select * from comision_forma_pago_view ') where ciclo_id=@CICLO_SELEC
+	       SELECT @TOTAL_HEADER= SUM(total),@TOTAL_RETENCION_HEADER= SUM(retencion_total) , @TOTAL_APLICACION_HEADER=SUM(total_descuento), @TOTAL_PAGAR = SUM(total_neto)  FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_forma_pago_view ') where ciclo_id=@CICLO_SELEC
 		 	SET  @HEADER_PORCENTAJE = @TOTAL_RETENCION_HEADER / @TOTAL_HEADER * 100	
 			
 		   	insert into BDMultinivel.dbo.GP_COMISION(monto_total_bruto, porcentaje_retencion, monto_total_retencion, monto_total_aplicacion, monto_total_neto, id_ciclo,id_tipo_comision, id_usuario)
@@ -81,7 +81,7 @@ BEGIN TRY
 							);
 
 	        ----------------------------------------------------------------------------------------------------------
-		    INSERT INTO @VW_COMISIONES_FREELANCERS	SELECT contacto_id , SUM(total) as total, SUM(retencion_total) as retencion_total, SUM(total_neto) as total_pagar  FROM OPENQUERY( [10.2.10.222], 'select * from comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  group by contacto_id
+		    INSERT INTO @VW_COMISIONES_FREELANCERS	SELECT contacto_id , SUM(total) as total, SUM(retencion_total) as retencion_total, SUM(total_neto) as total_pagar  FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  group by contacto_id
 			
 			-------------------------------------------------
 			
@@ -109,7 +109,7 @@ BEGIN TRY
 			 SET @FRELA_TOTAL=0; SET @FRELA_RETENCION=0;SET @FRELA_TOTALPAGAR=0;SET @FRELA_PORCENTAJE= 0;
 			
 
-			SELECT top(1)  @FRELA_TOTAL= Sum(total), @FRELA_RETENCION= sum(retencion_total), @FRELA_TOTALPAGAR =sum(total_neto)  FROM OPENQUERY( [10.2.10.222], 'select * from comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
+			SELECT top(1)  @FRELA_TOTAL= Sum(total), @FRELA_RETENCION= sum(retencion_total), @FRELA_TOTALPAGAR =sum(total_neto)  FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
 			SET  @FRELA_PORCENTAJE = @FRELA_RETENCION / @FRELA_TOTAL * 100			   
 				  
 				 select TOP(1) @IDFICHA_SELECCIONADO = id_ficha from BDMultinivel.dbo.FICHA where codigo= @CONTACTOITitem
@@ -131,7 +131,7 @@ BEGIN TRY
 							BEGIN
 							   SET @ESTADO_COMISION_DETALLE_DINAMICO = @ESTADO_DETALLE_COMISION_NO_PRESENTA_FACTURA;
 							END 
-							SELECT  @TOTAL_DESCUENTO_FREELANCER = total_descuento  FROM OPENQUERY( [10.2.10.222], 'select * from comision_forma_pago_view ') WHERE ciclo_id = @CICLO_SELEC and contacto_id=@CONTACTOITitem 
+							SELECT  @TOTAL_DESCUENTO_FREELANCER = total_descuento  FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_forma_pago_view ') WHERE ciclo_id = @CICLO_SELEC and contacto_id=@CONTACTOITitem 
 							insert into BDMultinivel.dbo.GP_COMISION_DETALLE (monto_bruto, porcentaje_retencion, monto_retencion, monto_aplicacion, monto_neto, id_comision, id_ficha, id_usuario)                 
 							values(
 								@FRELA_TOTAL, --monto_bruto, 
@@ -155,7 +155,7 @@ BEGIN TRY
 
 								--BUSCAR POR CONTACTO
 								DECLARE @VW_COMISIONES_EMPRESA as table(contacto_id INT, total DECIMAL(18,2), retencion_total DECIMAL(18,2), total_neto DECIMAL(18,2), empresa_id int, factura_id int   );			
-								insert into @VW_COMISIONES_EMPRESA SELECT contacto_id, total, retencion_total, total_neto, empresa_id, factura_id   FROM OPENQUERY( [10.2.10.222], 'select * from comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
+								insert into @VW_COMISIONES_EMPRESA SELECT contacto_id, total, retencion_total, total_neto, empresa_id, factura_id   FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
 			
 								--comisione detalle empresa While
 									DECLARE @item_Contacto int;
