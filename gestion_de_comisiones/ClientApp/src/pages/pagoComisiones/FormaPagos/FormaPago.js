@@ -274,7 +274,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
            if(response && response.code == 0){
                let data= response.data;
                setPendienteFormaPago(data.pendienteFormaPago);
-               setListaComisionesAPagar(data.lista);                 
+               setListaComisionesAPagar(data.lista);  
+               setListaComisionPaginacionNueva(true);               
            }       
      }
 
@@ -288,6 +289,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
               let data= response.data;
               setPendienteFormaPago(data.pendienteFormaPago);
               setListaComisionesAPagar(data.lista);  
+              setListaComisionPaginacionNueva(true);
           }       
       }else{
           mensajeGenericoCiclo();
