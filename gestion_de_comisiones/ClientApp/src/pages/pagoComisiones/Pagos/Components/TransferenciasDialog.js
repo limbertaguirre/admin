@@ -87,6 +87,7 @@ const TransferenciasDialog = ({
   openDialog,
   closeTransferenciasDialog,
   empresas,
+  recargarCicloActual
 }) => {
     const style = useStyles();
     const dispatch = useDispatch();
@@ -221,8 +222,9 @@ const TransferenciasDialog = ({
             variant: "info",
           })
         );
-        setEnabledConfirmarTodosInput(false);
-        setEnabledConfirmarSeleccionInput(false);
+        // setEnabledConfirmarTodosInput(false);
+        // setEnabledConfirmarSeleccionInput(false);
+        handleVerificarPagosTransferenciasTodos(userName, empresaId);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -233,6 +235,7 @@ const TransferenciasDialog = ({
         setEnabledConfirmarTodosInput(true);
         setEnabledConfirmarSeleccionInput(true);
       }
+      handleClosePagosTransferenciaDetalleDialog();
     } else {
       console.log('handleConfirmarPagosTransferenciasTodos empresaId undefined ', empresaId);
     }
@@ -281,8 +284,6 @@ const TransferenciasDialog = ({
         } else {
           let d = data.descargarExcel.split('/');
           let s = ''.concat(d[1],'/', d[0],'/', d[2]);
-          console.log('FECHA d ', d);
-          console.log('FECHA s ', s);
           handleDateChange(s);
           setInputs(true);
           setEnabledDownloadInput(false);
@@ -303,6 +304,10 @@ const TransferenciasDialog = ({
           })
         );
         setInputs(false);
+      }
+      //recargarCicloActual
+      if (response && response.data && response.data.recargarCicloActual) {
+        recargarCicloActual();
       }
     }
   };
@@ -414,7 +419,7 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={() => setOpenPagosTransferenciaDetalleDialog(true)/*setOpenModalCancel(true)/*setOpenModalCancel(true)*/}>Confimar todos</Button>
+            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={() => setOpenPagosTransferenciaDetalleDialog(true)}>Confimar todos</Button>
             <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>handleCloseTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         

@@ -328,6 +328,7 @@ const useStyles = makeStyles((theme) => ({
             openDialog={openTransferenciasDialog}
             closeTransferenciasDialog={handleCloseTransferencias}
             empresas={empresasTransferencias}
+            recargarCicloActual={handleOnGetPagos}
             // handleDownloadFileEmpresas = {handleDownloadFileEmpresas}          
           />
         )}
