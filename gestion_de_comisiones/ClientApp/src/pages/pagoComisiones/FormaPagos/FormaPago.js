@@ -211,6 +211,34 @@ const StyledBreadcrumb = withStyles((theme) => ({
         settipTSnackbar('warning');
       }      
     }
+
+    const RecargarListadoComisionesSinActualizarPagina=()=>{         
+      if(idCiclo && idCiclo !== 0){  
+          setIdCicloSelected(idCiclo);     
+          const data={
+            usuarioLogin:userName,
+            idCiclo: idCiclo
+          };
+          requestPost('Pagos/ObtenerFormasPagos',data,dispatch).then((res)=>{  
+                   
+              if(res.code === 0){  
+                let data= res.data;
+                  setPendienteFormaPago(data.pendienteFormaPago);
+                  setListaComisionesAPagar(data.lista);                   
+                  setStatusBusqueda(true);    
+                  ApiVerificarAutorizador(userName,idCiclo,idUsuario, dispatch);               
+              }else{
+                  dispatch(ActionMensaje.showMessage({ message: res.message, variant: "error" }));
+              }    
+          })   
+  
+      }else{
+        setOpenSnackbar(true);
+        setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
+        settipTSnackbar('warning');
+      }      
+    }
+
     const closeSnackbar= (event, reason) => {
       if (reason === 'clickaway') {
         return;
@@ -257,7 +285,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
           if(response && response.code == 0){
               setTipoPago(false);
               setIdtipoPagoSelect("0");
-              handleOnGetAplicaciones();
+              RecargarListadoComisionesSinActualizarPagina();
           }else{
             dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
           }
