@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     "& > * + *": {
-      //marginTop: theme.spacing(2),
     },
   },
   botones: {
@@ -56,9 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-// let MessageTransferConfirm = ({ open, titulo, subTituloModal, tipoModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
   let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
-  //tipoModal : info, error, warning, success
   const classes = useStyles();
   let cerrarModal = () => {
     handleCloseConfirm();
