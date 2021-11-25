@@ -41,11 +41,11 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($" usuario : {model.userName} inicio el servicio Sesion() ");
-                //BDMultinivelContext contextMulti = new BDMultinivelContext();
+                BDMultinivelContext contextMulti = new BDMultinivelContext();
 
-                //using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
-                //{                   
-                    //bool valid = context.ValidateCredentials(model.userName, model.password);
+                using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
+                {
+                    bool valid = context.ValidateCredentials(model.userName, model.password);
                     if (true)
                     {                     
                         var usuario = Service.VerificarUsuario(model.userName);
@@ -58,7 +58,7 @@ namespace gestion_de_comisiones.Controllers
                         Logger.LogWarning($" usuario : {model.userName} fin de servicio - Credenciales Invalidas de GRUPO SION");
                         return Ok(Result);
                     }
-                //}
+                }
             }
             catch (Exception ex) {
                 Logger.LogError($" usuario : {model.userName} catch sesion() error : : {ex.Message}");
