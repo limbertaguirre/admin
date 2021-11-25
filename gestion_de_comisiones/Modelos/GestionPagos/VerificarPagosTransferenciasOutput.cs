@@ -6,11 +6,13 @@ namespace gestion_de_comisiones.Modelos.GestionPagos
         public static int PENDIENTES = 1;
         public static int CONFIRMADOS = 2;
         public static int RECHAZADOS = 3;
-        public static int CONFIRMADOS_O_RECHAZADOS = 4;
+        public static int CONFIRMADOS_O_RECHAZADOS = 4;       
+
         public int totalPendientes { get; set; }
         public int totalEnviadosConfirmar { get; set; }
         public int totalConfirmados { get; set; }
         public int totalRechazados { get; set; }
+        public bool recargarCicloActual { get; set; }
         public string montoTotalConfirmados { get; set; }
         public string montoTotalRechazados { get; set; }
         public string montoTotalPendientes { get; set; }
