@@ -449,8 +449,8 @@ const GridTransferencia = (props) => {
   };
   let sumaConfirmados = 0;
   let sumaRechazados = 0;
-  sumaConfirmados = data.montoTotal - totalMontoRechazados;
-  sumaRechazados = data.montoTotal - sumaConfirmados;
+  sumaConfirmados = parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados);
+  sumaRechazados = parseFloat(data.montoTotal) - sumaConfirmados;
 
   return (
     <Core.Dialog
