@@ -612,7 +612,7 @@ const GridTransferencia = (props) => {
         subTituloModal={""}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: totalPagar,
+          montoAPagar: (data.montoTotal - totalMontoRechazados).toFixed(2),
           rechazados: list.length - selected.length,
           montoAPagarRechazados: totalMontoRechazados,
           totalLista: list.length,
