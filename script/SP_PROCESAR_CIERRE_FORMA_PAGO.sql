@@ -27,6 +27,7 @@ BEGIN TRY
    DECLARE @ESTADO_HABILITADO INT;
    DECLARE @ESTADO_COMISION_CERRADO_FORMA_PAGO_TABLE INT;
    DECLARE @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE INT;
+   DECLARE @ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE INT;
 
    SET @ID_USUARIO_LOGUEADO= @id_usuario; 
    SET @ID_TIPO_COMISION_PAGOCOMISION=1;               --//GP_TIPO_COMISION
@@ -39,6 +40,7 @@ BEGIN TRY
    SET @ESTADO_HABILITADO=1;
    SET @ESTADO_COMISION_CERRADO_FORMA_PAGO_TABLE= 10;  -- //GP_ESTADO_COMISION
    SET @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE= 9; -- //GP_ESTADO_COMISION
+   SET @ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE=8;
 
    SET @NRO_SIN_FORMA_DE_PAGO=0
 
@@ -47,6 +49,25 @@ BEGIN TRY
 		 INSERT INTO @DetallecomisionesSinFormaPagos  select idComisionDetalle, idFicha, ci from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO
 		  IF @NRO_SIN_FORMA_DE_PAGO > 0
 		  BEGIN
+		      ---obtener idcomision actual
+			      DECLARE @ID_COMISION_ACTUAL INT;
+				  DECLARE @TOTAL_NETO_COMISION_ACTUAL DECIMAL(18,2);	
+				  DECLARE @TOTAL_NETO_COMISION_NUEVO_RECHAZADO DECIMAL(18,2);	
+				  DECLARE @ID_COMISION_NEW_RESAGADO INT;
+
+				   select @ID_COMISION_ACTUAL = CO.id_comision  from BDMultinivel.dbo.GP_COMISION CO
+				   inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I COE ON COE.id_comision = CO.id_comision
+				   where id_ciclo= @ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION and id_estado_comision=@ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE
+
+				   --obtener totales
+						select @TOTAL_NETO_COMISION_NUEVO_RECHAZADO = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=1 and id_tipo_pago=0 --total los resagados forma de pagos
+						select @TOTAL_NETO_COMISION_ACTUAL = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=1 and id_tipo_pago != 0 --total los que tienen pagado
+				   
+				   -- actualizar el monto neto de comision actual 				   
+					   UPDATE BDMultinivel.dbo.GP_COMISION  
+					   SET monto_total_neto =@TOTAL_NETO_COMISION_ACTUAL  where id_comision=@ID_COMISION_ACTUAL 
+
+
 		      --duplicar ciclo a comision resagada
 			  DECLARE @IDCOMISION_SCOPE INT;
 			  SET @IDCOMISION_SCOPE = 0;
@@ -84,7 +105,7 @@ BEGIN TRY
 					@porcentaje_retencion,  --porcentaje_retencion,
 					@monto_total_retencion,  --monto_total_retencion,
 					@monto_total_aplicacion,  --monto_total_aplicacion,
-					@monto_total_neto,  --monto_total_neto,
+					@TOTAL_NETO_COMISION_NUEVO_RECHAZADO,  --monto_total_neto, --este es el monto actual rezagado
 					@ID_CICLO_VARI,  --id_ciclo, 
 					@TIPO_COMISION_PAGO_REZAGADO_TABLE,  --id_tipo_comision, 
 					@ID_USUARIO_LOGUEADO,  --id_usuario,
