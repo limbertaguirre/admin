@@ -194,7 +194,7 @@ import {
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total pendientes ($us.):</Typography>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" gutterBottom>{(data.montoTotalPendientes>0)?formatearNumero(parseFloat(data.montoTotalPendientes.replace(".",","))):0}</Typography>
+                    <Typography variant="body1" gutterBottom>{(parseFloat(data.montoTotalPendientes).toFixed(2) > 0) ? formatearNumero(parseFloat(data.montoTotalPendientes).toFixed(2)):0}</Typography>
                 </Grid>
                   </>
               )}
