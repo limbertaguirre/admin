@@ -447,6 +447,10 @@ const GridTransferencia = (props) => {
       setTotalPagar(s.toFixed(2));
     }
   };
+  let sumaConfirmados = 0;
+  let sumaRechazados = 0;
+  sumaConfirmados = data.montoTotal - totalMontoRechazados;
+  sumaRechazados = data.montoTotal - sumaConfirmados;
 
   return (
     <Core.Dialog
@@ -612,9 +616,9 @@ const GridTransferencia = (props) => {
         subTituloModal={""}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: (data.montoTotal - totalMontoRechazados).toFixed(2),
+          montoAPagar: (sumaConfirmados).toFixed(2),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: totalMontoRechazados,
+          montoAPagarRechazados: (list.length - selected.length)?(sumaRechazados).toFixed(2):0.00,
           totalLista: list.length,
           montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
         }}
