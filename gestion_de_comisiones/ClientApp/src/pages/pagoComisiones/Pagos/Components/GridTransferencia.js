@@ -614,7 +614,7 @@ const GridTransferencia = (props) => {
           confirmados: selected.length,
           montoAPagar: (data.montoTotal - totalMontoRechazados).toFixed(2),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: totalMontoRechazados,
+          montoAPagarRechazados: (list.length - selected.length !== 0)?(data.montoTotal - (data.montoTotal - totalMontoRechazados)).toFixed(2): 0.00,
           totalLista: list.length,
           montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
         }}
