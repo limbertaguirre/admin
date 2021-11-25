@@ -379,6 +379,7 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 4].AutoFitColumns(1);
                         ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
                         ws.Cells[i, 5].AutoFitColumns(1);
+                        //ws.Cells[i, 6].Style.Numberformat.Format = "#,##0";
                         ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".", ",");
                         //ws.Cells[i, 6].AutoFitColumns(1);
                         //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
