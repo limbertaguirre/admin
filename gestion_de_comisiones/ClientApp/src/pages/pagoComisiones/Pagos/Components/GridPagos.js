@@ -209,8 +209,7 @@ import * as utilidad from '../../../../lib/utility';
         if(listaComisionPaginacionNueva){
           setPage(0);
           setRowsPerPage(30);            
-          setContadorPage( page * rowsPerPage);
-          console.log(' ingreso : ')
+          setContadorPage( page * rowsPerPage);          
         }
      },[listaComisionPaginacionNueva,rowsPerPage,page, contadorPage])
 
@@ -238,7 +237,6 @@ import * as utilidad from '../../../../lib/utility';
       seleccionarTipoFiltroBusqueda(idtipo);
       setAnchorEl(null);
     };
-
     return (
       <>
         <br />                 
@@ -253,20 +251,7 @@ import * as utilidad from '../../../../lib/utility';
                                 <IconButton aria-controls="fade-menu" className={style.altoCeldas} edge="start" color="inherit"   aria-label="close"    onClick={handleOpenFilter}>                                          
                                   Filtro  <FilterListIcon />
                                 </IconButton>
-                          </Tooltip>                                   
-                            {/* <Menu
-                              id="fade-menu"
-                              anchorEl={anchorEl}
-                              keepMounted
-                              open={open}
-                              onClose={handleCloseFilter}
-                              TransitionComponent={Fade}
-                            >
-                              {listFormaPago.map((row, index) => ( 
-                                 <MenuItem onClick={() => seleccionarTipo(`${row.idTipoPago}`)}>{row.nombre} {' - '} {row.cantidad}</MenuItem>
-                              ))}                             
-                            </Menu>   */}
-                            
+                          </Tooltip>                                                               
                             <StyledMenu
                               id="customized-menu"
                               anchorEl={anchorEl}
@@ -276,8 +261,7 @@ import * as utilidad from '../../../../lib/utility';
                             >
                               {listFormaPago.map((row, index) => (                                
                                 <StyledMenuItem key={index} onClick={() => seleccionarTipo(`${row.idTipoPago}`)} >
-                                 <ListItemIcon>
-                                  {/* <PaymentIcon fontSize="small" /> */}
+                                 <ListItemIcon>                                  
                                    <ImageIconPagos name={row.icono} /> 
                                  </ListItemIcon>
                                  <ListItemText >
@@ -302,10 +286,7 @@ import * as utilidad from '../../../../lib/utility';
                             <TableCell align="center" className={style.headerRow}><b>Nombre completo</b></TableCell>
                             <TableCell align="center" className={style.headerRow}><b>Cédula identidad</b></TableCell>
                             <TableCell align="center" className={style.headerRow}><b>Cuenta Banco</b></TableCell>
-                            <TableCell align="center" className={style.headerRow}><b>Banco</b></TableCell>
-                            {/* <TableCell align="center className={style.headerRow}"><b>Monto Bruto ($us.)</b></TableCell>
-                            <TableCell align="center" className={style.headerRow}><b>Retención ($us.)</b></TableCell>
-                            <TableCell align="center" className={style.headerRow} ><b>Descuento ($us.)</b></TableCell> */}
+                            <TableCell align="center" className={style.headerRow}><b>Banco</b></TableCell>                         
                             <TableCell align="center" className={style.headerRow}><b>Monto Total Neto ($us.)</b></TableCell>
                             <TableCell align="center" className={style.headerRow} ><b>Forma Pago</b> </TableCell>
                             <TableCell align="center" className={style.headerRow} ><b>Estado Pago</b> </TableCell>
@@ -320,16 +301,18 @@ import * as utilidad from '../../../../lib/utility';
                             <TableCell align="left">{row.nombre}</TableCell>
                             <TableCell align="center" >{row.ci}</TableCell>
                             <TableCell align="center">{row.cuentaBancaria}</TableCell>
-                            <TableCell align="center">{row.nombreBanco}</TableCell>   
-                           {/*  <TableCell align="center">{row.montoBruto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="center">{row.montoRetencion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>   
-                            <TableCell align="center">{row.montoAplicacion.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2,})}</TableCell>  */}                             
+                            <TableCell align="center">{row.nombreBanco}</TableCell>                               
                             <TableCell align="center">{row.montoNeto.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</TableCell>  
                             <TableCell align="center">{row.tipoPagoDescripcion}</TableCell>     
                             <TableCell align="center">{row.pagoDetalleHabilitado == true && row.idEstadoListadoFormaPago == utilidad.ID_ESTADO_LISTADO_FORMA_PAGO? 
-                                <Chip label="Pagado" color="primary" variant="outlined" />
-                              :  <Chip label="por pagar"  color="secondary" variant="outlined"   />
-                            }</TableCell> 
+                                 <Chip label="Pagado" color="primary" variant="outlined" />
+                              :
+                              <> 
+                                 {row.idEstadoListadoFormaPago == 0 && <Chip label="por pagar"  color="secondary" variant="outlined"   /> }
+                                 {row.idEstadoListadoFormaPago == utilidad.ID_ESTADO_LISTADO_FORMA_PAGO_RECHAZADO && <Chip label="Rechazado"  color="secondary" variant="outlined"   /> }
+                              </>
+                            }
+                            </TableCell> 
                            {/*  <TableCell align="center">
                              
                                 {row.idListaFormasPago > 0? 
@@ -359,10 +342,7 @@ import * as utilidad from '../../../../lib/utility';
 
                           <TableRow key={100000000000000}>
                             <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="right"><b></b></TableCell>
-                              {/* <TableCell align="center"><b></b></TableCell>
-                              <TableCell align="center"><b></b></TableCell>*/}
-                               
+                              <TableCell align="right"><b></b></TableCell>                                                            
                               <TableCell align="center"><b></b> </TableCell>
                               <TableCell align="center"><b>  </b></TableCell>
                               <TableCell align="center"><b> TOTAL</b></TableCell>
