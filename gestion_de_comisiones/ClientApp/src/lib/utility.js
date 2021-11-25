@@ -1,5 +1,6 @@
 export const TIPO_APLICACION_OTROS_ID= 4;
 export const ID_ESTADO_LISTADO_FORMA_PAGO= 3;
+export const ID_ESTADO_LISTADO_FORMA_PAGO_RECHAZADO= 4;
 
 export const formatearNumero = (
     numero,
