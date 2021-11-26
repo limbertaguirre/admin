@@ -10,6 +10,7 @@ export const formatearNumero = (
   ) => {
     numero = (numero + "").replace(/[^0-9+\-Ee.]/g, "");
     const n = !isFinite(+numero) ? 0 : +numero;
+    console.log('formatearNumero n', n)
     const prec = !isFinite(+cantidadDecimales) ? 0 : Math.abs(cantidadDecimales);
     const sep = typeof separadorMiles === "undefined" ? "," : separadorMiles;
     const dec =
@@ -31,7 +32,10 @@ export const formatearNumero = (
         )).toFixed(prec);
       }
     };
-    s = (prec ? toFixedFix(n, prec).toString() : "" + Math.round(n)).split(".");
+    console.log('formatearNumero prec ', prec)
+    const aa = toFixedFix(n, prec).toString()
+    console.log('formatearNumero aa ', aa)
+    s = (prec ? aa: "" + Math.round(n)).split(".");
     if (s[0].length > 3) {
       s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
     }
@@ -39,5 +43,6 @@ export const formatearNumero = (
       s[1] = s[1] || "";
       s[1] += new Array(prec - s[1].length + 1).join("0");
     }
+    console.log('formatearNumero s ', s);
     return s.join(dec);
   };
