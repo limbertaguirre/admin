@@ -380,7 +380,6 @@ const GridTransferencia = (props) => {
 
   const closeModalMessage = () => {
     setOpenModalConfirmation(false);
-    setTotalMontoRechazados(0);
   };
   const abrirModalCormarPagos = () => {
     setOpenModalConfirmation(true);
@@ -452,6 +451,11 @@ const GridTransferencia = (props) => {
   let sumaRechazados = 0;
   sumaConfirmados = parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados);
   sumaRechazados = parseFloat(data.montoTotal) - sumaConfirmados;
+const cerrarVolverCero = () =>{
+  setTotalMontoRechazados(0)
+  closeFullScreenModal()
+}
+
 
   return (
     <Core.Dialog
@@ -465,7 +469,7 @@ const GridTransferencia = (props) => {
           <Core.IconButton
             edge="start"
             color="inherit"
-            onClick={closeFullScreenModal}
+            onClick={cerrarVolverCero}
             aria-label="close"
           >
             <GeneralIcons.Close />
