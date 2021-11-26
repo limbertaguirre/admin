@@ -451,6 +451,11 @@ const GridTransferencia = (props) => {
   let sumaRechazados = 0;
   sumaConfirmados = parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados);
   sumaRechazados = parseFloat(data.montoTotal) - sumaConfirmados;
+const cerrarVolverCero = () =>{
+  setTotalMontoRechazados(0)
+  closeFullScreenModal()
+}
+
 
   return (
     <Core.Dialog
@@ -464,7 +469,7 @@ const GridTransferencia = (props) => {
           <Core.IconButton
             edge="start"
             color="inherit"
-            onClick={closeFullScreenModal}
+            onClick={cerrarVolverCero}
             aria-label="close"
           >
             <GeneralIcons.Close />
@@ -574,7 +579,7 @@ const GridTransferencia = (props) => {
                           <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
                           <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
                           <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                          <Core.TableCell align="left">{row.importePorEmpresa}</Core.TableCell>
+                          <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
                           <Core.TableCell align="center">{row.empresa}</Core.TableCell>
                           <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
                               <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
@@ -599,7 +604,7 @@ const GridTransferencia = (props) => {
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</b>
+                      <b>{formatearNumero(parseFloat(data.montoTotal).toFixed(2))}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -613,14 +618,14 @@ const GridTransferencia = (props) => {
       <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
-        subTituloModal={""}
+        subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: (sumaConfirmados).toFixed(2),
+          montoAPagar: formatearNumero((sumaConfirmados).toFixed(2)),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?(sumaRechazados).toFixed(2):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?formatearNumero((sumaRechazados).toFixed(2)):0.00,
           totalLista: list.length,
-          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+          montoTotal: formatearNumero(parseFloat(data.montoTotal).toFixed(2)),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}

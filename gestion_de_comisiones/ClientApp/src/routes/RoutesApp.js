@@ -14,7 +14,7 @@ import {useSelector,useDispatch} from "react-redux";
     return (
       <>       
         {load?
-         <Layout title={'GESTOR DE COMISONES'}>
+         <Layout title={'GESTOR DE COMISIONES'}>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
                 <Route path='/cargar/comisiones' component={Pages.CargarComisiones} />

@@ -43,22 +43,21 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },dialgoTitle: {
-      backgroundColor: theme.palette.primary.main,
+      // backgroundColor: theme.palette.primary.main,
       backgroundColor: "#1872b8",
+      boxShadow: "2px 1px 5px #1872b8",
       color: "white",
       "& .MuiTypography-root": {
         color: "white"
       }
     },
     table: {
-      minWidth: 300,
+      minWidth: 200,
     },
 }));
 
   let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
   const classes = useStyles();
-  console.log("Cant. Confirmados: ", mensaje.confirmados, " Monto a pagar confirmados: ", mensaje.montoAPagar)
-  console.log("Cant. Rechazados: ", mensaje.rechazados, " Monto a pagar Rechazados: ", mensaje.montoAPagarRechazados)
   let cerrarModal = () => {
     handleCloseConfirm();
   };
@@ -77,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
         <DialogContent>
           <div className={classes.root}>
             <DialogContentText>
-              <strong>{subTituloModal}</strong>
+              {subTituloModal}
               <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                   <TableHead>
