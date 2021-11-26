@@ -667,11 +667,9 @@ namespace gestion_de_comisiones.Repository
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .Sum(x => x.ImportePorEmpresa);
 
-                double dd = (double) montoTotal;
-                string montoTotalSS = dd.ToString("N2", new CultureInfo("is-IS"));
                 ObtenerPagosTransferenciasOutput o = new ObtenerPagosTransferenciasOutput();
                 o.list = info;
-                o.montoTotal = montoTotalSS;
+                o.montoTotal = montoTotal.ToString();
                 return o;
             }
             catch (Exception ex)
