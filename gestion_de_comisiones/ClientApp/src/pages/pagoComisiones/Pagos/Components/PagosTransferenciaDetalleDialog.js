@@ -170,7 +170,7 @@ import {
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total confirmados ($us.):</Typography>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" gutterBottom>{formatearNumero(data.montoTotalConfirmados)}</Typography>
+                    <Typography variant="body1" gutterBottom>{formatearNumero(parseFloat(data.montoTotalConfirmados).toFixed(2))}</Typography>
                 </Grid>
                 {data.montoTotalRechazados > 0 && (
                 <>
@@ -178,7 +178,7 @@ import {
                         <Typography variant="body1" className={style.bold} gutterBottom>Monto total rechazados ($us.):</Typography>
                     </Grid>            
                     <Grid item xs={6} sm={6}>              
-                        <Typography variant="body1" gutterBottom>{formatearNumero(data.montoTotalRechazados)}</Typography>
+                        <Typography variant="body1" gutterBottom>{formatearNumero(parseFloat(data.montoTotalRechazados).toFixed(2))}</Typography>
                     </Grid>
                 </>)
                 }
