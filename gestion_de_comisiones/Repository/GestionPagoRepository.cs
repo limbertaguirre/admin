@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -570,13 +571,19 @@ namespace gestion_de_comisiones.Repository
 
                 VerificarPagosTransferenciasOutput o = new VerificarPagosTransferenciasOutput();
 
-                if(cantidadPendientes > 0)
+                double ddd = (double) sumaTotalConfirmados;
+                string sumaTotalConfirmadosSS = ddd.ToString("N2", new CultureInfo("is-IS"));
+
+                double dd = (double) sumaTotalPendientes;
+                string sumaTotalPendientesSS = dd.ToString("N2", new CultureInfo("is-IS"));
+
+                if (cantidadPendientes > 0)
                 {
                     o.type = VerificarPagosTransferenciasOutput.PENDIENTES;
                     o.ciclo = ciclo;
                     o.empresa = empresa;
                     o.totalPendientes = cantidadPendientes;
-                    o.montoTotalPendientes = sumaTotalPendientes.ToString();
+                    o.montoTotalPendientes = sumaTotalPendientesSS;
                 } else if(cantidadPendientes == 0 && (cantidadRechazados > 0 || cantidadConfirmados > 0))
                 {
                     o.type = VerificarPagosTransferenciasOutput.CONFIRMADOS_O_RECHAZADOS;
@@ -585,7 +592,7 @@ namespace gestion_de_comisiones.Repository
                     o.totalConfirmados = cantidadConfirmados;
                     o.totalRechazados = cantidadRechazados;
                     o.totalEnviadosConfirmar = cantidadRechazados + cantidadConfirmados;
-                    o.montoTotalConfirmados = sumaTotalConfirmados.ToString();
+                    o.montoTotalConfirmados = sumaTotalConfirmadosSS;
                     o.montoTotalRechazados = sumaTotalRechazados.ToString();                    
                 }
                 o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();
@@ -660,9 +667,11 @@ namespace gestion_de_comisiones.Repository
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia)
                     .Sum(x => x.ImportePorEmpresa);
 
+                double dd = (double) montoTotal;
+                string montoTotalSS = dd.ToString("N2", new CultureInfo("is-IS"));
                 ObtenerPagosTransferenciasOutput o = new ObtenerPagosTransferenciasOutput();
                 o.list = info;
-                o.montoTotal = montoTotal.ToString();
+                o.montoTotal = montoTotalSS;
                 return o;
             }
             catch (Exception ex)

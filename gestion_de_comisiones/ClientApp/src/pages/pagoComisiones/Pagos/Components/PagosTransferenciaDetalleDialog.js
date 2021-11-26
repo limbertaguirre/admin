@@ -29,7 +29,6 @@ import {
   import DialogContent from "@material-ui/core/DialogContent";
   import DialogContentText from "@material-ui/core/DialogContentText";
   import DialogTitle from "@material-ui/core/DialogTitle";
-  import {formatearNumero} from "../../../../lib/utility";
   
   const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -170,7 +169,7 @@ import {
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total confirmados ($us.):</Typography>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" gutterBottom>{formatearNumero(parseFloat(data.montoTotalConfirmados).toFixed(2))}</Typography>
+                    <Typography variant="body1" gutterBottom>{data.montoTotalConfirmados}</Typography>
                 </Grid>
                 {data.montoTotalRechazados > 0 && (
                 <>
@@ -178,7 +177,7 @@ import {
                         <Typography variant="body1" className={style.bold} gutterBottom>Monto total rechazados ($us.):</Typography>
                     </Grid>            
                     <Grid item xs={6} sm={6}>              
-                        <Typography variant="body1" gutterBottom>{formatearNumero(parseFloat(data.montoTotalRechazados).toFixed(2))}</Typography>
+                        <Typography variant="body1" gutterBottom>{data.montoTotalRechazados}</Typography>
                     </Grid>
                 </>)
                 }
@@ -194,7 +193,7 @@ import {
                     <Typography variant="body1" className={style.bold} gutterBottom>Monto total pendientes ($us.):</Typography>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" gutterBottom>{(parseFloat(data.montoTotalPendientes).toFixed(2) > 0) ? formatearNumero(parseFloat(data.montoTotalPendientes).toFixed(2)):0}</Typography>
+                    <Typography variant="body1" gutterBottom>{data.montoTotalPendientes}</Typography>
                 </Grid>
                   </>
               )}
