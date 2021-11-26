@@ -380,6 +380,7 @@ const GridTransferencia = (props) => {
 
   const closeModalMessage = () => {
     setOpenModalConfirmation(false);
+    setTotalMontoRechazados(0);
   };
   const abrirModalCormarPagos = () => {
     setOpenModalConfirmation(true);
@@ -613,7 +614,7 @@ const GridTransferencia = (props) => {
       <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
-        subTituloModal={""}
+        subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
           montoAPagar: formatearNumero((sumaConfirmados).toFixed(2)),
