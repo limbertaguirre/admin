@@ -57,8 +57,6 @@ const useStyles = makeStyles((theme) => ({
 
   let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
   const classes = useStyles();
-  console.log("Cant. Confirmados: ", mensaje.confirmados, " Monto a pagar confirmados: ", mensaje.montoAPagar)
-  console.log("Cant. Rechazados: ", mensaje.rechazados, " Monto a pagar Rechazados: ", mensaje.montoAPagarRechazados)
   let cerrarModal = () => {
     handleCloseConfirm();
   };
