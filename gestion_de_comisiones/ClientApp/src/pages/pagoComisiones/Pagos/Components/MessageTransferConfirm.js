@@ -88,12 +88,12 @@ const useStyles = makeStyles((theme) => ({
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell><b>CONFIRMADOS: </b></TableCell>
+                      <TableCell><b>POR CONFIRMAR: </b></TableCell>
                       <TableCell align="center">{mensaje.confirmados}</TableCell>
                       <TableCell align="center">{mensaje.montoAPagar}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><b>RECHAZADOS: </b></TableCell>
+                      <TableCell><b>POR RECHAZAR: </b></TableCell>
                       <TableCell align="center">{mensaje.rechazados}</TableCell>
                       <TableCell align="center">{mensaje.montoAPagarRechazados}</TableCell>
                     </TableRow>
