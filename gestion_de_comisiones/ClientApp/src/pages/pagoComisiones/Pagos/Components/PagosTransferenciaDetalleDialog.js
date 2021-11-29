@@ -12,7 +12,11 @@ import {
     FormControl,
     InputLabel,
     MenuItem,
-    Breadcrumbs
+    Breadcrumbs,
+    List,
+    ListItem,
+    ListItemText,
+    ListSubheader
   } from "@material-ui/core";
   import {
     KeyboardDatePicker,
@@ -29,6 +33,7 @@ import {
   import DialogContent from "@material-ui/core/DialogContent";
   import DialogContentText from "@material-ui/core/DialogContentText";
   import DialogTitle from "@material-ui/core/DialogTitle";
+  import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
   
   const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -93,6 +98,20 @@ import {
     },
     bold: {
         fontWeight: 600
+    },root: {
+      width: '100%',
+      
+      backgroundColor: theme.palette.background.paper,
+    },
+    item: {
+      paddingTop: 0,
+      paddingBottom: 0
+    },
+    listText: {
+      textAlign: 'left'
+    },
+    listItemText: {
+      maxWidth: 270
     }
   }));
   
@@ -119,7 +138,10 @@ import {
         className={style.dialogContainer}
         onClose={() => close()}
       >
-        <DialogTitle className={style.dialgoTitle}>Detalle pago por transferencias confirmadas</DialogTitle>
+        {isConfirm?
+        <DialogTitle className={style.dialgoTitle}>Confirmar transferencia</DialogTitle>
+        :
+        <DialogTitle className={style.dialgoTitle}>Detalle de pago por transferencias</DialogTitle>}
   
         <DialogContent>
           <DialogContentText>
@@ -183,8 +205,23 @@ import {
                 }
               </>):
                   (<>
-                  <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" className={style.bold} gutterBottom>Cantidad total pendientes:</Typography>
+                  <List className={style.root}>
+                    <ListItem className={style.item} alignItems='flex-start'>
+                      <ListItemText className={style.listItemText}>
+                        <Typography variant="body1" className={style.bold} gutterBottom>Total pendientes (ACI):</Typography>
+                      </ListItemText>
+                      <ListItemText className={style.listText}>{data.totalPendientes}</ListItemText>
+                    </ListItem>  
+                    <ListItem className={style.item}>
+                      <ListItemText className={style.listItemText}>
+                        <Typography variant="body1" className={style.bold} gutterBottom>Monto total pendientes ($us.):</Typography>
+                      </ListItemText>
+                      <ListItemText className={style.listText}>{data.montoTotalPendientes}</ListItemText>
+                    </ListItem> 
+                  </List>      
+                  {/* <Grid item xs={6} sm={6}>                  
+                    <Typography variant="body1" className={style.bold} gutterBottom>Total pendientes:</Typography>
+                    <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalPendientes}</Typography>
@@ -194,7 +231,7 @@ import {
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.montoTotalPendientes}</Typography>
-                </Grid>
+                </Grid> */}
                   </>
               )}
             </Grid>
