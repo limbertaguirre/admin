@@ -475,7 +475,7 @@ const cerrarVolverCero = () =>{
             <GeneralIcons.Close />
           </Core.IconButton>
           <Core.Typography variant="h6" className={classes.appBar}>
-            CONFIRMAR TRANSFERENCIA
+            CONFIRMAR TRANSFERENCIA PARA {data.list[0].empresa}
           </Core.Typography>
         </Core.Toolbar>
       </Core.AppBar>
@@ -604,7 +604,7 @@ const cerrarVolverCero = () =>{
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{formatearNumero(parseFloat(data.montoTotal).toFixed(2))}</b>
+                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -625,7 +625,7 @@ const cerrarVolverCero = () =>{
           rechazados: list.length - selected.length,
           montoAPagarRechazados: (list.length - selected.length)?formatearNumero((sumaRechazados).toFixed(2)):0.00,
           totalLista: list.length,
-          montoTotal: formatearNumero(parseFloat(data.montoTotal).toFixed(2)),
+          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}

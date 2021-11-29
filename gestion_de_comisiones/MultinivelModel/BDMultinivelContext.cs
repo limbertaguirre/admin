@@ -79,6 +79,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerFicha> VwObtenerFichas { get; set; }
         public virtual DbSet<VwObtenerInfoExcelFormatoBanco> VwObtenerInfoExcelFormatoBancoes { get; set; }
         public virtual DbSet<VwObtenerProyectoxProducto> VwObtenerProyectoxProductoes { get; set; }
+        public virtual DbSet<VwObtenerRezagadosPago> VwObtenerRezagadosPagos { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
         public virtual DbSet<VwTipoAutorizacion> VwTipoAutorizacions { get; set; }
@@ -625,7 +626,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El monto total a facturar por empresa");
 
                 entity.Property(e => e.NroAutorizacion)
-                    .HasMaxLength(1)
+                    .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("nro_autorizacion")
                     .HasComment("Es el nro de autorizacion de la factura");
@@ -3116,6 +3117,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
 
+                entity.Property(e => e.IdFicha).HasColumnName("id_ficha");
+
+                entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
+
                 entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
                 entity.Property(e => e.ImporteNeto)
@@ -3182,6 +3187,89 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("producto")
                     .IsFixedLength(true)
                     .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+            });
+
+            modelBuilder.Entity<VwObtenerRezagadosPago>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerRezagadosPagos");
+
+                entity.Property(e => e.CodigoDeCliente)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("CODIGO_DE_CLIENTE");
+
+                entity.Property(e => e.DocDeIdentidad)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("DOC_DE_IDENTIDAD");
+
+                entity.Property(e => e.Empresa)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("empresa");
+
+                entity.Property(e => e.EntidadDestino)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("ENTIDAD_DESTINO");
+
+                entity.Property(e => e.FechaDePago)
+                    .HasMaxLength(92)
+                    .IsUnicode(false)
+                    .HasColumnName("FECHA_DE_PAGO");
+
+                entity.Property(e => e.FormaDePago).HasColumnName("FORMA_DE_PAGO");
+
+                entity.Property(e => e.Glosa)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("GLOSA");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
+
+                entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
+
+                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
+
+                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
+
+                entity.Property(e => e.ImporteNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("IMPORTE_NETO");
+
+                entity.Property(e => e.ImportePorEmpresa)
+                    .HasColumnType("decimal(38, 2)")
+                    .HasColumnName("IMPORTE_POR_EMPRESA");
+
+                entity.Property(e => e.MonedaDestino)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("MONEDA_DESTINO");
+
+                entity.Property(e => e.NombreDeCliente)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("NOMBRE_DE_CLIENTE");
+
+                entity.Property(e => e.NroDeCuenta)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("NRO_DE_CUENTA");
+
+                entity.Property(e => e.SucursalDestino)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SUCURSAL_DESTINO");
             });
 
             modelBuilder.Entity<VwObtenercomisione>(entity =>
