@@ -449,13 +449,27 @@ const GridTransferencia = (props) => {
   };
   let sumaConfirmados = 0;
   let sumaRechazados = 0;
-  sumaConfirmados = parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados);
-  sumaRechazados = parseFloat(data.montoTotal) - sumaConfirmados;
+  sumaConfirmados = data.montoTotal - totalMontoRechazados;
+  sumaConfirmados =  formatearNumero(parseFloat(sumaConfirmados).toFixed(2));
+  console.log("ESTO ES SUMA DE CONFIRMADOS: ",sumaConfirmados)
+  sumaRechazados = data.montoTotal - (data.montoTotal - totalMontoRechazados);
+  sumaRechazados =  formatearNumero(parseFloat(sumaRechazados).toFixed(2));
+  console.log("ESTO ES SUMA DE RECHAZADOS: ",sumaRechazados)
 const cerrarVolverCero = () =>{
   setTotalMontoRechazados(0)
   closeFullScreenModal()
 }
-
+function addFormat(nStr) {
+  nStr += '';
+  var x = nStr.split('.');
+  var x1 = x[0];
+  var x2 = x.length > 1 ? ',' + x[1] : '';
+  var rgx = /(\d+)(\d{3})/;
+  while (rgx.test(x1)) {
+          x1 = x1.replace(rgx, '$1' + '.' + '$2');
+  }
+  return x1 + x2;
+}
 
   return (
     <Core.Dialog
@@ -604,7 +618,7 @@ const cerrarVolverCero = () =>{
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b>
+                      <b>{addFormat(data.montoTotal.toLocaleString())}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -621,11 +635,11 @@ const cerrarVolverCero = () =>{
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: formatearNumero((sumaConfirmados).toFixed(2)),
+          montoAPagar: sumaConfirmados,
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?formatearNumero((sumaRechazados).toFixed(2)):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?sumaRechazados:0.00,
           totalLista: list.length,
-          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }),
+          montoTotal: formatearNumero(parseFloat(data.montoTotal).toFixed(2)),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
