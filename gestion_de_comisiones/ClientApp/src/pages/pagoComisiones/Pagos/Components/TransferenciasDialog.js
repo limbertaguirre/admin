@@ -107,6 +107,10 @@ const TransferenciasDialog = ({
   const [selected, setSelected] = React.useState([]);
   const [transferenciaSeleccionData, setTransferenciaSeleccionData] = React.useState(null);
 
+  useEffect(() => {    
+    empresaId == -1  &&  setInputs(false);
+  }, [empresaId]);
+
   const downloadExcel = (base64, fileName) => {
     // const contentType = "application/vnd.ms-excel";
     const contentType =
