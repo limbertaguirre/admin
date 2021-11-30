@@ -251,7 +251,8 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    //minWidth: 750,
+    maxWidth: "100%",
   },
   visuallyHidden: {
     border: 0,
