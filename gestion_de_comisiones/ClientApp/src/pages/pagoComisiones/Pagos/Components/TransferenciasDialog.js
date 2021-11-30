@@ -284,7 +284,7 @@ const TransferenciasDialog = ({
         } else {
           let d = data.descargarExcel.split('/');
           let s = ''.concat(d[1],'/', d[0],'/', d[2]);
-          handleDateChange(s);
+          await handleDateChange(s);
           setInputs(true);
           setEnabledDownloadInput(false);
           setEnabledDatePickerInput(false);
@@ -395,7 +395,7 @@ const TransferenciasDialog = ({
                   inputVariant="outlined"
                   label="Seleccione una fecha"
                   format="dd/MM/yyyy"
-                  minDate={new Date()}
+                  minDate={selectedDate}
                   helperText="Fecha en la que el banco debe realizar el pago (Esta fecha aparecerá en el archivo excel)."
                   value={selectedDate}
                   InputAdornmentProps={{ position: "start" }}

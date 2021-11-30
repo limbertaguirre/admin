@@ -12,7 +12,12 @@ import {
     FormControl,
     InputLabel,
     MenuItem,
-    Breadcrumbs
+    Breadcrumbs,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
+    ListSubheader
   } from "@material-ui/core";
   import {
     KeyboardDatePicker,
@@ -29,6 +34,7 @@ import {
   import DialogContent from "@material-ui/core/DialogContent";
   import DialogContentText from "@material-ui/core/DialogContentText";
   import DialogTitle from "@material-ui/core/DialogTitle";
+  import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
   
   const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -93,6 +99,36 @@ import {
     },
     bold: {
         fontWeight: 600
+    },root: {
+      width: '100%',
+      
+      backgroundColor: theme.palette.background.paper,
+    },
+    item: {
+      paddingTop: 0,
+      paddingBottom: 0
+    },
+    listText: {
+      textAlign: 'left'
+    },
+    listItemText: {
+      maxWidth: 270
+    },
+    listIcon: {
+      alignSelf: 'left'
+    },
+    listItemDiv: {
+      maxWidth: 270,
+      display: 'flex',
+      flexDirection: 'row'
+    },
+    tooltipText: {
+      '& .MuiTooltip-popper': {
+        fontSize: "14px !important"
+      },
+      '& .MuiTooltip-popperArrow': {
+        fontSize: "14px !important"
+      }
     }
   }));
   
@@ -106,7 +142,28 @@ import {
   }) => {
       const style = useStyles();
       const dispatch = useDispatch();
-      const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load});    
+      const {userName, idUsuario} =useSelector((stateSelector)=>{ return stateSelector.load}); 
+      const totalPendientesText = `
+      Es la cantidad de ACI que están pendientes a confirmar que se le realizarán las transferencias de pago a sus cuentas bancarias respectivas.
+      `;
+      const montoTotalPendientesText = `
+      Es la suma total de los ACI que están pendientes a confirmar que se le realizarán las transferencias de pago a sus cuentas bancarias respectivas.
+      `;
+      const cantidadEnviadosText = `
+      Es la cantidad de ACI que fueron enviados a travéz del EXCEL al banco para que se le realicen las transferencias de pago a sus cuentas bancarias respectivamente.
+      `;
+      const cantidadConfirmadosText = `
+      Es la cantidad de ACI que ya se les hizo la transferencia bancaria a sus cuentas respectivamente.
+      `;
+      const cantidadRechazadosText = `
+      Es la cantidad de ACI que el banco rechazó y no les hizo la transferencia bancaria a sus cuentas respectivamente. Estos ACI están en REZAGADOS.
+      `;
+      const montoConfirmadosText = `
+      Es la suma total de los montos ya transferidos a los ACI.
+      `;
+      const montoRechazadosText = `
+      Es la suma total de los montos de los ACI rechazados.
+      `;
     console.log('PagosTransferenciaDetalleDialog data ', data);
     console.log('PagosTransferenciaDetalleDialog empresaId ', empresaId);
     console.log('PagosTransferenciaDetalleDialog userName ', userName);
@@ -119,7 +176,10 @@ import {
         className={style.dialogContainer}
         onClose={() => close()}
       >
-        <DialogTitle className={style.dialgoTitle}>Detalle pago por transferencias confirmadas</DialogTitle>
+        {isConfirm?
+        <DialogTitle className={style.dialgoTitle}>Confirmar transferencia</DialogTitle>
+        :
+        <DialogTitle className={style.dialgoTitle}>Detalle de pago por transferencias</DialogTitle>}
   
         <DialogContent>
           <DialogContentText>
@@ -145,36 +205,61 @@ import {
               {!isConfirm ? (
               <>
                 <Grid item xs={6} sm={6}>
-                    <Typography variant="body1" className={style.bold} gutterBottom>Total enviados a confirmar:</Typography>
+                    <div className={style.listItemDiv}>
+                      <Typography variant="body1" className={style.bold} gutterBottom>Cantidad de ACI enviados:</Typography>
+                      <Tooltip title={cantidadEnviadosText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                        <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                      </Tooltip>
+                    </div>
                 </Grid>            
                 <Grid item xs={6} sm={6}>
                     <Typography variant="body1" gutterBottom>{data.totalEnviadosConfirmar}</Typography>
                 </Grid>
                 
-                <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" className={style.bold} gutterBottom>Total confirmados:</Typography>
+                <Grid item xs={6} sm={6}>       
+                  <div className={style.listItemDiv}>       
+                    <Typography variant="body1" className={style.bold} gutterBottom>Total confirmados (ACI):</Typography>
+                    <Tooltip title={cantidadConfirmadosText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                      <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                    </Tooltip>
+                  </div>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalConfirmados}</Typography>
                 </Grid>
             
                 <Grid item xs={6} sm={6}>
-                    <Typography variant="body1" className={style.bold} gutterBottom>Total rechazados:</Typography>
+                  <div className={style.listItemDiv}>       
+                    <Typography variant="body1" className={style.bold} gutterBottom>Total rechazados (ACI):</Typography>
+                    <Tooltip title={cantidadRechazadosText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                      <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                    </Tooltip>
+                  </div>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalRechazados}</Typography>
                 </Grid>
                
-                <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" className={style.bold} gutterBottom>Monto total confirmados ($us.):</Typography>
+                <Grid item xs={6} sm={6}>    
+                <div className={style.listItemDiv}>         
+                    <Typography variant="body1" className={style.bold} gutterBottom>Monto confirmados ($us.):</Typography>
+                    <Tooltip title={montoConfirmadosText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                      <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                    </Tooltip>
+                    </div>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.montoTotalConfirmados}</Typography>
                 </Grid>
                 {data.montoTotalRechazados > 0 && (
                 <>
-                    <Grid item xs={6} sm={6}>              
-                        <Typography variant="body1" className={style.bold} gutterBottom>Monto total rechazados ($us.):</Typography>
+                    <Grid item xs={6} sm={6}> 
+                    <div className={style.listItemDiv}>             
+                        <Typography variant="body1" className={style.bold} gutterBottom>Monto rechazados ($us.):</Typography>
+                        <Tooltip title={montoRechazadosText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                      <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                    </Tooltip>
+                    </div>
                     </Grid>            
                     <Grid item xs={6} sm={6}>              
                         <Typography variant="body1" gutterBottom>{data.montoTotalRechazados}</Typography>
@@ -183,8 +268,29 @@ import {
                 }
               </>):
                   (<>
-                  <Grid item xs={6} sm={6}>              
-                    <Typography variant="body1" className={style.bold} gutterBottom>Cantidad total pendientes:</Typography>
+                  <List className={style.root}>
+                    <ListItem className={style.item} alignItems='flex-start'>
+                      <ListItemText disableTypography={true} className={style.listItemDiv}>
+                        <Typography variant="body1" className={style.bold} gutterBottom>Total pendientes (ACI):</Typography>
+                        <Tooltip title={totalPendientesText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                          <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                        </Tooltip>
+                      </ListItemText>                      
+                      <ListItemText className={style.listText}>{data.totalPendientes}</ListItemText>
+                    </ListItem>  
+                    <ListItem className={style.item}>
+                      <ListItemText disableTypography={true} className={style.listItemDiv}>
+                        <Typography variant="body1" className={style.bold} gutterBottom>Monto total pendientes ($us.):</Typography>
+                        <Tooltip title={montoTotalPendientesText}  PopperProps={{style:{fontSize:'14px'}}} arrow={true} placement='top' enterTouchDelay={10} className={style.tooltipText} style={{marginLeft: 4}}>
+                          <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
+                        </Tooltip>
+                      </ListItemText>
+                      <ListItemText className={style.listText}>{data.montoTotalPendientes}</ListItemText>
+                    </ListItem> 
+                  </List>      
+                  {/* <Grid item xs={6} sm={6}>                  
+                    <Typography variant="body1" className={style.bold} gutterBottom>Total pendientes:</Typography>
+                    <HelpOutlineIcon color="disabled"></HelpOutlineIcon>
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.totalPendientes}</Typography>
@@ -194,7 +300,7 @@ import {
                 </Grid>            
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.montoTotalPendientes}</Typography>
-                </Grid>
+                </Grid> */}
                   </>
               )}
             </Grid>
