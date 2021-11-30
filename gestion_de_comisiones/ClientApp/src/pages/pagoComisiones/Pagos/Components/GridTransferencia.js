@@ -449,11 +449,11 @@ const GridTransferencia = (props) => {
   };
   let sumaConfirmados = 0;
   let sumaRechazados = 0;
-  sumaConfirmados = data.montoTotal - totalMontoRechazados;
-  sumaConfirmados =  formatearNumero(parseFloat(sumaConfirmados).toFixed(2));
+  sumaConfirmados = parseFloat(data.montoTotal - totalMontoRechazados).toFixed(2);
+  sumaConfirmados =  sumaConfirmados;
   console.log("ESTO ES SUMA DE CONFIRMADOS: ",sumaConfirmados)
-  sumaRechazados = data.montoTotal - (data.montoTotal - totalMontoRechazados);
-  sumaRechazados =  formatearNumero(parseFloat(sumaRechazados).toFixed(2));
+  sumaRechazados = parseFloat(data.montoTotal) - (parseFloat(data.montoTotal - totalMontoRechazados).toFixed(2));
+  sumaRechazados =  parseFloat(sumaRechazados).toFixed(2);
   console.log("ESTO ES SUMA DE RECHAZADOS: ",sumaRechazados)
 const cerrarVolverCero = () =>{
   setTotalMontoRechazados(0)
@@ -635,11 +635,11 @@ function addFormat(nStr) {
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: sumaConfirmados,
+          montoAPagar: addFormat(sumaConfirmados.toString()),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?sumaRechazados:0.00,
+          montoAPagarRechazados: (list.length - selected.length)?addFormat(sumaRechazados.toString()):0.00,
           totalLista: list.length,
-          montoTotal: formatearNumero(parseFloat(data.montoTotal).toFixed(2)),
+          montoTotal: addFormat(data.montoTotal.toLocaleString()),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
