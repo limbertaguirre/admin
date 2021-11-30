@@ -251,7 +251,8 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    //minWidth: 750,
+    maxWidth: "100%",
   },
   visuallyHidden: {
     border: 0,
@@ -633,9 +634,9 @@ function addFormat(nStr) {
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: addFormat((sumaConfirmados.toFixed(2)).toString()),
+          montoAPagar: sumaConfirmados.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?addFormat((sumaRechazados.toFixed(2)).toString()):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?sumaRechazados.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }):0.00,
           totalLista: list.length,
           montoTotal: addFormat(data.montoTotal.toLocaleString()),
         }}
