@@ -313,18 +313,14 @@ const useStyles = makeStyles((theme) => ({
     },[  listaComisionesAPagar,listaComisionPaginacionNueva]);
 
     const confirmarCierrePagos =()=>{
-      ApiVerificarYConfirmarCierrePago(userName, idUsuario,idCiclo);
+      ApiVerificarConfirmarCierrePago(userName, idUsuario,idCiclo);
     }
-    async function ApiVerificarYConfirmarCierrePago(userNa, idUser,idCICLO){
+    async function ApiVerificarConfirmarCierrePago(userNa, idUser,idCICLO){
         if(idCICLO && idCICLO !== 0){  
-            let response= await Actions.VerificarCierreFormaPago(userNa, idUser,idCICLO, dispatch)   
-           
+            let response= await Actions.ConfirmarCierrePago(userNa, idUser,idCICLO, dispatch)   
+            console.log('respom : ',response);
             if(response && response.code == 0){
-              let data= response.data;
-              setOpenCierrePagoModal(true);
-              setHabilitadoCierrePago(data.habilitado);
-              setListadoConfirm(data.listaPorAreas);
-              setListadoSeleccionado(data.listSeleccionados)
+                 console.log('code ok  : ',response);
             }else{
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
             }
@@ -332,7 +328,13 @@ const useStyles = makeStyles((theme) => ({
         }else{
             mensajeGenericoCiclo();
         }    
-      }
+    }
+
+    const mensajeGenericoCiclo =()=>{
+      setOpenSnackbar(true);
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
+      settipTSnackbar('warning');
+    }
 
   
     return (

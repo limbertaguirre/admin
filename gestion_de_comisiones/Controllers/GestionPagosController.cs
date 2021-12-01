@@ -233,5 +233,21 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por filtro tipo de pago" });
             }
         }
+        // POST: gestionPagos/FiltrarComisionPagoPorTipoPago
+        [HttpPost]
+        public ActionResult CerrarPagoComision([FromBody] FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+               // Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+               // return Ok(Service.FiltrarComisionesPorTipoPago(param));
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "error probando cierre de pagos" });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  CerrarPagoComision() controller mensaje:  {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error intentar cerrar el pago" });
+            }
+        }
     }
 }
