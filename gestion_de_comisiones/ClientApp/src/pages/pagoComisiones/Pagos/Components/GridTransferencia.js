@@ -331,6 +331,11 @@ const GridTransferencia = (props) => {
   const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 console.log("GridTransferencia data: ", data)
+data.montoTotal = data.montoTotal.replace(',', '.');
+
+console.log("GridTransferencia data.montoTotal: ", data.montoTotal)
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
