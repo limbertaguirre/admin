@@ -627,7 +627,7 @@ const modalSum=(s1,s2,val)=>{
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{addFormat(data.montoTotal.toLocaleString())}</b>
+                      <b>{addFormat(parseFloat(data.montoTotal).toFixed(2))}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -648,7 +648,7 @@ const modalSum=(s1,s2,val)=>{
           rechazados: list.length - selected.length,
           montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal).toFixed(2), parseFloat(totalMontoRechazados).toFixed(2), 1):0.00,
           totalLista: list.length,
-          montoTotal: addFormat(data.montoTotal.toLocaleString()),
+          montoTotal: addFormat(parseFloat(data.montoTotal).toFixed(2)),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
