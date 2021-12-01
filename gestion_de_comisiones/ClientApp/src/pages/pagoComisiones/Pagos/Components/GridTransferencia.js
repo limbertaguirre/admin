@@ -468,11 +468,11 @@ const modalSum=(s1,s2,val)=>{
   if(val == 0){
     suma1 = s1 - s2
     console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma1)
-    return addFormat(suma1.toFixed(2))    
+    return addFormat((suma1.toFixed(2)))    
   } else if( val == 1){
     suma2 = s1 - (s1-s2)
-    console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma2)
-    return addFormat(suma2.toFixed(2))
+    console.log("ESTO ES SUMA DE RECHAZADOS: ",suma2)
+    return addFormat((suma2.toFixed(2)))
   }else return "valor no válido"
 }
 
@@ -640,9 +640,9 @@ const modalSum=(s1,s2,val)=>{
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: modalSum(data.montoTotal,totalMontoRechazados, 0),
+          montoAPagar: modalSum(parseFloat(data.montoTotal).toFixed(2),parseFloat(totalMontoRechazados).toFixed(2), 0),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?modalSum(data.montoTotal, totalMontoRechazados, 1):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal).toFixed(2), parseFloat(totalMontoRechazados).toFixed(2), 1):0.00,
           totalLista: list.length,
           montoTotal: addFormat(data.montoTotal.toLocaleString()),
         }}
