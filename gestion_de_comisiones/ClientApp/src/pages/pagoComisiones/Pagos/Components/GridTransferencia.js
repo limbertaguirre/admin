@@ -330,7 +330,7 @@ const GridTransferencia = (props) => {
     React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
-
+console.log("GridTransferencia data: ", data)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -469,14 +469,19 @@ const modalSum=(s1,s2,val)=>{
   console.log("ESTO ES typeof de s2: ", typeof s2)
   let suma1=0;
   let suma2=0;
+  let ad = "";
   if(val == 0){
     suma1 = s1 - s2
     console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma1)
-    return addFormat((suma1.toFixed(2)))
+    ad = addFormat(suma1.toFixed(2))
+    console.log("ESTO ES SUMA DE CONFIRMADOS ad: ",ad)
+    return ad;
   } else if( val == 1){
     suma2 = s1 - (s1-s2)
     console.log("ESTO ES SUMA DE RECHAZADOS: ",suma2)
-    return addFormat((suma2.toFixed(2)))
+    ad = addFormat(suma2.toFixed(2))
+    console.log("ESTO ES SUMA DE RECHAZADOS ad: ",ad)
+    return ad;
   }else return "valor no válido"
 }
 
