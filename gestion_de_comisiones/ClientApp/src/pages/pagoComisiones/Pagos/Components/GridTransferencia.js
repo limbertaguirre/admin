@@ -328,7 +328,7 @@ const GridTransferencia = (props) => {
   });
   const [openModalConfirmation, setOpenModalConfirmation] =
     React.useState(false);
-  const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
+  const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
 
   const handleRequestSort = (event, property) => {
@@ -634,7 +634,7 @@ const modalSum=(s1,s2,val)=>{
         </Core.Grid>
       </Core.Grid>
 
-      <MessageTransferConfirm
+      {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
@@ -648,7 +648,7 @@ const modalSum=(s1,s2,val)=>{
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
-      />
+      />)}
     </Core.Dialog>
   );
   //-------------------------------------------------------------------------------------
