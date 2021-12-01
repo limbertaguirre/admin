@@ -251,7 +251,7 @@ import {
                 <Grid item xs={6} sm={6}>              
                     <Typography variant="body1" gutterBottom>{data.montoTotalConfirmados}</Typography>
                 </Grid>
-                {data.montoTotalRechazados > 0 && (
+                {data.totalRechazados > 0 && (
                 <>
                     <Grid item xs={6} sm={6}> 
                     <div className={style.listItemDiv}>             
