@@ -472,7 +472,7 @@ const modalSum=(s1,s2,val)=>{
   if(val == 0){
     suma1 = s1 - s2
     console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma1)
-    return addFormat((suma1.toFixed(2)))    
+    return addFormat((suma1.toFixed(2)))
   } else if( val == 1){
     suma2 = s1 - (s1-s2)
     console.log("ESTO ES SUMA DE RECHAZADOS: ",suma2)
@@ -627,7 +627,7 @@ const modalSum=(s1,s2,val)=>{
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{addFormat(parseFloat(data.montoTotal).toFixed(2))}</b>
+                      <b>{addFormat(data.montoTotal)}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -644,11 +644,11 @@ const modalSum=(s1,s2,val)=>{
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: modalSum(parseFloat(data.montoTotal).toFixed(2),parseFloat(totalMontoRechazados).toFixed(2), 0),
+          montoAPagar: modalSum(parseFloat(data.montoTotal),parseFloat(totalMontoRechazados), 0),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal).toFixed(2), parseFloat(totalMontoRechazados).toFixed(2), 1):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal), parseFloat(totalMontoRechazados), 1):0.00,
           totalLista: list.length,
-          montoTotal: addFormat(parseFloat(data.montoTotal).toFixed(2)),
+          montoTotal: addFormat(data.montoTotal),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
