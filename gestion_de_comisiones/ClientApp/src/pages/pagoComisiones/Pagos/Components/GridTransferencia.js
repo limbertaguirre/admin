@@ -463,6 +463,10 @@ function addFormat(nStr) {
   return x1 + x2;
 }
 const modalSum=(s1,s2,val)=>{
+  console.log("ESTO ES s1: ",s1)
+  console.log("ESTO ES typeof de s1: ", typeof s1)
+  console.log("ESTO ES s2: ",s2)
+  console.log("ESTO ES typeof de s2: ", typeof s2)
   let suma1=0;
   let suma2=0;
   if(val == 0){
