@@ -251,7 +251,6 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    //minWidth: 750,
     maxWidth: "100%",
   },
   visuallyHidden: {
@@ -347,7 +346,7 @@ const GridTransferencia = (props) => {
       return;
     }
     setTotalPagar(0);
-    setTotalMontoRechazados(data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
+    setTotalMontoRechazados(data.montoTotal);
     setSelected([]);
   };
 
@@ -448,12 +447,6 @@ const GridTransferencia = (props) => {
       setTotalPagar(s.toFixed(2));
     }
   };
-  let sumaConfirmados = 0;
-  let sumaRechazados = 0;
-  sumaConfirmados = parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados);
-  console.log("ESTO ES SUMA DE CONFIRMADOS: ",sumaConfirmados)
-  sumaRechazados = parseFloat(data.montoTotal) - (parseFloat(data.montoTotal) - parseFloat(totalMontoRechazados));
-  console.log("ESTO ES SUMA DE RECHAZADOS: ",sumaRechazados)
 const cerrarVolverCero = () =>{
   setTotalMontoRechazados(0)
   closeFullScreenModal()
@@ -468,6 +461,19 @@ function addFormat(nStr) {
           x1 = x1.replace(rgx, '$1' + '.' + '$2');
   }
   return x1 + x2;
+}
+const modalSum=(s1,s2,val)=>{
+  let suma1=0;
+  let suma2=0;
+  if(val == 0){
+    suma1 = s1 - s2
+    console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma1)
+    return addFormat(suma1.toFixed(2))    
+  } else if( val == 1){
+    suma2 = s1 - (s1-s2)
+    console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma2)
+    return addFormat(suma2.toFixed(2))
+  }else return "valor no válido"
 }
 
   return (
@@ -634,9 +640,9 @@ function addFormat(nStr) {
         subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: sumaConfirmados.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }),
+          montoAPagar: modalSum(data.montoTotal,totalMontoRechazados, 0),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: (list.length - selected.length)?sumaRechazados.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, }):0.00,
+          montoAPagarRechazados: (list.length - selected.length)?modalSum(data.montoTotal, totalMontoRechazados, 1):0.00,
           totalLista: list.length,
           montoTotal: addFormat(data.montoTotal.toLocaleString()),
         }}
