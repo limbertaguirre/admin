@@ -283,7 +283,7 @@ namespace gestion_de_comisiones.Repository
 
         private GestionPagosRezagadosEvent postEvent(int type, VerificarPagosTransferenciasOutput data, string message)
         {
-            GestionPagosEvent e = new GestionPagosEvent();
+            GestionPagosRezagadosEvent e = new GestionPagosRezagadosEvent();
             e.eventType = type;
             if (data != null)
             {
