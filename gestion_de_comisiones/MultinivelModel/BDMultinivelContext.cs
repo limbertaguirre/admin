@@ -3274,6 +3274,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
 
+                entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
+
                 entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
                 entity.Property(e => e.ImporteNeto)
