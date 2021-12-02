@@ -1,6 +1,8 @@
 import { apiComerce } from "./gestorproyect";
 import * as Actions from "./../redux/actions/messageAction";
+import * as Act from "./../redux/actions/LoginAction";
 import { loadingRequest, loadingEndRequest } from "./../redux/actions/loadingAction";
+
 
 const _hanldeThen = (res, dispatch) => {
   dispatch(loadingEndRequest());
@@ -16,6 +18,7 @@ const _hanldeThen = (res, dispatch) => {
 
 const _hanldeCatch = (error, dispatch) => {
   dispatch(loadingEndRequest());
+
   if (error.response) {
     const { status} = error.response;
 
@@ -23,6 +26,12 @@ const _hanldeCatch = (error, dispatch) => {
        
       dispatch( Actions.showMessage({ message: "Tiempo Agotado", variant: "error" }) );
       
+    }else if (status === 401) {
+       
+     
+      dispatch( Act.sesionExpirado());
+      dispatch( Actions.showMessage({ message: "sesion caducada", variant: "error"}) );
+      return Promise.reject(error);
     } else if (status === 404) {
        
       dispatch( Actions.showMessage({
@@ -61,8 +70,9 @@ const _hanldeCatch = (error, dispatch) => {
 
 export const requestGet = (url, data, dispatch) => {    
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
-  const headers = { ...data, headers: { ...data } };  
+   const token = localStorage.getItem("token");
+  const headers = { ...data, headers: { ...data, Authorization: token  } }; 
+  
   return apiComerce.get(url, headers)
     .then((response) => {
       return _hanldeThen(response, dispatch);
@@ -74,10 +84,11 @@ export const requestGet = (url, data, dispatch) => {
 
 export const requestPost = (url, data, dispatch) => {
   dispatch(loadingRequest());
-  const config = { headers: { "Content-Type": "application/json"
-                          //  ,"token":token 
-                 } };
-  
+  const token = localStorage.getItem("token");
+  const config = {
+                  headers: { "Content-Type": "application/json" ,"Authorization":token  }
+                 };
+     
   return apiComerce.post(url, data, config)
     .then((response) => {
       return _hanldeThen(response, dispatch);
@@ -89,9 +100,9 @@ export const requestPost = (url, data, dispatch) => {
 
 export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
   const headers = { ...data, headers: { ...header
-                //   , token: token
+                  , Authorization: token
                    } };
   return apiComerce.get(url, headers).then((response) => {
          return _hanldeThen(response, dispatch);
@@ -104,9 +115,9 @@ export const requestGetWhithHeaders = (url, data, header ,dispatch) => {
 
 export const requestPostWhithHeaders = (url, data,headerParam, dispatch) => {
   dispatch(loadingRequest());
-//   const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
   const config = { headers: {...headerParam, "Content-Type": "application/json"
-                //   ,"token":token 
+                  ,"Authorization":token 
                  } };
   return apiComerce.post(url, data, config).then((response) => {
           return _hanldeThen(response, dispatch);

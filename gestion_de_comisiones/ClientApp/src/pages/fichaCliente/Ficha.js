@@ -134,7 +134,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   
   useEffect(()=>{ 
-    //console.log('paramet : ', props.location.state.namePagina + permiso.VISUALIZAR);
+    
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
@@ -250,8 +250,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     };
     const obtenerNiveles=()=>{
       const data={usuarioLogin:userName };
-      requestPost('Cliente/obtenerNivelesClientes',data,dispatch).then((res)=>{ 
-        //console.log('Niveles : ', res);
+      requestPost('Cliente/obtenerNivelesClientes',data,dispatch).then((res)=>{         
             if(res.code === 0){                 
                setListNiveles(res.data);        
             }else{
@@ -362,8 +361,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const handleChangeCheck = (event) => {
         let checkFiel= event.target.name;
         let value= event.target.checked;
-        //console.log(checkFiel);
-        //console.log(value);
+        
                       
               if(checkFiel === 'checkTieneCuenta'){
                   if(value === false){

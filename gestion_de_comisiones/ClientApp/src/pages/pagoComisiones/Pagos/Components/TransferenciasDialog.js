@@ -157,10 +157,7 @@ const TransferenciasDialog = ({
         selectedDate,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleDownloadFileEmpresas ",
-        response
-      );
+
       if (response && response.code == 0) {
         downloadExcel(response.data.file, response.data.fileName);
         handleVerificarPagosTransferenciasTodos(userName, empresaId);
@@ -177,14 +174,14 @@ const TransferenciasDialog = ({
 
   const handleEmpresasSelectChange = (event) => {
     setEmpresaId(event.target.value);
-    console.log("handleEmpresasSelectChange ", event.target.value);
+    
     handleVerificarPagosTransferenciasTodos(userName, event.target.value);
   };  
 
   const handleObtenerPagosTransferencias = async (user, empresaId) =>{
     if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
       let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
-      console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
+       
       if(!response || !response.data) {
         dispatch(ActionMensaje.showMessage({
             message: "Hubo inconvenientes al recuperar la información. Intente nuevamente por favor.",
@@ -215,10 +212,7 @@ const TransferenciasDialog = ({
         empresaId,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleConfirmarPagosTransferenciasTodos response ",
-        response
-      );
+     
       if (response && response.code == 0) {
         dispatch(
           ActionMensaje.showMessage({
@@ -241,7 +235,7 @@ const TransferenciasDialog = ({
       }
       handleClosePagosTransferenciaDetalleDialog();
     } else {
-      console.log('handleConfirmarPagosTransferenciasTodos empresaId undefined ', empresaId);
+     
     }
   };
 
@@ -260,10 +254,7 @@ const TransferenciasDialog = ({
         empresaId,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleVerificarPagosTransferenciasTodos response ",
-        response
-      );
+      
       let data = {
         ...response.data,
         message: response.message

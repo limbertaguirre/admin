@@ -190,7 +190,7 @@ const DetalleDescuentoModal = (props) => {
               setErrorCantidad(!isValidCantidad());
             }
             if (texfiel === "idTipoDescuento") {
-              console.log('tipo :', value);
+              
               setIdTipoDescuento(value);
               setErrorIdTipoDescuento(!isValidTipoDescuento());
             }
@@ -301,7 +301,7 @@ const DetalleDescuentoModal = (props) => {
      const listarDescuentos = (usuario) => {
         const headers={usuarioLogin:usuario};
         requestGet('Aplicaciones/ObtenerTipoDescuentosGuardian',headers,dispatch).then((res)=>{  
-          console.log('descuentos : ', res.data);           
+                  
             if(res.code === 0){                 
                 setListTipoDescuento(res.data);                            
             }else{
