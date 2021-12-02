@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
-    [Authorize]
+  //  [Authorize]
     public class GestionPagosController : Controller
     {
         private readonly ILogger<GestionPagosController> Logger;

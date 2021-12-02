@@ -1,5 +1,6 @@
 export const TIPO_APLICACION_OTROS_ID= 4;
 export const ID_ESTADO_LISTADO_FORMA_PAGO= 3;
+export const ID_ESTADO_LISTADO_FORMA_PAGO_RECHAZADO= 4;
 
 export const formatearNumero = (
     numero,
@@ -30,7 +31,8 @@ export const formatearNumero = (
         )).toFixed(prec);
       }
     };
-    s = (prec ? toFixedFix(n, prec).toString() : "" + Math.round(n)).split(".");
+    const aa = toFixedFix(n, prec).toString()
+    s = (prec ? aa: "" + Math.round(n)).split(".");
     if (s[0].length > 3) {
       s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
     }

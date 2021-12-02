@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     "& > * + *": {
-      //marginTop: theme.spacing(2),
     },
   },
   botones: {
@@ -44,21 +43,23 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },dialgoTitle: {
-      backgroundColor: theme.palette.primary.main,
+      // backgroundColor: theme.palette.primary.main,
       backgroundColor: "#1872b8",
+      boxShadow: "2px 1px 5px #1872b8",
       color: "white",
       "& .MuiTypography-root": {
         color: "white"
       }
     },
     table: {
-      minWidth: 300,
+      minWidth: 200,
     },
+    textcontent:{
+      color : "black",
+    }
 }));
 
-// let MessageTransferConfirm = ({ open, titulo, subTituloModal, tipoModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
   let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
-  //tipoModal : info, error, warning, success
   const classes = useStyles();
   let cerrarModal = () => {
     handleCloseConfirm();
@@ -78,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
         <DialogContent>
           <div className={classes.root}>
             <DialogContentText>
-              <strong>{subTituloModal}</strong>
+              <Typography variant="body1" gutterBottom className={classes.textcontent}>{subTituloModal}</Typography>
               <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                   <TableHead>
@@ -90,12 +91,12 @@ const useStyles = makeStyles((theme) => ({
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell><b>CONFIRMADOS: </b></TableCell>
+                      <TableCell><b>POR CONFIRMAR: </b></TableCell>
                       <TableCell align="center">{mensaje.confirmados}</TableCell>
                       <TableCell align="center">{mensaje.montoAPagar}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><b>RECHAZADOS: </b></TableCell>
+                      <TableCell><b>POR RECHAZAR: </b></TableCell>
                       <TableCell align="center">{mensaje.rechazados}</TableCell>
                       <TableCell align="center">{mensaje.montoAPagarRechazados}</TableCell>
                     </TableRow>

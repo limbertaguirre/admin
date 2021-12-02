@@ -251,7 +251,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    maxWidth: "100%",
   },
   visuallyHidden: {
     border: 0,
@@ -328,8 +328,9 @@ const GridTransferencia = (props) => {
   });
   const [openModalConfirmation, setOpenModalConfirmation] =
     React.useState(false);
-  const [totalPagar, setTotalPagar] = React.useState(data?.montoTotal);
+  const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
+  data.montoTotal = data.montoTotal.replace(',', '.');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -346,7 +347,7 @@ const GridTransferencia = (props) => {
       return;
     }
     setTotalPagar(0);
-    setTotalMontoRechazados(data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
+    setTotalMontoRechazados(data.montoTotal);
     setSelected([]);
   };
 
@@ -447,6 +448,35 @@ const GridTransferencia = (props) => {
       setTotalPagar(s.toFixed(2));
     }
   };
+const cerrarVolverCero = () =>{
+  setTotalMontoRechazados(0)
+  closeFullScreenModal()
+}
+function addFormat(nStr) {
+  nStr += '';
+  var x = nStr.split('.');
+  var x1 = x[0];
+  var x2 = x.length > 1 ? ',' + x[1] : '';
+  var rgx = /(\d+)(\d{3})/;
+  while (rgx.test(x1)) {
+          x1 = x1.replace(rgx, '$1' + '.' + '$2');
+  }
+  return x1 + x2;
+}
+const modalSum=(s1,s2,val)=>{
+  let suma1=0;
+  let suma2=0;
+  let ad = "";
+  if(val == 0){
+    suma1 = s1 - s2
+    ad = addFormat(suma1.toFixed(2))
+    return ad;
+  } else if( val == 1){
+    suma2 = s1 - (s1-s2)
+    ad = addFormat(suma2.toFixed(2))
+    return ad;
+  }else return "valor no válido"
+}
 
   return (
     <Core.Dialog
@@ -460,13 +490,13 @@ const GridTransferencia = (props) => {
           <Core.IconButton
             edge="start"
             color="inherit"
-            onClick={closeFullScreenModal}
+            onClick={cerrarVolverCero}
             aria-label="close"
           >
             <GeneralIcons.Close />
           </Core.IconButton>
           <Core.Typography variant="h6" className={classes.appBar}>
-            CONFIRMAR TRANSFERENCIA
+            CONFIRMAR TRANSFERENCIA PARA {data.list[0].empresa}
           </Core.Typography>
         </Core.Toolbar>
       </Core.AppBar>
@@ -570,7 +600,7 @@ const GridTransferencia = (props) => {
                           <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
                           <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
                           <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                          <Core.TableCell align="left">{row.importePorEmpresa}</Core.TableCell>
+                          <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
                           <Core.TableCell align="center">{row.empresa}</Core.TableCell>
                           <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
                               <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
@@ -595,7 +625,7 @@ const GridTransferencia = (props) => {
                       <b>{"TOTAL: "} </b>
                     </Core.TableCell>
                     <Core.TableCell align="left">
-                      <b>{data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</b>
+                      <b>{addFormat(data.montoTotal)}</b>
                     </Core.TableCell>
                     <Core.TableCell align="center"></Core.TableCell>
                   </Core.TableRow>
@@ -606,21 +636,21 @@ const GridTransferencia = (props) => {
         </Core.Grid>
       </Core.Grid>
 
-      <MessageTransferConfirm
+      {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
-        subTituloModal={""}
+        subTituloModal={<b>Ciclo: {data.list[0].glosa}<br/>Empresa: {data.list[0].empresa}</b>}
         mensaje={{
           confirmados: selected.length,
-          montoAPagar: totalPagar,
+          montoAPagar: modalSum(parseFloat(data.montoTotal),parseFloat(totalMontoRechazados), 0),
           rechazados: list.length - selected.length,
-          montoAPagarRechazados: totalMontoRechazados,
+          montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal), parseFloat(totalMontoRechazados), 1):0.00,
           totalLista: list.length,
-          montoTotal: data.montoTotal.toLocaleString("de-DE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+          montoTotal: addFormat(data.montoTotal),
         }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
-      />
+      />)}
     </Core.Dialog>
   );
   //-------------------------------------------------------------------------------------

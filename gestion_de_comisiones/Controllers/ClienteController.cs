@@ -181,9 +181,9 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogInformation($"usuario : {param.usuarioNameLogueado} Fin del controller ActualizarCliente()  ");
                 return Ok(resulcliente);
             }
-            catch
+            catch (Exception ex)
             {
-                Logger.LogError($"usuario : {param.usuarioNameLogueado} error catch  ActualizarCliente() controller ");
+                Logger.LogError($"usuario : {param.usuarioNameLogueado} error catch  ActualizarCliente() controller {ex}");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al actualizar al cliente" };
                 return Ok(Result);
             }

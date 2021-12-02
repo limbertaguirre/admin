@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -256,7 +257,7 @@ namespace gestion_de_comisiones.Repository
                     ids[i] = (int) empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && ids.Contains(x.IdEmpresa))
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,
@@ -277,8 +278,8 @@ namespace gestion_de_comisiones.Repository
 
         public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try {
-
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} handleDownloadFileEmpresas parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("yyyyMMdd")}");
 
@@ -325,7 +326,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogInformation($" usuarioId: {usuarioId}, handleDownloadFileEmpresas inicio SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS parameterReturn: {parameterReturn}");
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS] @CicloId,  @EmpresaId, @UsuarioId, @FechaPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS returnValue {returnValue}  ");
+                Logger.LogInformation($" result: {result}, inicio repository handleDownloadFileEmpresas(): SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS returnValue {returnValue}  ");
                 if (returnValue == 1)
                 {
                     //throw new Exception("Pas[o algo inesperado, no se pudo realizar la actualizacion.");
@@ -365,13 +366,15 @@ namespace gestion_de_comisiones.Repository
                     var range = ws.Cells["A1:M13"];
                     range.AutoFilter = true;
                     ws.AutoFilter.ApplyFilter();
+                    NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands; ;
+                    CultureInfo provider = new CultureInfo("is-IS");                    
 
                     for (int i = 2; i <= info.Count + 1; i++)
                     {
                         VwObtenerInfoExcelFormatoBanco f = info[i - 2];
-                        ws.Cells[i, 1].Value = Convert.ToString(i - 1);
+                        ws.Cells[i, 1].Value = i - 1;
                         //ws.Cells[i, 1].AutoFitColumns(1);
-                        ws.Cells[i, 2].Value = Convert.ToString(f.CodigoDeCliente);
+                        ws.Cells[i, 2].Value = int.Parse(f.CodigoDeCliente);
                         //ws.Cells[i, 2].AutoFitColumns(1);
                         ws.Cells[i, 3].Value = Convert.ToString(f.NroDeCuenta);
                         //ws.Cells[i, 3].AutoFitColumns(1);
@@ -379,16 +382,23 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 4].AutoFitColumns(1);
                         ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
                         ws.Cells[i, 5].AutoFitColumns(1);
-                        ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".", ",");
-                        //ws.Cells[i, 6].AutoFitColumns(1);
+                        double dd = (double) f.ImportePorEmpresa;
+                        string dd2 = dd.ToString("N2", new CultureInfo("is-IS"));                       
+                        ws.Cells[i, 6].Value = Decimal.Parse(dd2, style, provider);
                         //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
                         ws.Cells[i, 7].Value = f.FechaDePago;
                         ws.Cells[i, 7].AutoFitColumns(1);
-                        ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
+                        ws.Cells[i, 8].Value = f.FormaDePago;
                         //ws.Cells[i, 8].AutoFitColumns(1);
-                        ws.Cells[i, 9].Value = Convert.ToString(f.MonedaDestino);
+                        if (!String.IsNullOrEmpty(f.MonedaDestino))
+                            ws.Cells[i, 9].Value = int.Parse(f.MonedaDestino);
+                        else
+                            ws.Cells[i, 9].Value = "";
                         //ws.Cells[i, 9].AutoFitColumns(1);
-                        ws.Cells[i, 10].Value = Convert.ToString(f.EntidadDestino);
+                        if (!String.IsNullOrEmpty(f.EntidadDestino))
+                            ws.Cells[i, 10].Value = int.Parse(f.EntidadDestino);
+                        else
+                            ws.Cells[i, 10].Value = "";
                         //ws.Cells[i, 10].AutoFitColumns(1);
                         ws.Cells[i, 11].Value = f.SucursalDestino;
                         ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
@@ -398,12 +408,14 @@ namespace gestion_de_comisiones.Repository
                     DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
                     r.file = Convert.ToBase64String(p.GetAsByteArray());
                     r.fileName = info[0].Empresa;
+                    dbcontextTransaction.Commit();
                     return postEvent(GestionPagosEvent.SUCCESS, r, "Archivo excel generado correctamente.");
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
             }
         }
@@ -472,9 +484,54 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerInfoExcelFormatoBanco> list = new List<VwObtenerInfoExcelFormatoBanco>();
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleVerificarPagosTransferenciasTodos() ");
                 Logger.LogWarning($" usuario: {body.user} parametros: idciclo:{body.cicloId} empresaId: {body.empresaId}");
+
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              }
+                           };
+                var recargarCicloActual = false;
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS] @CicloId, @UsuarioId  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, fin repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue {returnValue}  ");
+                if (returnValue == -1)
+                {
+                    // Rollback
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue -1. Catch e hizo Rollback. Analizar la razon.");
+                }
+                else if (returnValue == 1)
+                {
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 1. No hay pagos de transferencias pendientes de pago y se registro en tabla detalle forma de pagos.");
+                    recargarCicloActual = true;
+                } else if (returnValue == 2)
+                {
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 2. Aun hay pagos de transferencias pendientes de pago.");
+                }
+
                 var cantidadPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1).Count();
-                var cantidadRechazados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                var cantidadRechazados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 3).Count();
                 var cantidadConfirmados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 2).Count();
@@ -483,7 +540,7 @@ namespace gestion_de_comisiones.Repository
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 2)
                     .Sum(x => x.ImportePorEmpresa);
 
-                var sumaTotalRechazados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
+                var sumaTotalRechazados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 3)
                     .Sum(x => x.ImportePorEmpresa);
 
@@ -524,13 +581,22 @@ namespace gestion_de_comisiones.Repository
 
                 VerificarPagosTransferenciasOutput o = new VerificarPagosTransferenciasOutput();
 
-                if(cantidadPendientes > 0)
+                double ddd = (double) sumaTotalConfirmados;
+                string sumaTotalConfirmadosSS = ddd.ToString("N2", new CultureInfo("is-IS"));
+
+                double dd = (double) sumaTotalPendientes;
+                string sumaTotalPendientesSS = dd.ToString("N2", new CultureInfo("is-IS"));
+
+                double d = (double) sumaTotalRechazados;
+                string sumaTotalRechazadosSS = d.ToString("N2", new CultureInfo("is-IS"));
+
+                if (cantidadPendientes > 0)
                 {
                     o.type = VerificarPagosTransferenciasOutput.PENDIENTES;
                     o.ciclo = ciclo;
                     o.empresa = empresa;
                     o.totalPendientes = cantidadPendientes;
-                    o.montoTotalPendientes = sumaTotalPendientes.ToString();
+                    o.montoTotalPendientes = sumaTotalPendientesSS;
                 } else if(cantidadPendientes == 0 && (cantidadRechazados > 0 || cantidadConfirmados > 0))
                 {
                     o.type = VerificarPagosTransferenciasOutput.CONFIRMADOS_O_RECHAZADOS;
@@ -539,10 +605,11 @@ namespace gestion_de_comisiones.Repository
                     o.totalConfirmados = cantidadConfirmados;
                     o.totalRechazados = cantidadRechazados;
                     o.totalEnviadosConfirmar = cantidadRechazados + cantidadConfirmados;
-                    o.montoTotalConfirmados = sumaTotalConfirmados.ToString();
-                    o.montoTotalRechazados = sumaTotalRechazados.ToString();                    
+                    o.montoTotalConfirmados = sumaTotalConfirmadosSS;
+                    o.montoTotalRechazados = sumaTotalRechazadosSS;                    
                 }
-                o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();      
+                o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();
+                o.recargarCicloActual = recargarCicloActual;
                 Logger.LogWarning($"handleVerificarPagosTransferenciasTodos() cantidadPendientes: {cantidadPendientes}, cantidadConfirmados: {cantidadConfirmados}, cantidadRechazados: {cantidadRechazados}");
 
                 if (cantidadPendientes > 0)
@@ -628,9 +695,11 @@ namespace gestion_de_comisiones.Repository
 
         public GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
         {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
                 Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferencias(): idciclo {body.cicloId}  ");
+                
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
                     .Select(u => new
@@ -656,11 +725,64 @@ namespace gestion_de_comisiones.Repository
                     return postEvent(GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS, "No se pudo realizar la confirmación de los pagos por transferencia a rechazados, verifique e intente nuevamente.");
                 }
 
-                return postEvent(GestionPagosEvent.SUCCESS, "Se realizó la confirmación de los pagos por transferencia exitosamente.");
+                // SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS
+                Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
+                Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {body.cicloId}, EmpresaId: {body.empresaId}");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                              },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@TipoPago",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = tipoPagoTransferencia
+                              }
+                           };
+                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn ReturnValue: {parameterReturn[0]}");
+                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn CicloId: {parameterReturn[1]}");
+                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn EmpresaId: {parameterReturn[2]}");
+                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3]}");
+                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4]}");
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
+                int returnValue = (int) parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
+                if (returnValue == -1)
+                {
+                    // Entro al catch del SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS hizo Rollback
+                    Logger.LogWarning($"repository handleConfirmarPagosTransferencias() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
+                    dbcontextTransaction.Rollback();
+                    return postEvent(GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
+                }
+
+                dbcontextTransaction.Commit();
+                // Si returnValue no es -1 ni 2, es 1
+                return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
             catch (Exception ex)
-            {
+            {                
                 Logger.LogWarning($" usuario: {body.user} CATCH handleConfirmarPagosTransferencias() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosEvent.ERROR, $"NO se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
             }
         }

@@ -44,9 +44,9 @@ namespace gestion_de_comisiones.Controllers
                 BDMultinivelContext contextMulti = new BDMultinivelContext();
 
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
-                {                   
-                   bool valid = context.ValidateCredentials(model.userName, model.password);
-                    if (true)
+                {
+                    bool valid = context.ValidateCredentials(model.userName, model.password);
+                    if (valid)
                     {                     
                         var usuario = Service.VerificarUsuario(model.userName);
                         Logger.LogInformation($" usuario : {model.userName} fin de servicio sesion() : {JsonConvert.SerializeObject(usuario)}");
