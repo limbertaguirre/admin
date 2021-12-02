@@ -894,7 +894,7 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
 
-                Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                //Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
 
