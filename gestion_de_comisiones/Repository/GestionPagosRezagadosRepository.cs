@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -64,6 +65,59 @@ namespace gestion_de_comisiones.Repository
                 return list;
 
             }
+        }
+
+        public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param)
+        {
+            //throw new NotImplementedException();
+            ///*
+            try
+            {
+                int idTipoPagoTransferencia = 2;
+                int idTipoComision = 1;
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPagoTransferencia: {idTipoPagoTransferencia}");
+                var empresasIds = ContextMulti.Usuarios
+                .Join(ContextMulti.AsignacionEmpresaPagoes,
+                      p => p.IdUsuario,
+                      e => e.IdUsuario,
+                      (p, e) => new
+                      {
+                          empresaId = e.IdEmpresa,
+                          usuario = p.Usuario1,
+                          idTipoPago = e.IdTipoPago
+                      }
+                 )
+                .Where(x => x.usuario == param.usuarioLogin && x.idTipoPago == idTipoPagoTransferencia)
+                .Select(u => new
+                {
+                    u.empresaId
+                })
+                .ToList();
+
+                int[] ids = new int[empresasIds.Count];
+                for (int i = 0; i < empresasIds.Count; i++)
+                {
+                    ids[i] = (int)empresasIds[i].empresaId;
+                }
+                var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
+                    .Select(e => new
+                    {
+                        idCiclo = e.IdCiclo,
+                        idEmpresa = e.IdEmpresa,
+                        empresa = e.Empresa,
+                        montoATransferir = e.MontoTransferir,
+                    }).ToList();
+                return empresas;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch handleTransferenciasEmpresas() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return list;
+            }
+            //*/
         }
     }
 }

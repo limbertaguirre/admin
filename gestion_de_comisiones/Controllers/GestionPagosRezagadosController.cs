@@ -55,6 +55,22 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogError($"usuario: {param.usuarioLogin} error catch GestionPagosRezagadosController - GetComisionesPagos() controller StackTrace: { e.StackTrace }");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Hubo un inconveniente al listar a los rezagados del ciclo seleccionado." });
             }
-        }       
+        }
+
+        [HttpPost]
+        public ActionResult handleTransferenciasEmpresas([FromBody] ComisionesPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller handleTransferenciasEmpresas() parametro: idciclo:{param.idCiclo}");
+                return Ok(Service.handleTransferenciasEmpresas(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  handleTransferenciasEmpresas() controller ");
+                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
     }
 }
