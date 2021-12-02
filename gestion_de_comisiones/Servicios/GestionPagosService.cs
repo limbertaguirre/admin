@@ -306,21 +306,24 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
 
-                int idEstadoComisionSiFacturo = 10; //VARIABLE
-                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
-                int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
+                int idEstadoComision = 10; //VARIABLE
                 int idTipoComisionPagoComision = 1; //parametro
                 int idTipoFormaPagoSionPay = 1; //parametro
                 int idTipoFormaPagoTransferencia = 2; //parametro
-
-                VerificarPagoSionPayInput parametros = new VerificarPagoSionPayInput { idCiclo = param.idCiclo, usuarioLogin=param.usuarioLogin };
-
-                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(parametros, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
-                if (comisiones.CodigoRespuesta == -1)
-                    return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
-                if (comisiones.Cantidad > 0)
-                   return Respuesta.ReturnResultdo(1, "Pendientes en el pago de sion pay", comisiones);
                
+
+                RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (sionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos realizados por SION PAY.", " ");
+                if (sionPay.Cantidad > 0)
+                   return Respuesta.ReturnResultdo(1, "Pagos pendientes en el pago de sion pay.", sionPay);
+
+                RespuestaPorTipoPagoModel transacion = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if (transacion.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (transacion.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia.", transacion);
+
                 return Respuesta.ReturnResultdo(1, "en proceso","" );
             }
             catch (Exception ex)
