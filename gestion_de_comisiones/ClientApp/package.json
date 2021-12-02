@@ -28,7 +28,8 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-localstorage-simple": "^2.4.0",
     "redux-thunk": "^2.3.0",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "socket.io-client": "^4.4.0"
   },
   "devDependencies": {
     "ajv": "^6.9.1",
