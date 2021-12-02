@@ -18,8 +18,8 @@ export const iniciarSesion= (userName,password)=>{
             var data= res.data;
                  dispatch({
                     type: TypesHome.MENU_PAGE,
-                     menu:data.perfil.menus == null? [] : data.perfil.menus,
-                     perfiles:data.perfil.listaHash ==null? [] : data.perfil.listaHash,
+                     menu:data.perfil && data.perfil.menus == null? [] : data.perfil.menus,
+                     perfiles:data.perfil&& data.perfil.listaHash ==null? [] : data.perfil.listaHash,
                 })
 
                 dispatch({
