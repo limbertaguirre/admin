@@ -127,7 +127,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
    const [idComsionDetalleSelected, setiIdComsionDetalleSelected ]= useState(0);
 
    useEffect(()=>{
-     //console.log('idcomision selected: ', idComsionDetalleSelected);
+    
    },[idComsionDetalleSelected])
   const [open, setOpen] =useState(false);
   useEffect(()=>{  
@@ -137,7 +137,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const obtenerCiclos=()=>{
     const data={usuarioLogin:userName };
      requestGet('Factura/ObtenerCiclos',data,dispatch).then((res)=>{ 
-     // console.log('ciclos : ', res);
+     
           if(res.code === 0){                 
             setCiclos(res.data);
           }else{
@@ -186,7 +186,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo
        };
        requestPost('Factura/ListarComisionesPendientes',data,dispatch).then((res)=>{ 
-           console.log('comisones : ', res);
+           
 
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
@@ -200,8 +200,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
         idCiclo: IDciclo,
         nombreCriterio:nombreCriterio
        };
-       requestPost('Factura/BuscarComisionNombre',data,dispatch).then((res)=>{ 
-      //  console.log('search  : ', res);
+       requestPost('Factura/BuscarComisionNombre',data,dispatch).then((res)=>{       
             if(res.code === 0){                 
               setListaComisionesPendientes(res.data);
               setListaHabilitada(true)
@@ -213,9 +212,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
         usuarioLogin:user,
         idComisionDetalleEmpresa:parseInt(idcomisionDetalle)
        };
-       console.log('parame detalle  : ', data);
+       
        requestPost('Factura/ComisionesDetalleEmpresa',data,dispatch).then((res)=>{ 
-       console.log('detalle  : ', res);
+       
             if(res.code === 0){         
               setFicha({idFicla:res.data.idFicla, nombreFicha:res.data.nombreFicha, rango:res.data.rango, ciclo: res.data.ciclo,idCiclo:res.data.idCiclo,avatar:res.data.avatar });
               setListaDetalleEmpresa(res.data.listDetalle);
@@ -260,7 +259,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       ApiCargarComisionesDetalleEmpresa(userName,idDetalleComision );
   }
    const handleCloseConfirm=()=>{
-     console.log('fin select => iddetalleComision: ',idComsionDetalleSelected );
+     
      ApiFacturarDetalleComision(userName,idComsionDetalleSelected,idUsuario );   
    }
    const handleCloseCancel=()=>{
@@ -271,10 +270,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
       usuarioLogin:user,
       idComisionDetalle:parseInt(idcomisionDetalle),
       usuarioId:userId
-     };
-     console.log('parame detalle  : ', data);
+     };     
      requestPost('Factura/FacturarComisionDetalle',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR COMI DETALL  : ', res);
+     
           if(res.code === 0){         
             setOpen(false);
             if(idCiclo !== 0){
@@ -362,7 +360,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       usuarioId:userId
      };
      requestPost('Factura/SubirArchivoFacturaPdfEmpresa',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR estado : ', res);
+     
           if(res.code === 0){     
               if(idCiclo !== 0){              
                 ApiCargarComisionesDetalleEmpresa(userName,idComsionDetalleSelected ); 
@@ -375,16 +373,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
    };
 
    const cancelarTodo=()=>{
-    console.log('cancelar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
-    console.log('comision seleccionado: ', idComsionDetalleSelected);
+    
     setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
     ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
 
    }
    const AceptarTodo=()=>{
-    console.log('aceptar todo: ');
-    console.log('aceptar todo: estado', !estadoComisionGlobalFacturado); //userName,idComsionDetalleSelected,idUsuario
-    console.log('comision seleccionado: ', idComsionDetalleSelected);
+   
     setEstadoComisionGlobalFacturado(!estadoComisionGlobalFacturado);
    ApiTAplicarTodoFactura(userName,idComsionDetalleSelected, idUsuario,!estadoComisionGlobalFacturado );
    }
@@ -398,7 +393,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
      };
     
      requestPost('Factura/AplicarFacturaTodoEstado',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR COMI DETALL  : ', res);
+     
           if(res.code === 0){                    
             if(idCiclo !== 0){
               
@@ -419,7 +414,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
       usuarioId:userId
      };
      requestPost('Factura/CerrarFactura',data,dispatch).then((res)=>{ 
-     console.log('ACTUALIZAR COMI DETALL  : ', res);
+     
           if(res.code === 0){                    
             dispatch(ActionMesaje.showMessage({ message: res.message, variant: "success" }));
             setListaComisionesPendientes([]);

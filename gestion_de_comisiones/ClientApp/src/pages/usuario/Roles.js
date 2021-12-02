@@ -228,14 +228,14 @@ const  Roles =()=>  {
 
     const addCalculoHisotorico =(permiso, idModulo,nombreModulo, idPagina, nombrePagina)=>{
        const backupHistory = [...listHisotrico];
-      // console.log('inicia con : ', backupHistory);
+      
         let objmoduloBk = listHisotrico.filter(x => x.idModulo !== parseInt(idModulo));//--------------
         let objmodulo = listHisotrico.filter(x => x.idModulo == parseInt(idModulo));
         const moBK = [...objmoduloBk];
 
-       // console.log(' modulo hisotico elejido',objmodulo);
+      
         if(objmodulo.length == 0){
-          // console.log('no existe modulo hisotico',objmodulo);
+          
            const addNew= {
                         idModulo:idModulo,
                         nombreModulo:nombreModulo,

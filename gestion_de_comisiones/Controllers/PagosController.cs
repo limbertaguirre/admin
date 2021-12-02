@@ -2,6 +2,7 @@
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Servicios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
+	
 	public class PagosController : Controller
 	{
 		private readonly ILogger<PagosController> Logger;
