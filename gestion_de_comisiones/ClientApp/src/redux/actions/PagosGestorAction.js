@@ -155,7 +155,7 @@ export async function handleDownloadFileEmpresas(
       empresaId,
       date
     };
-    console.log("handleDownloadFileEmpresas data: ", data);
+    
     requestPost("gestionPagos/handleDownloadFileEmpresas", data, dispatch).then(
       (response) => {
         resolve(response);
@@ -176,7 +176,7 @@ export async function handleObtenerPagosTransferencias(
       cicloId,
       empresaId
     };
-    console.log("handleObtenerPagosTransferencias data: ", data);
+    
     requestPost("gestionPagos/handleObtenerPagosTransferencias", data, dispatch).then(
       (response) => {
         resolve(response);
@@ -197,7 +197,7 @@ export async function handleConfirmarPagosTransferenciasTodos(
       cicloId: cicloId,
       empresaId: empresaId
     };
-    console.log("handleConfirmarPagosTransferenciasTodos data: ", data);
+    
     requestPost(
       "gestionPagos/handleConfirmarPagosTransferenciasTodos",
       data,
@@ -243,7 +243,7 @@ export async function handleVerificarPagosTransferenciasTodos(
       cicloId: cicloId,
       empresaId: empresaId
     };
-    console.log("handleVerificarPagosTransferenciasTodos data: ", data);
+    
     requestPost(
       "gestionPagos/handleVerificarPagosTransferenciasTodos",
       data,

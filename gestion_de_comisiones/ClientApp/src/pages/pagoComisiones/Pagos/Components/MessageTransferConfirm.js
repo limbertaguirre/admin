@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
     table: {
       minWidth: 200,
     },
+    textcontent:{
+      color : "black",
+    }
 }));
 
   let MessageTransferConfirm = ({ open, titulo, subTituloModal, mensaje, handleCloseConfirm, handleCloseCancel}) => {
@@ -76,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
         <DialogContent>
           <div className={classes.root}>
             <DialogContentText>
-              {subTituloModal}
+              <Typography variant="body1" gutterBottom className={classes.textcontent}>{subTituloModal}</Typography>
               <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                   <TableHead>

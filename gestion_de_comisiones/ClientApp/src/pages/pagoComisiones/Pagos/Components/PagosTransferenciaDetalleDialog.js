@@ -164,9 +164,7 @@ import {
       const montoRechazadosText = `
       Es la suma total de los montos de los ACI rechazados.
       `;
-    console.log('PagosTransferenciaDetalleDialog data ', data);
-    console.log('PagosTransferenciaDetalleDialog empresaId ', empresaId);
-    console.log('PagosTransferenciaDetalleDialog userName ', userName);
+
 
     return (
       <Dialog

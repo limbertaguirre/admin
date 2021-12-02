@@ -278,8 +278,8 @@ namespace gestion_de_comisiones.Repository
 
         public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try {
-
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} handleDownloadFileEmpresas parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("yyyyMMdd")}");
 
@@ -366,13 +366,15 @@ namespace gestion_de_comisiones.Repository
                     var range = ws.Cells["A1:M13"];
                     range.AutoFilter = true;
                     ws.AutoFilter.ApplyFilter();
+                    NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands; ;
+                    CultureInfo provider = new CultureInfo("is-IS");                    
 
                     for (int i = 2; i <= info.Count + 1; i++)
                     {
                         VwObtenerInfoExcelFormatoBanco f = info[i - 2];
-                        ws.Cells[i, 1].Value = Convert.ToString(i - 1);
+                        ws.Cells[i, 1].Value = i - 1;
                         //ws.Cells[i, 1].AutoFitColumns(1);
-                        ws.Cells[i, 2].Value = Convert.ToString(f.CodigoDeCliente);
+                        ws.Cells[i, 2].Value = int.Parse(f.CodigoDeCliente);
                         //ws.Cells[i, 2].AutoFitColumns(1);
                         ws.Cells[i, 3].Value = Convert.ToString(f.NroDeCuenta);
                         //ws.Cells[i, 3].AutoFitColumns(1);
@@ -380,17 +382,23 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 4].AutoFitColumns(1);
                         ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
                         ws.Cells[i, 5].AutoFitColumns(1);
-                        //ws.Cells[i, 6].Style.Numberformat.Format = "#,##0";
-                        ws.Cells[i, 6].Value = Convert.ToString(f.ImportePorEmpresa).Replace(".", ",");
-                        //ws.Cells[i, 6].AutoFitColumns(1);
+                        double dd = (double) f.ImportePorEmpresa;
+                        string dd2 = dd.ToString("N2", new CultureInfo("is-IS"));                       
+                        ws.Cells[i, 6].Value = Decimal.Parse(dd2, style, provider);
                         //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
                         ws.Cells[i, 7].Value = f.FechaDePago;
                         ws.Cells[i, 7].AutoFitColumns(1);
-                        ws.Cells[i, 8].Value = Convert.ToString(f.FormaDePago);
+                        ws.Cells[i, 8].Value = f.FormaDePago;
                         //ws.Cells[i, 8].AutoFitColumns(1);
-                        ws.Cells[i, 9].Value = Convert.ToString(f.MonedaDestino);
+                        if (!String.IsNullOrEmpty(f.MonedaDestino))
+                            ws.Cells[i, 9].Value = int.Parse(f.MonedaDestino);
+                        else
+                            ws.Cells[i, 9].Value = "";
                         //ws.Cells[i, 9].AutoFitColumns(1);
-                        ws.Cells[i, 10].Value = Convert.ToString(f.EntidadDestino);
+                        if (!String.IsNullOrEmpty(f.EntidadDestino))
+                            ws.Cells[i, 10].Value = int.Parse(f.EntidadDestino);
+                        else
+                            ws.Cells[i, 10].Value = "";
                         //ws.Cells[i, 10].AutoFitColumns(1);
                         ws.Cells[i, 11].Value = f.SucursalDestino;
                         ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
@@ -400,12 +408,14 @@ namespace gestion_de_comisiones.Repository
                     DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
                     r.file = Convert.ToBase64String(p.GetAsByteArray());
                     r.fileName = info[0].Empresa;
+                    dbcontextTransaction.Commit();
                     return postEvent(GestionPagosEvent.SUCCESS, r, "Archivo excel generado correctamente.");
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
             }
         }
@@ -577,6 +587,9 @@ namespace gestion_de_comisiones.Repository
                 double dd = (double) sumaTotalPendientes;
                 string sumaTotalPendientesSS = dd.ToString("N2", new CultureInfo("is-IS"));
 
+                double d = (double) sumaTotalRechazados;
+                string sumaTotalRechazadosSS = d.ToString("N2", new CultureInfo("is-IS"));
+
                 if (cantidadPendientes > 0)
                 {
                     o.type = VerificarPagosTransferenciasOutput.PENDIENTES;
@@ -593,7 +606,7 @@ namespace gestion_de_comisiones.Repository
                     o.totalRechazados = cantidadRechazados;
                     o.totalEnviadosConfirmar = cantidadRechazados + cantidadConfirmados;
                     o.montoTotalConfirmados = sumaTotalConfirmadosSS;
-                    o.montoTotalRechazados = sumaTotalRechazados.ToString();                    
+                    o.montoTotalRechazados = sumaTotalRechazadosSS;                    
                 }
                 o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();
                 o.recargarCicloActual = recargarCicloActual;

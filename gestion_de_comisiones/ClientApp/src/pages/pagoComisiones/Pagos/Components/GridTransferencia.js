@@ -330,11 +330,7 @@ const GridTransferencia = (props) => {
     React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
-console.log("GridTransferencia data: ", data)
-data.montoTotal = data.montoTotal.replace(',', '.');
-
-console.log("GridTransferencia data.montoTotal: ", data.montoTotal)
-
+  data.montoTotal = data.montoTotal.replace(',', '.');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -468,24 +464,16 @@ function addFormat(nStr) {
   return x1 + x2;
 }
 const modalSum=(s1,s2,val)=>{
-  console.log("ESTO ES s1: ",s1)
-  console.log("ESTO ES typeof de s1: ", typeof s1)
-  console.log("ESTO ES s2: ",s2)
-  console.log("ESTO ES typeof de s2: ", typeof s2)
   let suma1=0;
   let suma2=0;
   let ad = "";
   if(val == 0){
     suma1 = s1 - s2
-    console.log("ESTO ES SUMA DE CONFIRMADOS: ",suma1)
     ad = addFormat(suma1.toFixed(2))
-    console.log("ESTO ES SUMA DE CONFIRMADOS ad: ",ad)
     return ad;
   } else if( val == 1){
     suma2 = s1 - (s1-s2)
-    console.log("ESTO ES SUMA DE RECHAZADOS: ",suma2)
     ad = addFormat(suma2.toFixed(2))
-    console.log("ESTO ES SUMA DE RECHAZADOS ad: ",ad)
     return ad;
   }else return "valor no válido"
 }
@@ -651,7 +639,7 @@ const modalSum=(s1,s2,val)=>{
       {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
-        subTituloModal={<b>Empresa: {data.list[0].empresa} - Ciclo: {data.list[0].glosa}</b>}
+        subTituloModal={<b>Ciclo: {data.list[0].glosa}<br/>Empresa: {data.list[0].empresa}</b>}
         mensaje={{
           confirmados: selected.length,
           montoAPagar: modalSum(parseFloat(data.montoTotal),parseFloat(totalMontoRechazados), 0),

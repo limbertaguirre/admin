@@ -18,6 +18,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using gestion_de_comisiones.Modelos.Rol;
 
 namespace gestion_de_comisiones.Servicios
 {
@@ -48,7 +49,7 @@ namespace gestion_de_comisiones.Servicios
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddHours(4),
+                Expires = DateTime.UtcNow.AddMinutes(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -64,6 +65,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($" usuario : {usuario} inicio la funcionalidad VerificarUsuario()");
                 UsuarioRepository UserRepos = new UsuarioRepository();
+                LoginRespuesta resp = new LoginRespuesta();
                 var objetoo = UserRepos.ObtenerUsuarioPorId(usuario);
                 if (objetoo != null)
                 {
@@ -73,12 +75,9 @@ namespace gestion_de_comisiones.Servicios
                     {
                         var nn = rol.nombre;
                         var listModulePadre = RolRepository.obtnerModulosPadres(usuario);
-                        var perfil = this.cargarPerfilesModulos(rol.idRol, usuario, objetoo.IdUsuario, listModulePadre);
-                        var token = this.getToken(usuario);
-
-                        var Result = Respuesta.ReturnResultdo(0, "roles obtenidos", perfil);
-                        return Result;
-
+                        resp.perfil = (PerfilModel)this.cargarPerfilesModulos(rol.idRol, usuario, objetoo.IdUsuario, listModulePadre);
+                        resp.token = this.getToken(usuario);
+                        return Respuesta.ReturnResultdo(0, "roles obtenidos", resp);                        
                     }
                     else
                     {
@@ -86,8 +85,7 @@ namespace gestion_de_comisiones.Servicios
                         // var resulte = Respuesta.ReturnResultdo(1, "No exite rol", "");
                         PerfilModel objPerfil = new PerfilModel();
                         Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
-                        var Result = Respuesta.ReturnResultdo(0, "Aun no tiene rol asignado.", objPerfil);
-                        return Result;
+                        return Respuesta.ReturnResultdo(0, "Aun no tiene rol asignado.", resp);                     
                     }
                    
                 }

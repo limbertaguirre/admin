@@ -9,7 +9,8 @@ const defaultState={
     listSucursales:[],
     idUsuario:0,
     nombre:'',
-    apellido:''
+    apellido:'',
+    token:''
 };
 
 export default function reducer(state = defaultState, action){
@@ -21,7 +22,8 @@ export default function reducer(state = defaultState, action){
               userName:action.userName,
               idUsuario:action.idUsuario,
               nombre:action.nombre,
-              apellido:action.apellido
+              apellido:action.apellido,
+              token:action.token
             };
         case Type.LOAD_LOGIN_ERROR:
             return {
@@ -32,7 +34,8 @@ export default function reducer(state = defaultState, action){
                 loadFail:true,
                 idUsuario:0,
                 nombre:'',
-                apellido:''                
+                apellido:'',
+                token:''                
             };
         case Type.CLOSE_SESION:
             return {
@@ -41,6 +44,7 @@ export default function reducer(state = defaultState, action){
                 userName:'',
                 loadFail:false,
                 idUsuario:0,
+                token:''
             };
         case Type.OPEN_MODAL_USER:
             return {
