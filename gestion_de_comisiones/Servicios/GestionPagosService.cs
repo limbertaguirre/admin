@@ -300,5 +300,34 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object CerrarPagoComision(CerrarPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
+
+                int idEstadoComisionSiFacturo = 10; //VARIABLE
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
+                int idTipoComisionPagoComision = 1; //parametro
+                int idTipoFormaPagoSionPay = 1; //parametro
+                int idTipoFormaPagoTransferencia = 2; //parametro
+
+                VerificarPagoSionPayInput parametros = new VerificarPagoSionPayInput { idCiclo = param.idCiclo, usuarioLogin=param.usuarioLogin };
+
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(parametros, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (comisiones.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
+                if (comisiones.Cantidad > 0)
+                   return Respuesta.ReturnResultdo(1, "Pendientes en el pago de sion pay", comisiones);
+               
+                return Respuesta.ReturnResultdo(1, "en proceso","" );
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch CerrarPagoComision()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

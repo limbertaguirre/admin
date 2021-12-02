@@ -372,7 +372,7 @@ const useStyles = makeStyles((theme) => ({
                             type="submit"
                             variant="contained"
                             color="primary"
-                            className={style.submitSAVE}
+                            className={style.submitCargar}
                             onClick = {()=> confirmarCierrePagos()}                                         
                             >
                               <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
