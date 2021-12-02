@@ -978,15 +978,22 @@ namespace gestion_de_comisiones.Repository
             {
                 int idEstadoDEtalleListadoFormaPago = 4;//parametro
                 RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel();
-                Logger.LogWarning($" usuario: {usuarioLogin} inicio el cierre de transaccion repository VerificarTransaccionRechazadoMontoCero() ");
-                Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {idTipoComisionPagoComision}");
-                Logger.LogWarning($" usuario: {usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");               
+                Logger.LogInformation($" usuario: {usuarioLogin} inicio el cierre de transaccion repository VerificarTransaccionRechazadoMontoCero() ");
+                Logger.LogInformation($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {idTipoComisionPagoComision}");
+                Logger.LogInformation($" usuario: {usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");               
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision).ToList();
-                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Count();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision && x.IdEstadoListadoFormaPago == idEstadoDEtalleListadoFormaPago).ToList();
+
+                //cantidad debe volver monto cero ya que fueron resagados las transferencias
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.MontoNeto > 0).Count();
+                if(model.Cantidad > 0)
+                {
+                    Logger.LogInformation($" usuario: {usuarioLogin} HUBO transacciones rechazados con monto mayor a cero");
+                    Logger.LogInformation($" usuario: {usuarioLogin} exiten rechazado con monto mayor a cero :  {JsonConvert.SerializeObject(ListComisiones)} ");
+                }
                 model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
                 model.CodigoRespuesta = 1; //valor positivo
-                Logger.LogWarning($" usuario: {usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                Logger.LogInformation($" usuario: {usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
                 return model;
             }
             catch (Exception ex)

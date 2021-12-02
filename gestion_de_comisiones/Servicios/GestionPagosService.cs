@@ -324,6 +324,8 @@ namespace gestion_de_comisiones.Servicios
                 if (transacion.Cantidad > 0)
                     return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia.", transacion);
 
+                RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+
                 return Respuesta.ReturnResultdo(1, "en proceso","" );
             }
             catch (Exception ex)
