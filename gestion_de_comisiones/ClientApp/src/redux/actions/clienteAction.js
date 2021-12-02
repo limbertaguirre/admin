@@ -9,7 +9,7 @@ import * as Action from './messageAction';
           
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
-    //console.log('obtener clientes', res);
+    
         if(res.code === 0){  
             dispatch({
                 type:Types.LISTA_CLIENTES,
@@ -25,10 +25,10 @@ import * as Action from './messageAction';
   }
   export const buscarClientesXnombre= (criterio)=>{
     return (dispatch, getState )=>{        
-        console.log('buscarcliente  clien'); 
+        
           const data={usuarioLogin:getState().load.userName, criterio: criterio };
           requestPost('Cliente/BuscarCliente',data,dispatch).then((res)=>{ 
-            console.log('buscarcliente', res);
+            
                 if(res.code === 0){  
                     dispatch({
                         type:Types.BUSQUEDA_NOMBRE_CLIENTE,
@@ -183,9 +183,9 @@ import * as Action from './messageAction';
              fechaBaja : fechaBaja,
              motivoBaja : motivoBaja,
            };
-         console.log('update, ', data);
+         
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
-             console.log('actualizar cliente res:  : ', res);
+           
                 if(res.code === 0){                        
                   dispatch(Action.showMessage({ message: res.message, variant: "success" }));     
                   history.goBack();     

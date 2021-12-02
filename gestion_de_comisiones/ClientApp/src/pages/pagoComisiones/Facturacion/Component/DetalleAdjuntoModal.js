@@ -168,7 +168,7 @@ const DetalleAdjuntoModal = (props) => {
       };
 
       const onChangeFilePDF= (e, idDetalleEmpresa)=> {
-        //console.log('llego aceptar')
+       
         var file = e.target.files[0];
         const reader = new FileReader();
         var url = reader.readAsDataURL(file);
@@ -228,7 +228,7 @@ const DetalleAdjuntoModal = (props) => {
        };
       
        requestPost('Factura/obtenerCDetalleEmpresa',data,dispatch).then((res)=>{ 
-       console.log('detalle Edit  : ', res);
+       
             if(res.code === 0){         
               setListEmpresas(res.data.listEmpresa);
               setIdDetalleEmpresaSelected(res.data.idComisionDetalleEmpresa);

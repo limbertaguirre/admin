@@ -165,7 +165,7 @@ const CargarAplicaciones = (props) => {
   }
 
   const buscarFreelanzer=()=>{
-    console.log('enter', txtBusqueda);
+    
     if(txtBusqueda.length > 4){
           if(idCiclo && idCiclo !== 0){
                   const data={

@@ -72,7 +72,7 @@ export const requestGet = (url, data, dispatch) => {
   dispatch(loadingRequest());
    const token = localStorage.getItem("token");
   const headers = { ...data, headers: { ...data, Authorization: token  } }; 
-  console.log('headers: '+ headers.headers.token); 
+  
   return apiComerce.get(url, headers)
     .then((response) => {
       return _hanldeThen(response, dispatch);
@@ -88,7 +88,7 @@ export const requestPost = (url, data, dispatch) => {
   const config = {
                   headers: { "Content-Type": "application/json" ,"Authorization":token  }
                  };
-     console.log('headers: '+ config.headers);
+     
   return apiComerce.post(url, data, config)
     .then((response) => {
       return _hanldeThen(response, dispatch);
