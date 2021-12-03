@@ -1675,7 +1675,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 
         CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
         as
-        select c.id_ciclo
+        select c.id_comision, c.id_ciclo
         , cde.id_empresa
         , TRIM(e.nombre) as empresa
         , c.id_tipo_comision
@@ -1690,7 +1690,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
         where l.monto_neto <> 0
         and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-        group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision, l.id_tipo_pago, cec.id_estado_comision
+        group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision, l.id_tipo_pago, cec.id_estado_comision, c.id_comision
         GO
 
 
@@ -2211,14 +2211,19 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     GO
     CREATE VIEW [dbo].[vwObtenerRezagadosPagos]
     as
-    select 
+    select
+    c.id_comision,
     c.id_ciclo,
+    ci.nombre,
     cde.id_empresa,
     TRIM(e.nombre) as empresa,
     l.id_lista_formas_pago,
+    dl.id_estado_listado_forma_pago,
+    dl.habilitado estado_listado_forma_pago_habilitado,
     l.id_comisiones_detalle,
     cde.id_comision_detalle_empresa,
     cde.estado as id_estado_comision_detalle_empresa,
+    d.id_estado_listado_forma_pago,
     f.codigo_cnx as [CODIGO_DE_CLIENTE],
     f.cuenta_bancaria AS [NRO_DE_CUENTA],
     f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
@@ -2234,10 +2239,12 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     case when isnull(b.id_banco, 0) = 17 then '' else case when isnull(ciu.id_pais, -1) = 1 then ciu.codigo else '' end end SUCURSAL_DESTINO,
     ci.nombre as GLOSA,
     l.id_tipo_pago
-    from LISTADO_FORMAS_PAGO l
-    inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-    inner join GP_COMISION c on c.id_comision = cd.id_comision
-    inner join GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
+    from BDMultinivel.dbo.LISTADO_FORMAS_PAGO l
+    inner join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl on dl.id_lista_formas_pago = l.id_lista_formas_pago
+    inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+    inner join BDMultinivel.dbo.GP_COMISION c on c.id_comision = cd.id_comision
+    inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
+    inner join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL d on d.id_lista_formas_pago = l.id_lista_formas_pago
     inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
     inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
     inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
@@ -2247,7 +2254,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     where cde.monto_neto <> 0
     and c.id_tipo_comision = 2
     and cec.id_estado_comision = 11 -- COMISIONES REZAGADOS PAGOS
-    and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago,  l.id_lista_formas_pago
-
+    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa,
+    e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago, l.id_lista_formas_pago, c.id_comision, ci.nombre, c.fecha_creacion, c.fecha_actualizacion,
+    dl.id_estado_listado_forma_pago, dl.habilitado
     GO

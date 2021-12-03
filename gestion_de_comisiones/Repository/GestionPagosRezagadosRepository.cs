@@ -122,7 +122,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public GestionPagosRezagadosEvent handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        public GestionPagosRezagadosEvent handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body)
         {
             try
             {
@@ -143,6 +143,12 @@ namespace gestion_de_comisiones.Repository
                                             Direction = System.Data.ParameterDirection.Output,
                                 },
                                 new SqlParameter() {
+                                            ParameterName = "@ComisionId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.comisionId 
+                                },
+                                new SqlParameter() {
                                             ParameterName = "@CicloId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
@@ -156,22 +162,22 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
                 var recargarCicloActual = false;
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS] @CicloId, @UsuarioId  ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS] @CicloId, @UsuarioId  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, fin repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue {returnValue}  ");
+                Logger.LogInformation($" result: {result}, fin repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue {returnValue}  ");
                 if (returnValue == -1)
                 {
                     // Rollback
-                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue -1. Catch e hizo Rollback. Analizar la razon.");
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue -1. Catch e hizo Rollback. Analizar la razon.");
                 }
                 else if (returnValue == 1)
                 {
-                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 1. No hay pagos de transferencias pendientes de pago y se registro en tabla detalle forma de pagos.");
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue 1. No hay pagos de transferencias pendientes de pago y se registro en tabla detalle forma de pagos.");
                     recargarCicloActual = true;
                 }
                 else if (returnValue == 2)
                 {
-                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 2. Aun hay pagos de transferencias pendientes de pago.");
+                    Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue 2. Aun hay pagos de transferencias pendientes de pago.");
                 }
 
                 var cantidadPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes

@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-CREATE PROC [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS](@cicloId int, @usuarioId int)
+CREATE PROC [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS](@comisionId int, @cicloId int, @usuarioId int)
 AS
 BEGIN TRANSACTION
 BEGIN TRY
@@ -8,32 +8,33 @@ BEGIN TRY
     DECLARE @IMPBODY   VARCHAR (500);
     DECLARE @IMPSUBJECT   VARCHAR (500);
 
-    DECLARE @cantidadConfirmados int = 0 
+    DECLARE @cantidadRezagados int = 0 
     DECLARE @estadoListadoFormaPagoExitoso int = 3
     DECLARE @tipoPagoTransferencia int = 2
-    DECLARE @estadoComisionDetalleEmpresaPendiente int = 1
+    DECLARE @estadoComisionDetalleEmpresaRechazado int = 3
     DECLARE @estadoComisionDetalleEmpresaConfirmado int = 2
-    DECLARE @tipoComisionPago int = 1
-    SET @cantidadConfirmados = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
-                            where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaPendiente
+    DECLARE @tipoComisionPagoRezagados int = 2
+    SET @cantidadRezagados = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                            where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado 
                             and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                                where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0))
-                            
-                            select top 1 i.* from BDMultinivel.dbo.vwObtenerRezagadosPagos i
-                            select top 1 i.* from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
-                            select COUNT(i.id_comisiones_detalle) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
-                            where i.id_ciclo = 80 and i.id_tipo_pago = 2 and i.id_estado_comision_detalle_empresa = 1
+                                                where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPagoRezagados and i.monto_transferir <> 0))
+
+                            select * from BDMultinivel.dbo.GP_COMISION c 
+                            inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
+                            where cec.id_estado_comision = 11 and c.id_tipo_comision = 2 and cec.habilitado = 1
+
+                            select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                            where i.id_comision = 120 and i.id_ciclo = 83 and i.id_tipo_pago = 2 and i.id_estado_comision_detalle_empresa = 3
                             and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                                where i.id_ciclo = 80 and i.id_tipo_pago = 2 and i.id_tipo_comision = 1 and i.monto_transferir <> 0)
-                            
-    IF (@cantidadConfirmados <= 0)        
+                                                where i.id_ciclo = 83 and i.id_tipo_pago = 2 and i.id_tipo_comision = 2 and i.monto_transferir <> 0 and i.id_comision = 120)
+    IF (@cantidadRezagados <= 0)        
     BEGIN                            
-        -- No hay pendientes de confirmacion
-        -- Verificando si esta o no en detalle listado forma pago        
-        DECLARE @cantidad int = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
-                            where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
+        -- No hay comisiones_detalles en estado de rechazado en todas las empresas.
+        -- Verificando si esta o no en detalle listado forma pago
+        DECLARE @cantidad int = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                            where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
                             and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                                where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0)
+                                                where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPagoRezagados and i.monto_transferir <> 0)
                             and i.id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL i where i.habilitado = 1 and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoExitoso))
                                                        
         IF(@cantidad <= 0)
@@ -41,7 +42,7 @@ BEGIN TRY
             -- No esta en detalle listado forma pago por tanto registramos en detalle
             INSERT INTO GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) select 1, i.id_lista_formas_pago, @estadoListadoFormaPagoExitoso, @usuarioId from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
                             where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
-                            and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i where i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0)
+                            and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i where i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPagoRezagados and i.monto_transferir <> 0)
                             group by i.id_lista_formas_pago
 
             COMMIT TRANSACTION
@@ -56,7 +57,7 @@ BEGIN TRY
     END
     ELSE
     BEGIN
-        -- Aun hay pendientes de confirmacion
+        -- Aun hay comisiones_detalles en estado de rechazado en algunas empresas.
         COMMIT TRANSACTION
         RETURN 2
     END
