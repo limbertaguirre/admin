@@ -25,16 +25,18 @@ namespace gestion_de_comisiones.Servicios
     public class LoginService : ILoginService
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
-        //private readonly IUsuarioRepository UserRepos;
         private readonly ILogger<LoginService> Logger;
         private readonly IConfiguration Config;
+        private readonly INotificacionSocketService NotificacionSocketService;
 
-        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository, IConfiguration config, IUsuarioRepository usuarioRepository)
+        public LoginService(ILogger<LoginService> logger, IRolRepository rolRepository, IConfiguration config, IUsuarioRepository usuarioRepository,
+            INotificacionSocketService notificacionSocketService)
         {
             Logger = logger;
             RolRepository = rolRepository;
             Config = config;
             UsuarioRepository = usuarioRepository;
+            NotificacionSocketService = notificacionSocketService;
         }
         public IRolRepository RolRepository { get; }
         private IUsuarioRepository UsuarioRepository { get; }
@@ -60,14 +62,14 @@ namespace gestion_de_comisiones.Servicios
             return bear_token;
         }
 
-        public object VerificarUsuario(string usuario)
+        public async Task<object> VerificarUsuarioAsync(string usuario)
         {
             try
             {
                 Logger.LogInformation($" usuario : {usuario} inicio la funcionalidad VerificarUsuario()");
-                //UsuarioRepository UserRepos = new UsuarioRepository();
+                UsuarioRepository UserRepos = new UsuarioRepository();
                 LoginRespuesta resp = new LoginRespuesta();
-                var objetoo = UsuarioRepository.ObtenerUsuarioPorId(usuario);
+                var objetoo = UserRepos.ObtenerUsuarioPorId(usuario);
                 if (objetoo != null)
                 {
                     //-----------------------------------------------------------------------------------------------------
@@ -78,6 +80,7 @@ namespace gestion_de_comisiones.Servicios
                         var listModulePadre = RolRepository.obtnerModulosPadres(usuario);
                         resp.perfil = (PerfilModel)this.cargarPerfilesModulos(rol.idRol, usuario, objetoo.IdUsuario, listModulePadre);
                         resp.token = this.getToken(usuario);
+                        await NotificacionSocketService.NotificarUnLogin(usuario, resp.token);
                         return Respuesta.ReturnResultdo(0, "roles obtenidos", resp);
                     }
                     else
@@ -178,7 +181,6 @@ namespace gestion_de_comisiones.Servicios
                     objPerfil.nombre = "";
                     objPerfil.Apellido = "";
                 }
-
                 return objPerfil;
             }
             catch (Exception ex)
@@ -187,7 +189,6 @@ namespace gestion_de_comisiones.Servicios
                 PerfilModel objPerfil = new PerfilModel();
                 return objPerfil;
             }
-
         }
 
         public object verificarSession(string usuario, string netSessionId, int estado)
@@ -243,6 +244,5 @@ namespace gestion_de_comisiones.Servicios
             }
             return null;
         }
-
     }
 }
