@@ -87,7 +87,7 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        public object handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body)
         {
             try
             {

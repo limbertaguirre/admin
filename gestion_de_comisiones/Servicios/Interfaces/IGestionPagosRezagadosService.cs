@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object GetCiclos(string usuario);
         public object GetComisionesDePagos(ComisionesPagosInput param);
         public object handleTransferenciasEmpresas(ComisionesPagosInput param);
-        object handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
+        object handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
     }
 }

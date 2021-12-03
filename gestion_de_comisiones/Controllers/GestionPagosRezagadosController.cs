@@ -74,7 +74,7 @@ namespace gestion_de_comisiones.Controllers
         }
 
         [HttpPost]
-        public ActionResult handleVerificarPagosTransferenciasTodos([FromBody] DownloadFileTransferenciaInput body)
+        public ActionResult handleVerificarPagosTransferenciasTodos([FromBody] ObtenerRezagadosPagosTransferenciasInput body)
         {
             try
             {
