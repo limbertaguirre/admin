@@ -52,11 +52,10 @@ BEGIN TRY
 		  END
 		  IF @IDESTADOCOMISION_ACTUAL = @ID_ESTADO_COMISION_FORMA_DE_PAGO 
 		  BEGIN
-		       -- ACTUALIZAMOS COMISION A CERRADO
-			   select @IDCOMISION_SELECCIONADO as 'idcomi',  @IDCOMISION_DETALLE_ESTADO_OLD as 'id detall estado actual', @IDESTADOCOMISION_ACTUAL as 'estado old'
-			  -- --dehabilitamos el actual estado 10 de forma de pago 
+		       -- ACTUALIZAMOS COMISION A CERRADO			
+			   --dehabilitamos el actual estado 10 de forma de pago 
 			   UPDATE BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I set habilitado=@ESTADO_DESAHABILITADO   where id_comision_estado_comision_i= @IDCOMISION_DETALLE_ESTADO_OLD
-			  -- --creamos un nuevo estado pago cerrado de comision
+			   --creamos un nuevo estado pago cerrado de comision
 			   insert into BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I(habilitado, id_comision,id_estado_comision, id_usuario,fecha_creacion, fecha_actualizacion)
 			   values(@ESTADO_HABILITADO, --habilitado, 
 			          @IDCOMISION_SELECCIONADO, --id_comision,

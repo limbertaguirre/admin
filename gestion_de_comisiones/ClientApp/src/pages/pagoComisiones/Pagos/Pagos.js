@@ -323,6 +323,7 @@ const useStyles = makeStyles((theme) => ({
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
                 //inicializa lista                
                 inicializarListaPagos();
+                cargarCiclo(userName);
 
             }else{
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
@@ -343,6 +344,8 @@ const useStyles = makeStyles((theme) => ({
       setListaComisionesAPagar([]);
       setStatusBusqueda(false);
       setTxtBusqueda('');
+      setIdCicloSelected(0);
+      setListCiclo([]);
     }
   
     return (
