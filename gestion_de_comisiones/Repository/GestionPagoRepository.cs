@@ -988,7 +988,7 @@ namespace gestion_de_comisiones.Repository
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.MontoNeto > 0).Count();
                 if(model.Cantidad > 0)
                 {
-                    Logger.LogInformation($" usuario: {usuarioLogin} HUBO transacciones rechazados con monto mayor a cero");
+                    Logger.LogInformation($" usuario: {usuarioLogin} HUBO transacciones rechazados con monto mayor a cero verifique");
                     Logger.LogInformation($" usuario: {usuarioLogin} exiten rechazado con monto mayor a cero :  {JsonConvert.SerializeObject(ListComisiones)} ");
                 }
                 model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
@@ -1003,6 +1003,64 @@ namespace gestion_de_comisiones.Repository
                 return model;
             }
         }
+
+        public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param, int idTipoComision)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el CerrarPagoComisionPorTipoComision() ");
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  parametros :{ param},  idtipoComision: {idTipoComision}");
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idCiclo
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.usuarioId
+                                },
+                                  new SqlParameter() {
+                                            ParameterName = "@id_tipo_comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = idTipoComision
+                                }
+                };
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO] @id_ciclo,  @id_usuario, @id_tipo_comision  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0)
+                {
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se cerro el pago de comision EL [SP_CERRAR_COMISION_PAGO_POR_TIPO].");
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  respuesta sp: {returnValue}");
+                    return returnValue;
+                }
+                else
+                {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    return -1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch CerrarFormaDePago() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
+                return -2;
+            }
+        }
+
 
 
     }

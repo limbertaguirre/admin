@@ -322,11 +322,17 @@ namespace gestion_de_comisiones.Servicios
                 if (transacion.CodigoRespuesta == -1)
                     return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
                 if (transacion.Cantidad > 0)
-                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia.", transacion);
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia, verifique los montos", transacion);
 
                 RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if(verificarMonto.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (verificarMonto.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes verificar los monto de las transferencias ", verificarMonto);
 
-                return Respuesta.ReturnResultdo(1, "en proceso","" );
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param, idTipoComisionPagoComision);
+
+                return Respuesta.ReturnResultdo(1, "listo para cerrar el ciclo de pago","" );
             }
             catch (Exception ex)
             {
