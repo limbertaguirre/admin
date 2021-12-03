@@ -320,7 +320,10 @@ const useStyles = makeStyles((theme) => ({
             let response= await Actions.ConfirmarCierrePago(userNa, idUser,idCICLO, dispatch)   
             console.log('respom : ',response);
             if(response && response.code == 0){
-                 console.log('code ok  : ',response);
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
+                //inicializa lista                
+                inicializarListaPagos();
+
             }else{
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
             }
@@ -336,6 +339,11 @@ const useStyles = makeStyles((theme) => ({
       settipTSnackbar('warning');
     }
 
+    const inicializarListaPagos =() =>{
+      setListaComisionesAPagar([]);
+      setStatusBusqueda(false);
+      setTxtBusqueda('');
+    }
   
     return (
       <>

@@ -1,5 +1,5 @@
 
-CREATE PROCEDURE [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO]
+alter PROCEDURE [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO]
      @id_Ciclo     int,
      @id_usuario int,
 	 @id_tipo_comision int
@@ -14,6 +14,8 @@ BEGIN TRY
    DECLARE @ID_USUARIO_LOGUEADO INT;
    DECLARE @ID_CICLO_VAR INT;
    DECLARE @ID_TIPO_COMISION_PAGOCOMISION INT;
+   DECLARE @ID_ESTADO_COMISION_PAGO_COMISION_CERRADO INT;
+   DECLARE @ID_ESTADO_COMISION_FORMA_DE_PAGO INT;
 
    DECLARE @ID_ESTADOCOMISION_CERRADO_FORMA_PAGO_TABLE INT;
    DECLARE @ID_ESTADOCOMISION_PAGO_COMISION_CERRADO_TABLE INT;
@@ -26,17 +28,58 @@ BEGIN TRY
    --//GP_TIPO_COMISION 
    SET @ESTADO_DESAHABILITADO=0;
    SET @ESTADO_HABILITADO=1;
+   SET @ID_ESTADO_COMISION_FORMA_DE_PAGO=10
+   SET @ID_ESTADO_COMISION_PAGO_COMISION_CERRADO=13;
 
    DECLARE @IDCOMISION_SELECCIONADO INT;
+   DECLARE @IDCOMISION_DETALLE_ESTADO_OLD INT;
+   DECLARE @IDESTADOCOMISION_ACTUAL INT;
+   SET @IDCOMISION_SELECCIONADO=0;
+   SET @IDCOMISION_DETALLE_ESTADO_OLD=0;
+   SET @IDESTADOCOMISION_ACTUAL = 0
 
-   --select * from BDMultinivel.dbo.GP_COMISION co 
-   --INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I on 
+	   select top(1) @IDCOMISION_SELECCIONADO=co.id_comision, @IDCOMISION_DETALLE_ESTADO_OLD= CE.id_comision_estado_comision_i,@IDESTADOCOMISION_ACTUAL= CE.id_estado_comision  from BDMultinivel.dbo.GP_COMISION co 
+	   INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I CE on co.id_comision = CE.id_comision 
+	   where co.id_ciclo=@ID_CICLO_VAR and co.id_tipo_comision =@ID_TIPO_COMISION_PAGOCOMISION and CE.habilitado = @ESTADO_HABILITADO
 
-    --select * from BDMultinivel.dbo.GP_COMISION co where co.id_ciclo=83 and co.id_tipo_comision =1
-    --select * from BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I where id_comision=117 and habilitado='true'
-		
-	COMMIT TRANSACTION;		    
-	return 2           
+	   IF @ID_TIPO_COMISION_PAGOCOMISION = 1 --PROCESAN LOS TIPO PAGOS
+	   BEGIN	   
+	      SELECT 'PROCESAR TIPO PAGO'
+		  IF @IDESTADOCOMISION_ACTUAL = @ID_ESTADO_COMISION_PAGO_COMISION_CERRADO --SI SEENCUENTA CERRADO
+		  BEGIN 
+		      return 1 -- COMISION CERRADA EXISTENTE
+			-- SELECT 'COMISION CERRADA EXISTENTE'
+		  END
+		  IF @IDESTADOCOMISION_ACTUAL = @ID_ESTADO_COMISION_FORMA_DE_PAGO 
+		  BEGIN
+		       -- ACTUALIZAMOS COMISION A CERRADO
+			   select @IDCOMISION_SELECCIONADO as 'idcomi',  @IDCOMISION_DETALLE_ESTADO_OLD as 'id detall estado actual', @IDESTADOCOMISION_ACTUAL as 'estado old'
+			  -- --dehabilitamos el actual estado 10 de forma de pago 
+			   UPDATE BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I set habilitado=@ESTADO_DESAHABILITADO   where id_comision_estado_comision_i= @IDCOMISION_DETALLE_ESTADO_OLD
+			  -- --creamos un nuevo estado pago cerrado de comision
+			   insert into BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I(habilitado, id_comision,id_estado_comision, id_usuario,fecha_creacion, fecha_actualizacion)
+			   values(@ESTADO_HABILITADO, --habilitado, 
+			          @IDCOMISION_SELECCIONADO, --id_comision,
+					  @ID_ESTADO_COMISION_PAGO_COMISION_CERRADO, --id_estado_comision, 
+					  @ID_USUARIO_LOGUEADO, --id_usuario,
+					  GETDATE(), -- fecha_creacion, 
+					  GETDATE() -- fecha_actualizacion
+					  )
+
+            COMMIT TRANSACTION;		
+		    RETURN 2
+			 --SELECT 'CIERRE EXITOSO'
+		  END
+
+	   END
+	   IF @ID_TIPO_COMISION_PAGOCOMISION = 2 --PROCESAN LOS TIPO PAGOS REZAGADOS
+	   BEGIN	 
+	       COMMIT TRANSACTION;		
+	       RETURN 4
+	      -- SELECT 'PROCESAR LOS RESAGADOS'
+	   END
+
+       
 
 END TRY
 BEGIN CATCH
@@ -60,4 +103,4 @@ BEGIN CATCH
          ROLLBACK TRANSACTION;        
 		 return -1
       END
-END CATCH;
+END CATCH
