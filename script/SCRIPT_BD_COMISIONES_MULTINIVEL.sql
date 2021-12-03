@@ -1900,10 +1900,11 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         DECLARE @estadoComisionDetalleEmpresaPendiente int = 1
         DECLARE @estadoComisionDetalleEmpresaConfirmado int = 2
         DECLARE @tipoComisionPago int = 1
+        DECLARE @idEstadoComisionPago int = 10
         SET @cantidadConfirmados = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
                                 where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaPendiente
                                 and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                                    where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0))
+                                                    where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.id_estado_comision = @idEstadoComisionPago and i.monto_transferir <> 0))
                                 
         IF (@cantidadConfirmados <= 0)        
         BEGIN                            
@@ -1912,7 +1913,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
             DECLARE @cantidad int = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
                                 where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
                                 and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                                    where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0)
+                                                    where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.id_estado_comision = @idEstadoComisionPago and i.monto_transferir <> 0)
                                 and i.id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL i where i.habilitado = 1 and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoExitoso))
                                                         
             IF(@cantidad <= 0)
@@ -1920,7 +1921,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                 -- No esta en detalle listado forma pago por tanto registramos en detalle
                 INSERT INTO GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) select 1, i.id_lista_formas_pago, @estadoListadoFormaPagoExitoso, @usuarioId from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i
                                 where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
-                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i where i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.monto_transferir <> 0)
+                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i where i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionPago and i.id_estado_comision =@idEstadoComisionPago and i.monto_transferir <> 0)
                                 group by i.id_lista_formas_pago
 
                 COMMIT TRANSACTION
