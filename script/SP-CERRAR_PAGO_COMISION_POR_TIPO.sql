@@ -27,8 +27,12 @@ BEGIN TRY
    SET @ESTADO_DESAHABILITADO=0;
    SET @ESTADO_HABILITADO=1;
 
+   DECLARE @IDCOMISION_SELECCIONADO INT;
 
-    --select * from BDMultinivel.dbo.GP_COMISION where id_ciclo=83 and id_tipo_comision =1
+   --select * from BDMultinivel.dbo.GP_COMISION co 
+   --INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I on 
+
+    --select * from BDMultinivel.dbo.GP_COMISION co where co.id_ciclo=83 and co.id_tipo_comision =1
     --select * from BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I where id_comision=117 and habilitado='true'
 		
 	COMMIT TRANSACTION;		    
