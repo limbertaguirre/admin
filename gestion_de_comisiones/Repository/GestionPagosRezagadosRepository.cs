@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -63,6 +64,36 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
 
+            }
+        }
+
+        public object ObtenerPagosRezagadosTransferencias(ObtenerRezagadosPagosTransferenciasInput body)
+        {
+            try
+            {
+
+                Logger.LogInformation($" usuario: {body.user} inicio el repository ObtenerPagosRezagadosTransferencias() ");
+                Logger.LogInformation($" usuario: {body.user} parametros: idciclo: {body.cicloId}");
+                int cicloId = Convert.ToInt32(body.cicloId);
+                int tipoPagoTransferencia = 2;
+                List<VwObtenerRezagadosPago> info = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdComision == body.comisionId && x.IdTipoPago == tipoPagoTransferencia)
+                    .ToList();
+
+                var montoTotal = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdComision == body.comisionId && x.IdTipoPago == tipoPagoTransferencia)
+                    .Sum(x => x.ImportePorEmpresa);
+
+                ObtenerRezagadosPagosTransferenciasOutput o = new ObtenerRezagadosPagosTransferenciasOutput();
+                o.list = info;
+                o.montoTotal = montoTotal.ToString();
+                return o;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError ($" usuario: {body.user} error catch ObtenerPagosRezagadosTransferencias() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return list;
             }
         }
     }

@@ -39,7 +39,7 @@ namespace gestion_de_comisiones.Servicios
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {usuario} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
+                Logger.LogError($"usuario : {usuario} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
             }
         }
@@ -58,9 +58,24 @@ namespace gestion_de_comisiones.Servicios
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch GestionPagosRezagadosService - GetComisionesDePagos error mensaje: {ex.Message}");
-                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch GestionPagosRezagadosService - GetComisionesDePagos error StackTrace: {ex.StackTrace}");
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch GestionPagosRezagadosService - GetComisionesDePagos error mensaje: {ex.Message}");
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch GestionPagosRezagadosService - GetComisionesDePagos error StackTrace: {ex.StackTrace}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtenerlas comisiones de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ObtenerPagosRezagadosTransferencias(ObtenerRezagadosPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el servicio ObtenerPagosRezagadosTransferencias() ");
+                var folder = Repository.ObtenerPagosRezagadosTransferencias(param);
+                return Respuesta.ReturnResultdo(0, "ok", folder);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.user} error catch ObtenerPagosRezagadosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de rezagados", "problemas en el servidor, intente mas tarde");
             }
         }
     }

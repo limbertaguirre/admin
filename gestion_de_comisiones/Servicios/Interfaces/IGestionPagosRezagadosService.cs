@@ -7,5 +7,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     {
         public object GetCiclos(string usuario);
         public object GetComisionesDePagos(ComisionesPagosInput param);
+        public object ObtenerPagosRezagadosTransferencias(ObtenerRezagadosPagosTransferenciasInput param);
     }
 }

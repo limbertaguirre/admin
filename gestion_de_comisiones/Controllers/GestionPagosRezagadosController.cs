@@ -38,7 +38,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Hubo un inconveniente al obtener los ciclos de los rezagados." });
             }
         }
-        //POST: gestionPagos/GetComisionesPagos
+        //POST: gestionPagosRezagados/GetComisionesPagos
         [HttpPost]
         public ActionResult GetComisionesPagos([FromBody] ComisionesPagosInput param)
         {
@@ -55,6 +55,22 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogError($"usuario: {param.usuarioLogin} error catch GestionPagosRezagadosController - GetComisionesPagos() controller StackTrace: { e.StackTrace }");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Hubo un inconveniente al listar a los rezagados del ciclo seleccionado." });
             }
-        }       
+        }
+
+        //POST: gestionPagosRezagados/ObtenerPagosRezagadosTransferencias
+        [HttpPost]
+        public ActionResult ObtenerPagosRezagadosTransferencias([FromBody] ObtenerRezagadosPagosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador ObtenerPagosRezagadosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.ObtenerPagosRezagadosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  ObtenerPagosRezagadosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes de rezagados" });
+            }
+        }
     }
 }
