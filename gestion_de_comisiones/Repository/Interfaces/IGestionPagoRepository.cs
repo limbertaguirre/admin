@@ -25,5 +25,8 @@ namespace gestion_de_comisiones.Repository.Interfaces
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
         public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInput param, int idEstadoComision, int idTipoComisionPagoComision);
         public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo);
+        public RespuestaPorTipoPagoModel VerificarTipoPagoCiclo(int idCiclo, string usuarioLogin, int idEstadoComision, int idTipoComisionPagoComision, int idTipoFormaPago);
+        public RespuestaPorTipoPagoModel VerificarTransaccionRechazadoMontoCero(int idCiclo, string usuarioLogin, int idEstadoComision, int idTipoComisionPagoComision, int idTipoFormaPago);
+        public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param, int idTipoComision);
     }
 }
