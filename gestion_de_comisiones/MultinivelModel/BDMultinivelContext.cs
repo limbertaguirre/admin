@@ -3036,7 +3036,11 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
 
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
 
                 entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
 
@@ -3250,6 +3254,16 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ENTIDAD_DESTINO");
 
+                entity.Property(e => e.EstadoListadoFormaPagoHabilitado).HasColumnName("estado_listado_forma_pago_habilitado");
+
+                entity.Property(e => e.FechaActualizacionComision)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion_comision");
+
+                entity.Property(e => e.FechaCreacionComision)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion_comision");
+
                 entity.Property(e => e.FechaDePago)
                     .HasMaxLength(92)
                     .IsUnicode(false)
@@ -3264,6 +3278,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
 
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
                 entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
 
                 entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
@@ -3271,6 +3287,10 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
                 entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
+
+                entity.Property(e => e.IdEstadoListadoFormaPago).HasColumnName("id_estado_listado_forma_pago");
+
+                entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
 
                 entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
@@ -3287,6 +3307,16 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(1)
                     .IsUnicode(false)
                     .HasColumnName("MONEDA_DESTINO");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.NombreBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("NOMBRE_BANCO");
 
                 entity.Property(e => e.NombreDeCliente)
                     .IsRequired()

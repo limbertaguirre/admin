@@ -253,3 +253,17 @@ export async function handleVerificarPagosTransferenciasTodos(
     });
   });
 }
+
+export async function ConfirmarCierrePago(userName,usuarioId, idCiclo, dispatch) {
+  return new Promise((resolve) => {
+    const data = {
+      usuarioLogin: userName,
+      usuarioId:usuarioId,
+      idCiclo: parseInt(idCiclo)
+    };
+     
+    requestPost( "gestionPagos/CerrarPagoComision", data, dispatch).then((response) => {
+      resolve(response);
+    });
+  });
+}
