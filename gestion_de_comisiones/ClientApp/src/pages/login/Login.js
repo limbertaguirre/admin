@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, IconButton, TextField } from "@material-ui/core";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
@@ -23,6 +23,8 @@ import styles from "../../assets/jss/material-kit-react/views/loginPage";
 import image from "../../assets/img/bg7.jpg";
 import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
 import RegistroModal from './RegistroModal';
+import UsuarioBloqueado from "./UsuarioBloqueado";
+import { is } from "date-fns/locale";
 
 const useStyles = makeStyles(styles);
 
@@ -91,7 +93,7 @@ const useStyles2 = makeStyles((theme) => ({
   const Login = (props) => {  
 
         const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
-        const {modalUserNew} = useSelector((stateSelector) =>{ return stateSelector.load});
+        const {modalUserNew,isBloqueado, tiempoBloqueo} = useSelector((stateSelector) =>{ return stateSelector.load});
 
         setTimeout(function() {
             setCardAnimation("");
@@ -107,20 +109,28 @@ const useStyles2 = makeStyles((theme) => ({
     const [showPassword, onShowPassword] = useState(false);
     const [carnetError, setCarnetError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
+    const [userBloqueado, setUserBloqueado] = useState(false);
+    const [userBloqueadoTiempo, setUserBloqueadoTiempo] = useState(false);
+ 
+
 
       const handleClickShowPassword = () => {
         onShowPassword(prev => !prev);
       }
       const isValidPassword = (password) => {    
+          /*dispatch(
+            Action.inicializarBloquedo());*/
         return  password.length >= 5;
       };
       const isValidCarnet = (carnet) => {    
         return  carnet.length >= 3;
       };
       const isFormValid=()=> {
+      
         return isValidCarnet(carnet) && isValidPassword(password);
       }
       const onChangeFormulario = (e)=>{     
+        inicializarBloqueoUsuario()
           const texfiel = e.target.name;
           const value = e.target.value;
           if(texfiel === "carnet"){
@@ -132,13 +142,20 @@ const useStyles2 = makeStyles((theme) => ({
             setPasswordError(!isValidPassword(value));
           }          
       }
-      const _handleRegistrar=()=>{         
-          dispatch(Action.iniciarSesion(carnet, password));         
+      const _handleRegistrar=()=>{
+        setUserBloqueadoTiempo(0);
+        setUserBloqueado(false);
+
+         dispatch(Action.iniciarSesion(carnet, password));
       };
 
       const cerrarModal=()=>{
         dispatch(Action.cerrarRegistroModal());
       }
+    const inicializarBloqueoUsuario =()=>{
+      dispatch(Action.inicializarBloquedo());
+    }
+     
 
         
 
@@ -180,7 +197,6 @@ const useStyles2 = makeStyles((theme) => ({
                                   margin="normal"
                                   required
                                   fullWidth
-                                  id="email"
                                   label="Usuario"
                                   name="carnet"
                                   autoComplete="carnet"
@@ -224,7 +240,12 @@ const useStyles2 = makeStyles((theme) => ({
                                       </InputAdornment>
                                     )
                                   }}                          
-                                />              
+                                /> 
+                                <UsuarioBloqueado 
+                                  tiempo = {userBloqueadoTiempo}
+                                  ejecutar = {userBloqueado} 
+                                  mostrar = {true}
+                                />
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
                         <Button

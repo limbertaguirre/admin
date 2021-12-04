@@ -13,13 +13,13 @@ export const iniciarSesion= (userName,password)=>{
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{                   
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{
             if(res.code === 0){
-            var data= res.data;
-                 dispatch({
+                var data= res.data;
+                dispatch({
                     type: TypesHome.MENU_PAGE,
-                     menu:data.perfil.menus == null? [] : data.perfil.menus,
-                     perfiles:data.perfil.listaHash ==null? [] : data.perfil.listaHash,
+                    menu:data.perfil.menus == null? [] : data.perfil.menus,
+                    perfiles:data.perfil.listaHash ==null? [] : data.perfil.listaHash,
                 })
 
                 dispatch({
@@ -30,15 +30,27 @@ export const iniciarSesion= (userName,password)=>{
                     apellido:data.perfil.apellido,
                     token:'Bearer '+data.token
                 });
-                localStorage.setItem("token", 'Bearer '+data.token);    
-            }else if(res.code === 1){ 
+                localStorage.setItem("token", 'Bearer '+data.token);
+            }else if(res.code === 1){
+                dispatch({
+                    type:Types.USUARIO_BLOQUEADO,
+                    isBloqueado:false,
+                    tiempoBloqueo:0
+                });
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
                 dispatch({
                     type:Types.OPEN_MODAL_USER
-                })  
-            }               
-        })              
+                })
+            }else if(res.code === 3){
+                console.log('res ', res)
+                dispatch({
+                    type:Types.USUARIO_BLOQUEADO,
+                    isBloqueado:true,
+                    tiempoBloqueo: parseInt(res.data)
+                });
+            }
+        })
     }
   }
 
@@ -124,4 +136,12 @@ export const iniciarSesion= (userName,password)=>{
             window.localStorage.clear();                          
     }
   }
-  
+export const inicializarBloquedo = ()=>{
+    return (dispatch)=>{
+        dispatch({
+            type:Types.USUARIO_BLOQUEADO,
+            isBloqueado:false,
+            tiempoBloqueo: 0
+        })
+    }
+}

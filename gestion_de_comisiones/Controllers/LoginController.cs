@@ -49,14 +49,25 @@ namespace gestion_de_comisiones.Controllers
                     if (valid)
                     {                     
                         var usuario = Service.VerificarUsuario(model.userName);
+                        var t = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 1);
                         Logger.LogInformation($" usuario : {model.userName} fin de servicio sesion() : {JsonConvert.SerializeObject(usuario)}");
                         return Ok(usuario);                        
                     }
                     else
                     {
-                        var Result = new GenericDataJson<string> { Code = 1, Message = "Credenciales Invalidas de GRUPO SION" };
-                        Logger.LogWarning($" usuario : {model.userName} fin de servicio - Credenciales Invalidas de GRUPO SION");
-                        return Ok(Result);
+                        var responseTiempoBloqueo = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 0);
+                        if (responseTiempoBloqueo == null)
+                        {
+                            var Result = new GenericDataJson<string> { Code = 1, Message = "Credenciales Invalidas de GRUPO SION" };
+                            Logger.LogWarning($" usuario : {model.userName} fin de servicio - Credenciales Invalidas de GRUPO SION");
+                            return Ok(Result);
+                        }
+                        else
+                        {
+                            var Result = new GenericDataJson<string> { Code = 3, Message = "Usuario bloqueado", Data = responseTiempoBloqueo.ToString() };
+                            Logger.LogWarning($" usuario : {model.userName} fin de servicio - Usuario bloqueado, tiempo bloqueado: { responseTiempoBloqueo.ToString()}");
+                            return Ok(Result);
+                        }
                     }
                 }
             }

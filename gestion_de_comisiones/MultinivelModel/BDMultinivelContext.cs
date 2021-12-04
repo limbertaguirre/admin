@@ -28,6 +28,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Ciclo> Cicloes { get; set; }
         public virtual DbSet<Ciudad> Ciudads { get; set; }
         public virtual DbSet<ComisionDetalleEmpresa> ComisionDetalleEmpresas { get; set; }
+        public virtual DbSet<ControlUsuario> ControlUsuarios { get; set; }
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<EstadoAutorizacionComision> EstadoAutorizacionComisions { get; set; }
         public virtual DbSet<EstadoListadoFormaPago> EstadoListadoFormaPagoes { get; set; }
@@ -653,6 +654,38 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.VentasPersonales)
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("ventas_personales");
+            });
+
+            modelBuilder.Entity<ControlUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdControlUsuario)
+                    .HasName("PK__CONTROL___E299BFDC11DA6221");
+
+                entity.ToTable("CONTROL_USUARIO");
+
+                entity.Property(e => e.IdControlUsuario).HasColumnName("id_control_usuario");
+
+                entity.Property(e => e.CantidadIntentos).HasColumnName("cantidad_intentos");
+
+                entity.Property(e => e.Estado).HasColumnName("estado");
+
+                entity.Property(e => e.FechaBloquedo)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_bloquedo");
+
+                entity.Property(e => e.FechaDesbloqueo)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_desbloqueo");
+
+                entity.Property(e => e.NetSessionId)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("net_session_id");
+
+                entity.Property(e => e.Usuario)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("usuario");
             });
 
             modelBuilder.Entity<Empresa>(entity =>
