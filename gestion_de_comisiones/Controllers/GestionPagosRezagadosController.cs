@@ -59,7 +59,7 @@ namespace gestion_de_comisiones.Controllers
 
         //POST: gestionPagosRezagados/ObtenerPagosRezagadosTransferencias
         [HttpPost]
-        public ActionResult ObtenerPagosRezagadosTransferencias([FromBody] ObtenerRezagadosPagosTransferenciasInput param)
+        public ActionResult ObtenerPagosRezagadosTransferencias([FromBody] ObtenerPagosRezagadosTransferenciasInput param)
         {
             try
             {
@@ -70,6 +70,20 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogError($"usuario : {param.user} error catch  ObtenerPagosRezagadosTransferencias() controller ");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes de rezagados" });
+            }
+        }
+        [HttpPost]
+        public ActionResult ConfirmarPagosRezagadosTransferencias([FromBody] ConfirmarPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleConfirmarPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                return Ok(Service.ConfirmarPagosRezagadosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
     }

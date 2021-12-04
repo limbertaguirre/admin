@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Repository.Interfaces;
@@ -64,7 +65,7 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object ObtenerPagosRezagadosTransferencias(ObtenerRezagadosPagosTransferenciasInput param)
+        public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param)
         {
             try
             {
@@ -76,6 +77,29 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogError($"usuario : {param.user} error catch ObtenerPagosRezagadosTransferencias() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de rezagados", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} inicio el servicio ConfirmarPagosRezagadosTransferencias() body: {param}");
+                GestionPagosEvent r = Repository.ConfirmarPagosRezagadosTransferencias(param);
+                Logger.LogInformation($"GestionPagosRezagadosService Repuesta del repository ConfirmarPagosRezagadosTransferencias() eventType: {r.eventType}, message: {r.message}");
+                if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
+                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
+                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
+                    r.eventType == GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS)
+                {
+                    throw new Exception(r.message);
+                }
+                return Respuesta.ReturnResultdo(0, r.message, "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} CATCH ConfirmarPagosRezagadosTransferencias(), error {ex}");
+                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
             }
         }
     }
