@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using gestion_de_comisiones.Servicios.Interfaces;
 using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Repository
@@ -23,16 +24,18 @@ namespace gestion_de_comisiones.Repository
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagoRepository> Logger;
 
-        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, ILogger<GestionPagoRepository> logger)
+        private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
+        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagoRepository> logger)
         {
             this.ContextMulti = multinivelDbContext;
             this.Logger = logger;
+           
+            this.EnvioCorreoService = envioCorreoService;
         }
         public GestionPagoRepository()
         {
 
-        }
-
+        }        
         public object GetCiclos(string usuario, int idEstadoComision, int idTipoComisionPagoComision)
         {
             try
@@ -775,9 +778,20 @@ namespace gestion_de_comisiones.Repository
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
-
+                
                 dbcontextTransaction.Commit();
+                List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdComision == returnValue && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
+                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
+                    .ToList();
+                Logger.LogInformation($" usuario: {body.user}, despues del commit");
                 // Si returnValue no es -1 ni 2, es 1
+                if (rezagados.Count > 0)
+                {
+                    EnvioCorreoService.EnviarCorreoRezagados(rezagados);
+                    
+                }
+
                 return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
             catch (Exception ex)
@@ -854,11 +868,11 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
-
+       
         private bool confirmarTransferidosNoSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId, List<VwObtenerInfoExcelFormatoBanco> l)
         {
             try {
-            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");
+            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");                                
             for (int i = 0; i < l.Count; i++)
             {
                 VwObtenerInfoExcelFormatoBanco o = l[i];

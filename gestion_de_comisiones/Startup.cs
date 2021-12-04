@@ -68,6 +68,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IFormaPagoService, FormaPagoService>();
             services.AddScoped<IGestionPagosService, GestionPagosService>();
             services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
+            services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
