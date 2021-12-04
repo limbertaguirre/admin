@@ -1674,6 +1674,24 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_actualizacion'
         go
 
+		GO
+		CREATE TABLE [dbo].[CONTROL_USUARIO](
+			id_control_usuario int primary key IDENTITY(1,1) NOT NULL,
+			usuario varchar (255) NULL,
+			cantidad_intentos int NULL,
+			fecha_bloquedo datetime NULL,
+			fecha_desbloqueo datetime NULL,
+			net_session_id varchar(255) NULL,
+			estado int NULL,
+			)
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'id_control_usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Usuario que intenta iniciar session (Dominio).', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Cantidad de intentos que el usuario fallo al iniciar session', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'cantidad_intentos'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de bloqueo del usuario', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_bloquedo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de desbloqueo del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_desbloqueo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Id del aps.net core.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'net_session_id'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Estado del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'estado'
+		go
         CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
         as
         select c.id_ciclo

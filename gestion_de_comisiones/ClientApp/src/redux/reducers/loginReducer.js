@@ -10,7 +10,9 @@ const defaultState={
     idUsuario:0,
     nombre:'',
     apellido:'',
-    token:''
+    token:'',
+    isBloqueado: false,
+    tiempoBloqueo: 0
 };
 
 export default function reducer(state = defaultState, action){
@@ -65,7 +67,13 @@ export default function reducer(state = defaultState, action){
             return{
                 ...state,
                 listSucursales:action.sucursales,
-            }     
+            }  
+        case Type.USUARIO_BLOQUEADO:
+            return{
+                ...state,
+                isBloqueado:action.isBloqueado,
+                tiempoBloqueo:action.tiempoBloqueo
+            }   
         default:{
             return state;   
         }
