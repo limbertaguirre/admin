@@ -261,7 +261,7 @@ export async function ConfirmarCierrePago(userName,usuarioId, idCiclo, dispatch)
       usuarioId:usuarioId,
       idCiclo: parseInt(idCiclo)
     };
-     console.log('parametro : ', data);
+     
     requestPost( "gestionPagos/CerrarPagoComision", data, dispatch).then((response) => {
       resolve(response);
     });

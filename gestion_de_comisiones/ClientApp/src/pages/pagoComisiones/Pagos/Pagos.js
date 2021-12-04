@@ -317,8 +317,7 @@ const useStyles = makeStyles((theme) => ({
     }
     async function ApiVerificarConfirmarCierrePago(userNa, idUser,idCICLO){
         if(idCICLO && idCICLO !== 0){  
-            let response= await Actions.ConfirmarCierrePago(userNa, idUser,idCICLO, dispatch)   
-            console.log('respom : ',response);
+            let response= await Actions.ConfirmarCierrePago(userNa, idUser,idCICLO, dispatch)             
             if(response && response.code == 0){
                 dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
                 //inicializa lista                
