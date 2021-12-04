@@ -3,10 +3,6 @@ import * as TypesHome from '../types/homeTypes';
 import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
-
-
-
-
 export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{     
         let body={
@@ -32,11 +28,6 @@ export const iniciarSesion= (userName,password)=>{
                 });
                 localStorage.setItem("token", 'Bearer '+data.token);
             }else if(res.code === 1){
-                dispatch({
-                    type:Types.USUARIO_BLOQUEADO,
-                    isBloqueado:false,
-                    tiempoBloqueo:0
-                });
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
                 dispatch({

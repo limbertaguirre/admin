@@ -24,7 +24,6 @@ import image from "../../assets/img/bg7.jpg";
 import LogoSION2 from "../../assets/icons/LogoSION2-svg.svg";
 import RegistroModal from './RegistroModal';
 import UsuarioBloqueado from "./UsuarioBloqueado";
-import { is } from "date-fns/locale";
 
 const useStyles = makeStyles(styles);
 
@@ -86,10 +85,6 @@ const useStyles2 = makeStyles((theme) => ({
   },
 }));
 
-
-  
-
-
   const Login = (props) => {  
 
         const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
@@ -111,15 +106,11 @@ const useStyles2 = makeStyles((theme) => ({
     const [passwordError, setPasswordError] = useState(false);
     const [userBloqueado, setUserBloqueado] = useState(false);
     const [userBloqueadoTiempo, setUserBloqueadoTiempo] = useState(false);
- 
-
 
       const handleClickShowPassword = () => {
         onShowPassword(prev => !prev);
       }
       const isValidPassword = (password) => {    
-          /*dispatch(
-            Action.inicializarBloquedo());*/
         return  password.length >= 5;
       };
       const isValidCarnet = (carnet) => {    
@@ -143,9 +134,7 @@ const useStyles2 = makeStyles((theme) => ({
           }          
       }
       const _handleRegistrar=()=>{
-        setUserBloqueadoTiempo(0);
-        setUserBloqueado(false);
-
+        inicializarBloqueoUsuario();
          dispatch(Action.iniciarSesion(carnet, password));
       };
 
@@ -155,10 +144,6 @@ const useStyles2 = makeStyles((theme) => ({
     const inicializarBloqueoUsuario =()=>{
       dispatch(Action.inicializarBloquedo());
     }
-     
-
-        
-
     return (
         <div>
         <Header
