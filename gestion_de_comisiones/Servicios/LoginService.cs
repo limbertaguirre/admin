@@ -67,9 +67,8 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($" usuario : {usuario} inicio la funcionalidad VerificarUsuario()");
-                UsuarioRepository UserRepos = new UsuarioRepository();
                 LoginRespuesta resp = new LoginRespuesta();
-                var objetoo = UserRepos.ObtenerUsuarioPorId(usuario);
+                var objetoo = UsuarioRepository.ObtenerUsuarioPorId(usuario);
                 if (objetoo != null)
                 {
                     //-----------------------------------------------------------------------------------------------------
@@ -91,7 +90,6 @@ namespace gestion_de_comisiones.Servicios
                         Logger.LogInformation($" usuario : {usuario} repuesta obtener usuario: {JsonConvert.SerializeObject(objetoo)}");
                         return Respuesta.ReturnResultdo(0, "Aun no tiene rol asignado.", resp);
                     }
-
                 }
                 else
                 {
@@ -99,7 +97,6 @@ namespace gestion_de_comisiones.Servicios
                     var Result = new GenericDataJson<string> { Code = 2, Message = "El usaurio no se encuentra registrado" };
                     return Result;
                 }
-
             }
             catch (Exception ex)
             {
@@ -140,7 +137,6 @@ namespace gestion_de_comisiones.Servicios
 
                                 List<PerfilHash> permisosHash = RolRepository.obtenerPermisoXPagina(usuario, (int)tienePagina.IdRolPaginaI, itempag.Nombre, itempag.UrlPagina);
                                 listaHash.AddRange(permisosHash);
-
                             }
                         }
                         if (ListPages.Count > 0)
@@ -152,7 +148,6 @@ namespace gestion_de_comisiones.Servicios
                             submodulo.listaSubMenu = ListPages;
                             ListSubMenu.Add(submodulo);
                         }
-
                     }
                     if (ListSubMenu.Count > 0)
                     {
@@ -165,7 +160,6 @@ namespace gestion_de_comisiones.Servicios
                         ListMenu.Add(Menu);
 
                     }
-
                 }
                 objPerfil.menus = ListMenu;
                 objPerfil.listaHash = listaHash;

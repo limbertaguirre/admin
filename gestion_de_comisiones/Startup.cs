@@ -86,7 +86,6 @@ namespace gestion_de_comisiones
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
 
-
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

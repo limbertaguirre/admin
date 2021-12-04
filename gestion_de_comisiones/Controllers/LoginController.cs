@@ -15,7 +15,6 @@ using Newtonsoft.Json;
 
 namespace gestion_de_comisiones.Controllers
 {
-
     public class LoginController : Controller
     {
         private readonly ILogger<RolController> Logger;
@@ -33,7 +32,6 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
 
-
         // POST: Login/Sesion        
         [HttpPost]
         public async Task<ActionResult> Sesion([FromBody] LoginInputModel model)
@@ -47,7 +45,7 @@ namespace gestion_de_comisiones.Controllers
                 {
                     bool valid = context.ValidateCredentials(model.userName, model.password);
                     if (valid)
-                    {                     
+                    {
                         var usuario = await Service.VerificarUsuarioAsync(model.userName);
                         var t = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 1);
                         Logger.LogInformation($" usuario : {model.userName} fin de servicio sesion() : {JsonConvert.SerializeObject(usuario)}");
