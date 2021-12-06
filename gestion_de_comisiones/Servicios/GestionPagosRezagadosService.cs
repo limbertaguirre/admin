@@ -155,5 +155,24 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
+                GestionPagosRezagadosEvent r = (GestionPagosRezagadosEvent) Repository.handleDownloadFileEmpresas(body);
+                if (r.eventType == GestionPagosRezagadosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
+                {
+                    throw new Exception(r.message);
+                }
+                return Respuesta.ReturnResultdo(0, "ok", r.file);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

@@ -118,5 +118,20 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
+
+        [HttpPost]
+        public ActionResult handleDownloadFileEmpresas([FromBody] DownloadFileTransferenciaInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el controller handleDownloadFileEmpresas() parametro: idciclo:{body.cicloId}, empresaId: {body.empresaId}");
+                return Ok(Service.handleDownloadFileEmpresas(body));
+            }
+            catch (Exception e)
+            {
+                Logger.LogError($"usuario :  error catch  handleDownloadFileEmpresas() controller {e}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
     }
 }

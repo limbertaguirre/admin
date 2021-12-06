@@ -11,6 +11,7 @@ using gestion_de_comisiones.Servicios;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
 
 namespace gestion_de_comisiones.Repository
 {
@@ -258,11 +259,11 @@ namespace gestion_de_comisiones.Repository
                                   }
                                };
 
-                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_? @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue} ");
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
                         return false;
@@ -325,10 +326,10 @@ namespace gestion_de_comisiones.Repository
                            };
 
                     
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS returnValue {returnValue} ");
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
                         return false;
@@ -652,6 +653,157 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 return false;
+            }
+        }
+
+        public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
+        {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
+                Logger.LogWarning($" usuario: {body.user} handleDownloadFileEmpresas parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("yyyyMMdd")}");
+
+                Logger.LogInformation($" usuario: {body.user}, inicio repository handleDownloadFileEmpresas(): idciclo {body.cicloId}  ");
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleDownloadFileEmpresas()");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                               },
+                               new SqlParameter() {
+                                            ParameterName = "@ComisionId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.comisionId
+                               },
+                               new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                               },
+                               new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                               },
+                               new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                               },
+                               new SqlParameter() {
+                                            ParameterName = "@FechaPago",
+                                            SqlDbType =  System.Data.SqlDbType.VarChar,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.date.ToString("yyyyMMdd")
+                               }
+                           };
+                Logger.LogInformation($" usuarioId: {usuarioId}, handleDownloadFileEmpresas inicio SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS_REZAGADOS parameterReturn: {parameterReturn}");
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS_REZAGADOS] @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @FechaPago ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, inicio repository handleDownloadFileEmpresas(): SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS_REZAGADOS returnValue {returnValue}  ");
+                if (returnValue == 1)
+                {
+                    //throw new Exception("Pas[o algo inesperado, no se pudo realizar la actualizacion.");
+                    return postEvent(GestionPagosRezagadosEvent.ERROR, "Pas[o algo inesperado, no se pudo realizar la actualizacion.");
+                }
+                else if (returnValue == 2)
+                {
+                    return postEvent(GestionPagosRezagadosEvent.ROLLBACK_ERROR, "Hubo problemas de conexion, por favor intenta mas tarde.");
+                }
+
+                int cicloId = Convert.ToInt32(body.cicloId);
+                int tipoPagoTransferencia = 2;
+                int estadoComisionDetalleEmpresaPendienteId = 1;
+                List<VwObtenerRezagadosPago> info = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdComision == body.comisionId && x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendienteId)
+                    .ToList();
+
+                Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
+                if (info.Count == 0)
+                {
+
+                }
+                using (var p = new ExcelPackage())
+                {
+                    var ws = p.Workbook.Worksheets.Add($"{info[0].Empresa}");
+
+                    string[] headers = { "NRO. DE ORDEN", "CODIGO DE CLIENTE", "NRO. DE CUENTA", "NOMBRE DE CLIENTE",
+                                         "DOC. DE IDENTIDAD", "IMPORTE", "FECHA DE PAGO", "FORMA DE PAGO", "MONEDA DESTINO",
+                                        "ENTIDAD DESTINO", "SUCURSAL DESTINO", "GLOSA", "CODIGO UNICO"};
+
+                    for (int i = 1; i <= 13; i++)
+                    {
+                        ws.Cells[1, i].Value = headers[i - 1];
+                        ws.Cells[1, i].AutoFitColumns(1);
+                    }
+
+                    var range = ws.Cells["A1:M13"];
+                    range.AutoFilter = true;
+                    ws.AutoFilter.ApplyFilter();
+                    NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands; ;
+                    CultureInfo provider = new CultureInfo("is-IS");
+
+                    for (int i = 2; i <= info.Count + 1; i++)
+                    {
+                        VwObtenerRezagadosPago f = info[i - 2];
+                        ws.Cells[i, 1].Value = i - 1;
+                        //ws.Cells[i, 1].AutoFitColumns(1);
+                        ws.Cells[i, 2].Value = int.Parse(f.CodigoDeCliente);
+                        //ws.Cells[i, 2].AutoFitColumns(1);
+                        ws.Cells[i, 3].Value = Convert.ToString(f.NroDeCuenta);
+                        //ws.Cells[i, 3].AutoFitColumns(1);
+                        ws.Cells[i, 4].Value = Convert.ToString(f.NombreDeCliente);
+                        ws.Cells[i, 4].AutoFitColumns(1);
+                        ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
+                        ws.Cells[i, 5].AutoFitColumns(1);
+                        double dd = (double)f.ImportePorEmpresa;
+                        string dd2 = dd.ToString("N2", new CultureInfo("is-IS"));
+                        ws.Cells[i, 6].Value = Decimal.Parse(dd2, style, provider);
+                        //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 7].Value = f.FechaDePago;
+                        ws.Cells[i, 7].AutoFitColumns(1);
+                        ws.Cells[i, 8].Value = f.FormaDePago;
+                        //ws.Cells[i, 8].AutoFitColumns(1);
+                        if (!String.IsNullOrEmpty(f.MonedaDestino))
+                            ws.Cells[i, 9].Value = int.Parse(f.MonedaDestino);
+                        else
+                            ws.Cells[i, 9].Value = "";
+                        //ws.Cells[i, 9].AutoFitColumns(1);
+                        if (!String.IsNullOrEmpty(f.EntidadDestino))
+                            ws.Cells[i, 10].Value = int.Parse(f.EntidadDestino);
+                        else
+                            ws.Cells[i, 10].Value = "";
+                        //ws.Cells[i, 10].AutoFitColumns(1);
+                        ws.Cells[i, 11].Value = f.SucursalDestino;
+                        ws.Cells[i, 12].Value = "PAGO DE COMISIONES DEL MES DE " + Convert.ToString(f.Glosa);
+                        ws.Cells[i, 12].AutoFitColumns(1);
+                        ws.Cells[i, 13].Value = "";
+                    }
+                    DownloadFileTransferenciaOutput r = new DownloadFileTransferenciaOutput();
+                    r.file = Convert.ToBase64String(p.GetAsByteArray());
+                    r.fileName = info[0].Empresa;
+                    dbcontextTransaction.Commit();
+                    return postEvent(GestionPagosRezagadosEvent.SUCCESS, r, "Archivo excel generado correctamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
+                return postEvent(GestionPagosRezagadosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
             }
         }
     }

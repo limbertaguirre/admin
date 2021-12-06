@@ -2034,9 +2034,9 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             select * from BDMultinivel.dbo.vwObtenerRezagadosPagos i
                                             where i.id_ciclo = 80 and i.id_empresa = 3 and i.id_estado_comision_detalle_empresa = 3 and i.id_tipo_pago = 2 and i.id_comision = 112
         --
-        DECLARE @ExisteComision as table(id_comision int, id_ciclo INT, monto_total_neto decimal(18,2), porcentaje_retencion decimal(18,2));
+        DECLARE @ExisteComision as table(id_comision int, id_ciclo INT, monto_total_neto decimal(18,2), porcentaje_retencion decimal(18,2), fecha_creacion datetime);
 
-        INSERT INTO @ExisteComision select top 1 c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+        INSERT INTO @ExisteComision select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, ci.fecha_creacion
                                             from BDMultinivel.dbo.GP_COMISION c
                                             inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
                                             inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
@@ -2046,9 +2046,10 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             and c.id_ciclo = @cicloId
                                             and i.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago
                                             group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
-                                            order by ci.fecha_creacion asc
+                                            order by ci.fecha_creacion desc
 
-                                     select top 1 ci.id_ciclo, ci.nombre, ci.nombre, ci.estado estadoCiclo, ci.fecha_creacion, c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+                                    -- Solo debe haber 2 registros de rezagados, unos rezagados de pagos y otro rezagados de rezagados de pagos.
+                                     select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, ci.fecha_creacion
                                             from BDMultinivel.dbo.GP_COMISION c
                                             inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
                                             inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
@@ -2058,7 +2059,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             and c.id_ciclo = 80
                                             and i.id_estado_comision = 11
                                             group by ci.id_ciclo, ci.nombre, ci.nombre, ci.estado, ci.fecha_creacion, c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
-                                            order by ci.fecha_creacion asc
+                                            order by ci.fecha_creacion desc
 
         SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
         SELECT e.*, ' select fila 60' as NroFila FROM @ExisteComision e
@@ -2075,7 +2076,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
             DECLARE @idEstadoDetalleRechazadoEnPagoTransferencia int = 4  
             DECLARE @ERROR_INSERT INT = -1;
             DECLARE @ERRORMESSAGE VARCHAR(500);
-            IF(@existeCicloComisionRezagado <= 0)
+            IF(@existeCicloComisionRezagado <= 1)
             BEGIN
                 BEGIN TRY
                     -- Obtenenos el porcentaje de retencion 
@@ -2094,7 +2095,6 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 
                     SELECT c.*, ' select fila 91' FROM BDMultinivel.DBO.GP_COMISION c where c.id_ciclo = @cicloId and c.id_tipo_comision = @tipoComisionRezagado order by c.id_comision desc
                     SELECT c.*, ' select fila 92' FROM BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I c where c.id_comision = @newIdComision and c.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago order by c.id_comision_estado_comision_i desc
-                    --RAISERROR('ELIOT CRACK', 15, 1)
                 END TRY
                 BEGIN CATCH
                     SELECT 'ENTRO AL CATCH LINEA 96'
@@ -2102,10 +2102,10 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                     SET @ERRORMESSAGE = 'ERROR AL INSERTAR EN LAS TABLAS GP_COMISION | GP_COMISION_ESTADO_COMISION_I'
                     RAISERROR(@ERRORMESSAGE, 15, 1)
                 END CATCH
-            END
+            END            
             ELSE
             BEGIN
-                SELECT top 1 @newIdComision = e.id_comision FROM @ExisteComision e
+                SELECT top 1 @newIdComision = e.id_comision FROM @ExisteComision e order by e.fecha_creacion desc
                 -- ACTUALIZAR TODO
                 -- @newIdComision = 85
                 select @newIdComision as newIdComision, ' select fila 107' as NroFila
@@ -2121,7 +2121,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                     SELECT @idComisionDetalle AS idComisionDetalle, @idComisionDetalleEmpresa AS idComisionDetalleEmpresa, @montoNetoComisionDetalleEmpresa AS montoNetoComisionDetalleEmpresa, @fichaId AS fichaId, ' select fila 117' as NroFila
                     SELECT '----------------------------------------------------------------------------------------------------------------'
                     DECLARE @newIdComisionDetalle int;
-                    DECLARE @estadoComisionDetalleRezagado int = 5;                
+                    DECLARE @estadoComisionDetalleRezagado int = 5;
                     DECLARE @idComisionDetalleRezagado int = ISNULL((SELECT cd.id_comision_detalle from BDMultinivel.dbo.GP_COMISION c 
                                                         inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
                                                         inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
@@ -2245,7 +2245,6 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
             return -1
         END
     END CATCH;
-
     GO
     CREATE VIEW [dbo].[vwObtenerRezagadosPagos]
     as
@@ -2429,3 +2428,39 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         END CATCH;    
     END
     GO
+    CREATE PROC [dbo].[SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS_REZAGADOS] @ComisionId INT, @CicloId INT, @EmpresaId INT, @UsuarioId INT, @FechaPago VARCHAR(50)
+    AS
+    BEGIN
+        DECLARE @IdTipoPagoTransferencia                 int,
+                @IdEstadoComisionDetalleEmpresaRechazadoRezagado int,
+                @IMPBODY VARCHAR(500),
+                @IMPSUBJECT VARCHAR(500);
+        set @IdTipoPagoTransferencia = 2;
+        set @IdEstadoComisionDetalleEmpresaRechazadoRezagado = 3;
+        BEGIN TRY
+            BEGIN TRANSACTION
+                UPDATE COMISION_DETALLE_EMPRESA SET fecha_pago = CAST(@FechaPago AS datetime), id_usuario = @UsuarioId
+                    where estado = @IdEstadoComisionDetalleEmpresaRechazadoRezagado and
+                        id_comision_detalle_empresa in (select i.id_comision_detalle_empresa from dbo.vwObtenerRezagadosPagos i
+                                                            where i.id_comision = @ComisionId and i.id_ciclo = @CicloId and i.id_empresa = @EmpresaId and
+                                                            i.id_tipo_pago = @IdTipoPagoTransferencia and
+                                                            i.id_estado_comision_detalle_empresa = @IdEstadoComisionDetalleEmpresaRechazadoRezagado)
+                COMMIT TRANSACTION
+                return 0;
+        END TRY
+        BEGIN CATCH
+            IF @@TRANCOUNT > 0
+                BEGIN
+                    SET @IMPBODY =
+                            concat ('SP_ACTUALIZAR_FECHA_PAGO_TRANSFERENCIAS ',
+                                    ' ');
+                    SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo actualizar la fecha de pago en las comisiones detalle empresa por transferencias.';
+                    --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+                    --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+                    --                                @body           = @IMPBODY,
+                    --                                @subject        = @IMPSUBJECT;
+                    ROLLBACK TRANSACTION;        
+                    return 1
+                END
+        END CATCH
+    END
