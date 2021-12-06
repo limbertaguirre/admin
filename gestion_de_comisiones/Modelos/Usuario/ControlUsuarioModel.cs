@@ -7,7 +7,7 @@ namespace gestion_de_comisiones.Modelos.Usuario
 {
     public class ControlUsuarioModel
     {
-        public ControlUsuarioModel(int idControlUsuario, string usuario, int? cantidadIntentos, DateTime? fechaBloquedo, DateTime? fechaDesbloqueo, string netSessionId, int estado)
+        public ControlUsuarioModel(int idControlUsuario, string usuario, int? cantidadIntentos, DateTime? fechaBloquedo, DateTime? fechaDesbloqueo, string netSessionId, int? estado)
         {
             IdControlUsuario = idControlUsuario;
             Usuario = usuario;
@@ -23,6 +23,6 @@ namespace gestion_de_comisiones.Modelos.Usuario
         public DateTime? FechaBloquedo { get; set; }
         public DateTime? FechaDesbloqueo { get; set; }
         public string NetSessionId { get; set; }
-        public int Estado { get; set; }
+        public int? Estado { get; set; }
     }
 }
