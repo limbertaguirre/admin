@@ -104,7 +104,7 @@ namespace gestion_de_comisiones.Repository
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
-                Logger.LogInformation($" usuario: {param.user}, inicio repository ConfirmarPagosRezagadosTransferencias(): idciclo {param.cicloId}  ");
+                Logger.LogInformation($" usuario: {param.user}, inicio repository ConfirmarPagosRezagadosTransferencias(): idciclo {param.cicloId}, idcomision {param.comisionId}");
 
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == param.user)
@@ -124,7 +124,7 @@ namespace gestion_de_comisiones.Repository
                 int tipoComision = 2;
                 int estadoComision = 11;
                 List<VwObtenerRezagadosPago> l = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
+                    .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId && x.IdComision == param.comisionId && x.IdTipoPago == tipoPagoTransferencia &&
                             x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
                     .ToList();
 
@@ -135,7 +135,7 @@ namespace gestion_de_comisiones.Repository
 
                 // SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS
                 Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
-                Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, EmpresaId: {param.empresaId}");
+                Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, EmpresaId: {param.empresaId}, ComisionId: {param.comisionId}");
                 var parameterReturn = new SqlParameter[] {
                                 new SqlParameter  {
                                             ParameterName = "ReturnValue",

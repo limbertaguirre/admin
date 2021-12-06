@@ -12,6 +12,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public GestionPagosRezagadosEvent handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         GestionPagosRezagadosEvent ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
-        GestionPagosRezagadosEvent handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
     }
 }
