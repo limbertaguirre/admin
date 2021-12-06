@@ -120,6 +120,8 @@ namespace gestion_de_comisiones.Repository
 
                 int tipoPagoTransferencia = 2;
                 int idEstadoComisionDetalleEmpresaConfirmado = 2;
+                int tipoComision = 2;
+                int estadoComision = 11;
                 List<VwObtenerRezagadosPago> l = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
                             x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
@@ -134,48 +136,61 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
                 Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, EmpresaId: {param.empresaId}");
                 var parameterReturn = new SqlParameter[] {
-                               new SqlParameter  {
+                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
                                             SqlDbType = System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@TipoComision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = tipoComision
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@EstadoComision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = estadoComision
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@ComisionId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.comisionId
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@CicloId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = param.cicloId
-                              },
+                                },
                                 new SqlParameter() {
                                                 ParameterName = "@ComisionId",
                                                 SqlDbType =  System.Data.SqlDbType.Int,
                                                 Direction = System.Data.ParameterDirection.Input,
                                                 Value = param.comisionId
-                                  },
+                                },
                                 new SqlParameter() {
                                             ParameterName = "@EmpresaId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = param.empresaId
-                              },
-                               new SqlParameter() {
+                                },
+                                new SqlParameter() {
                                             ParameterName = "@UsuarioId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = usuarioId.usuarioId
-                              },
-                               new SqlParameter() {
+                                },
+                                new SqlParameter() {
                                             ParameterName = "@TipoPago",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = tipoPagoTransferencia
                               }
                            };
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn ReturnValue: {parameterReturn[0]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn CicloId: {parameterReturn[1]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn EmpresaId: {parameterReturn[2]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4]}");
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)

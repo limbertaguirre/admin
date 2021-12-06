@@ -1986,7 +1986,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         END
     END CATCH;
     GO
-    CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS](@cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
+    CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS](@tipoComision INT, @estadoComision INT, @comisionId INT, @cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
     AS
     BEGIN TRANSACTION
     BEGIN TRY
@@ -2013,9 +2013,9 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         -- VARIABLES NO EXCLUYENTES
         set @estadoComisionDetalleEmpresaRechazado = 3;
         set @tipoComisionPago = 1;
-        set @tipoComisionRezagado = 2;
+        set @tipoComisionRezagado = @tipoComision; -- 2
         set @GP_EstadoComisionCerradoFormaPago = 10;
-        set @GP_EstadoComisionRezagadoPendientePago = 11;
+        set @GP_EstadoComisionRezagadoPendientePago = @estadoComision; -- 11;
         set @habilitado = 1;
         --
         DECLARE @idComisionDetalle int,
@@ -2028,19 +2028,37 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         */
 
         DECLARE Detalle_Cursor1 CURSOR FOR select i.id_comisiones_detalle, i.id_comision_detalle_empresa, i.IMPORTE_POR_EMPRESA, i.id_ficha
-                                            from BDMultinivel.dbo.vwObtenerInfoExcelFormatoBanco i 
-                                            where i.id_ciclo = @cicloId and i.id_empresa = @empresaId and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado and i.id_tipo_pago = @tipoPago
+                                            from BDMultinivel.dbo.vwObtenerRezagadosPagos i 
+                                            where i.id_ciclo = @cicloId and i.id_comision = @comisionId and i.id_empresa = @empresaId and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado and i.id_tipo_pago = @tipoPago
+                                            
+                                            select * from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                            where i.id_ciclo = 80 and i.id_empresa = 3 and i.id_estado_comision_detalle_empresa = 3 and i.id_tipo_pago = 2 and i.id_comision = 112
         --
         DECLARE @ExisteComision as table(id_comision int, id_ciclo INT, monto_total_neto decimal(18,2), porcentaje_retencion decimal(18,2));
 
-        INSERT INTO @ExisteComision select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+        INSERT INTO @ExisteComision select top 1 c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
                                             from BDMultinivel.dbo.GP_COMISION c
+                                            inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
                                             inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
                                             inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I i on i.id_comision = c.id_comision
                                             where c.id_tipo_comision = @tipoComisionRezagado
+                                            --and c.id_comision = @comisionId
                                             and c.id_ciclo = @cicloId
                                             and i.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago
                                             group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+                                            order by ci.fecha_creacion asc
+
+                                     select top 1 ci.id_ciclo, ci.nombre, ci.nombre, ci.estado estadoCiclo, ci.fecha_creacion, c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+                                            from BDMultinivel.dbo.GP_COMISION c
+                                            inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
+                                            inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
+                                            inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I i on i.id_comision = c.id_comision
+                                            where c.id_tipo_comision = 2
+                                            --and c.id_comision = @comisionId
+                                            and c.id_ciclo = 80
+                                            and i.id_estado_comision = 11
+                                            group by ci.id_ciclo, ci.nombre, ci.nombre, ci.estado, ci.fecha_creacion, c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+                                            order by ci.fecha_creacion asc
 
         SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
         SELECT e.*, ' select fila 60' as NroFila FROM @ExisteComision e
@@ -2334,6 +2352,72 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
             IF @@TRANCOUNT > 0
                 BEGIN
                     SET @IMPBODY = concat ('SP_CONFIRMAR_TRANSFERENCIAS_TODOS ', ' ');
+                    SET @IMPSUBJECT = 'ALERTA PRODUCCION : No se pudo actualizar los estados de las comisiones en sion pay';
+                    --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+                    --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+                    --                                @body           = @IMPBODY,
+                    --                                @subject        = @IMPSUBJECT;
+                    ROLLBACK TRANSACTION;        
+                    RETURN 1
+                END
+        END CATCH;    
+    END
+    GO
+    CREATE proc [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS]
+        @CicloId    int,
+        @EmpresaId  int,
+        @UsuarioId  int,
+        @ComisionDetalleEmpresaId  int
+    AS
+    BEGIN
+        BEGIN TRY
+            DECLARE @IMPBODY        VARCHAR (500);
+            DECLARE @IMPSUBJECT     VARCHAR (500);
+            DECLARE @EstadoConfirmado   int;
+            SET @EstadoConfirmado   = 2;
+            BEGIN TRANSACTION
+                update COMISION_DETALLE_EMPRESA set estado = @EstadoConfirmado, fecha_actualizacion = GETDATE(), id_usuario = @UsuarioId
+                where id_comision_detalle_empresa = @ComisionDetalleEmpresaId
+            COMMIT TRANSACTION
+            RETURN 0;
+        END TRY
+        BEGIN CATCH   
+            IF @@TRANCOUNT > 0
+                BEGIN
+                    SET @IMPBODY = concat ('SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS ', ' ');
+                    SET @IMPSUBJECT = 'ALERTA PRODUCCION : No se pudo actualizar los estados de las comisiones en sion pay';
+                    --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+                    --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+                    --                                @body           = @IMPBODY,
+                    --                                @subject        = @IMPSUBJECT;
+                    ROLLBACK TRANSACTION;        
+                    RETURN 1
+                END
+        END CATCH;    
+    END
+    GO
+    CREATE proc [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS]
+        @CicloId    int,
+        @EmpresaId  int,
+        @UsuarioId  int,
+        @ComisionDetalleEmpresaId  int
+    AS
+    BEGIN
+        BEGIN TRY
+            DECLARE @IMPBODY        VARCHAR (500);
+            DECLARE @IMPSUBJECT     VARCHAR (500);
+            DECLARE @EstadoRechazado    int;                
+            SET @EstadoRechazado   = 3;
+            BEGIN TRANSACTION
+                update COMISION_DETALLE_EMPRESA set estado = @EstadoRechazado, fecha_actualizacion = GETDATE(), id_usuario = @UsuarioId
+                where id_comision_detalle_empresa = @ComisionDetalleEmpresaId
+            COMMIT TRANSACTION
+            RETURN 0;
+        END TRY
+        BEGIN CATCH   
+            IF @@TRANCOUNT > 0
+                BEGIN
+                    SET @IMPBODY = concat ('SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS ', ' ');
                     SET @IMPSUBJECT = 'ALERTA PRODUCCION : No se pudo actualizar los estados de las comisiones en sion pay';
                     --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
                     --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
