@@ -41,7 +41,7 @@ namespace gestion_de_comisiones
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
-           { 
+           {
                x.RequireHttpsMetadata = false;
                x.SaveToken = true;
                x.TokenValidationParameters = new TokenValidationParameters
@@ -51,7 +51,7 @@ namespace gestion_de_comisiones
                    ValidateIssuer = false,
                    ValidateAudience = false
                };
-            });
+           });
 
             //services.AddAutoMapper(typeof(MappingProfiles));
 
@@ -68,6 +68,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IFormaPagoService, FormaPagoService>();
             services.AddScoped<IGestionPagosService, GestionPagosService>();
             services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
+            services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -85,7 +86,6 @@ namespace gestion_de_comisiones
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
 
-
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -101,7 +101,7 @@ namespace gestion_de_comisiones
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             //var path = Directory.GetCurrentDirectory();
-           // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
+            // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
             loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
 
             if (env.IsDevelopment())
@@ -139,6 +139,12 @@ namespace gestion_de_comisiones
                     spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
+            });
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                await next();
             });
         }
     }

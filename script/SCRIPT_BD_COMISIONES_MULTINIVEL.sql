@@ -470,6 +470,7 @@ insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descr
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(10, 'CERRADO FORMA DE PAGO', 'CERRADO FORMA DE PAGO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(13, 'PAGO DE COMISION CERRADO', 'PAGO DE COMISION CERRADO',1)
 
 go
 create table GP_COMISION_ESTADO_COMISION_I
@@ -1673,6 +1674,24 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_actualizacion'
         go
 
+		GO
+		CREATE TABLE [dbo].[CONTROL_USUARIO](
+			id_control_usuario int primary key IDENTITY(1,1) NOT NULL,
+			usuario varchar (255) NULL,
+			cantidad_intentos int NULL,
+			fecha_bloquedo datetime NULL,
+			fecha_desbloqueo datetime NULL,
+			net_session_id varchar(255) NULL,
+			estado int NULL,
+			)
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'id_control_usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Usuario que intenta iniciar session (Dominio).', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Cantidad de intentos que el usuario fallo al iniciar session', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'cantidad_intentos'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de bloqueo del usuario', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_bloquedo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de desbloqueo del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_desbloqueo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Id del aps.net core.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'net_session_id'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Estado del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'estado'
+		go
         CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
         as
         select c.id_comision, c.id_ciclo
@@ -2301,10 +2320,8 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                 where   id_empresa = @EmpresaId and estado = @EstadoRechazado and
                         id_comision_detalle_empresa in (select i.id_comision_detalle_empresa from BDMultinivel.dbo.vwObtenerRezagadosPagos i
                                                 where i.id_empresa = @EmpresaId and i.id_ciclo = @CicloId and i.id_comision = @ComisionId and i.id_tipo_pago = @TipoPagoTransferencia)
-
-                                                select i.* from BDMultinivel.dbo.vwObtenerRezagadosPagos i
-                                                where i.id_empresa = 3 and i.id_ciclo = 80 and i.id_tipo_pago = 2
-            COMMIT TRANSACTION                                     
+                                            
+            COMMIT TRANSACTION
             select @CantidadActualizados = COUNT(*) from  BDMultinivel.dbo.vwObtenerRezagadosPagos i where i.id_empresa = @EmpresaId and i.id_ciclo = @CicloId and i.id_comision = @ComisionId and i.id_tipo_pago = @TipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @EstadoRechazado
             if(@CantidadActualizados > 0)
             BEGIN

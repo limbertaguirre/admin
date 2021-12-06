@@ -74,6 +74,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Venta> Ventas { get; set; }
         public virtual DbSet<VwListarAutorizacionesTipo> VwListarAutorizacionesTipoes { get; set; }
         public virtual DbSet<VwObtenerCiclo> VwObtenerCiclos { get; set; }
+        public virtual DbSet<VwObtenerCiclosRezagado> VwObtenerCiclosRezagados { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleAplicacione> VwObtenerComisionesDetalleAplicaciones { get; set; }
         public virtual DbSet<VwObtenerComisionesDetalleEmpresa> VwObtenerComisionesDetalleEmpresas { get; set; }
         public virtual DbSet<VwObtenerEmpresasComisionesDetalleEmpresa> VwObtenerEmpresasComisionesDetalleEmpresas { get; set; }
@@ -2914,6 +2915,36 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("nombre");
             });
 
+            modelBuilder.Entity<VwObtenerCiclosRezagado>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwObtenerCiclosRezagados");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
+                entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+            });
+
             modelBuilder.Entity<VwObtenerComisionesDetalleAplicacione>(entity =>
             {
                 entity.HasNoKey();
@@ -3291,6 +3322,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdEstadoListadoFormaPago).HasColumnName("id_estado_listado_forma_pago");
 
                 entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
+
+                entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
 
                 entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
 
