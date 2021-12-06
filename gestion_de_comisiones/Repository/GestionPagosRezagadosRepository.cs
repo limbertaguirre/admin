@@ -170,12 +170,12 @@ namespace gestion_de_comisiones.Repository
                                             Value = tipoPagoTransferencia
                               }
                            };
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn ReturnValue: {parameterReturn[0]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn CicloId: {parameterReturn[1]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn EmpresaId: {parameterReturn[2]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3]}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4]}");
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
+                Logger.LogInformation($"repository ConfirmarPagosRezagadosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn ReturnValue: {parameterReturn[0]}");
+                Logger.LogInformation($"repository ConfirmarPagosRezagadosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn CicloId: {parameterReturn[1]}");
+                Logger.LogInformation($"repository ConfirmarPagosRezagadosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn EmpresaId: {parameterReturn[2]}");
+                Logger.LogInformation($"repository ConfirmarPagosRezagadosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3]}");
+                Logger.LogInformation($"repository ConfirmarPagosRezagadosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4]}");
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @TipoPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
@@ -243,7 +243,7 @@ namespace gestion_de_comisiones.Repository
                                   }
                                };
 
-                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_? @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                    Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
                     var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     int returnValue = (int)parameterReturn[0].Value;
 
