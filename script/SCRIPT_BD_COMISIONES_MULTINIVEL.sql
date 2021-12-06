@@ -2031,8 +2031,8 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             from BDMultinivel.dbo.vwObtenerRezagadosPagos i 
                                             where i.id_ciclo = @cicloId and i.id_comision = @comisionId and i.id_empresa = @empresaId and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado and i.id_tipo_pago = @tipoPago
                                             
-                                            select * from BDMultinivel.dbo.vwObtenerRezagadosPagos i
-                                            where i.id_ciclo = 80 and i.id_empresa = 3 and i.id_estado_comision_detalle_empresa = 3 and i.id_tipo_pago = 2 and i.id_comision = 112
+                                            /*select * from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                            where i.id_ciclo = 80 and i.id_empresa = 3 and i.id_estado_comision_detalle_empresa = 3 and i.id_tipo_pago = 2 and i.id_comision = 112*/
         --
         DECLARE @ExisteComision as table(id_comision int, id_ciclo INT, monto_total_neto decimal(18,2), porcentaje_retencion decimal(18,2), fecha_creacion datetime);
 
@@ -2049,7 +2049,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             order by ci.fecha_creacion desc
 
                                     -- Solo debe haber 2 registros de rezagados, unos rezagados de pagos y otro rezagados de rezagados de pagos.
-                                     select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, ci.fecha_creacion
+                                     /*select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, ci.fecha_creacion
                                             from BDMultinivel.dbo.GP_COMISION c
                                             inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
                                             inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
@@ -2059,7 +2059,7 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                                             and c.id_ciclo = 80
                                             and i.id_estado_comision = 11
                                             group by ci.id_ciclo, ci.nombre, ci.nombre, ci.estado, ci.fecha_creacion, c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
-                                            order by ci.fecha_creacion desc
+                                            order by ci.fecha_creacion desc*/
 
         SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
         SELECT e.*, ' select fila 60' as NroFila FROM @ExisteComision e
@@ -2248,8 +2248,9 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     GO
     CREATE VIEW [dbo].[vwObtenerRezagadosPagos]
     as
-    select
+    select 
     c.id_comision,
+    c.id_tipo_comision,
     c.id_ciclo,
     ci.nombre,
     cde.id_empresa,
@@ -2260,9 +2261,12 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     l.id_comisiones_detalle,
     cde.id_comision_detalle_empresa,
     cde.estado as id_estado_comision_detalle_empresa,
-    d.id_estado_listado_forma_pago,
+    l.id_tipo_pago,
+    c.fecha_creacion fecha_creacion_comision,
+    c.fecha_actualizacion fecha_actualizacion_comision,
     f.codigo_cnx as [CODIGO_DE_CLIENTE],
     f.cuenta_bancaria AS [NRO_DE_CUENTA],
+    b.nombre AS NOMBRE_BANCO,
     f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
     f.ci as [DOC_DE_IDENTIDAD],
     sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
@@ -2274,14 +2278,12 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     case when isnull(b.id_banco, 0) = 17 then '' else b.codigo end ENTIDAD_DESTINO,
     -- Sucursal
     case when isnull(b.id_banco, 0) = 17 then '' else case when isnull(ciu.id_pais, -1) = 1 then ciu.codigo else '' end end SUCURSAL_DESTINO,
-    ci.nombre as GLOSA,
-    l.id_tipo_pago
-    from BDMultinivel.dbo.LISTADO_FORMAS_PAGO l
+    ci.nombre as GLOSA
+    from LISTADO_FORMAS_PAGO l
     inner join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl on dl.id_lista_formas_pago = l.id_lista_formas_pago
-    inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-    inner join BDMultinivel.dbo.GP_COMISION c on c.id_comision = cd.id_comision
-    inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
-    inner join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL d on d.id_lista_formas_pago = l.id_lista_formas_pago
+    inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
+    inner join GP_COMISION c on c.id_comision = cd.id_comision
+    inner join GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
     inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
     inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
     inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
@@ -2289,11 +2291,12 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
     inner join BDMultinivel.dbo.CIUDAD ciu on ciu.id_ciudad = f.id_ciudad
     left join BDMultinivel.dbo.BANCO b on b.id_banco = f.id_banco
     where cde.monto_neto <> 0
-    and c.id_tipo_comision = 2
-    and cec.id_estado_comision = 11 -- COMISIONES REZAGADOS PAGOS
-    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa,
+    --and c.id_tipo_comision = 2
+    and cec.id_estado_comision = 11 -- REZAGADOS DE PAGOS
+    --and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
+    group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, b.nombre, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa,
     e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago, l.id_lista_formas_pago, c.id_comision, ci.nombre, c.fecha_creacion, c.fecha_actualizacion,
-    dl.id_estado_listado_forma_pago, dl.habilitado
+    dl.id_estado_listado_forma_pago, dl.habilitado, c.id_tipo_comision
     GO
     CREATE VIEW [dbo].[vwObtenerCiclosRezagados]
     AS
@@ -2464,3 +2467,92 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
                 END
         END CATCH
     END
+    GO
+    CREATE PROC [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS](@comisionId int, @cicloId int, @usuarioId int)
+    AS
+    BEGIN TRANSACTION
+    BEGIN TRY
+    -- VARIABLES PARA EMAIL
+        DECLARE @IMPBODY   VARCHAR (500);
+        DECLARE @IMPSUBJECT   VARCHAR (500);
+
+        DECLARE @cantidadConfirmados int = 0 
+        DECLARE @estadoListadoFormaPagoExitoso int = 3
+        DECLARE @estadoListadoFormaPagoRechazado int = 4
+        DECLARE @tipoPagoTransferencia int = 2
+        DECLARE @estadoComisionDetalleEmpresaRechazado int = 3
+        DECLARE @estadoComisionDetalleEmpresaConfirmado int = 2
+        DECLARE @tipoComisionRezagado int = 2
+        DECLARE @idEstadoComisionRezagado int = 11
+        SET @cantidadConfirmados = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado
+                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
+                                                    where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0))
+                                
+        IF (@cantidadConfirmados <= 0)
+        BEGIN                            
+            -- No hay pendientes de confirmacion
+            -- Verificando si esta o no en detalle listado forma pago        
+            DECLARE @cantidad int = (select COUNT(i.id_lista_formas_pago) from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
+                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
+                                                    where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0)
+                                and i.id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL i where i.habilitado = 1 and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoRechazado))
+                                                        
+            IF(@cantidad > 0)
+            BEGIN
+                -- Esta en detalle listado forma pago con estado 3 de rechazado por tanto deshabilitamos los habilitados              
+                UPDATE BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL set habilitado = 0 where id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
+                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
+                                                    where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0))
+
+                -- 
+                INSERT INTO GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) select 1, i.id_lista_formas_pago, @estadoListadoFormaPagoExitoso, @usuarioId from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                                where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
+                                and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i where i.id_comision = @comisionId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0)
+                                group by i.id_lista_formas_pago
+
+                COMMIT TRANSACTION
+                RETURN 1                  
+            END
+            ELSE
+            BEGIN
+                --  Esta en detalle listado forma pago por tanto no registramos en detalle
+                COMMIT TRANSACTION
+                RETURN 3
+            END    
+        END
+        ELSE
+        BEGIN
+            -- Aun hay pendientes de confirmacion
+            COMMIT TRANSACTION
+            RETURN 2
+        END
+
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_NUMBER () AS ErrorNumber,
+            ERROR_SEVERITY () AS ErrorSeverity,
+            ERROR_STATE () AS ErrorState,
+            ERROR_PROCEDURE () AS ErrorProcedure,
+            ERROR_LINE () AS ErrorLine,
+            ERROR_MESSAGE () AS ErrorMessage;
+        declare @error int, @message varchar(4000)
+        select @error = ERROR_NUMBER(), @message = ERROR_MESSAGE()
+    IF @@TRANCOUNT > 0
+        BEGIN
+            SET @IMPBODY =
+                    concat ('SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS ',
+                            ' ');
+            SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo cargar las comisiones ';
+            --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+            --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+            --                                @body           = @IMPBODY,
+            --                                @subject        = @IMPSUBJECT;
+            ROLLBACK TRANSACTION
+            raiserror ('SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS: %d: %s', 16, 1, @error, @message) ;       
+            return -1
+        END
+    END CATCH;
+    GO

@@ -113,6 +113,32 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
+                /*using (var ctx = new GpComisions())
+                {
+                    var query = from a in ctx.Articulos
+                                join s in ctx.Saldos on a.id equals s.id
+                                select new Cicloes
+                                {
+                                    Id = a.id,
+                                    NombreProducto = a.nombreProducto,
+                                    Precio = a.Precio,
+                                    Cantidad = s.Cantidad
+                                };
+                    return query.ToList();
+                }
+
+                var c = ContextMulti.GpComisions
+                    .Join(ContextMulti.Cicloes,
+                        p => p.IdCiclo,
+                        e => e.IdCiclo,
+                        (p, e) => new
+                        {
+                          //  p.IdCiclo
+                        }
+                    )
+                    .Join(ContextMulti.GpComisionDetalles,
+                        r => r.);*/
+
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio confirmarRechazadosTransferidosSeleccionados en repository ConfirmarPagosRezagadosTransferencias()");
                 if (!confirmarRezagadosTransferidosSeleccionados(param, usuarioId))
                 {
@@ -121,8 +147,8 @@ namespace gestion_de_comisiones.Repository
 
                 int tipoPagoTransferencia = 2;
                 int idEstadoComisionDetalleEmpresaConfirmado = 2;
-                int tipoComision = 2;
-                int estadoComision = 11;
+                int idTipoComision = 2;
+                int idEstadoComision = 11;
                 List<VwObtenerRezagadosPago> l = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId && x.IdComision == param.comisionId && x.IdTipoPago == tipoPagoTransferencia &&
                             x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
@@ -146,13 +172,13 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@TipoComision",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = tipoComision
+                                            Value = idTipoComision
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@EstadoComision",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = estadoComision
+                                            Value = idEstadoComision
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@ComisionId",
@@ -193,7 +219,9 @@ namespace gestion_de_comisiones.Repository
                            };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
+                Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fi" +
+                    $"" +
+                    $"n SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
                     // Entro al catch del SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS hizo Rollback
@@ -435,7 +463,7 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
                 var recargarCicloActual = false;
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS] @CicloId, @UsuarioId  ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS] @ComisionId, @CicloId, @UsuarioId  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, fin repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue {returnValue}  ");
                 if (returnValue == -1)
