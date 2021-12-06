@@ -240,10 +240,10 @@ namespace gestion_de_comisiones.Repository
                                };
 
                     Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_? @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS returnValue {returnValue} ");
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
                         return false;
@@ -306,10 +306,10 @@ namespace gestion_de_comisiones.Repository
                            };
 
                     
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS returnValue {returnValue} ");
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
                         return false;
