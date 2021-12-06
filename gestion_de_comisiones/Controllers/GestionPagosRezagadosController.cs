@@ -27,8 +27,9 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                var r = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
                 Logger.LogInformation($"usuario: {usuarioLogin} inicio controller GestionPagosRezagadosController - GetCiclos()  ");
+                var r = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
+                Logger.LogInformation($"usuario: {usuarioLogin} fin controller GestionPagosRezagadosController - GetCiclos()  ");
                 return Ok(Service.GetCiclos(usuarioLogin));
             }
             catch (Exception e)
@@ -57,6 +58,37 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult handleTransferenciasEmpresas([FromBody] ComisionesPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller handleTransferenciasEmpresas() parametro: idciclo:{param.idCiclo}");
+                return Ok(Service.handleTransferenciasEmpresas(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  handleTransferenciasEmpresas() controller ");
+                //var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult handleVerificarPagosTransferenciasTodos([FromBody] ObtenerRezagadosPagosTransferenciasInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el controller handleConfirmarTodos() parametro: cicloId: {body.cicloId}");
+                return Ok(Service.handleVerificarPagosTransferenciasTodos(body));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {body.user} error catch  handleConfirmarTodos() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
+            }
+        }
+        
         //POST: gestionPagosRezagados/ObtenerPagosRezagadosTransferencias
         [HttpPost]
         public ActionResult ObtenerPagosRezagadosTransferencias([FromBody] ObtenerPagosRezagadosTransferenciasInput param)
