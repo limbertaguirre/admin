@@ -33,14 +33,22 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
-                var ciclosR = ContextMulti.VwObtenerCiclos.Where(x => x.IdEstadoComision == idEstadoComision && x.IdTipoComision == idTipoComisionPagoComision).ToList();
-                List<CicloDto> ciclos = new List<CicloDto>();
-                foreach (var c in ciclosR)
-                {
-                    Logger.LogInformation($" usuario: {usuario} ciclosR => IdCiclo: {c.IdCiclo} Nombre: {c.Nombre} Estado: {c.Estado}");
-                    ciclos.Add(new CicloDto(c.IdCiclo, c.Nombre));
-                }
-                return ciclos;
+                var ciclosR = ContextMulti.VwObtenerCiclosRezagados.Where(x => x.IdEstadoComision == idEstadoComision && x.IdTipoComision == 3)
+                    .Select(u => new
+                    {
+                        u.IdComision,
+                        u.IdCiclo,
+                        u.Nombre,
+                        u.Estado
+                    })
+                    .ToList();
+                //List<CicloDto> ciclos = new List<CicloDto>();
+                //foreach (var c in ciclosR)
+                //{
+                //    Logger.LogInformation($" usuario: {usuario} ciclosR => IdCiclo: {c.IdCiclo} Nombre: {c.Nombre} Estado: {c.Estado}");
+                //    ciclos.Add(new CicloDto(c.IdCiclo, c.Nombre));
+                //}
+                return ciclosR;
             }
             catch (Exception ex)
             {
@@ -315,6 +323,72 @@ namespace gestion_de_comisiones.Repository
                 e.message = errorMessage;
             }
             return e;
+        }
+
+        public bool handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                var usuarioId = ContextMulti.Usuarios
+                    .Where(x => x.Usuario1 == body.user)
+                    .Select(u => new
+                    {
+                        usuarioId = u.IdUsuario
+                    }).FirstOrDefault();
+
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasTodos()");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@ComisionId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@CicloId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.cicloId
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@EmpresaId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = body.empresaId
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@UsuarioId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = usuarioId.usuarioId
+                                }
+                           };
+
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS] @ComisionId, @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS returnValue {returnValue}  ");
+                if (returnValue == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                //return 0;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
+                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                return false;
+            }
         }
     }
 }

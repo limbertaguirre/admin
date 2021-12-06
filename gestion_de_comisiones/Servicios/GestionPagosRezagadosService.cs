@@ -26,10 +26,10 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio GestionPagosRezagadosService => getCiclos()");
-                int idEstadoCerradoformaPago = 11; //rametro
-                int idTipoComisionPagoComision = 2; //parametro
-                List<CicloDto> ciclos = (List<CicloDto>)Repository.GetCiclos(usuario, idEstadoCerradoformaPago, idTipoComisionPagoComision);
-                if (ciclos.Count > 0)
+                int idEstadoComisionRezagados = 11; //rametro
+                int idTipoComisionRezagados = 2; //parametro
+                var ciclos = Repository.GetCiclos(usuario, idEstadoComisionRezagados, idTipoComisionRezagados);
+                if (true)
                 {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
                 }
