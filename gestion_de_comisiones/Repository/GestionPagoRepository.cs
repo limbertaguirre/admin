@@ -234,7 +234,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 int idTipoPagoTransferencia = 2;
                 int idTipoComision = 1;
-                int idEstadoComision = 10;
+                int IdEstadoComisionCerradoFormaPago = 10;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPagoTransferencia: {idTipoPagoTransferencia}");
                 var empresasIds = ContextMulti.Usuarios
@@ -261,7 +261,7 @@ namespace gestion_de_comisiones.Repository
                     ids[i] = (int) empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.IdEstadoComision == idEstadoComision && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.IdEstadoComision == IdEstadoComisionCerradoFormaPago && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,

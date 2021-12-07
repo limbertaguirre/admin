@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.MultinivelModel
     public partial class VwObtenerRezagadosPago
     {
         public int IdComision { get; set; }
+        public int? IdTipoComision { get; set; }
         public int? IdCiclo { get; set; }
         public string Nombre { get; set; }
         public int IdEmpresa { get; set; }
@@ -18,6 +19,9 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdComisionesDetalle { get; set; }
         public int IdComisionDetalleEmpresa { get; set; }
         public byte? IdEstadoComisionDetalleEmpresa { get; set; }
+        public int IdTipoPago { get; set; }
+        public DateTime? FechaCreacionComision { get; set; }
+        public DateTime? FechaActualizacionComision { get; set; }
         public string CodigoDeCliente { get; set; }
         public string NroDeCuenta { get; set; }
         public string NombreBanco { get; set; }
@@ -31,8 +35,5 @@ namespace gestion_de_comisiones.MultinivelModel
         public string EntidadDestino { get; set; }
         public string SucursalDestino { get; set; }
         public string Glosa { get; set; }
-        public int IdTipoPago { get; set; }
-        public DateTime? FechaCreacionComision { get; set; }
-        public DateTime? FechaActualizacionComision { get; set; }
     }
 }
