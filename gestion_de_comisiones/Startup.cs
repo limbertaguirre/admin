@@ -69,6 +69,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IGestionPagosService, GestionPagosService>();
             services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
             services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
+            services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -85,6 +86,7 @@ namespace gestion_de_comisiones
 
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
+
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
