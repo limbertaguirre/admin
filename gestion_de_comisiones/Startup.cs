@@ -41,7 +41,7 @@ namespace gestion_de_comisiones
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
-           { 
+           {
                x.RequireHttpsMetadata = false;
                x.SaveToken = true;
                x.TokenValidationParameters = new TokenValidationParameters
@@ -51,7 +51,7 @@ namespace gestion_de_comisiones
                    ValidateIssuer = false,
                    ValidateAudience = false
                };
-            });
+           });
 
             //services.AddAutoMapper(typeof(MappingProfiles));
 
@@ -68,6 +68,8 @@ namespace gestion_de_comisiones
             services.AddScoped<IFormaPagoService, FormaPagoService>();
             services.AddScoped<IGestionPagosService, GestionPagosService>();
             services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
+            services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
+            services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -100,8 +102,15 @@ namespace gestion_de_comisiones
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                await next();
+            });
+
             //var path = Directory.GetCurrentDirectory();
-           // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
+            // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
             loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
 
             if (env.IsDevelopment())

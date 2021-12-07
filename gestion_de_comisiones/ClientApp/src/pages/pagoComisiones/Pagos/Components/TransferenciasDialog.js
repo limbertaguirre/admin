@@ -181,7 +181,7 @@ const TransferenciasDialog = ({
   const handleObtenerPagosTransferencias = async (user, empresaId) =>{
     if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
       let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
-       
+       console.log("handleObtenerPagosTransferencias: ", response)
       if(!response || !response.data) {
         dispatch(ActionMensaje.showMessage({
             message: "Hubo inconvenientes al recuperar la información. Intente nuevamente por favor.",

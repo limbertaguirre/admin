@@ -13,5 +13,9 @@ namespace gestion_de_comisiones.Repository.Interfaces
         Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario);
         Task<bool> DeleteUsuarioRol(DeleteUserRolInputModel model);
         public UsuarioModel ObtenerUsuarioPorUsuario(string usuario);
+        public ControlUsuarioModel VerificarSession(string usuario, string netSessionId, int estado);
+        public UsuarioModel ObtenerUsuarioPorId(string usuario);
+        public bool ActualizarIntentoUsuario(string usuario, string netSessionId, int cantidad, int estado);
+        public bool InsertarIntentoUsuario(string usuario, string netSessionId, int cantidad);
     }
 }
