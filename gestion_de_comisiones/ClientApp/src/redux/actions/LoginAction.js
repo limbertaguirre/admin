@@ -11,20 +11,20 @@ export const iniciarSesion= (userName,password)=>{
         }
         requestPost('Login/Sesion',body,dispatch).then((res)=>{
             if(res.code === 0){
-                var data= res.data;
-                dispatch({
+            var data= res.data;             
+                 dispatch({
                     type: TypesHome.MENU_PAGE,
-                     menu:data.perfil && data.perfil.menus == null? [] : data.perfil.menus,
-                     perfiles:data.perfil&& data.perfil.listaHash ==null? [] : data.perfil.listaHash,
+                     menu:data.perfil == null || data.perfil.menus == null? [] : data.perfil.menus,
+                     perfiles:data.perfil == null || data.perfil.listaHash ==null? [] : data.perfil.listaHash,
                 })
 
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,
-                    idUsuario:data.perfil.idUsuario,
-                    nombre:data.perfil.nombre,
-                    apellido:data.perfil.apellido,
-                    token:'Bearer '+data.token
+                    idUsuario:data.perfil == null? 0 : data.perfil.idUsuario,
+                    nombre:data.perfil == null? 'Usuario Nuevo' : data.perfil.nombre,
+                    apellido:data.perfil == null? '' : data.perfil.apellido,
+                    token: data.perfil == null? '' : 'Bearer '+data.token
                 });
                 localStorage.setItem("token", 'Bearer '+data.token);
             }else if(res.code === 1){
