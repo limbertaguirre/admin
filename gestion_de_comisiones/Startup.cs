@@ -102,6 +102,11 @@ namespace gestion_de_comisiones
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                await next();
+            });
             //var path = Directory.GetCurrentDirectory();
             // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
             loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
@@ -146,6 +151,8 @@ namespace gestion_de_comisiones
             app.Use(async (context, next) =>
             {
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-XSS-Protecion", " 1; mode=block");
                 await next();
             });
         }
