@@ -13,6 +13,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public DateTime? FechaBloquedo { get; set; }
         public DateTime? FechaDesbloqueo { get; set; }
         public string NetSessionId { get; set; }
-        public int? Estado { get; set; }
+        public int Estado { get; set; }
     }
 }
