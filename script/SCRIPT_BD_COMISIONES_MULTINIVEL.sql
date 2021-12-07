@@ -379,6 +379,7 @@ go
 
 --insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(1,'PAGO COMISIONES', '',1)
 --insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(2,'PAGO REZAGADOS', '',1)
+--insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(3,'PAGO INCENTIVOS', '',1)
 
 go
 create table CICLO
@@ -471,6 +472,8 @@ insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descr
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(13, 'PAGO DE COMISION CERRADO', 'PAGO DE COMISION CERRADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(14, 'INCENTIVO PENDIENTE', 'INCENTIVO PENDIENTE',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(15, 'INCENTIVO PAGO', 'INCENTIVO PAGO',1)
 
 go
 create table GP_COMISION_ESTADO_COMISION_I
@@ -744,6 +747,8 @@ go
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(4, 'Para autorizar','previo para autorizar', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(5, 'Resagado','cuando no presenta factura o no tiene una forma de pago', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(6, 'No presenta factura','el freelancer comisiona pero no presenta factura', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(7, 'Incentivo pendiente','El pago de incentivo del FreeLancer se encuentra pendiente', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(8, 'Incentivo pagado','El pago de incentivo del FreeLancer se encuentra pagado', 1 )
 
 go
 create table GP_COMISION_DETALLE
