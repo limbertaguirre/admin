@@ -104,7 +104,7 @@ namespace gestion_de_comisiones.Repository
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
-                Logger.LogInformation($" usuario: {param.user}, inicio repository ConfirmarPagosRezagadosTransferencias(): idciclo {param.cicloId}, idcomision {param.comisionId}");
+                Logger.LogInformation($" usuario: {param.user}, inicio repository ConfirmarPagosRezagadosTransferencias(): idciclo {param.cicloId}, idempresa{param.empresaId}, idcomision {param.comisionId}");
 
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == param.user)
@@ -156,12 +156,13 @@ namespace gestion_de_comisiones.Repository
 
                 if (!confirmarRezagadosTransferidosNoSeleccionados(param, usuarioId, l))
                 {
+                    Logger.LogError($" ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS");
                     return postEvent(GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS, "No se pudo realizar la confirmación de los pagos por transferencia a rechazados, verifique e intente nuevamente.");
                 }
 
                 // SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS
                 Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
-                Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, EmpresaId: {param.empresaId}, ComisionId: {param.comisionId}");
+                Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, ComisionId: {param.comisionId}, EmpresaId: {param.empresaId}");
                 var parameterReturn = new SqlParameter[] {
                                 new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -181,28 +182,22 @@ namespace gestion_de_comisiones.Repository
                                             Value = idEstadoComision
                                 },
                                 new SqlParameter() {
-                                            ParameterName = "@ComisionId",
-                                            SqlDbType =  System.Data.SqlDbType.Int,
-                                            Direction = System.Data.ParameterDirection.Input,
-                                            Value = param.comisionId
-                                },
-                                new SqlParameter() {
                                             ParameterName = "@CicloId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = param.cicloId
                                 },
                                 new SqlParameter() {
-                                                ParameterName = "@ComisionId",
-                                                SqlDbType =  System.Data.SqlDbType.Int,
-                                                Direction = System.Data.ParameterDirection.Input,
-                                                Value = param.comisionId
-                                },
-                                new SqlParameter() {
                                             ParameterName = "@EmpresaId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = param.empresaId
+                                },
+                                new SqlParameter() {
+                                                ParameterName = "@ComisionId",
+                                                SqlDbType =  System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Input,
+                                                Value = param.comisionId
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@UsuarioId",
@@ -218,14 +213,13 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
+                //var result = "Todo Ok @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago";
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fi" +
-                    $"" +
-                    $"n SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
+                Logger.LogInformation($" result: {result}, repository ConfirmarPagosRezagadosTransferencias fi" + $"" + $"n SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
                     // Entro al catch del SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS hizo Rollback
-                    Logger.LogWarning($"repository handleConfirmarPagosTransferencias() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
+                    Logger.LogWarning($"repository ConfirmarPagosRezagadosTransferencias() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosRezagadosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
@@ -236,7 +230,7 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {param.user} CATCH handleConfirmarPagosTransferencias() mensaje : {ex}");
+                Logger.LogError($" usuario: {param.user} CATCH ConfirmarPagosRezagadosTransferencias() mensaje : {ex}");
                 dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosRezagadosEvent.ERROR, $"NO se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
             }
@@ -289,9 +283,10 @@ namespace gestion_de_comisiones.Repository
 
                     Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
                     var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    //var result = "Todo OK @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId";
                     int returnValue = (int)parameterReturn[0].Value;
 
-                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
                         return false;
@@ -352,11 +347,9 @@ namespace gestion_de_comisiones.Repository
                                             Value = o.IdComisionDetalleEmpresa
                               }
                            };
-
-                    
                     var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    //var result = "Todo OK@CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId";
                     int returnValue = (int)parameterReturn[0].Value;
-
                     Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
                     if (returnValue == 1)
                     {
@@ -367,7 +360,7 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {body.user} CATCH confirmarRezagadosTransferidosNoSeleccionados(): {ex}");
+                Logger.LogError($" usuario: {body.user} CATCH confirmarRezagadosTransferidosNoSeleccionados(): {ex}");
                 return false;
             }
         }        

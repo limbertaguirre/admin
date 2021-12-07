@@ -109,12 +109,12 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.user} inicio el controlador handleConfirmarPagosTransferencias() parametro: idciclo:{param.cicloId}");
+                Logger.LogInformation($"usuario : {param.user} inicio el controlador ConfirmarPagosRezagadosTransferencias() parametro: idciclo:{param.cicloId}, idcomision:{param.comisionId}");
                 return Ok(Service.ConfirmarPagosRezagadosTransferencias(param));
             }
             catch
             {
-                Logger.LogError($"usuario : {param.user} error catch  handleConfirmarPagosTransferencias() controller ");
+                Logger.LogError($"usuario : {param.user} error catch  ConfirmarPagosRezagadosTransferencias() controller ");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
