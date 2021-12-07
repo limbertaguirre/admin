@@ -104,9 +104,11 @@ namespace gestion_de_comisiones
         {
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
                 await next();
             });
+
             //var path = Directory.GetCurrentDirectory();
             // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
             loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
@@ -146,14 +148,6 @@ namespace gestion_de_comisiones
                     spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
-            });
-
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("X-XSS-Protecion", " 1; mode=block");
-                await next();
             });
         }
     }
