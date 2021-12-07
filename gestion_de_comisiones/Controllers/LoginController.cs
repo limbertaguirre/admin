@@ -15,7 +15,6 @@ using Newtonsoft.Json;
 
 namespace gestion_de_comisiones.Controllers
 {
-
     public class LoginController : Controller
     {
         private readonly ILogger<RolController> Logger;
@@ -33,10 +32,9 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
 
-
         // POST: Login/Sesion        
-        [HttpPost]        
-        public ActionResult Sesion([FromBody] LoginInputModel model)
+        [HttpPost]
+        public async Task<ActionResult> Sesion([FromBody] LoginInputModel model)
         {
             try
             {
@@ -47,11 +45,11 @@ namespace gestion_de_comisiones.Controllers
                 {
                     bool valid = context.ValidateCredentials(model.userName, model.password);
                     if (valid)
-                    {                     
-                        var usuario = Service.VerificarUsuario(model.userName);
+                    {
+                        var usuario = await Service.VerificarUsuarioAsync(model.userName);
                         var t = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 1);
                         Logger.LogInformation($" usuario : {model.userName} fin de servicio sesion() : {JsonConvert.SerializeObject(usuario)}");
-                        return Ok(usuario);                        
+                        return Ok(usuario);
                     }
                     else
                     {
@@ -71,14 +69,12 @@ namespace gestion_de_comisiones.Controllers
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.LogError($" usuario : {model.userName} catch sesion() error : : {ex.Message}");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Intente mas tarde", Data = ex.Message };
                 return Ok(Result);
             }
-        } 
-
-
-
+        }
     }
 }
