@@ -1,6 +1,6 @@
 
 CREATE PROCEDURE [dbo].[SP_PAGAR_RESAGADO_SION_PAY_COMISION]
-     @id_Ciclo     int,
+     @id_Comision     int,
      @id_usuario int
 AS
 
@@ -11,8 +11,9 @@ BEGIN TRY
  ------------------------------------------------------------------ 
  BEGIN  -- Section recargando planilla basica
 
-  DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha INT,nombre varchar(100), ci varchar(100), id_tipo_pago int, tipo_pago varchar(100), ciudad varchar(100), pais varchar(100));
+    DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha INT,nombre varchar(100), ci varchar(100), id_tipo_pago int, tipo_pago varchar(100), ciudad varchar(100), pais varchar(100));
 
+    DECLARE @ID_COMISION_PARAM INT;
     DECLARE @IDCICLO INT;
 	DECLARE @IDUSUARIO INT;
 	DECLARE @USUARIO_LOGUADO VARCHAR(100);
@@ -24,20 +25,21 @@ BEGIN TRY
 	DECLARE @ESTADO_COMISION_ACTIVO INT;
 
 	
-
-	SET @IDCICLO=@id_Ciclo
-	SET @IDUSUARIO= @id_usuario
+	SET @ID_COMISION_PARAM= 1123; -- @id_Comision
+	SET @IDCICLO=0;
+	SET @IDUSUARIO= 1;--@id_usuario
 	SET @USUARIO_LOGUADO = '';
 	SET @USUARIO_NOMBRE='';
 	SET @DESCRIPCION_CICLO = '';
-	SET @PARAM_ID_TIPO_COMISION_PAGO_COMISION=1; -- //GP_TIPO_COMISION
+	SET @PARAM_ID_TIPO_COMISION_PAGO_COMISION=2; -- //GP_TIPO_COMISION
 	SET @ID_COMISION_SELECTED=0;
 	SET @ID_TIPO_SION_PAY=1;  --//TIPO_PAGO
 	SET @ESTADO_COMISION_ACTIVO=1;
 
-	  SELECT @DESCRIPCION_CICLO= nombre FROM  BDMultinivel.dbo.CICLO WHERE id_ciclo=@IDCICLO
+	  
 	  SELECT @USUARIO_LOGUADO= usuario, @USUARIO_NOMBRE= nombres + ' '+apellidos FROM BDMultinivel.dbo.USUARIO where id_usuario=@IDUSUARIO
-	  select  @ID_COMISION_SELECTED= id_comision from BDMultinivel.dbo.GP_COMISION WHERE id_ciclo=@IDCICLO and id_tipo_comision=@PARAM_ID_TIPO_COMISION_PAGO_COMISION
+	  select  @ID_COMISION_SELECTED= id_comision, @IDCICLO=id_ciclo from BDMultinivel.dbo.GP_COMISION WHERE id_comision=@ID_COMISION_PARAM and id_tipo_comision=@PARAM_ID_TIPO_COMISION_PAGO_COMISION
+	  SELECT @DESCRIPCION_CICLO= nombre FROM  BDMultinivel.dbo.CICLO WHERE id_ciclo=@IDCICLO
 	  -----------------------
 	 
 	  ---------------------------------------
@@ -49,7 +51,7 @@ BEGIN TRY
 		left JOIN BDMultinivel.dbo.PAIS PAI ON PAI.id_pais= CIU.id_pais
 		where CD.id_comision= @ID_COMISION_SELECTED AND LIFO.id_tipo_pago=@ID_TIPO_SION_PAY
 
-	   SET @DESCRIPCION_CICLO = CONCAT('RECARGA - Desde comisiones  - ', @DESCRIPCION_CICLO)
+	   SET @DESCRIPCION_CICLO = CONCAT('RECARGA - Desde comisiones R - ', @DESCRIPCION_CICLO)
 
 	   ----------------------------------------------------------------------------------------------------------
 	   ----------------------------------------------------------------------------------------------------------
