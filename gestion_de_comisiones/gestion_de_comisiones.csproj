@@ -45,12 +45,14 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     <None Remove="EPPlus" />
     <None Remove="Controllers\Events\" />
+    <None Remove="Modelos\Reporte\" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="Modelos\Ciudad\" />
     <Folder Include="Controllers\Events\" />
+    <Folder Include="Modelos\Reporte\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

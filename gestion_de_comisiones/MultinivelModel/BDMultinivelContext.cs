@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Collections.Generic;
+using System.Linq;
+using gestion_de_comisiones.Modelos.Reporte;
 
 #nullable disable
 
@@ -95,6 +98,16 @@ namespace gestion_de_comisiones.MultinivelModel
                 optionsBuilder.UseSqlServer("Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
             }
         }
+
+        public IQueryable<ReporteCicloModel> FfReportePorCiclo( int idCiclo )
+            => FromExpression(() => FfReportePorCiclo(idCiclo));
+
+        public IQueryable<ReporteDetalleCicloModel> FfReporteDetalleCiclo(int idComisionDetalle)
+            => FromExpression(() => FfReporteDetalleCiclo(idComisionDetalle));
+
+        public IQueryable<ReporteFreelancerModel> FfReporteFreelancer(int idFicha)
+            => FromExpression(() => FfReporteFreelancer(idFicha));
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -3548,6 +3561,27 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.TieneCuentaBancaria).HasColumnName("tiene_cuenta_bancaria");
             });
+
+            modelBuilder.HasDbFunction(typeof(BDMultinivelContext)
+                .GetMethod(nameof(FfReportePorCiclo), new[] { typeof(int) } ))
+                .HasName("ffReportePorCiclo");
+
+            modelBuilder.Entity<ReporteCicloModel>()
+                .HasNoKey();
+
+            modelBuilder.HasDbFunction(typeof(BDMultinivelContext)
+                .GetMethod(nameof(FfReporteDetalleCiclo), new[] { typeof(int) }))
+                .HasName("ffReporteDetalleCiclo");
+
+            modelBuilder.Entity<ReporteDetalleCicloModel>()
+                .HasNoKey();
+
+            modelBuilder.HasDbFunction(typeof(BDMultinivelContext)
+                .GetMethod(nameof(FfReporteFreelancer), new[] { typeof(int) }))
+                .HasName("ffReporteFreelancer");
+
+            modelBuilder.Entity<ReporteFreelancerModel>()
+                .HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }
