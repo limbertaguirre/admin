@@ -3,42 +3,45 @@ import * as TypesHome from '../types/homeTypes';
 import {requestGet, requestPost} from '../../service/request';
 import * as Action from './messageAction';
 
-
-
-
-
 export const iniciarSesion= (userName,password)=>{
     return (dispatch)=>{     
         let body={
             userName:userName,
             password:password
         }
-        requestPost('Login/Sesion',body,dispatch).then((res)=>{                   
+        requestPost('Login/Sesion',body,dispatch).then((res)=>{
             if(res.code === 0){
-            var data= res.data;
+            var data= res.data;             
                  dispatch({
                     type: TypesHome.MENU_PAGE,
-                     menu:data.perfil && data.perfil.menus == null? [] : data.perfil.menus,
-                     perfiles:data.perfil&& data.perfil.listaHash ==null? [] : data.perfil.listaHash,
+                     menu:data.perfil == null || data.perfil.menus == null? [] : data.perfil.menus,
+                     perfiles:data.perfil == null || data.perfil.listaHash ==null? [] : data.perfil.listaHash,
                 })
 
                 dispatch({
                     type: Types.LOAD_LOGIN,
                     userName:userName,
-                    idUsuario:data.perfil.idUsuario,
-                    nombre:data.perfil.nombre,
-                    apellido:data.perfil.apellido,
-                    token:'Bearer '+data.token
+                    idUsuario:data.perfil == null? 0 : data.perfil.idUsuario,
+                    nombre:data.perfil == null? 'Usuario Nuevo' : data.perfil.nombre,
+                    apellido:data.perfil == null? '' : data.perfil.apellido,
+                    token: data.perfil == null? '' : 'Bearer '+data.token
                 });
-                localStorage.setItem("token", 'Bearer '+data.token);    
-            }else if(res.code === 1){ 
+                localStorage.setItem("token", 'Bearer '+data.token);
+            }else if(res.code === 1){
                 dispatch(Action.showMessage({ message: res.message, variant: "error" }));
             }else if(res.code === 2){
                 dispatch({
                     type:Types.OPEN_MODAL_USER
-                })  
-            }               
-        })              
+                })
+            }else if(res.code === 3){
+                console.log('res ', res)
+                dispatch({
+                    type:Types.USUARIO_BLOQUEADO,
+                    isBloqueado:true,
+                    tiempoBloqueo: parseInt(res.data)
+                });
+            }
+        })
     }
   }
 
@@ -124,4 +127,12 @@ export const iniciarSesion= (userName,password)=>{
             window.localStorage.clear();                          
     }
   }
-  
+export const inicializarBloquedo = ()=>{
+    return (dispatch)=>{
+        dispatch({
+            type:Types.USUARIO_BLOQUEADO,
+            isBloqueado:false,
+            tiempoBloqueo: 0
+        })
+    }
+}

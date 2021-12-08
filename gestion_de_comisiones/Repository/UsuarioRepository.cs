@@ -8,25 +8,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace gestion_de_comisiones.Repository
 {
-    public class UsuarioRepository: IUsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
 
         private readonly BDMultinivelContext multinivelDbContext;
         private readonly ILogger<UsuarioRepository> logger;
-
-        public UsuarioRepository(BDMultinivelContext multinivelDbContext, ILogger<UsuarioRepository> logger)
+        private readonly IConfiguration Config;
+        public UsuarioRepository(IConfiguration config, BDMultinivelContext multinivelDbContext, ILogger<UsuarioRepository> logger)
         {
             this.multinivelDbContext = multinivelDbContext;
             this.logger = logger;
+            this.Config = config;
         }
-        public UsuarioRepository()
-        {
-
-        }
-
 
         /// <summary>
         /// Obtiene todos los usuarios con estado activo(true).
@@ -47,7 +44,7 @@ namespace gestion_de_comisiones.Repository
                         .Where(u => u.Estado.Equals(true) && !usuariosRoles.Any(ur => ur.IdUsuario.Equals(u.IdUsuario)))
                         .Select(u => new UsuarioSelectModel { IdUsuario = u.IdUsuario, Nombres = u.Nombres, Apellidos = u.Apellidos, Login = u.Usuario1 })
                         .ToListAsync();
-                 break;
+                    break;
                 case 1://edit operation
                     result = await multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true)).Join(
                     multinivelDbContext.Usuarios,
@@ -62,7 +59,7 @@ namespace gestion_de_comisiones.Repository
                         Login = us.Usuario1,
                     })
                     .ToListAsync();
-                break;
+                    break;
             }
 
             logger.LogInformation(MessageLogger.FunctionIn(model.UsuarioLogin, nameof(UsuarioRepository.GetUsuariosForSelect)));
@@ -86,30 +83,32 @@ namespace gestion_de_comisiones.Repository
         }
         public async Task<List<UsuarioRolListViewModel>> GetUsuariosRol(string usuario)
         {
-            var usuariosRol =await multinivelDbContext.UsuariosRoles.Where(ur=>ur.Estado.Equals(true)).Join(
+            var usuariosRol = await multinivelDbContext.UsuariosRoles.Where(ur => ur.Estado.Equals(true)).Join(
                 multinivelDbContext.Usuarios,
                 ur => ur.IdUsuario,
                 us => us.IdUsuario,
-                (ur, us) => 
-                new { UsuarioRolId=ur.IdUsuariosRoles, 
-                    UsuarioId = us.IdUsuario, 
-                    Usuario=us.Usuario1,
-                    Nombres=us.Nombres, 
-                    Apellidos=us.Apellidos,
-                    RolId=ur.IdRol
-                    }).Join(
-                multinivelDbContext.Rols,
-                ur =>ur.RolId,
-                r => r.IdRol,
-                (ur,r)=> new UsuarioRolListViewModel
+                (ur, us) =>
+                new
                 {
-                    UsuarioRolId=ur.UsuarioRolId,
-                   UsuarioId = ur.UsuarioId,
-                    Usuario=ur.Usuario,
-                    Nombres=ur.Nombres,
-                    Apellidos=ur.Apellidos,
-                   RolId = r.IdRol,
-                   Rol=r.Nombre
+                    UsuarioRolId = ur.IdUsuariosRoles,
+                    UsuarioId = us.IdUsuario,
+                    Usuario = us.Usuario1,
+                    Nombres = us.Nombres,
+                    Apellidos = us.Apellidos,
+                    RolId = ur.IdRol
+                }).Join(
+                multinivelDbContext.Rols,
+                ur => ur.RolId,
+                r => r.IdRol,
+                (ur, r) => new UsuarioRolListViewModel
+                {
+                    UsuarioRolId = ur.UsuarioRolId,
+                    UsuarioId = ur.UsuarioId,
+                    Usuario = ur.Usuario,
+                    Nombres = ur.Nombres,
+                    Apellidos = ur.Apellidos,
+                    RolId = r.IdRol,
+                    Rol = r.Nombre
                 })
                 .ToListAsync();
             return usuariosRol;
@@ -118,14 +117,14 @@ namespace gestion_de_comisiones.Repository
         public async Task<bool> SetRolByUsuario(SetRolModel model)
         {
             //Check user
-            var usuario =await multinivelDbContext.Usuarios.FindAsync(model.UsuarioId);
+            var usuario = await multinivelDbContext.Usuarios.FindAsync(model.UsuarioId);
             if (usuario is null)
             {
                 throw new Exception(MessageHandler.NotFoundRegister(model.UsuarioId, nameof(Usuario)));
             }
 
             //Check rol
-            var rol =await multinivelDbContext.Rols.FindAsync(model.RolId);
+            var rol = await multinivelDbContext.Rols.FindAsync(model.RolId);
             if (rol is null)
             {
                 throw new Exception(MessageHandler.NotFoundRegister(model.RolId, nameof(Rol)));
@@ -160,7 +159,7 @@ namespace gestion_de_comisiones.Repository
                 multinivelDbContext.UsuariosRoles.Add(usuariosRole);
             }
 
-            
+
             await multinivelDbContext.SaveChangesAsync();
 
             return true;
@@ -221,6 +220,70 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public ControlUsuarioModel VerificarSession(string usuario, string netSessionId, int estado)
+        {
+            try
+            {
+                var responseOBJControlusuario = contextMulti.ControlUsuarios.Where(x => x.Usuario == usuario && (x.Estado == 1 || x.Estado == 2)).Select(c => new ControlUsuarioModel(c.IdControlUsuario, c.Usuario, c.CantidadIntentos, c.FechaBloquedo, c.FechaDesbloqueo, c.NetSessionId, c.Estado)).SingleOrDefault();
+                return responseOBJControlusuario;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public bool InsertarIntentoUsuario(string usuario, string netSessionId, int cantidad)
+        {
+            try
+            {
+                ControlUsuario controlUsuario = new ControlUsuario();
+                controlUsuario.Usuario = usuario;
+                controlUsuario.NetSessionId = netSessionId;
+                controlUsuario.CantidadIntentos = cantidad;
+                controlUsuario.Estado = 1;
+                contextMulti.ControlUsuarios.Add(controlUsuario);
+                contextMulti.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
 
+                return false;
+            }
+        }
+        public bool ActualizarIntentoUsuario(string usuario, string netSessionId, int cantidad, int estado)
+        {
+            try
+            {
+                int tiempoBloqueoUsuario = Config.GetValue<int>("TiempoBloqueoUsuario");
+                int cantidaddIntentoBloqueo = Config.GetValue<int>("CantidaddIntentoBloqueo");
+                if (estado == 2)
+                {
+                    var CtrlUsuarioRow = contextMulti.ControlUsuarios.Where(x => x.Usuario == usuario && x.Estado == 2).First();
+                    CtrlUsuarioRow.Estado = 0;
+                }
+                else
+                {
+                    var CtrlUsuarioRow = contextMulti.ControlUsuarios.Where(x => x.Usuario == usuario && x.Estado == 1).First();
+
+                    CtrlUsuarioRow.NetSessionId = netSessionId;
+                    if (estado == 1) { CtrlUsuarioRow.Estado = 0; } else { CtrlUsuarioRow.CantidadIntentos = cantidad; }
+                    if (cantidad < cantidaddIntentoBloqueo)
+                    {
+                        CtrlUsuarioRow.FechaBloquedo = DateTime.Now;
+                        CtrlUsuarioRow.FechaDesbloqueo = DateTime.Now.AddMinutes(tiempoBloqueoUsuario);
+                        CtrlUsuarioRow.Estado = 2;
+                    }
+                }
+                contextMulti.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
+        }
     }
 }

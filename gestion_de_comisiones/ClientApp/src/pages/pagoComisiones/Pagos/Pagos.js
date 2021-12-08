@@ -311,6 +311,41 @@ const useStyles = makeStyles((theme) => ({
     };
     useEffect(()=>{         
     },[  listaComisionesAPagar,listaComisionPaginacionNueva]);
+
+    const confirmarCierrePagos =()=>{
+      ApiVerificarConfirmarCierrePago(userName, idUsuario,idCiclo);
+    }
+    async function ApiVerificarConfirmarCierrePago(userNa, idUser,idCICLO){
+        if(idCICLO && idCICLO !== 0){  
+            let response= await Actions.ConfirmarCierrePago(userNa, idUser,idCICLO, dispatch)             
+            if(response && response.code == 0){
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "success" }));
+                //inicializa lista                
+                inicializarListaPagos();
+                cargarCiclo(userName);
+
+            }else{
+                dispatch(ActionMensaje.showMessage({ message: response.message , variant: "error" }));
+            }
+  
+        }else{
+            mensajeGenericoCiclo();
+        }    
+    }
+
+    const mensajeGenericoCiclo =()=>{
+      setOpenSnackbar(true);
+      setMensajeSnackbar('¡Debe Seleccionar un ciclo!');
+      settipTSnackbar('warning');
+    }
+
+    const inicializarListaPagos =() =>{
+      setListaComisionesAPagar([]);
+      setStatusBusqueda(false);
+      setTxtBusqueda('');
+      setIdCicloSelected(0);
+      setListCiclo([]);
+    }
   
     return (
       <>
@@ -339,7 +374,29 @@ const useStyles = makeStyles((theme) => ({
              <Grid container className={style.gridContainer} >
               {statusBusqueda ?                
                   <>
-                    <Grid item xs={12} sm={3} md={3} className={style.containerSave} ></Grid>
+                    <Grid item xs={12} sm={3} md={3} className={style.containerSave} >
+                      {statusBusqueda&&
+                        <>
+                          {validarPermiso(perfiles, props.location.state.namePagina + permiso.CREAR)?
+                            <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={style.submitCargar}
+                            onClick = {()=> confirmarCierrePagos()}                                         
+                            >
+                              <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
+                            </Button> 
+                            :
+                              <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
+                                <Button variant="contained"  
+                                > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
+                              </Tooltip> 
+                          }
+                        </> 
+                    }    
+
+                    </Grid>
                   </>
                   :
                   <>
