@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using gestion_de_comisiones.Servicios.Interfaces;
 using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Repository
@@ -23,16 +24,18 @@ namespace gestion_de_comisiones.Repository
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagoRepository> Logger;
 
-        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, ILogger<GestionPagoRepository> logger)
+        private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
+        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagoRepository> logger)
         {
             this.ContextMulti = multinivelDbContext;
             this.Logger = logger;
+           
+            this.EnvioCorreoService = envioCorreoService;
         }
         public GestionPagoRepository()
         {
 
-        }
-
+        }        
         public object GetCiclos(string usuario, int idEstadoComision, int idTipoComisionPagoComision)
         {
             try
@@ -231,6 +234,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
                 int idTipoPagoTransferencia = 2;
                 int idTipoComision = 1;
+                int IdEstadoComisionCerradoFormaPago = 10;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComision: {idTipoComision}, idTipoPagoTransferencia: {idTipoPagoTransferencia}");
                 var empresasIds = ContextMulti.Usuarios
@@ -257,7 +261,7 @@ namespace gestion_de_comisiones.Repository
                     ids[i] = (int) empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.IdEstadoComision == IdEstadoComisionCerradoFormaPago && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,
@@ -774,9 +778,20 @@ namespace gestion_de_comisiones.Repository
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
-
+                
                 dbcontextTransaction.Commit();
+                List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdComision == returnValue && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
+                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
+                    .ToList();
+                Logger.LogInformation($" usuario: {body.user}, despues del commit");
                 // Si returnValue no es -1 ni 2, es 1
+                if (rezagados.Count > 0)
+                {
+                    EnvioCorreoService.EnviarCorreoRezagados(rezagados);
+                    
+                }
+
                 return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
             catch (Exception ex)
@@ -853,11 +868,11 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
-
+       
         private bool confirmarTransferidosNoSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId, List<VwObtenerInfoExcelFormatoBanco> l)
         {
             try {
-            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");
+            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");                                
             for (int i = 0; i < l.Count; i++)
             {
                 VwObtenerInfoExcelFormatoBanco o = l[i];
@@ -948,6 +963,120 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
+
+        public RespuestaPorTipoPagoModel VerificarTipoPagoCiclo(int idCiclo, string usuarioLogin, int idEstadoComision, int idTipoComisionPagoComision, int idTipoFormaPago)
+        {
+            try
+            {
+                RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel();
+                Logger.LogWarning($" usuario: {usuarioLogin} inicio el repository VerificarTipoPago() ");
+                Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision).ToList();
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Count();
+                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogWarning($" usuario: {usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarPagoSionPayCiclo() mensaje : {ex}");
+                RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel { CodigoRespuesta = -1 };
+                return model;
+            }
+        }
+
+        public RespuestaPorTipoPagoModel VerificarTransaccionRechazadoMontoCero(int idCiclo, string usuarioLogin, int idEstadoComision, int idTipoComisionPagoComision, int idTipoFormaPago)
+        {
+            try
+            {
+                int idEstadoDEtalleListadoFormaPago = 4;//parametro
+                RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel();
+                Logger.LogInformation($" usuario: {usuarioLogin} inicio el cierre de transaccion repository VerificarTransaccionRechazadoMontoCero() ");
+                Logger.LogInformation($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {idTipoComisionPagoComision}");
+                Logger.LogInformation($" usuario: {usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");               
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision && x.IdEstadoListadoFormaPago == idEstadoDEtalleListadoFormaPago).ToList();
+
+                //cantidad debe volver monto cero ya que fueron resagados las transferencias
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.MontoNeto > 0).Count();
+                if(model.Cantidad > 0)
+                {
+                    Logger.LogInformation($" usuario: {usuarioLogin} HUBO transacciones rechazados con monto mayor a cero verifique");
+                    Logger.LogInformation($" usuario: {usuarioLogin} exiten rechazado con monto mayor a cero :  {JsonConvert.SerializeObject(ListComisiones)} ");
+                }
+                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogInformation($" usuario: {usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarPagoSionPayCiclo() mensaje : {ex}");
+                RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel { CodigoRespuesta = -1 };
+                return model;
+            }
+        }
+
+        public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param, int idTipoComision)
+        {
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el CerrarPagoComisionPorTipoComision() ");
+            Logger.LogInformation($" usuario: {param.usuarioLogin} -  parametros :{ param},  idtipoComision: {idTipoComision}");
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_ciclo",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idCiclo
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.usuarioId
+                                },
+                                  new SqlParameter() {
+                                            ParameterName = "@id_tipo_comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = idTipoComision
+                                }
+                };
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO] @id_ciclo,  @id_usuario, @id_tipo_comision  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0)
+                {
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se cerro el pago de comision EL [SP_CERRAR_COMISION_PAGO_POR_TIPO].");
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  respuesta sp: {returnValue}");
+                    return returnValue;
+                }
+                else
+                {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    return -1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch CerrarFormaDePago() mensaje : {ex}");
+                dbcontextTransaction.Rollback();
+                return -2;
+            }
+        }
+
+
 
     }
 }

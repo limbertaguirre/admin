@@ -300,5 +300,47 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object CerrarPagoComision(CerrarPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
+
+                int idEstadoComision = 10; //VARIABLE
+                int idTipoComisionPagoComision = 1; //parametro
+                int idTipoFormaPagoSionPay = 1; //parametro
+                int idTipoFormaPagoTransferencia = 2; //parametro
+                                                      //
+                RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (sionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos realizados por SION PAY.", " ");
+                if (sionPay.Cantidad > 0)
+                   return Respuesta.ReturnResultdo(1, "Pagos pendientes en el pago de sion pay.", sionPay);
+
+                RespuestaPorTipoPagoModel transacion = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if (transacion.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (transacion.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia, verifique los montos", transacion);
+
+                RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if(verificarMonto.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (verificarMonto.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes verificar los monto de las transferencias ", verificarMonto);
+
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param, idTipoComisionPagoComision);
+                 if(cerrarPago < 0)
+                  return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+                 if (cerrarPago == 2)
+                 return Respuesta.ReturnResultdo(0, "la comision se cerro con exito", "");
+                 return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch CerrarPagoComision()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

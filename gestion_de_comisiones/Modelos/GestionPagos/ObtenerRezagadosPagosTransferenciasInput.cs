@@ -1,7 +1,7 @@
 ﻿using System;
 namespace gestion_de_comisiones.Modelos.GestionPagos
 {
-    public class DownloadFileTransferenciaInput
+    public class ObtenerRezagadosPagosTransferenciasInput
     {
         public string user { get; set; }
         public int comisionId { get; set; }
