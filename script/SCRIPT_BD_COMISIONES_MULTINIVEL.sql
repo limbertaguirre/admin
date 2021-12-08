@@ -470,6 +470,10 @@ insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descr
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(10, 'CERRADO FORMA DE PAGO', 'CERRADO FORMA DE PAGO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(13, 'PAGO DE COMISION CERRADO', 'PAGO DE COMISION CERRADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(14, 'INCENTIVO PENDIENTE', 'INCENTIVO PENDIENTE',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(15, 'INCENTIVO PAGO', 'INCENTIVO PAGO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(16, 'PAGO DE COMISION RZAGADO CERRADO', 'PAGO DE COMISION RZAGADO CERRADO',1)
 
 go
 create table GP_COMISION_ESTADO_COMISION_I
