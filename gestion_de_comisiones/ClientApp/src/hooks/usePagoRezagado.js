@@ -16,6 +16,7 @@ const usePagoRezagado = () => {
   const { perfiles } = useSelector((stateSelector) => stateSelector.home);
   const [statusBusqueda, setStatusBusqueda] = useState(false);
   const [txtBusqueda, setTxtBusqueda] = useState("");
+  const [idComision, setIdComision] = useState(null);
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensajeSnackbar, setMensajeSnackbar] = useState("");
@@ -64,8 +65,10 @@ const usePagoRezagado = () => {
   const handleOnGetPagos = () => {
     if (idCiclo && idCiclo !== 0) {
       setIdCicloSelected(idCiclo);
-      let objCicloSelected = listCiclo.find( item => item.idCiclo === idCiclo)
-      if(objCicloSelected){
+      let objCicloSelected = listCiclo.find((item) => item.idCiclo === idCiclo);
+
+      if (objCicloSelected) {
+        setIdComision(objCicloSelected.idComision);
         cargarComisionesPagos(objCicloSelected.idComision, idCiclo);
       }
     } else {
@@ -77,8 +80,12 @@ const usePagoRezagado = () => {
   };
 
   async function cargarComisionesPagos(idComision, idCiclo) {
-    let url = "gestionPagosRezagados/GetComisionesPagos"
-    let respuesta = await requestPost(url, {idComision, idCiclo, usuarioLogin : userName}, dispatch);
+    let url = "gestionPagosRezagados/GetComisionesPagos";
+    let respuesta = await requestPost(
+      url,
+      { idComision, idCiclo, usuarioLogin: userName },
+      dispatch
+    );
     if (respuesta && respuesta.code == 0) {
       setListaComisionesAPagar(respuesta.data);
       setListaComisionPaginacionNueva(true);
@@ -230,21 +237,29 @@ const usePagoRezagado = () => {
 
   const handleTransferenciasEmpresas = async (user) => {
     if (idCiclo && idCiclo !== 0) {
-      let response = await handleTransferenciasEmpresasAction(
-        user,
-        idCiclo,
-        dispatch
-      );
-      if (response && response.code == 0) {
-        setEmpresasTransferencias(response.data);
-        setOpenTransferenciasDialog(true);
-      } else {
-        dispatch(
-          showMessage({
-            message: response.message,
-            variant: "error",
-          })
+      let url = "/gestionPagosRezagados/handleTransferenciasEmpresas";
+      const objCiclo = listCiclo.find((item) => item.idCiclo === idCiclo);
+      if (objCiclo) {
+        let response = await requestPost(
+          url,
+          {
+            usuarioLogin: user,
+            idCiclo: objCiclo.idCiclo,
+            idComision: objCiclo.idComision,
+          },
+          dispatch
         );
+        if (response && response.code == 0) {
+          setEmpresasTransferencias(response.data);
+          setOpenTransferenciasDialog(true);
+        } else {
+          dispatch(
+            showMessage({
+              message: response.message,
+              variant: "error",
+            })
+          );
+        }
       }
     }
   };
@@ -364,6 +379,7 @@ const usePagoRezagado = () => {
     open,
     seleccionarNombreCombo,
     anchorEl,
+    idComision,
   };
 };
 

@@ -100,8 +100,8 @@ namespace gestion_de_comisiones.MultinivelModel
             }
         }
 
-        public IQueryable<ReporteCicloModel> FfReportePorCiclo( int idCiclo )
-            => FromExpression(() => FfReportePorCiclo(idCiclo));
+        public IQueryable<ReporteCicloModel> FfReportePorCiclo( int idCiclo, int mode )
+            => FromExpression(() => FfReportePorCiclo(idCiclo, mode));
 
         public IQueryable<ReporteDetalleCicloModel> FfReporteDetalleCiclo(int idComisionDetalle)
             => FromExpression(() => FfReporteDetalleCiclo(idComisionDetalle));
@@ -3624,7 +3624,7 @@ namespace gestion_de_comisiones.MultinivelModel
             });
 
             modelBuilder.HasDbFunction(typeof(BDMultinivelContext)
-                .GetMethod(nameof(FfReportePorCiclo), new[] { typeof(int) } ))
+                .GetMethod(nameof(FfReportePorCiclo), new[] { typeof(int), typeof(int) } ))
                 .HasName("ffReportePorCiclo");
 
             modelBuilder.Entity<ReporteCicloModel>()

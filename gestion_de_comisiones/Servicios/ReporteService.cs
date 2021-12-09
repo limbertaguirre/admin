@@ -22,9 +22,9 @@ namespace gestion_de_comisiones.Servicios
             this.reporteRepository = reporteRepository;
         }
 
-        public object obtenerReporteCiclo(int idCiclo)
+        public object obtenerReporteCiclo(int idCiclo, int mode)
         {
-            var listReporte =  reporteRepository.listaReporteCiclos(idCiclo);
+            var listReporte =  reporteRepository.listaReporteCiclos(idCiclo, mode);
             return respuesta.ReturnResultdo(0, "Ok", listReporte);
         }
 

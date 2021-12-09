@@ -33,6 +33,7 @@ import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import GridTransferenciaModal from "./GridTransferencia";
 import PagosTransferenciaDetalleDialog from "./PagosTransferenciaDetalleDialog";
 import MessageConfirm from "../../../../components/mesageModal/MessageConfirm";
+import { requestPost } from "../../../../service/request";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -106,6 +107,7 @@ const TransferenciasDialog = ({
   closeTransferenciasDialog,
   empresas,
   recargarCicloActual,
+  idComision,
 }) => {
   const style = useStyles();
   const dispatch = useDispatch();
@@ -205,12 +207,14 @@ const TransferenciasDialog = ({
 
   const handleObtenerPagosTransferencias = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
-      let response = await Actions.handleObtenerPagosTransferencias(
-        user,
+      let url =
+        "/gestionPagosRezagados/handleVerificarPagosTransferenciasTodos";
+      let response = await requestPost(url, {
+        usuarioLogin: userName,
         cicloId,
+        comisionId: idComision,
         empresaId,
-        dispatch
-      );
+      });
       console.log("handleObtenerPagosTransferencias: ", response);
       if (!response || !response.data) {
         dispatch(
@@ -240,10 +244,16 @@ const TransferenciasDialog = ({
 
   const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
-      let response = await Actions.handleConfirmarPagosTransferenciasTodos(
-        user,
-        cicloId,
-        empresaId,
+      let url =
+        "/gestionPagosRezagados/handleVerificarPagosTransferenciasTodos";
+      let response = await requestPost(
+        url,
+        {
+          user: userName,
+          cicloId,
+          comisionId: idComision,
+          empresaId,
+        },
         dispatch
       );
 
@@ -278,10 +288,16 @@ const TransferenciasDialog = ({
     };
 
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
-      let response = await Actions.handleVerificarPagosTransferenciasTodos(
-        user,
-        cicloId,
-        empresaId,
+      let url =
+        "/gestionPagosRezagados/handleVerificarPagosTransferenciasTodos";
+      let response = await requestPost(
+        url,
+        {
+          user: userName,
+          cicloId,
+          comisionId: idComision,
+          empresaId,
+        },
         dispatch
       );
 
