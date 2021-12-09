@@ -36,8 +36,11 @@ namespace gestion_de_comisiones.Repository
                         u.IdComision,
                         u.IdCiclo,
                         u.Nombre,
-                        u.Estado
+                        //u.Estado,
+                        u.IdEstadoComision
                     })
+                    .Distinct()
+                    .OrderBy(c => c.IdComision)
                     .ToList();                
                 return ciclosR;
             }
@@ -113,31 +116,35 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
-                /*using (var ctx = new GpComisions())
+                int estadoComisionRezagados = 9;
+                int tipoComisionRezagados = 2;
+                var count = ContextMulti.GpComisions.Join(ContextMulti.Cicloes,
+                                              GpComision => GpComision.IdCiclo,
+                                              Ciclo => Ciclo.IdCiclo,
+                                          (GpComision, Ciclo) => new
+                                          {
+                                              idComision = GpComision.IdComision,
+                                              tipoComision = GpComision.IdTipoComision,
+                                              idCiclo = Ciclo.IdCiclo
+                                          }).Join(ContextMulti.GpComisionEstadoComisionIs,
+                                                  GpComision => GpComision.idComision,
+                                                  GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                  (GpComision, GpComisionEstadoComisionI) => new
+                                                  {
+                                                      idEstadoComision = GpComisionEstadoComisionI.IdEstadoComision,
+                                                      habilitado = GpComisionEstadoComisionI.Habilitado,
+                                                      idComision = GpComision.idComision,
+                                                      idCiclo = GpComision.idCiclo,
+                                                      tipoComision = GpComision.tipoComision
+                                                  }
+                                      ).Where(x => x.habilitado == true && x.idCiclo == param.cicloId && x.idEstadoComision == estadoComisionRezagados
+                                        && x.tipoComision == tipoComisionRezagados).Count();
+                
+                Logger.LogInformation($"Repository GestionPagosRezagadosRepository - ConfirmarPagosRezagadosTransferencias cantidad de registros rezagados {count}");
+                if (count == 2)
                 {
-                    var query = from a in ctx.Articulos
-                                join s in ctx.Saldos on a.id equals s.id
-                                select new Cicloes
-                                {
-                                    Id = a.id,
-                                    NombreProducto = a.nombreProducto,
-                                    Precio = a.Precio,
-                                    Cantidad = s.Cantidad
-                                };
-                    return query.ToList();
+                    return postEvent(GestionPagosRezagadosEvent.EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS, "Es necesario que cierre el registro para el ciclo actual de rezagados para poder continuar al siguiente registro de rezagados.");
                 }
-
-                var c = ContextMulti.GpComisions
-                    .Join(ContextMulti.Cicloes,
-                        p => p.IdCiclo,
-                        e => e.IdCiclo,
-                        (p, e) => new
-                        {
-                          //  p.IdCiclo
-                        }
-                    )
-                    .Join(ContextMulti.GpComisionDetalles,
-                        r => r.);*/
 
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio confirmarRechazadosTransferidosSeleccionados en repository ConfirmarPagosRezagadosTransferencias()");
                 if (!confirmarRezagadosTransferidosSeleccionados(param, usuarioId))
