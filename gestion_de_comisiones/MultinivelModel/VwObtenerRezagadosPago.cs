@@ -22,6 +22,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdTipoPago { get; set; }
         public DateTime? FechaCreacionComision { get; set; }
         public DateTime? FechaActualizacionComision { get; set; }
+        public int IdFicha { get; set; }
         public string CodigoDeCliente { get; set; }
         public string NroDeCuenta { get; set; }
         public string NombreBanco { get; set; }
