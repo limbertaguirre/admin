@@ -251,5 +251,21 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error intentar cerrar el pago" });
             }
         }
+        // POST: gestionPagos/BuscarFreelancerPagosTransferencias
+        [HttpPost]
+        public ActionResult BuscarFreelancerPagosTransferencias([FromBody] DownloadFileTransferenciaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controller BuscarFreelancerPagosTransferencias() parametros: idciclo:{param.cicloId}, idempresa:{param.empresaId}");
+                return Ok(Service.BuscarFreelancerPagosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  BuscarFreelancerPagosTransferencias() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(Result);
+            }
+        }
     }
 }

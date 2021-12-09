@@ -23,5 +23,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
         public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInput param);
         public object CerrarPagoComision(CerrarPagoParam param);
+        public object BuscarFreelancerPagosTransferencias(DownloadFileTransferenciaInput param);
     }
 }
