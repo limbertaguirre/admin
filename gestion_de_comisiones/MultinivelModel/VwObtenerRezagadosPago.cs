@@ -14,8 +14,8 @@ namespace gestion_de_comisiones.MultinivelModel
         public int IdEmpresa { get; set; }
         public string Empresa { get; set; }
         public int IdListaFormasPago { get; set; }
-        public int IdEstadoListadoFormaPago { get; set; }
-        public bool EstadoListadoFormaPagoHabilitado { get; set; }
+        public int? IdEstadoListadoFormaPago { get; set; }
+        public bool? EstadoListadoFormaPagoHabilitado { get; set; }
         public int IdComisionesDetalle { get; set; }
         public int IdComisionDetalleEmpresa { get; set; }
         public byte? IdEstadoComisionDetalleEmpresa { get; set; }
@@ -30,11 +30,12 @@ namespace gestion_de_comisiones.MultinivelModel
         public string DocDeIdentidad { get; set; }
         public decimal? ImportePorEmpresa { get; set; }
         public decimal ImporteNeto { get; set; }
-        public string FechaDePago { get; set; }
-        public int FormaDePago { get; set; }
-        public string MonedaDestino { get; set; }
-        public string EntidadDestino { get; set; }
-        public string SucursalDestino { get; set; }
-        public string Glosa { get; set; }
+        #nullable enable
+        public string? FechaDePago { get; set; }
+        public int FormaDePago { get; set; }        
+        public string? MonedaDestino { get; set; }
+        public string? EntidadDestino { get; set; }
+        public string? SucursalDestino { get; set; }
+        public string? Glosa { get; set; }
     }
 }
