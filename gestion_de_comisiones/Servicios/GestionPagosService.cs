@@ -342,5 +342,27 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object BuscarFreelancerPagosTransferencias(DownloadFileTransferenciaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el servicio BuscarFreelancerPagosTransferencias() ");
+                var file = Repository.BuscarFreelancerPagosTransferencias(param);
+                if (file == null)
+                {
+                    return Respuesta.ReturnResultdo(0, "No se encontraron resultados", file);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(0, "Resultado encontrado", file);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.user} error catch BuscarFreelancerPagosTransferencias()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "Error de conexion", "Ocurrió algo inesperado con la comunicación con el servidor.");
+            }
+        }
     }
 }

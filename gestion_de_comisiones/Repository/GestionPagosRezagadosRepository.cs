@@ -827,5 +827,23 @@ namespace gestion_de_comisiones.Repository
                 return postEvent(GestionPagosRezagadosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
             }
         }
+        public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {param.user} -  inicio el BuscarFreelancerPagosTransferencias() ");
+                int cicloId = Convert.ToInt32(param.cicloId);
+                int tipoPagoTransferencia = 2;
+                var Buscar = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.DocDeIdentidad == param.ci && x.IdCiclo == cicloId && param.empresaId == x.IdEmpresa && x.IdTipoPago == tipoPagoTransferencia)
+                    .ToList();
+                return Buscar;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {param.user} error catch BuscarFreelancerPagosTransferencias() mensaje : {ex}");
+                return false;
+            }
+        }
     }
 }

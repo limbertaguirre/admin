@@ -133,5 +133,21 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las empresas." });
             }
         }
+        // POST: gestionPagos/BuscarFreelancerPagosRezagadosTransferencias
+        [HttpPost]
+        public ActionResult BuscarFreelancerPagosRezagadosTransferencias([FromBody] ObtenerPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el controller BuscarFreelancerPagosRezagadosTransferencias() parametros: idciclo:{param.cicloId}, idempresa:{param.empresaId}");
+                return Ok(Service.BuscarFreelancerPagosRezagadosTransferencias(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.user} error catch  BuscarFreelancerPagosRezagadosTransferencias() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(Result);
+            }
+        }
     }
 }
