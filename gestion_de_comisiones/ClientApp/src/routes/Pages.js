@@ -15,6 +15,7 @@ import EditRol from "../pages/usuario/Roles/EditRol";
 import Cliente from "../pages/fichaCliente/Cliente";
 import Ficha from "../pages/fichaCliente/Ficha";
 import SetRol from "../pages/usuario/SetRol";
+import PagoRezagado from "../pages/pagoRezagados/pagos/PagoRezagado";
 import ReporteCiclo from "../pages/reporte/ReporteCiclo";
 import ReporteFreelancer from "../pages/reporte/ReporteFreelancer";
 
@@ -45,4 +46,5 @@ export default {
   SetRol,
   ReporteCiclo,
   ReporteFreelancer,
+  PagoRezagado,
 };
