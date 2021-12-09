@@ -23,6 +23,8 @@ import {
   DialogTitle,
   Chip,
   withStyles,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 import Home from "@material-ui/icons/Home";
 import ListIcon from "@material-ui/icons/List";
@@ -82,6 +84,10 @@ const ReporteCiclo = () => {
     selectedDetailItemData,
     downloadPdfReport,
     downloadExcelReport,
+    activarComisiones,
+    activarRezagados,
+    setActivarComisiones,
+    setActivarRezagados,
   } = useReporteCiclo();
   return (
     <div>
@@ -103,7 +109,7 @@ const ReporteCiclo = () => {
       </Typography>
       <Paper elevation={2} className={styles.cardPaper}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={7}>
+          <Grid item xs={12} sm={4}>
             <FormControl variant="outlined" fullWidth>
               <InputLabel id="ciclo-label-id">Ciclo</InputLabel>
               <Select
@@ -123,7 +129,8 @@ const ReporteCiclo = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={5} className={styles.buttonsGrid}>
+
+          <Grid item xs={12} sm={4} className={styles.buttonsGrid}>
             <Button
               variant="contained"
               color="primary"
@@ -149,6 +156,30 @@ const ReporteCiclo = () => {
             >
               PDF
             </Button>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={activarComisiones}
+                  onChange={(e) => setActivarComisiones(e.target.checked)}
+                  name="comisiones"
+                />
+              }
+              style={{ marginBottom: 0 }}
+              label="Pago por comision"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={activarRezagados}
+                  onChange={(e) => setActivarRezagados(e.target.checked)}
+                  name="rezagados"
+                />
+              }
+              style={{ marginBottom: 0 }}
+              label="Pago por rezagados"
+            />
           </Grid>
         </Grid>
         {items.length > 0 && (

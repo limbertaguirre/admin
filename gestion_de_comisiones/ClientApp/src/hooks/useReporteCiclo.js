@@ -3,6 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { requestGet, requestPost } from "../service/request";
 import { downloadExcelTable, downloadPdfTable } from "../service/fileManager";
 import { format } from "date-fns";
+import { showMessage } from "../redux/actions/messageAction";
+const comisionTypes = {
+  SOLO_COMISIONES: 1,
+  SOLO_REZAGADOS: 2,
+  COMISIONES_REZAGADOS: 3,
+};
 
 const useReporteCiclo = () => {
   const dispatch = useDispatch();
@@ -13,8 +19,22 @@ const useReporteCiclo = () => {
   const [items, setItems] = useState([]);
   const [ciclos, setCiclos] = useState([]);
   const [detailItems, setDetailItems] = useState([]);
+  const [activarRezagados, setActivarRezagados] = useState(true);
+  const [activarComisiones, setActivarComisiones] = useState(true);
   //UI SATE
   const [open, setOpen] = useState(false);
+
+  const getQueryComisionTypeMode = () => {
+    if (activarComisiones && activarRezagados) {
+      return comisionTypes.COMISIONES_REZAGADOS;
+    } else {
+      if (activarComisiones && !activarRezagados) {
+        return comisionTypes.SOLO_COMISIONES;
+      } else {
+        return comisionTypes.SOLO_REZAGADOS;
+      }
+    }
+  };
 
   const downloadPdfReport = () => {
     if (items.length > 0) {
@@ -86,8 +106,18 @@ const useReporteCiclo = () => {
 
   const getReportInfo = async () => {
     if (ciclo) {
+      if (!activarRezagados && !activarComisiones) {
+        dispatch(
+          showMessage({
+            message:
+              "Debe activar la opcion Pago por comisión o Pago por rezagados.",
+            variant: "warning",
+          })
+        );
+        return;
+      }
       let url = "/Reporte/obtenerReporteCiclo";
-      let data = { idCiclo: ciclo };
+      let data = { idCiclo: ciclo, mode: getQueryComisionTypeMode() };
       try {
         let response = await requestPost(url, data, dispatch);
         console.log(response);
@@ -153,6 +183,10 @@ const useReporteCiclo = () => {
     selectedDetailItemData,
     downloadPdfReport,
     downloadExcelReport,
+    activarComisiones,
+    activarRezagados,
+    setActivarComisiones,
+    setActivarRezagados,
   };
 };
 

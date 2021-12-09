@@ -21,7 +21,7 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]
         public ActionResult obtenerReporteCiclo([FromBody] ReporteCicloModelRequest reporteCicloModelRequest)
         {
-            var result = service.obtenerReporteCiclo(reporteCicloModelRequest.idCiclo);
+            var result = service.obtenerReporteCiclo(reporteCicloModelRequest.idCiclo, reporteCicloModelRequest.mode);
             return Ok(result);
         }
 

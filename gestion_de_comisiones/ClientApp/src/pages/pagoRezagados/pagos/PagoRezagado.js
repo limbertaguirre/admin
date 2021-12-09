@@ -143,6 +143,7 @@ const PagoRezagado = ({ location }) => {
     open,
     seleccionarNombreCombo,
     anchorEl,
+    idComision,
   } = usePagoRezagado();
   return (
     <>
@@ -167,6 +168,7 @@ const PagoRezagado = ({ location }) => {
       {empresasTransferencias && (
         <TransferenciasDialog
           cicloId={idCiclo}
+          idComision={idComision}
           openDialog={openTransferenciasDialog}
           closeTransferenciasDialog={handleCloseTransferencias}
           empresas={empresasTransferencias}
@@ -182,36 +184,36 @@ const PagoRezagado = ({ location }) => {
                 {statusBusqueda && (
                   <>
                     {
-                    // validarPermiso(
-                    //   perfiles,
-                    //   location.state.namePagina + permiso.CREAR
-                    // ) 
-                    true ? 
-                    (
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className={style.submitCargar}
-                        onClick={() => confirmarCierrePagos()}
-                      >
-                        <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
-                        PAGO
-                      </Button>
-                    ) : (
-                      <Tooltip
-                        disableFocusListener
-                        disableTouchListener
-                        TransitionComponent={Zoom}
-                        title={"Sin Acceso"}
-                      >
-                        <Button variant="contained">
-                          {" "}
+                      // validarPermiso(
+                      //   perfiles,
+                      //   location.state.namePagina + permiso.CREAR
+                      // )
+                      true ? (
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          className={style.submitCargar}
+                          onClick={() => confirmarCierrePagos()}
+                        >
                           <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
                           PAGO
                         </Button>
-                      </Tooltip>
-                    )}
+                      ) : (
+                        <Tooltip
+                          disableFocusListener
+                          disableTouchListener
+                          TransitionComponent={Zoom}
+                          title={"Sin Acceso"}
+                        >
+                          <Button variant="contained">
+                            {" "}
+                            <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
+                            PAGO
+                          </Button>
+                        </Tooltip>
+                      )
+                    }
                   </>
                 )}
               </Grid>
@@ -301,12 +303,11 @@ const PagoRezagado = ({ location }) => {
           {statusBusqueda && (
             <>
               {
-              // validarPermiso(
-              //   perfiles,
-              //   location.state.namePagina + permiso.CREAR
-              // ) 
-              // && 
-              (
+                // validarPermiso(
+                //   perfiles,
+                //   location.state.namePagina + permiso.CREAR
+                // )
+                // &&
                 <>
                   <Grid
                     item
@@ -349,7 +350,7 @@ const PagoRezagado = ({ location }) => {
                     </Menu>
                   </Grid>
                 </>
-              )}
+              }
             </>
           )}
         </Grid>
