@@ -378,7 +378,7 @@ namespace gestion_de_comisiones.Repository
             {
                 int idTipoPagoTransferencia = 2;
                 int idTipoComisionRezagados = 2;
-                int idEstadoComisionPagosRezagados = 11;
+                int idEstadoComisionPagosRezagados = 9;
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository handleTransferenciasEmpresas() ");
                 Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idTipoComisionRezagados: {idTipoComisionRezagados}, idTipoPagoTransferencia: {idTipoPagoTransferencia}");
                 var empresasIds = ContextMulti.Usuarios
