@@ -36,8 +36,11 @@ namespace gestion_de_comisiones.Repository
                         u.IdComision,
                         u.IdCiclo,
                         u.Nombre,
-                        u.Estado
+                        //u.Estado,
+                        u.IdEstadoComision
                     })
+                    .Distinct()
+                    .OrderBy(c => c.IdComision)
                     .ToList();                
                 return ciclosR;
             }
@@ -113,31 +116,35 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
-                /*using (var ctx = new GpComisions())
+                int estadoComisionRezagados = 9;
+                int tipoComisionRezagados = 2;
+                var count = ContextMulti.GpComisions.Join(ContextMulti.Cicloes,
+                                              GpComision => GpComision.IdCiclo,
+                                              Ciclo => Ciclo.IdCiclo,
+                                          (GpComision, Ciclo) => new
+                                          {
+                                              idComision = GpComision.IdComision,
+                                              tipoComision = GpComision.IdTipoComision,
+                                              idCiclo = Ciclo.IdCiclo
+                                          }).Join(ContextMulti.GpComisionEstadoComisionIs,
+                                                  GpComision => GpComision.idComision,
+                                                  GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                  (GpComision, GpComisionEstadoComisionI) => new
+                                                  {
+                                                      idEstadoComision = GpComisionEstadoComisionI.IdEstadoComision,
+                                                      habilitado = GpComisionEstadoComisionI.Habilitado,
+                                                      idComision = GpComision.idComision,
+                                                      idCiclo = GpComision.idCiclo,
+                                                      tipoComision = GpComision.tipoComision
+                                                  }
+                                      ).Where(x => x.habilitado == true && x.idCiclo == param.cicloId && x.idEstadoComision == estadoComisionRezagados
+                                        && x.tipoComision == tipoComisionRezagados).Count();
+                
+                Logger.LogInformation($"Repository GestionPagosRezagadosRepository - ConfirmarPagosRezagadosTransferencias cantidad de registros rezagados {count}");
+                if (count == 2)
                 {
-                    var query = from a in ctx.Articulos
-                                join s in ctx.Saldos on a.id equals s.id
-                                select new Cicloes
-                                {
-                                    Id = a.id,
-                                    NombreProducto = a.nombreProducto,
-                                    Precio = a.Precio,
-                                    Cantidad = s.Cantidad
-                                };
-                    return query.ToList();
+                    return postEvent(GestionPagosRezagadosEvent.EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS, "Es necesario que cierre el registro para el ciclo actual de rezagados para poder continuar al siguiente registro de rezagados.");
                 }
-
-                var c = ContextMulti.GpComisions
-                    .Join(ContextMulti.Cicloes,
-                        p => p.IdCiclo,
-                        e => e.IdCiclo,
-                        (p, e) => new
-                        {
-                          //  p.IdCiclo
-                        }
-                    )
-                    .Join(ContextMulti.GpComisionDetalles,
-                        r => r.);*/
 
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio confirmarRechazadosTransferidosSeleccionados en repository ConfirmarPagosRezagadosTransferencias()");
                 if (!confirmarRezagadosTransferidosSeleccionados(param, usuarioId))
@@ -148,7 +155,7 @@ namespace gestion_de_comisiones.Repository
                 int tipoPagoTransferencia = 2;
                 int idEstadoComisionDetalleEmpresaConfirmado = 2;
                 int idTipoComision = 2;
-                int idEstadoComision = 11;
+                int idEstadoComision = 9;
                 List<VwObtenerRezagadosPago> l = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId && x.IdComision == param.comisionId && x.IdTipoPago == tipoPagoTransferencia &&
                             x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
@@ -160,8 +167,8 @@ namespace gestion_de_comisiones.Repository
                     return postEvent(GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS, "No se pudo realizar la confirmación de los pagos por transferencia a rechazados, verifique e intente nuevamente.");
                 }
 
-                // SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS
-                Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
+                // SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS
+                Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS");
                 Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {param.cicloId}, ComisionId: {param.comisionId}, EmpresaId: {param.empresaId}");
                 var parameterReturn = new SqlParameter[] {
                                 new SqlParameter  {
@@ -212,14 +219,14 @@ namespace gestion_de_comisiones.Repository
                                             Value = tipoPagoTransferencia
                               }
                            };
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
                 //var result = "Todo Ok @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago";
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, repository ConfirmarPagosRezagadosTransferencias fi" + $"" + $"n SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
+                Logger.LogInformation($" result: {result}, repository ConfirmarPagosRezagadosTransferencias fi" + $"" + $"n SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
-                    // Entro al catch del SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS hizo Rollback
-                    Logger.LogWarning($"repository ConfirmarPagosRezagadosTransferencias() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
+                    // Entro al catch del SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS hizo Rollback
+                    Logger.LogWarning($"repository ConfirmarPagosRezagadosTransferencias() SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS @returnValue: {returnValue}");
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosRezagadosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
@@ -430,6 +437,7 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
+                var estadoComisionRezagadoId = 9;
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -453,10 +461,16 @@ namespace gestion_de_comisiones.Repository
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = usuarioId.usuarioId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@EstadoComisionRezagadoId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = estadoComisionRezagadoId
                               }
                            };
                 var recargarCicloActual = false;
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS] @ComisionId, @CicloId, @UsuarioId  ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS] @ComisionId, @CicloId, @EstadoComisionRezagadoId, @UsuarioId  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, fin repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue {returnValue}  ");
                 if (returnValue == -1)

@@ -385,12 +385,12 @@ const useStyles = makeStyles((theme) => ({
                             className={style.submitCargar}
                             onClick = {()=> confirmarCierrePagos()}                                         
                             >
-                              <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO
+                              <SaveIcon style={{marginRight:'5px'}} /> CERRAR PAGOS
                             </Button> 
                             :
                               <Tooltip disableFocusListener disableTouchListener TransitionComponent={Zoom} title={'Sin Acceso'}>
                                 <Button variant="contained"  
-                                > <SaveIcon style={{marginRight:'5px'}} /> CERRAR FORMA PAGO</Button> 
+                                > <SaveIcon style={{marginRight:'5px'}} /> CERRAR PAGOS</Button> 
                               </Tooltip> 
                           }
                         </> 

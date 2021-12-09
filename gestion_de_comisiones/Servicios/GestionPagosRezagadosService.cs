@@ -26,7 +26,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio GestionPagosRezagadosService => getCiclos()");
-                int idEstadoComisionRezagados = 11; //rametro
+                int idEstadoComisionRezagados = 9; //rametro
                 int idTipoComisionRezagados = 2; //parametro
                 var ciclos = Repository.GetCiclos(usuario, idEstadoComisionRezagados, idTipoComisionRezagados);
                 if (true)
@@ -51,7 +51,7 @@ namespace gestion_de_comisiones.Servicios
             {
 
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio GestionPagosRezagadosService => GetComisionesDePagos()");
-                int idEstadoPagosRezagados = 11;
+                int idEstadoPagosRezagados = 9;
                 int idTipoComisionRezagadosComision = 2;
                 var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoPagosRezagados, idTipoComisionRezagadosComision, param.idComision);
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
@@ -91,9 +91,9 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleVerificarPagosTransferenciasTodos() ");
                 GestionPagosRezagadosEvent @event = Repository.handleVerificarPagosTransferenciasTodos(body);
-                Logger.LogInformation($"handleConfirmarPagosTransferenciasTodos() response @event {@event}");
+                Logger.LogInformation($"handleVerificarPagosTransferenciasTodos() response @event {@event}");
                 if (@event.eventType == GestionPagosRezagadosEvent.EXISTEN_PENDIENTES)
                 {
                     return Respuesta.ReturnResultdo(2, @event.message, @event.dataVerify);
@@ -172,6 +172,28 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {body.user} error catch handleDownloadFileEmpresas() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
+                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);
+                if (confirm)
+                {
+                    return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(1, "No se pudo realizar la confirmacion de las transferencias.", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {body.user} error catch handleConfirmarPagosTransferenciasTodos() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
     }

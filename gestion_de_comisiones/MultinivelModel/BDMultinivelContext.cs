@@ -53,7 +53,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<GpProrrateoDetalle> GpProrrateoDetalles { get; set; }
         public virtual DbSet<GpTipoComision> GpTipoComisions { get; set; }
         public virtual DbSet<Incentivo> Incentivoes { get; set; }
-        public virtual DbSet<IncentivoPorSionPay> IncentivoPorSionPays { get; set; }
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
         public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
         public virtual DbSet<LogPagoMasivoSionPayComisionOEmpresaFail> LogPagoMasivoSionPayComisionOEmpresaFails { get; set; }
@@ -1760,73 +1759,6 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Es el precio del incentivo ya se si es un especie o dinero");
             });
 
-            modelBuilder.Entity<IncentivoPorSionPay>(entity =>
-            {
-                entity.HasKey(e => e.IdIncentivoPlanilla)
-                    .HasName("PK__INCENTIV__BD6030CA1DAFC624");
-
-                entity.ToTable("INCENTIVO_POR_SION_PAY");
-
-                entity.Property(e => e.IdIncentivoPlanilla).HasColumnName("id_incentivo_planilla");
-
-                entity.Property(e => e.Ciudad)
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("ciudad");
-
-                entity.Property(e => e.CuentaSionpay)
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("cuenta_sionpay");
-
-                entity.Property(e => e.Detalle)
-                    .IsRequired()
-                    .IsUnicode(false)
-                    .HasColumnName("detalle");
-
-                entity.Property(e => e.Empresa)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("empresa");
-
-                entity.Property(e => e.Estado).HasColumnName("estado");
-
-                entity.Property(e => e.FechaModificacion)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fecha_modificacion")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.FechaRegistro)
-                    .HasColumnType("datetime")
-                    .HasColumnName("fecha_registro")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
-
-                entity.Property(e => e.IdUsuarioSistema).HasColumnName("id_usuario_sistema");
-
-                entity.Property(e => e.Monto)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasColumnName("monto");
-
-                entity.Property(e => e.NombreCliente)
-                    .IsRequired()
-                    .HasMaxLength(1000)
-                    .IsUnicode(false)
-                    .HasColumnName("nombre_cliente");
-
-                entity.Property(e => e.Pais)
-                    .HasMaxLength(500)
-                    .IsUnicode(false)
-                    .HasColumnName("pais");
-
-                entity.Property(e => e.Usuario)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("usuario");
-            });
-
             modelBuilder.Entity<ListadoFormasPago>(entity =>
             {
                 entity.HasKey(e => e.IdListaFormasPago)
@@ -3401,6 +3333,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
 
                 entity.Property(e => e.IdEstadoListadoFormaPago).HasColumnName("id_estado_listado_forma_pago");
+
+                entity.Property(e => e.IdFicha).HasColumnName("id_ficha");
 
                 entity.Property(e => e.IdListaFormasPago).HasColumnName("id_lista_formas_pago");
 
