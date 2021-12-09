@@ -181,10 +181,13 @@ const PagoRezagado = ({ location }) => {
               <Grid item xs={12} sm={3} md={3} className={style.containerSave}>
                 {statusBusqueda && (
                   <>
-                    {validarPermiso(
-                      perfiles,
-                      location.state.namePagina + permiso.CREAR
-                    ) ? (
+                    {
+                    // validarPermiso(
+                    //   perfiles,
+                    //   location.state.namePagina + permiso.CREAR
+                    // ) 
+                    true ? 
+                    (
                       <Button
                         type="submit"
                         variant="contained"
@@ -297,10 +300,13 @@ const PagoRezagado = ({ location }) => {
 
           {statusBusqueda && (
             <>
-              {validarPermiso(
-                perfiles,
-                location.state.namePagina + permiso.CREAR
-              ) && (
+              {
+              // validarPermiso(
+              //   perfiles,
+              //   location.state.namePagina + permiso.CREAR
+              // ) 
+              // && 
+              (
                 <>
                   <Grid
                     item

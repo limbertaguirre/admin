@@ -1,7 +1,7 @@
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { verificarAcceso } from "../lib/accesosPerfiles";
-import { requestGet } from "../service/request";
+import { requestGet, requestPost } from "../service/request";
 import * as permiso from "../routes/permiso";
 import { useEffect, useState } from "react";
 import { showMessage } from "../redux/actions/messageAction";
@@ -64,7 +64,10 @@ const usePagoRezagado = () => {
   const handleOnGetPagos = () => {
     if (idCiclo && idCiclo !== 0) {
       setIdCicloSelected(idCiclo);
-      cargarComisionesPagos(userName, idCiclo);
+      let objCicloSelected = listCiclo.find( item => item.idCiclo === idCiclo)
+      if(objCicloSelected){
+        cargarComisionesPagos(objCicloSelected.idComision, idCiclo);
+      }
     } else {
       generarSnackBar(
         "¡Debe Seleccionar un ciclo para cargar las comisiones!",
@@ -73,9 +76,9 @@ const usePagoRezagado = () => {
     }
   };
 
-  async function cargarComisionesPagos(userNa, cicloId) {
-    let respuesta = await obtenerComisionesPagos(userNa, cicloId, dispatch);
-
+  async function cargarComisionesPagos(idComision, idCiclo) {
+    let url = "gestionPagosRezagados/GetComisionesPagos"
+    let respuesta = await requestPost(url, {idComision, idCiclo, usuarioLogin : userName}, dispatch);
     if (respuesta && respuesta.code == 0) {
       setListaComisionesAPagar(respuesta.data);
       setListaComisionPaginacionNueva(true);
