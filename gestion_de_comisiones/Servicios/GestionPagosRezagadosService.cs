@@ -14,6 +14,9 @@ namespace gestion_de_comisiones.Servicios
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<GestionPagosRezagadosService> Logger;
+        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 9;
+        private readonly int TIPO_COMISION_REZAGADOS = 2;
+        private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
 
         public GestionPagosRezagadosService(ILogger<GestionPagosRezagadosService> logger, IGestionPagosRezagadosRepository repository)
         {
@@ -27,16 +30,14 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio GestionPagosRezagadosService => getCiclos()");
-                int idEstadoComisionRezagados = 9; //rametro
-                int idTipoComisionRezagados = 2; //parametro
-                var ciclos = Repository.GetCiclos(usuario, idEstadoComisionRezagados, idTipoComisionRezagados);
-                if (true)
+                var ciclos = Repository.GetCiclos(usuario, ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS, TIPO_COMISION_REZAGADOS);
+                if (ciclos != null)
                 {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
                 }
                 else
                 {
-                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", ciclos);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Ocurrió un inconveniente al obtener el ciclo.", ciclos);
                 }
             }
             catch (Exception ex)
@@ -52,9 +53,7 @@ namespace gestion_de_comisiones.Servicios
             {
 
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio GestionPagosRezagadosService => GetComisionesDePagos()");
-                int idEstadoPagosRezagados = 9;
-                int idTipoComisionRezagadosComision = 2;
-                var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoPagosRezagados, idTipoComisionRezagadosComision, param.idComision);
+                var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS, TIPO_COMISION_REZAGADOS, param.idComision);
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
 
             }
