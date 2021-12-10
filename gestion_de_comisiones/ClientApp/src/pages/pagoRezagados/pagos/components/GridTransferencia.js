@@ -428,13 +428,17 @@ const GridTransferencia = ({
     //   dispatch
     // );
     let url = "/gestionPagosRezagados/ConfirmarPagosRezagadosTransferencias";
-    let response = requestPost(url, {
-      user: userName,
-      cicloId,
-      comisionId: idComision,
-      empresaId: idEmpresa,
-      confirmados: list,
-    });
+    let response = requestPost(
+      url,
+      {
+        user: userName,
+        cicloId,
+        comisionId: idComision,
+        empresaId: idEmpresa,
+        confirmados: list,
+      },
+      dispatch
+    );
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
