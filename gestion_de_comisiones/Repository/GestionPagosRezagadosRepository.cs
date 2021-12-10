@@ -12,6 +12,7 @@ using gestion_de_comisiones.Servicios;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 
 namespace gestion_de_comisiones.Repository
@@ -851,7 +852,7 @@ namespace gestion_de_comisiones.Repository
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
-                Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): IdComsion  {param.IdComsion}  ");
+                Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): IdComsion  {param.IdComision}  ");
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -862,7 +863,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@id_Comision",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = param.IdComsion
+                                            Value = param.IdComision
                               },
                                new SqlParameter() {
                                             ParameterName = "@id_usuario",
@@ -881,13 +882,13 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@id_Comision",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = param.IdComsion
+                                            Value = param.IdComision
                               },
                                new SqlParameter() {
                                             ParameterName = "@id_usuario",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = param.IdComsion
+                                            Value = param.IdComision
                               }
                            };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PAGAR_RESAGADO_SION_PAY_COMISION] @id_Comision,  @id_usuario  ", parameterReturn);
@@ -917,5 +918,27 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
+        public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision,int idTipoComision, int idTipoFormaPagoSionPay)
+        {
+            try 
+            {
+                RespuestaSionPayModel model = new RespuestaSionPayModel();
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} inicio el repository VerificarPagoRezagadoSionPay() ");
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} parametros: idcomision:{param.IdComision} , idEstado:{idEstadoComision}");                
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.IdComision && x.IdTipoComision == idTipoComision && x.IdEstadoComision == idEstadoComision).ToList();
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Count();
+                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch VerificarPagoRezagadoSionPay() mensaje : {ex.Message}");
+                RespuestaSionPayModel model = new RespuestaSionPayModel { CodigoRespuesta = -1 };
+                return model;
+            }
+        }
+
     }
 }
