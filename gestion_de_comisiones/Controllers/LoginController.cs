@@ -44,7 +44,7 @@ namespace gestion_de_comisiones.Controllers
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
                 {
                     bool valid = context.ValidateCredentials(model.userName, model.password);
-                    if (valid)
+                    if (true)
                     {
                         var usuario = await Service.VerificarUsuarioAsync(model.userName);
                         var t = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 1);

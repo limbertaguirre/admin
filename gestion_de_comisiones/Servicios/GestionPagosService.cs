@@ -350,7 +350,7 @@ namespace gestion_de_comisiones.Servicios
                 var file = Repository.BuscarFreelancerPagosTransferencias(param);
                 if (file == null)
                 {
-                    return Respuesta.ReturnResultdo(0, "No se encontraron resultados", file);
+                    return Respuesta.ReturnResultdo(1, "No se encontraron resultados", file);
                 }
                 else
                 {
