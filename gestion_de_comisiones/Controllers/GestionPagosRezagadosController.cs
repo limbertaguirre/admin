@@ -156,7 +156,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller PagarComisionRezagadosSionPay() parametro: idComision:{param.IdComsion}");
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller PagarComisionRezagadosSionPay() parametro: idComision:{param.IdComision}");
                 return Ok(Service.PagarComisionRezagadosSionPayTodo(param));
             }
             catch (Exception e)
