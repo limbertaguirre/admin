@@ -470,13 +470,16 @@ insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descr
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(7, 'PENDIENTE PORRATERO', 'PENDIENTE PORRATERO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(8, 'CERRADO PORRATEO', 'CERRADO PORRATEO',1)
 
-insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(9, 'PENDIENTE FORMA DE PAGO', 'PENDIENTE FORMA DE PAGO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(9, 'PENDIENTE FORMA DE PAGO', 'Este estado sera listado para los pagos rezagados que volvera a al estado sin formas de pagos  a elegir los rezagados',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(10, 'CERRADO FORMA DE PAGO', 'CERRADO FORMA DE PAGO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(13, 'PAGO DE COMISION CERRADO', 'PAGO DE COMISION CERRADO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(14, 'INCENTIVO PENDIENTE', 'INCENTIVO PENDIENTE',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(15, 'INCENTIVO PAGO', 'INCENTIVO PAGO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(16, 'FORMA PAGO DE COMISION REZAGADO CERRADO ', 'este estado sera listado desde la pagina de pago de rezagados',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(17, 'PAGO COMISION REZAGADO CERRADO', 'Es cuando el pago de comision rezagado halla sido cerrado y se les pagos por transferencia o sion pay',1)
+
 
 go
 create table GP_COMISION_ESTADO_COMISION_I

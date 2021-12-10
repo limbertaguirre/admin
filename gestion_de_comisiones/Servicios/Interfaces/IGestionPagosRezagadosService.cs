@@ -1,5 +1,6 @@
 ﻿using System;
 using gestion_de_comisiones.Modelos.GestionPagos;
+using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 
 namespace gestion_de_comisiones.Servicios.Interfaces
 {
@@ -12,5 +13,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         public object ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
+        public object PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
     }
 }

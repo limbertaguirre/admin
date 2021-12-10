@@ -1,6 +1,7 @@
 ﻿using System;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Modelos.GestionPagos;
+using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 
 namespace gestion_de_comisiones.Repository.Interfaces
 {
@@ -13,5 +14,8 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         GestionPagosRezagadosEvent ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
+        public bool PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
+        public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision, int idTipoComision, int idTipoFormaPagoSionPay);
     }
 }
