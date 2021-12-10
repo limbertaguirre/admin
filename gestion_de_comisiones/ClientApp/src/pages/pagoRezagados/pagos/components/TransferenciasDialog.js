@@ -182,7 +182,7 @@ const TransferenciasDialog = ({
         cicloId,
         empresaId,
         comisionId: idComision,
-        selectedDate,
+        date: selectedDate,
       };
       let url = "/gestionPagosRezagados/handleDownloadFileEmpresas";
       let response = await requestPost(url, data, dispatch);
