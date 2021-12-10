@@ -208,14 +208,17 @@ const TransferenciasDialog = ({
 
   const handleObtenerPagosTransferencias = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
-      let url =
-        "/gestionPagosRezagados/handleVerificarPagosTransferenciasTodos";
-      let response = await requestPost(url, {
-        usuarioLogin: userName,
-        cicloId,
-        comisionId: idComision,
-        empresaId,
-      });
+      let url = "/gestionPagosRezagados/ObtenerPagosRezagadosTransferencias";
+      let response = await requestPost(
+        url,
+        {
+          usuarioLogin: userName,
+          cicloId,
+          comisionId: idComision,
+          empresaId,
+        },
+        dispatch
+      );
       console.log("handleObtenerPagosTransferencias: ", response);
       if (!response || !response.data) {
         dispatch(
@@ -246,7 +249,7 @@ const TransferenciasDialog = ({
   const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
     if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
       let url =
-        "/gestionPagosRezagados/handleVerificarPagosTransferenciasTodos";
+        "/gestionPagosRezagados/handleConfirmarPagosTransferenciasTodos";
       let response = await requestPost(
         url,
         {
