@@ -503,6 +503,7 @@ const TransferenciasDialog = ({
           closeFullScreenModal={closeFullScreenModal}
           seleccionarTodo={seleccionarTodo}
           selected={selected}
+          idComision={idComision}
           setSelected={setSelected}
         />
       )}
