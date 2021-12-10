@@ -279,12 +279,6 @@ namespace gestion_de_comisiones.Repository
                                                 Direction = System.Data.ParameterDirection.Input,
                                                 Value = body.empresaId
                                   },
-                                    new SqlParameter() {
-                                                ParameterName = "@ComisionId",
-                                                SqlDbType =  System.Data.SqlDbType.Int,
-                                                Direction = System.Data.ParameterDirection.Input,
-                                                Value = body.comisionId
-                                  },
                                    new SqlParameter() {
                                                 ParameterName = "@UsuarioId",
                                                 SqlDbType =  System.Data.SqlDbType.Int,
@@ -300,7 +294,7 @@ namespace gestion_de_comisiones.Repository
                                };
 
                     Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarRezagadosTransferidosSeleccionados():  SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS_REZAGADOS] @CicloId, @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     //var result = "Todo OK @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId";
                     int returnValue = (int)parameterReturn[0].Value;
 
@@ -346,12 +340,6 @@ namespace gestion_de_comisiones.Repository
                                             Direction = System.Data.ParameterDirection.Input,
                                             Value = body.empresaId
                               },
-                                new SqlParameter() {
-                                            ParameterName = "@ComisionId",
-                                            SqlDbType =  System.Data.SqlDbType.Int,
-                                            Direction = System.Data.ParameterDirection.Input,
-                                            Value = body.comisionId
-                              },
                                new SqlParameter() {
                                             ParameterName = "@UsuarioId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
@@ -365,7 +353,7 @@ namespace gestion_de_comisiones.Repository
                                             Value = o.IdComisionDetalleEmpresa
                               }
                            };
-                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
                     //var result = "Todo OK@CicloId,  @EmpresaId, @ComisionId, @UsuarioId, @ComisionDetalleEmpresaId";
                     int returnValue = (int)parameterReturn[0].Value;
                     Logger.LogInformation($" result: {result}, inicio repository confirmarRezagadosTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS_REZAGADOS returnValue {returnValue} ");
