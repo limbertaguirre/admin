@@ -6,17 +6,34 @@ import { formatearNumero } from "../lib/utility";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-export const downloadPdfTable = ({ headers, data, widths, fileName }) => {
+export const downloadPdfTable = ({
+  headers,
+  data,
+  widths,
+  fileName,
+  nombreCiclo,
+}) => {
+  let headersFormatted = headers.map((header) => ({
+    text: header,
+    bold: true,
+  }));
   let docDefinition = {
     pageSize: "LETTER",
     pageOrientation: "landscape",
     content: [
       {
+        text: "Reporte de pagos por ciclo - " + nombreCiclo,
+        bold: true,
+        fontSize: 20,
+        alignment: "center",
+        lineHeight: 1.5,
+      },
+      {
         table: {
           styles: "tableExample",
           headerRows: 1,
           widths,
-          body: [headers, ...data],
+          body: [headersFormatted, ...data],
         },
       },
     ],
@@ -99,7 +116,6 @@ export const getFreelancerExcel = ({
 }) => {
   const workBook = new ExcelJS.Workbook();
   const sheet = workBook.addWorksheet(title);
-  data.unshift(headers);
   let headingRowsConfig = [
     [
       {
@@ -134,9 +150,26 @@ export const getFreelancerExcel = ({
       },
     ],
   ];
+
   let infoRows = sheet.addRows(headingRowsConfig);
+  let headerRow = sheet.addRow(headers);
+  headerRow.eachCell((cell) => {
+    cell.style = {
+      font: {
+        bold: true,
+      },
+    };
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
   let dataRows = sheet.addRows(data);
-  const widths = getColumWidths(data).map((item) => ({ width: item }));
+  const widths = getColumWidths([headers, ...data]).map((item) => ({
+    width: item,
+  }));
   sheet.columns = widths;
   dataRows.forEach((row) => {
     row.eachCell((cell) => {
@@ -190,6 +223,12 @@ export const downloadFreelancerPdf = ({
     pageOrientation: "landscape",
     content: [
       {
+        text: "Reporte de freelancer",
+        fontSize: 20,
+        lineHeight: 1.5,
+        bold: true,
+      },
+      {
         text: [{ text: "Nombres: ", bold: true }, { text: userModel.nombres }],
       },
       {
@@ -204,7 +243,7 @@ export const downloadFreelancerPdf = ({
       {
         text: [
           { text: "Email: ", bold: true },
-          { text: userModel.correoElectronico },
+          { text: userModel.correoElectronico, lineHeight: 2 },
         ],
       },
       {
@@ -213,7 +252,7 @@ export const downloadFreelancerPdf = ({
           headerRows: 1,
           widths,
           body: [
-            headers,
+            headers.map((item) => ({ text: item, bold: true })),
             ...data,
             [
               {
@@ -221,6 +260,7 @@ export const downloadFreelancerPdf = ({
                 border: [true, true, true, true],
                 text: "TOTAL",
                 alignment: "right",
+                bold: true,
               },
               "",
               "",

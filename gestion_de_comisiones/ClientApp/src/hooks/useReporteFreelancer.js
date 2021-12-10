@@ -14,6 +14,7 @@ const useReporteFreelancer = () => {
   const dispatch = useDispatch();
   const [query, setQuery] = useState(null);
   const [clients, setClients] = useState([]);
+  const [exportAnchorEl, setExportAnchorEl] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [items, setItems] = useState([]);
   const [detailItems, setDetailItems] = useState([]);
@@ -21,6 +22,10 @@ const useReporteFreelancer = () => {
   const [openAutocomplete, setOpenAutocomplete] = useState(false);
   const [open, setOpen] = useState(false);
   const [loadingAutcomplete, setLoadingAutocomplete] = useState(false);
+
+  const onClickExportButton = (e) => setExportAnchorEl(e.currentTarget);
+
+  const closeExportMenu = () => setExportAnchorEl(null);
 
   const openAutocompleteInput = () => setOpenAutocomplete(true);
 
@@ -154,6 +159,9 @@ const useReporteFreelancer = () => {
     loadingAutcomplete,
     downloadReportExcel,
     downloadReportPdf,
+    onClickExportButton,
+    closeExportMenu,
+    exportAnchorEl,
   };
 };
 

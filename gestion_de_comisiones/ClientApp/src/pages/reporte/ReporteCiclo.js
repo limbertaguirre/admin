@@ -25,6 +25,7 @@ import {
   withStyles,
   FormControlLabel,
   Switch,
+  Menu,
 } from "@material-ui/core";
 import Home from "@material-ui/icons/Home";
 import ListIcon from "@material-ui/icons/List";
@@ -88,6 +89,9 @@ const ReporteCiclo = () => {
     activarRezagados,
     setActivarComisiones,
     setActivarRezagados,
+    onClickExportButton,
+    closeExportMenu,
+    exportAnchorEl,
   } = useReporteCiclo();
   return (
     <div>
@@ -139,23 +143,43 @@ const ReporteCiclo = () => {
             >
               Cargar
             </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={downloadExcelReport}
-              className={styles.buttonRight}
-            >
-              Excel
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={downloadPdfReport}
-              className={styles.buttonRight}
-            >
-              PDF
-            </Button>
+            {items.length > 0 && (
+              <>
+                <Button
+                  aria-controls="export-menu"
+                  aria-haspopup="true"
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  style={{ marginLeft: 4 }}
+                  onClick={onClickExportButton}
+                >
+                  Exportar
+                </Button>
+                <Menu
+                  id="export-menu"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  anchorEl={exportAnchorEl}
+                  getContentAnchorEl={null}
+                  open={Boolean(exportAnchorEl)}
+                  onClose={closeExportMenu}
+                >
+                  <MenuItem onClick={downloadExcelReport}>
+                    Exportar a Excel
+                  </MenuItem>
+                  <MenuItem onClick={downloadPdfReport}>
+                    Exportar a Pdf
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
           </Grid>
           <Grid item xs={12} sm={4}>
             <FormControlLabel

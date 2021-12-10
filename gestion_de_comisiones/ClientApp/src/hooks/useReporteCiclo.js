@@ -15,6 +15,7 @@ const useReporteCiclo = () => {
   const { userName: usuarioLogin } = useSelector((state) => state.load);
   // DATA STATE
   const [ciclo, setCiclo] = useState(null);
+  const [exportAnchorEl, setExportAnchorEl] = useState(null);
   const [detailId, setDetailId] = useState(null);
   const [items, setItems] = useState([]);
   const [ciclos, setCiclos] = useState([]);
@@ -23,6 +24,10 @@ const useReporteCiclo = () => {
   const [activarComisiones, setActivarComisiones] = useState(true);
   //UI SATE
   const [open, setOpen] = useState(false);
+
+  const onClickExportButton = (e) => setExportAnchorEl(e.currentTarget);
+
+  const closeExportMenu = () => setExportAnchorEl(null);
 
   const getQueryComisionTypeMode = () => {
     if (activarComisiones && activarRezagados) {
@@ -47,6 +52,9 @@ const useReporteCiclo = () => {
           "MONTO",
           "TIPO DE PAGO",
         ],
+        nombreCiclo: ciclo
+          ? ciclos.find((item) => (item.idCiclo = ciclo)).nombre
+          : "",
         data: items.map((item) => [
           item.nombres + " " + item.apellidos,
           item.ci,
@@ -83,7 +91,9 @@ const useReporteCiclo = () => {
           item.montoNeto,
           item.tipoPago,
         ]),
-        title: ciclo.nombre,
+        title: ciclo
+          ? ciclos.find((item) => (item.idCiclo = ciclo)).nombre
+          : "",
         fileName: `reporte-ciclo-${format(
           new Date(),
           "yyyy-MM-dd-HH-mm-ss"
@@ -187,6 +197,9 @@ const useReporteCiclo = () => {
     activarRezagados,
     setActivarComisiones,
     setActivarRezagados,
+    onClickExportButton,
+    closeExportMenu,
+    exportAnchorEl,
   };
 };
 

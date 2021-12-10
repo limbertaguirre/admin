@@ -21,6 +21,8 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import { Home, List } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
@@ -84,6 +86,9 @@ const ReporteFreelancer = () => {
     loadingAutcomplete,
     downloadReportExcel,
     downloadReportPdf,
+    onClickExportButton,
+    closeExportMenu,
+    exportAnchorEl,
   } = useReporteFreelancer();
   return (
     <div>
@@ -181,23 +186,43 @@ const ReporteFreelancer = () => {
             >
               Cargar
             </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={downloadReportExcel}
-              className={styles.buttonRight}
-            >
-              Excel
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={downloadReportPdf}
-              className={styles.buttonRight}
-            >
-              PDF
-            </Button>
+            {items.length > 0 && (
+              <>
+                <Button
+                  aria-controls="export-menu"
+                  aria-haspopup="true"
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  style={{ marginLeft: 4 }}
+                  onClick={onClickExportButton}
+                >
+                  Exportar
+                </Button>
+                <Menu
+                  id="export-menu"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  anchorEl={exportAnchorEl}
+                  getContentAnchorEl={null}
+                  open={Boolean(exportAnchorEl)}
+                  onClose={closeExportMenu}
+                >
+                  <MenuItem onClick={downloadReportExcel}>
+                    Exportar a Excel
+                  </MenuItem>
+                  <MenuItem onClick={downloadReportPdf}>
+                    Exportar a Pdf
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
           </Grid>
         </Grid>
       </Paper>
