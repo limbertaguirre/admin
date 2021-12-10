@@ -24,18 +24,18 @@ namespace gestion_de_comisiones.Controllers
         public IIncentivoSionPayService Service { get; set; }
         // POST: Incentivo/CargarPlanillaExcel
         [HttpPost]
-        public ActionResult CargarPlanillaExcel([FromBody] PlanillaExcelInput param)
+        public ActionResult CargarPlanillaExcel([FromBody] PlanillaPagoIncentivo planillaIncentivo)
         {
             try
             {
-                Logger.LogInformation($"usuario request : {param.UsuarioNombre} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.IdCiclo}");
-                var resulcliente = Service.CargarDatosPlanillaExcel(param);
+                Logger.LogInformation($"usuario request : {planillaIncentivo.UsuarioNombre} inicio el controller AplicacionesController => Index() parametro: idciclo:{planillaIncentivo.IdCiclo}");
+                var resulcliente = Service.CargarDatosPlanillaExcel(planillaIncentivo);
                 //Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
                 return Ok(resulcliente);
             }
             catch
             {
-                Logger.LogError($"usuario request: {param.UsuarioNombre} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                Logger.LogError($"usuario request: {planillaIncentivo.UsuarioNombre} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(Result);
             }

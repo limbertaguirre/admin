@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
 {
     public interface IIncentivoSionPayRepository
     {
-        public object GuardarPlanillaIncentivoSionPay(PlanillaExcelInput param);
+        public object GuardarPlanillaIncentivoSionPay(PlanillaPagoIncentivo planillaIncentivo);
+        public List<DatosPlanillaExcel> verificarIncentivosEmpresaCiNoRepetidos(PlanillaPagoIncentivo planillaIncentivo);
     }
 }

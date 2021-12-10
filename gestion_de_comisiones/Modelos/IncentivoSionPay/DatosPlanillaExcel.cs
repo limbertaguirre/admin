@@ -18,5 +18,8 @@ namespace gestion_de_comisiones.Modelos.Incentivo
         public string Ciudad { get; set; }
         public string Pais { get; set; }
         public string Detalle { get; set; }
+        public bool Observada { get; set; }
+        public string MotivoObservacion { get; set; }
+        public int IdTipoIncentivoPago { get; set; }
     }
 }

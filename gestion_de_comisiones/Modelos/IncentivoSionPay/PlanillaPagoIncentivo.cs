@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Modelos.Incentivo
 {
-    public class PlanillaExcelInput
+    public class PlanillaPagoIncentivo
     {
         public List<DatosPlanillaExcel> DatosClientes { get; set; }
         public int IdCiclo { get; set;}

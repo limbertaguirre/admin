@@ -8,6 +8,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
 {
     public interface IIncentivoSionPayService
     {
-        public object CargarDatosPlanillaExcel(PlanillaExcelInput param);
+        public object CargarDatosPlanillaExcel(PlanillaPagoIncentivo param);
     }
 }

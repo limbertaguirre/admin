@@ -21,13 +21,23 @@ namespace gestion_de_comisiones.Servicios
             Repository = repository;
         }
         public IIncentivoSionPayRepository Repository { get; set; }
-        public object CargarDatosPlanillaExcel(PlanillaExcelInput param)
+        public object CargarDatosPlanillaExcel(PlanillaPagoIncentivo param)
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.UsuarioNombre} inicio el servicio IncentivoService => CargarDatosPlanillaExcel()");
-                var planillaIncentivo = Repository.GuardarPlanillaIncentivoSionPay(param);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se cargo la planilla correctamente", planillaIncentivo);
+                List<DatosPlanillaExcel> lista = Repository.verificarIncentivosEmpresaCiNoRepetidos(param);
+                if(lista != null && lista.Count > 0)
+                {
+                    Logger.LogInformation($"usuario : {param.UsuarioNombre} inicio el servicio IncentivoService => CargarDatosPlanillaExcel() verificando lista");
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Lista Observada", lista);
+                }
+                else
+                {
+                    Logger.LogInformation($"usuario : {param.UsuarioNombre} inicio el servicio IncentivoService => CargarDatosPlanillaExcel()");
+                    var planillaIncentivo = Repository.GuardarPlanillaIncentivoSionPay(param);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se cargo la planilla correctamente", planillaIncentivo);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -35,5 +45,7 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al cargar la planilla", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        
     }
 }
