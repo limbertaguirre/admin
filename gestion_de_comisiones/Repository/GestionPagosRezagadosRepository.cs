@@ -5,6 +5,7 @@ using System.Linq;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.GestionPagos;
+using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -845,6 +846,95 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
                 dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosRezagadosEvent.ERROR, "Pasó un inconveniente, por favor intente más tarde mientras lo resolvemos, ¡gracias!.");
+            }
+        }
+        public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {param.user} -  inicio el BuscarFreelancerPagosTransferencias() ");
+                int cicloId = Convert.ToInt32(param.cicloId);
+                int tipoPagoTransferencia = 2;
+                var Buscar = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.DocDeIdentidad == param.ci && x.IdCiclo == cicloId && param.empresaId == x.IdEmpresa && x.IdTipoPago == tipoPagoTransferencia)
+                    .ToList();
+                return Buscar;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {param.user} error catch BuscarFreelancerPagosTransferencias() mensaje : {ex}");
+                return false;
+            }
+        }
+        public bool PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param)
+        {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): IdComsion  {param.IdComsion}  ");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_Comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.IdComsion
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.IdUsuario
+                              }
+                           };
+                var parameterReturn2 = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_Comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.IdComsion
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.IdComsion
+                              }
+                           };
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PAGAR_RESAGADO_SION_PAY_COMISION] @id_Comision,  @id_usuario  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0)
+                {
+                    var result2 = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PROCESAR_PAGO_REZAGADO_SION_PAY_UPDATE_DETALLES] @id_Comision,  @id_usuario  ", parameterReturn2);
+                    int returnValue2 = (int)parameterReturn2[0].Value;
+
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO].");
+                    return true;
+                }
+                else
+                {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    return false;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch PagarSionPayComision() en pagos mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return false;
             }
         }
     }
