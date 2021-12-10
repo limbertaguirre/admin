@@ -177,14 +177,15 @@ const TransferenciasDialog = ({
       empresaId != -1 &&
       selectedDate
     ) {
-      let response = await Actions.handleDownloadFileEmpresas(
+      let data = {
         user,
         cicloId,
         empresaId,
+        comisionId: idComision,
         selectedDate,
-        dispatch
-      );
-
+      };
+      let url = "/gestionPagosRezagados/handleDownloadFileEmpresas";
+      let response = await requestPost(url, data, dispatch);
       if (response && response.code == 0) {
         downloadExcel(response.data.file, response.data.fileName);
         handleVerificarPagosTransferenciasTodos(userName, empresaId);

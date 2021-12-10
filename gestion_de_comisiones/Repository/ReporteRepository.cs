@@ -32,7 +32,7 @@ namespace gestion_de_comisiones.Repository
         }
 
         public List<ReporteCicloModel> listaReporteCiclos(int idCiclo, int mode)
-        {
+        {           
             var result =  contextMulti.FfReportePorCiclo(idCiclo, mode).OrderByDescending(t => t.montoNeto).ToList();
             return result;
         }
