@@ -684,6 +684,12 @@ namespace gestion_de_comisiones.Repository
                                             Value = body.cicloId
                                 },
                                 new SqlParameter() {
+                                            ParameterName = "@EstadoComisionId",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS
+                                },
+                                new SqlParameter() {
                                             ParameterName = "@CicloId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
@@ -703,7 +709,7 @@ namespace gestion_de_comisiones.Repository
                                 }
                            };
 
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS] @ComisionId, @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS] @ComisionId, @CicloId, @EstadoComisionId, @EmpresaId, @UsuarioId  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS returnValue {returnValue}  ");
                 if (returnValue == 0)
