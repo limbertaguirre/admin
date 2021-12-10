@@ -966,15 +966,15 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
-        public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision,int idTipoComision, int idTipoFormaPagoSionPay)
+        public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision,int idTipoComision, int idTipoFormaPagoSionPay,int idEstadoListaFormaPago)
         {
             try 
             {
                 RespuestaSionPayModel model = new RespuestaSionPayModel();
                 Logger.LogWarning($" usuario: {param.UsuarioLogin} inicio el repository VerificarPagoRezagadoSionPay() ");
                 Logger.LogWarning($" usuario: {param.UsuarioLogin} parametros: idcomision:{param.IdComision} , idEstado:{idEstadoComision}");                
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.IdComision && x.IdTipoComision == idTipoComision && x.IdEstadoComision == idEstadoComision).ToList();
-                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Count();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.IdComision && x.IdTipoComision == idTipoComision && x.IdEstadoComision == idEstadoComision && x.IdTipoPago == idTipoFormaPagoSionPay ).ToList();
+                model.Cantidad = ListComisiones.Where(x => x.PagoDetalleHabilitado == false).Count();
                 model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
                 model.CodigoRespuesta = 1; //valor positivo
                 Logger.LogWarning($" usuario: {param.UsuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
@@ -983,6 +983,25 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch VerificarPagoRezagadoSionPay() mensaje : {ex.Message}");
+                RespuestaSionPayModel model = new RespuestaSionPayModel { CodigoRespuesta = -1 };
+                return model;
+            }
+        }
+        public RespuestaSionPayModel ValidarCantidadComisionRezagada(PagoRezagadoInput param, int idEstadoComision, int idTipoComision, int idTipoFormaPagoSionPay)
+        {
+            try
+            {
+                RespuestaSionPayModel model = new RespuestaSionPayModel();
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} inicio el repository ValidarCantidadComisionRezagada() ");               
+                model.Cantidad = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.IdComision && x.IdTipoComision == idTipoComision && x.IdEstadoComision == idEstadoComision && x.IdTipoPago == idTipoFormaPagoSionPay).Count();
+                model.totalPagoSionPay = 0;
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} se verifico la cantidad de comision rezagado a pagar :  {JsonConvert.SerializeObject(model)} ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch ValidarCantidadComisionRezagada() mensaje : {ex.Message}");
                 RespuestaSionPayModel model = new RespuestaSionPayModel { CodigoRespuesta = -1 };
                 return model;
             }
