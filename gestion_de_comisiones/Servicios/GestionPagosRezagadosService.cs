@@ -204,16 +204,33 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio PagarComisionRezagadosSionPayTodo.");
                 //agregar verificar pago sion pay rezagado
                 int idEstadoComision = 9; //VARIABLE              
-                int idTipoComision = 1; //parametro rezagado
+                int idTipoComision = 2; //parametro rezagado
                 int idTipoFormaPagoSionPay = 1; //parametro 
-                RespuestaSionPayModel comisiones = Repository.VerificarPagoRezagadoSionPay(param, idEstadoComision, idTipoComision, idTipoFormaPagoSionPay);
+                int idEstadoListaFormaPago = 3; //Pago existoso
 
-                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Pago por sion pay en desarrollo", "");
+                RespuestaSionPayModel veri = Repository.ValidarCantidadComisionRezagada(param, idEstadoComision, idTipoComision, idTipoFormaPagoSionPay);
+                if (veri.CodigoRespuesta == -1)
+                 return Respuesta.ReturnResultdo(1, "Problemas al verificar la comision", " ");
 
-                //var pay = Repository.PagarComisionRezagadosSionPayTodo(param);
-                //if (pay)
-                //return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se realizo el pago de comisiones Rezagados.", pay);
-                //return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+                if (veri.Cantidad == 0)
+                return Respuesta.ReturnResultdo(1, "No hay comisiones asignadas para el pago por SION PAY.", " ");
+
+                RespuestaSionPayModel PagoSionPay = Repository.VerificarPagoRezagadoSionPay(param, idEstadoComision, idTipoComision, idTipoFormaPagoSionPay, idEstadoListaFormaPago);
+                if (PagoSionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar las comisiones rezagados por SIOB PAY", " ");
+                if (PagoSionPay.Cantidad > 0)
+                {
+                    //valido para pagar
+                    var pay = Repository.PagarComisionRezagadosSionPayTodo(param);
+                    if (pay)
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se realizo el pago de comisiones Rezagados.", pay);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+                }
+                else
+                {
+                    //igual cero se pago por sion pay
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Ya se realizo el pago por sion Pay", "");
+                }
             }
             catch (Exception ex)
             {
