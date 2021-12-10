@@ -208,7 +208,7 @@ namespace gestion_de_comisiones.Servicios
                 int idTipoFormaPagoSionPay = 1; //parametro 
                 RespuestaSionPayModel comisiones = Repository.VerificarPagoRezagadoSionPay(param, idEstadoComision, idTipoComision, idTipoFormaPagoSionPay);
 
-                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "en prueba el desarrollo", "");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Pago por sion pay en desarrollo", "");
 
                 //var pay = Repository.PagarComisionRezagadosSionPayTodo(param);
                 //if (pay)
