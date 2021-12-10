@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.GestionPagos;
+using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,9 @@ namespace gestion_de_comisiones.Servicios
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<GestionPagosRezagadosService> Logger;
+        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 9;
+        private readonly int TIPO_COMISION_REZAGADOS = 2;
+        private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
 
         public GestionPagosRezagadosService(ILogger<GestionPagosRezagadosService> logger, IGestionPagosRezagadosRepository repository)
         {
@@ -26,16 +30,14 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {usuario} inicio el servicio GestionPagosRezagadosService => getCiclos()");
-                int idEstadoComisionRezagados = 9; //rametro
-                int idTipoComisionRezagados = 2; //parametro
-                var ciclos = Repository.GetCiclos(usuario, idEstadoComisionRezagados, idTipoComisionRezagados);
-                if (true)
+                var ciclos = Repository.GetCiclos(usuario, ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS, TIPO_COMISION_REZAGADOS);
+                if (ciclos != null)
                 {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
                 }
                 else
                 {
-                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", ciclos);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Ocurrió un inconveniente al obtener el ciclo.", ciclos);
                 }
             }
             catch (Exception ex)
@@ -51,9 +53,7 @@ namespace gestion_de_comisiones.Servicios
             {
 
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio GestionPagosRezagadosService => GetComisionesDePagos()");
-                int idEstadoPagosRezagados = 9;
-                int idTipoComisionRezagadosComision = 2;
-                var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoPagosRezagados, idTipoComisionRezagadosComision, param.idComision);
+                var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS, TIPO_COMISION_REZAGADOS, param.idComision);
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
 
             }
@@ -196,5 +196,52 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el servicio BuscarFreelancerPagosRezagadosTransferencias() ");
+                var file = Repository.BuscarFreelancerPagosRezagadosTransferencias(param);
+                if (file == null)
+                {
+                    return Respuesta.ReturnResultdo(0, "No se encontraron resultados", file);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(0, "Resultado encontrado", file);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.user} error catch BuscarFreelancerPagosRezagadosTransferencias()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "Error de conexion", "Ocurrió algo inesperado con la comunicación con el servidor.");
+            }
+        }
+        public object PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio PagarComisionRezagadosSionPayTodo.");
+                //agregar verificar pago sion pay rezagado
+                int idEstadoComision = 9; //VARIABLE              
+                int idTipoComision = 1; //parametro rezagado
+                int idTipoFormaPagoSionPay = 1; //parametro 
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoRezagadoSionPay(param, idEstadoComision, idTipoComision, idTipoFormaPagoSionPay);
+
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Pago por sion pay en desarrollo", "");
+
+                //var pay = Repository.PagarComisionRezagadosSionPayTodo(param);
+                //if (pay)
+                //return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se realizo el pago de comisiones Rezagados.", pay);
+                //return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} error catch PagarComisionRezagadosSionPayTodo() al obtener para pagos,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
     }
 }
