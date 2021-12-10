@@ -3330,6 +3330,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
+                entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
+
                 entity.Property(e => e.IdEstadoComisionDetalleEmpresa).HasColumnName("id_estado_comision_detalle_empresa");
 
                 entity.Property(e => e.IdEstadoListadoFormaPago).HasColumnName("id_estado_listado_forma_pago");

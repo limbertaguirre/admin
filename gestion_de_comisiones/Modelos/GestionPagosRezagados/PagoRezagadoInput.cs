@@ -13,6 +13,6 @@ namespace gestion_de_comisiones.Modelos.GestionPagosRezagados
         [JsonPropertyName("idUsuario")]
         public int IdUsuario { get; set; }
         [JsonPropertyName("idComsion")]
-        public int IdComsion { get; set; }
+        public int IdComision { get; set; }
     }
 }
