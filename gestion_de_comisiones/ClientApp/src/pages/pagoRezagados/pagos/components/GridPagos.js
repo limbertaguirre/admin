@@ -190,7 +190,7 @@ const GridPagos = ({
       // setTotalBruto(ptotalBruto);
       // setTotalRetencion(ptotalRetencion);
       // setTotalDescuento(ptotalDescuento);
-      // setTotalNeto(ptotalNeto);
+      setTotalNeto(ptotalNeto);
     }
   }, [listaComisionesAPagar]);
 

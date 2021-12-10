@@ -66,7 +66,11 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogInformation($"Inicio GestionPagosRezagadosRepository - GetComisionesPagos");
                 Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
                 //var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == idCiclo && x.IdComision == idComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
+                int[] tiposPagos = { 1, 2};                                              
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes
+                    .Where(x => x.IdCiclo == idCiclo && x.IdComision == idComision &&
+                    x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
+                   (x.IdTipoPago == 1 || x.IdTipoPago == 2)).ToList();
                 Logger.LogInformation($"Fin GestionPagosRezagadosRepository - GetComisionesPagos");
                 return ListComisiones;
             }
