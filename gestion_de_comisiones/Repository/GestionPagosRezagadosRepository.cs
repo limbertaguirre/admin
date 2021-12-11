@@ -36,6 +36,28 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
+                List<int> cicloRezagadoDoble = new List<int>();
+                using (var command = ContextMulti.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = $"select case COUNT(r.id_ciclo) " +
+                                        "when 1 then(select rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo) " +
+                                        "when 2 then(select top 1 rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo) end as id_comision, "+
+                                        "r.id_ciclo from BDMultinivel.dbo.VwObtenerCiclosRezagados r " +
+                                        $"where r.id_estado_comision = {ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS} and r.id_tipo_comision = {TIPO_COMISION_REZAGADOS} " +
+                                        "group by r.id_ciclo";
+                    command.CommandType = System.Data.CommandType.Text;
+                    ContextMulti.Database.OpenConnection();
+                    using var resultQuery = command.ExecuteReader();
+                    if (resultQuery.HasRows)
+                    {
+                        while (resultQuery.Read())
+                        {
+                            Logger.LogInformation($"GestionPagosRezagadosRepository - GetCiclos command id_comision: {resultQuery["id_comision"]}");
+                            Logger.LogInformation($"GestionPagosRezagadosRepository - GetCiclos command id_ciclo: {resultQuery["id_ciclo"]}");
+                            cicloRezagadoDoble.Add(Convert.ToInt32(resultQuery["id_comision"]));
+                        }
+                    }
+                }
                 var ciclosR = ContextMulti.VwObtenerCiclosRezagados.Where(x => x.IdEstadoComision == idEstadoComision && x.IdTipoComision == idTipoComisionRezagados)
                     .Select(u => new
                     {
@@ -45,9 +67,10 @@ namespace gestion_de_comisiones.Repository
                         //u.Estado,
                         u.IdEstadoComision
                     })
+                    .Where(x => cicloRezagadoDoble.Contains(x.IdComision))
                     .Distinct()
                     .OrderBy(c => c.IdComision)
-                    .ToList();                
+                    .ToList();
                 return ciclosR;
             }
             catch (Exception ex)
@@ -64,7 +87,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($"Inicio GestionPagosRezagadosRepository - GetComisionesPagos");
-                Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
+                Logger.LogInformation($"GetComisionesPagos usuario: {usuario}, idCiclo: {idCiclo}, idEstadoComision: {idEstadoComision}, idTipoComisionPagoComision: {idTipoComisionPagoComision}, idComision: {idComision}");
                 //var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
                 int[] tiposPagos = { 1, 2};                                              
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes
