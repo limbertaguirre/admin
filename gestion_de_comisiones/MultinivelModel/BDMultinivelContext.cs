@@ -53,6 +53,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<GpProrrateoDetalle> GpProrrateoDetalles { get; set; }
         public virtual DbSet<GpTipoComision> GpTipoComisions { get; set; }
         public virtual DbSet<Incentivo> Incentivoes { get; set; }
+        public virtual DbSet<IncentivoPagoComision> IncentivoPagoComisions { get; set; }
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
         public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
         public virtual DbSet<LogPagoMasivoSionPayComisionOEmpresaFail> LogPagoMasivoSionPayComisionOEmpresaFails { get; set; }
@@ -70,6 +71,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<TipoAutorizacion> TipoAutorizacions { get; set; }
         public virtual DbSet<TipoBaja> TipoBajas { get; set; }
         public virtual DbSet<TipoIncentivo> TipoIncentivoes { get; set; }
+        public virtual DbSet<TipoIncentivoPago> TipoIncentivoPagoes { get; set; }
         public virtual DbSet<TipoPago> TipoPagoes { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuarioAutorizacion> UsuarioAutorizacions { get; set; }
@@ -1759,6 +1761,20 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Es el precio del incentivo ya se si es un especie o dinero");
             });
 
+            modelBuilder.Entity<IncentivoPagoComision>(entity =>
+            {
+                entity.HasKey(e => e.IdDetalle)
+                    .HasName("PK__INCENTIV__4F1332DE5FA0A3FC");
+
+                entity.ToTable("INCENTIVO_PAGO_COMISION");
+
+                entity.Property(e => e.IdDetalle).HasColumnName("id_detalle");
+
+                entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
+
+                entity.Property(e => e.IdTipoIncentivoPago).HasColumnName("id_tipo_incentivo_pago");
+            });
+
             modelBuilder.Entity<ListadoFormasPago>(entity =>
             {
                 entity.HasKey(e => e.IdListaFormasPago)
@@ -2524,6 +2540,27 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("nombre")
                     .HasComment("nombre es el tipo de incentivo en especie  o en dinero");
+            });
+
+            modelBuilder.Entity<TipoIncentivoPago>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoIncentivo)
+                    .HasName("PK__TIPO_INC__FAEB36E609168A93");
+
+                entity.ToTable("TIPO_INCENTIVO_PAGO");
+
+                entity.Property(e => e.IdTipoIncentivo).HasColumnName("id_tipo_incentivo");
+
+                entity.Property(e => e.Descripcion)
+                    .IsRequired()
+                    .HasMaxLength(300)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.Estado)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("estado");
             });
 
             modelBuilder.Entity<TipoPago>(entity =>

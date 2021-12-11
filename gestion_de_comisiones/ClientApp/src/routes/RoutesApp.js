@@ -37,6 +37,7 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
                 <Route exact path='/pago/rezagados' component={Pages.PagoRezagado}  />    
                 <Route exact path='/reporte/ciclos' component={Pages.ReporteCiclo}  />  
                 <Route exact path='/reporte/freelancer' component={Pages.ReporteFreelancer}  />  
+                <Route exact path='/pagos/incentivos/cargar-planilla' component={Pages.CargarPlanillaSionPay}  />  
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>  
           </Layout> 
