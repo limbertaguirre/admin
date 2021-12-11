@@ -430,7 +430,6 @@ const GridTransferencia = (props) => {
     }
   };
   const cerrarVolverCero = () =>{
-    window.Reload()
     setTotalMontoRechazados(0)
     closeFullScreenModal()
   }
@@ -471,6 +470,7 @@ const GridTransferencia = (props) => {
         buscarPorCi();
     }else{
       error('¡Introduzca carnet de identidad!');
+      window.location.reload();
     }
   }
 const onChange= (e) => {
