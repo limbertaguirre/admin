@@ -214,6 +214,7 @@ go
 	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
 	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Roles','gestionRolesIcon','1',1,3,1);--hijo
 	 --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de incentivos','pagoComisionesIcon',2,1,1,1);
+     --INSERT INTO BDMultinivel.dbo.MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de rezagados', 'pagoComisionesIcon', 3, 1, 1, 2);
 	 --insert INTO MODULO VALUES('Usuarios','gestionClienteIcon',2,1,3,1,GETDATE(),GETDATE());
 go
 create table PAGINA
@@ -252,7 +253,8 @@ go
 --	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,5,1);  
 
 --	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
---     insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);  
+--     insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);
+--     INSERT INTO BDMultinivel.dbo.PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos', '/pago/rezagados', 'facIcon', 1, 1, 1010, 2);  
 --	   INSERT INTO PAGINA VALUES('Asignación de roles','/usuario/asignar-roles','facIcon',1,1,@@Identity,1,GETDATE(),GETDATE());
 
   
