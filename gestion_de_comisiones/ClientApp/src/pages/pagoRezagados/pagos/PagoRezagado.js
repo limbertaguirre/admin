@@ -108,6 +108,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PagoRezagado = ({ location }) => {
   const style = useStyles();
+  console.log(location);
   const {
     idCiclo,
     openTransferenciasDialog,
@@ -155,14 +156,14 @@ const PagoRezagado = ({ location }) => {
           <StyledBreadcrumb
             key={1}
             component="a"
-            label="Pagos"
+            label="Pagos Rezagados"
             icon={<Home fontSize="small" />}
           />
         </Breadcrumbs>
       </div>
       <br />
       <Typography variant="h4" gutterBottom>
-        {"Pagos"}
+        Pagos Rezagados
       </Typography>
 
       {empresasTransferencias && (
@@ -303,11 +304,10 @@ const PagoRezagado = ({ location }) => {
           {statusBusqueda && (
             <>
               {
-                // validarPermiso(
-                //   perfiles,
-                //   location.state.namePagina + permiso.CREAR
-                // )
-                // &&
+                validarPermiso(
+                  perfiles,
+                  location.state.namePagina + permiso.CREAR
+                ) &&
                 <>
                   <Grid
                     item
@@ -369,16 +369,16 @@ const PagoRezagado = ({ location }) => {
         selecionarDetalleFrelances={selecionarDetalleFrelances}
         seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
         idCiclo={idCiclo}
-        permisoActualizar={true}
-        permisoCrear={true}
-        // permisoActualizar={validarPermiso(
-        //   perfiles,
-        //   location.state.namePagina + permiso.ACTUALIZAR
-        // )}
-        // permisoCrear={validarPermiso(
-        //   perfiles,
-        //   location.state.namePagina + permiso.CREAR
-        // )}
+        // permisoActualizar={true}
+        // permisoCrear={true}
+        permisoActualizar={validarPermiso(
+          perfiles,
+          location.state.namePagina + permiso.ACTUALIZAR
+        )}
+        permisoCrear={validarPermiso(
+          perfiles,
+          location.state.namePagina + permiso.CREAR
+        )}
       />
       <MessageConfirm
         open={openModalConfirm}

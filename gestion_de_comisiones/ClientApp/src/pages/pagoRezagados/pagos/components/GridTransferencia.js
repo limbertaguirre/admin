@@ -29,6 +29,7 @@ import clsx from "clsx";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import MessageTransferConfirm from "./MessageTransferConfirm";
 import { formatearNumero } from "../../../../lib/utility";
+import { requestPost } from "../../../../service/request";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -329,6 +330,7 @@ const GridTransferencia = ({
   selected,
   setSelected,
   data,
+  idComision,
 }) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
@@ -417,12 +419,24 @@ const GridTransferencia = ({
     list,
     idEmpresa
   ) {
-    let response = await handleConfirmarPagosTransferencias(
-      userN,
-      usuarioId,
-      cicloId,
-      list,
-      idEmpresa,
+    // let response = await handleConfirmarPagosTransferencias(
+    //   userN,
+    //   usuarioId,
+    //   cicloId,
+    //   list,
+    //   idEmpresa,
+    //   dispatch
+    // );
+    let url = "/gestionPagosRezagados/ConfirmarPagosRezagadosTransferencias";
+    let response = await requestPost(
+      url,
+      {
+        user: userName,
+        cicloId,
+        comisionId: idComision,
+        empresaId: idEmpresa,
+        confirmados: list,
+      },
       dispatch
     );
     if (response && response.code == 0) {

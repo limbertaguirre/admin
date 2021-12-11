@@ -692,7 +692,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@ComisionId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = body.cicloId
+                                            Value = body.comisionId
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@EstadoComisionId",
