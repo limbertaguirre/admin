@@ -18,6 +18,7 @@ import SetRol from "../pages/usuario/SetRol";
 import PagoRezagado from "../pages/pagoRezagados/pagos/PagoRezagado";
 import ReporteCiclo from "../pages/reporte/ReporteCiclo";
 import ReporteFreelancer from "../pages/reporte/ReporteFreelancer";
+import CargarPlanillaSionPay from '../pages/pagoIncentivos/CargarPlanilla';
 
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
@@ -47,4 +48,5 @@ export default {
   ReporteCiclo,
   ReporteFreelancer,
   PagoRezagado,
+  CargarPlanillaSionPay
 };
