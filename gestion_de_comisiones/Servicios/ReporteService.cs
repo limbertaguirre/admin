@@ -14,7 +14,7 @@ namespace gestion_de_comisiones.Servicios
 
         private readonly ILogger<ReporteService> logger;
 
-        public IReporteRepository reporteRepository { get; }
+        public IReporteRepository reporteRepository { get; set; }
 
         public ReporteService(ILogger<ReporteService> logger, IReporteRepository reporteRepository)
         {
