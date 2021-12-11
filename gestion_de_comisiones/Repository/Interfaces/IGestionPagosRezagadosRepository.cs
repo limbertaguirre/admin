@@ -14,6 +14,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         GestionPagosRezagadosEvent ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
+        bool handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
         public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         public bool PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
         public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision, int idTipoComision, int idTipoFormaPagoSionPay, int idEstadoListaFormaPago);

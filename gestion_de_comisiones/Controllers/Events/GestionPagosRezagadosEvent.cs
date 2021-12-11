@@ -4,7 +4,8 @@ using gestion_de_comisiones.Modelos.GestionPagos;
 namespace gestion_de_comisiones.Controllers.Events
 {
     public class GestionPagosRezagadosEvent
-    {        
+    {
+        internal static readonly int EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS;
         public static int SUCCESS = 0;
         public static int ERROR = 1;
         public static int ROLLBACK_ERROR = 2;

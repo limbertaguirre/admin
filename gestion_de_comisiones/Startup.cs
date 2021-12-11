@@ -68,6 +68,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IFormaPagoService, FormaPagoService>();
             services.AddScoped<IGestionPagosService, GestionPagosService>();
             services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
+            services.AddScoped<IReporteService, ReporteService>();
             services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
             services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
             services.AddScoped<IIncentivoSionPayService, IncentivoSionPayService>();
@@ -83,6 +84,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IFormaPagoRepository, FormaPagoRespository>();
             services.AddScoped<IGestionPagoRepository, GestionPagoRepository>();
             services.AddScoped<IGestionPagosRezagadosRepository, GestionPagosRezagadosRepository>();
+            services.AddScoped<IReporteRepository, ReporteRepository>();
             services.AddScoped<IIncentivoSionPayRepository, IncentivoSionPayRepository>();
 
             services.AddScoped<BDMultinivelContext>();
