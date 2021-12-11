@@ -428,7 +428,7 @@ const GridTransferencia = ({
     //   dispatch
     // );
     let url = "/gestionPagosRezagados/ConfirmarPagosRezagadosTransferencias";
-    let response = requestPost(
+    let response = await requestPost(
       url,
       {
         user: userName,
