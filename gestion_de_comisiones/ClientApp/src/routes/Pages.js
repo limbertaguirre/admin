@@ -15,7 +15,7 @@ import EditRol from '../pages/usuario/Roles/EditRol';
 import Cliente from '../pages/fichaCliente/Cliente';
 import Ficha from '../pages/fichaCliente/Ficha';
 import SetRol from '../pages/usuario/SetRol';
-
+import CargarPlanillaSionPay from '../pages/pagoIncentivos/CargarPlanilla';
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
 // const Facturacion = lazy( () =>  import("../pages/pagoComisiones/Facturacion"));
@@ -41,4 +41,5 @@ export default {
     Cliente,
     Ficha,
     SetRol,
+    CargarPlanillaSionPay
 };
