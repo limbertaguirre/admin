@@ -320,7 +320,7 @@ const ReporteFreelancer = () => {
       >
         <DialogTitle id="detalle-title">Detalle por empresa</DialogTitle>
         <DialogContent>
-          {selectedDetailItemData && (
+          {selectedDetailItemData && selectedClient && (
             <>
               <Typography>
                 <b>CI: </b>

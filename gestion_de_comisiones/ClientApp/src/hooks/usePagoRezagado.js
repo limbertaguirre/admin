@@ -332,15 +332,15 @@ const usePagoRezagado = () => {
   };
 
   useEffect(() => {
-    // try {
-    //   verificarAcceso(
-    //     perfiles,
-    //     location.state.namePagina + permiso.VISUALIZAR,
-    //     history
-    //   );
-    // } catch (err) {
-    //   verificarAcceso(perfiles, "none", history);
-    // }
+    try {
+      verificarAcceso(
+        perfiles,
+        location.state.namePagina + permiso.VISUALIZAR,
+        history
+      );
+    } catch (err) {
+      verificarAcceso(perfiles, "none", history);
+    }
     cargarCiclo(userName);
   }, []);
 

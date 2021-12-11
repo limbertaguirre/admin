@@ -117,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
      verificarAcceso(perfiles, props.location.state.namePagina + permiso.VISUALIZAR, history);
      }catch (err) {  verificarAcceso(perfiles, 'none', history); }
   },[])
+  console.log(props.location)
   const style= useStyles();
 
   const[statusBusqueda, setStatusBusqueda]= useState(false);
