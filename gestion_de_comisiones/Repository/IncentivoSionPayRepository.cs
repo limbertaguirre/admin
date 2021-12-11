@@ -258,33 +258,12 @@ namespace gestion_de_comisiones.Repository
             }
 
             return (observada == true)? planillaIncentivo.DatosClientes : null;
-        }
-
-        public object VerificarCuentaSionPay(PlanillaExcelInput param)
-        {
-            using (BDMultinivelContext context = new BDMultinivelContext()); 
-            {                
-                try
-                {
-                    foreach (var item in param.DatosClientes)
-                    {
-                        
-                    }
-                }
-                catch (Exception ex)
-                {
-                    
-                }
-            }
-
-
-                throw new NotImplementedException();
-        }
+        }       
         public object ObtenerCiclos(string usuario)
         {            
             try 
             {                
-                var ciclos = contextMulti.Cicloes.OrderByDescending(x => x.IdCiclo).Take(2);
+                var ciclos = ContextMulti.Cicloes.OrderByDescending(x => x.IdCiclo).Take(2);
                 return ciclos;
             }
             catch (Exception ex)
@@ -300,7 +279,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTipoIncentivo ");
-                var ciclos = contextMulti.TipoIncentivoPagoes.OrderByDescending(x => x.IdTipoIncentivo).Take(2);
+                var ciclos = ContextMulti.TipoIncentivoPagoes.OrderByDescending(x => x.IdTipoIncentivo).Take(2);
                 return ciclos;
             }
             catch (Exception ex)

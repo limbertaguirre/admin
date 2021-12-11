@@ -32,7 +32,7 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogInformation($"usuario request : {planillaIncentivo.UsuarioNombre} inicio el controller AplicacionesController => Index() parametro: idciclo:{planillaIncentivo.IdCiclo}");
                 var resulcliente = Service.CargarDatosPlanillaExcel(planillaIncentivo);
-                Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
+                Logger.LogInformation($"usuario : {planillaIncentivo.UsuarioNombre} Fin del controller AplicacionesController => Index()");
                 return Ok(resulcliente);
             }
             catch (Exception ex)
