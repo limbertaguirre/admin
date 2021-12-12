@@ -16,14 +16,12 @@ namespace gestion_de_comisiones.Controllers
     public class IncentivoSionPayController : Controller
     {
         private readonly ILogger<IncentivoSionPayController> Logger;
-        public IncentivoSionPayController(ILogger<IncentivoSionPayController> logger , IIncentivoSionPayService service, IFacturaService facturaService)
+        public IncentivoSionPayController(ILogger<IncentivoSionPayController> logger , IIncentivoSionPayService service)
         {
             Logger = logger;
-            Service = service;
-            FService = facturaService; 
+            Service = service;           
         }
-        public IIncentivoSionPayService Service { get; set; }
-        public IFacturaService FService { get; set; }
+        public IIncentivoSionPayService Service { get; set; }        
         // POST: IncentivoSionPay/CargarPlanillaExcel
         [HttpPost]
         public ActionResult CargarPlanillaExcel([FromBody] PlanillaPagoIncentivo planillaIncentivo)

@@ -6,6 +6,7 @@ import { requestPost ,requestGet } from '../../service/request';
 import {useDispatch, useSelector} from 'react-redux';
 import * as ActionMensaje from "../../redux/actions/messageAction";
 import ComboTipoIncentivoPago from './ComboTipoIncentivo';
+import ModalCargarPlanilla from './MensajeModalCargarPlanilla';
 const PagoIncentivo = (props)=> {
   const dispatch = useDispatch()
   const {userName, idUsuario} = useSelector((stateSelector)=>{ return stateSelector.load});
@@ -78,7 +79,8 @@ const PagoIncentivo = (props)=> {
     }
     requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
-        console.log(response)
+        setEstadoCargarPlanilla(response.code)
+        setModalCargarPlanilla(true)
       })
       .catch((error)=>{
         console.log(error)
@@ -93,7 +95,6 @@ const PagoIncentivo = (props)=> {
       requestGet('IncentivoSionPay/ObtenerCiclos',data,dispatch).then((res)=>{
         if(res.code === 0){
           setListaCiclo(res.data);
-          console.log(res.data)
         }else{
             setListaCiclo([]);
             dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
@@ -104,7 +105,8 @@ const PagoIncentivo = (props)=> {
   const [ ciclo , setCiclo ] = useState('')
   const [ listaCiclo , setListaCiclo ] = useState()
   const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState()
-
+  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
+  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
   const handleChangeCiclo = (event) =>{
     setCiclo(event.target.value);
   }
@@ -114,12 +116,14 @@ const PagoIncentivo = (props)=> {
     requestGet('IncentivoSionPay/ObtenerTipoIncentivo',data,dispatch).then((res)=>{
       if(res.code === 0){
         setListaTipoIncentivo(res.data);
-        console.log(res.data)
       }else{
           setListaCiclo([]);
           dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
       }
     })
+  }
+  const cerrarModal = () => {
+    setModalCargarPlanilla(false)
   }
   return(
     <>
@@ -201,6 +205,13 @@ const PagoIncentivo = (props)=> {
         color="primary"
         disabled={ datosExcel ? false : true}
         onClick={ cargarPlanilla }> Cargar Datos</Button>
+      <ModalCargarPlanilla 
+        open = { modalCargarPlanilla }
+        titulo = { 'Cargar Planilla Mensaje'}
+        tipoModal = { estadoCargarPlanilla === 0 ? 'success' : 'warning' }
+        mensaje = { estadoCargarPlanilla === 0 ? 'Planilla cargada correctamente' : 'Ocurrio un problema al cargar la planilla'} 
+        handleCloseConfirm = { cerrarModal} 
+      />
     </>
   )
 
