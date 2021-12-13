@@ -99,7 +99,7 @@ namespace gestion_de_comisiones.Servicios
         </table>
         </br>
             <p>
-            Este es un correo generado autoamticamente no responda a este.
+            Este es un correo generado automáticamente no responda a este.
             </p>
         ";
             return style + html;
