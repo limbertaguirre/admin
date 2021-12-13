@@ -45,7 +45,39 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al cargar la planilla", "problemas en el servidor, intente mas tarde");
             }
         }
-
         
+        public object VerificarCuentaSionPay(string cuenta)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ObtenerCiclos(string usuario)
+        {
+            try
+            {
+                var ciclos = Repository.ObtenerCiclos(usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", ciclos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerCiclos(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener ciclos", "problemas en el servidor, intente mas tarde");
+            }            
+        }
+
+        public object ObtenerTipoIncentivo(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
+                var ciclos = Repository.ObtenerTipoIncentivo(usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", ciclos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

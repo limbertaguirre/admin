@@ -1,11 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import { Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow }from "@material-ui/core";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useState  } from 'react';
+import { Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import readXlsxFile from 'read-excel-file'
-import { requestPost } from '../../service/request';
-import {useDispatch} from 'react-redux';
-
+import { requestPost ,requestGet } from '../../service/request';
+import {useDispatch, useSelector} from 'react-redux';
+import * as ActionMensaje from "../../redux/actions/messageAction";
+import ComboTipoIncentivoPago from './ComboTipoIncentivo';
+import ModalCargarPlanilla from './MensajeModalCargarPlanilla';
 const PagoIncentivo = (props)=> {
   const dispatch = useDispatch()
+  const {userName, idUsuario} = useSelector((stateSelector)=>{ return stateSelector.load});
   const changeInputFile = (event) => {
     console.log(event.target.files)
     const schema = {
@@ -73,18 +77,76 @@ const PagoIncentivo = (props)=> {
       IdCiclo : 1 ,
       UsuarioNombre : 'srios'
     }
-    requestPost('Incentivo/CargarPlanillaExcel',data, dispatch)
+    requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
-        console.log(response)
+        setEstadoCargarPlanilla(response.code)
+        setModalCargarPlanilla(true)
       })
       .catch((error)=>{
         console.log(error)
     })
   }
+  useEffect(()=>{
+    obtenerCiclos();
+    obtenerTipoIncentivoPago();
+  },[])
+  const obtenerCiclos = () => {
+    const data={usuarioLogin:userName};
+      requestGet('IncentivoSionPay/ObtenerCiclos',data,dispatch).then((res)=>{
+        if(res.code === 0){
+          setListaCiclo(res.data);
+        }else{
+            setListaCiclo([]);
+            dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
+        }
+      })
+  }
   const [datosExcel, setDatosExcel] = useState()
+  const [ ciclo , setCiclo ] = useState('')
+  const [ listaCiclo , setListaCiclo ] = useState()
+  const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState()
+  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
+  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
+  const handleChangeCiclo = (event) =>{
+    setCiclo(event.target.value);
+  }
+
+  const obtenerTipoIncentivoPago = () => {
+    const data={usuarioLogin:userName};
+    requestGet('IncentivoSionPay/ObtenerTipoIncentivo',data,dispatch).then((res)=>{
+      if(res.code === 0){
+        setListaTipoIncentivo(res.data);
+      }else{
+          setListaCiclo([]);
+          dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
+      }
+    })
+  }
+  const cerrarModal = () => {
+    setModalCargarPlanilla(false)
+  }
   return(
     <>
     <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel id="demo-simple-select-label">Seleccione el ciclo</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={ciclo}
+              label="Seleccione el ciclo"
+              onChange={handleChangeCiclo}
+            >
+              { listaCiclo &&
+                listaCiclo.map((ciclo,index)=>(
+                  <MenuItem key={index} value={ciclo.idCiclo}>{ciclo.nombre}</MenuItem>
+                  )
+                )
+              }
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={12}>
           <input type="file" id='contained-button-file'  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={ changeInputFile} style={{ display: 'none'}}/>
           <label htmlFor="contained-button-file">
@@ -129,17 +191,27 @@ const PagoIncentivo = (props)=> {
                 <TableCell align="left">{row.ciudad}</TableCell>
                 <TableCell align="left">{row.pais}</TableCell>
                 <TableCell align="left">{row.detalle}</TableCell>
+                <TableCell>
+                  <ComboTipoIncentivoPago listaIncentivo = {listaTipoIncentivo}/>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
       )}
-      <Button 
+      <Button
         variant="contained"
         color="primary"
         disabled={ datosExcel ? false : true}
         onClick={ cargarPlanilla }> Cargar Datos</Button>
+      <ModalCargarPlanilla 
+        open = { modalCargarPlanilla }
+        titulo = { 'Cargar Planilla Mensaje'}
+        tipoModal = { estadoCargarPlanilla === 0 ? 'success' : 'warning' }
+        mensaje = { estadoCargarPlanilla === 0 ? 'Planilla cargada correctamente' : 'Ocurrio un problema al cargar la planilla'} 
+        handleCloseConfirm = { cerrarModal} 
+      />
     </>
   )
 

@@ -16,9 +16,9 @@ namespace gestion_de_comisiones.Repository
         private readonly ILogger<IncentivoSionPayRepository> Logger;
         private readonly int  tipoComisionIncentivo = 3;
         private readonly BDMultinivelContext ContextMulti;
-
-        public IncentivoSionPayRepository(BDMultinivelContext contextMulti)
+        public IncentivoSionPayRepository(BDMultinivelContext contextMulti, ILogger<IncentivoSionPayRepository> logger)
         {
+            Logger = logger;
             this.ContextMulti = contextMulti;
         }
         private List<GpComisionDetalle> armarComisionDetallesPersistir(List<DatosPlanillaExcel> DatosClientes, int idComision)
@@ -258,6 +258,36 @@ namespace gestion_de_comisiones.Repository
             }
 
             return (observada == true)? planillaIncentivo.DatosClientes : null;
+        }       
+        public object ObtenerCiclos(string usuario)
+        {            
+            try 
+            {                
+                var ciclos = ContextMulti.Cicloes.OrderByDescending(x => x.IdCiclo).Take(2);
+                return ciclos;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch mensaje : {ex}");
+                List<Ciclo> list = new List<Ciclo>();
+                return list;
+            }            
+        }
+
+        public object ObtenerTipoIncentivo(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTipoIncentivo ");
+                var ciclos = ContextMulti.TipoIncentivoPagoes.OrderByDescending(x => x.IdTipoIncentivo).Take(2);
+                return ciclos;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch mensaje : {ex}");
+                List<Ciclo> list = new List<Ciclo>();
+                return list;
+            }
         }
     }
 }
