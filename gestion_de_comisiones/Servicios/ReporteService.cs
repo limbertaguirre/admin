@@ -28,7 +28,7 @@ namespace gestion_de_comisiones.Servicios
             return respuesta.ReturnResultdo(0, "Ok", listReporte);
         }
 
-        public object obtenerReporteDetalleCiclo(int idComisionDetalle)
+        public object obtenerReporteDetalleCiclo(string idComisionDetalle)
         {
             var listReporte = reporteRepository.listaReporteDetalleCiclo(idComisionDetalle);
             return respuesta.ReturnResultdo(0, "Ok", listReporte);
@@ -44,6 +44,11 @@ namespace gestion_de_comisiones.Servicios
         {
             var listaReporte = reporteRepository.listaReportePorFreelancer(idFicha);
             return respuesta.ReturnResultdo(0, "Ok", listaReporte);
+        }
+        public object listaCiclosReporte()
+        {
+            var listaCiclos = reporteRepository.listaCiclosReporte();
+            return respuesta.ReturnResultdo(0, "Ok", listaCiclos);
         }
     }
 }

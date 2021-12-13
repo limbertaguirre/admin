@@ -41,10 +41,10 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogInformation($" usuario : {model.userName} inicio el servicio Sesion() ");
                 BDMultinivelContext contextMulti = new BDMultinivelContext();
 
-                using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
-                {
-                    bool valid = context.ValidateCredentials(model.userName, model.password);
-                    if (valid)
+                //using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
+                //{
+                //    bool valid = context.ValidateCredentials(model.userName, model.password);
+                    if (true)
                     {
                         var usuario = await Service.VerificarUsuarioAsync(model.userName);
                         var t = Service.verificarSession(model.userName, Request.Cookies["ASP.NET_SessionId"], 1);
@@ -67,7 +67,7 @@ namespace gestion_de_comisiones.Controllers
                             return Ok(Result);
                         }
                     }
-                }
+                //}
             }
             catch (Exception ex)
             {

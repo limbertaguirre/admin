@@ -103,7 +103,7 @@ const useReporteCiclo = () => {
   };
 
   const getCiclos = async () => {
-    let url = "/GestionPagos/getCiclos";
+    let url = "/Reporte/obtenerCiclosReporte";
     try {
       let response = await requestGet(url, { usuarioLogin }, dispatch);
       if (response && response.code === 0) {

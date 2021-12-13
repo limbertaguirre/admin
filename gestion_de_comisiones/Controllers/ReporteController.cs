@@ -46,5 +46,11 @@ namespace gestion_de_comisiones.Controllers
             return Ok(result);
         }
 
+        public ActionResult obtenerCiclosReporte()
+        {
+            var result = service.listaCiclosReporte();
+            return Ok(result);
+        }
+
     }
 }
