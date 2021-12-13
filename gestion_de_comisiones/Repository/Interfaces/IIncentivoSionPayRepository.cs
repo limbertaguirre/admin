@@ -10,5 +10,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
     {
         public object GuardarPlanillaIncentivoSionPay(PlanillaPagoIncentivo planillaIncentivo);
         public List<DatosPlanillaExcel> verificarIncentivosEmpresaCiNoRepetidos(PlanillaPagoIncentivo planillaIncentivo);
+        public object ObtenerCiclos(string usuario);        
+        public object ObtenerTipoIncentivo(string usuario);
     }
 }
