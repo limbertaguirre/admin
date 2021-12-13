@@ -9,6 +9,7 @@ using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
+using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,11 +25,13 @@ namespace gestion_de_comisiones.Repository
         private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 9;
         private readonly int TIPO_COMISION_REZAGADOS = 2;
         private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
+        private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
 
-        public GestionPagosRezagadosRepository(BDMultinivelContext multinivelDbContext, ILogger<GestionPagosRezagadosRepository> logger)
+        public GestionPagosRezagadosRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagosRezagadosRepository> logger)
         {
             this.ContextMulti = multinivelDbContext;
             this.Logger = logger;
+            this.EnvioCorreoService = envioCorreoService;
         }
 
         public object GetCiclos(string usuario, int idEstadoComision, int idTipoComisionRezagados)
@@ -265,7 +268,18 @@ namespace gestion_de_comisiones.Repository
                     return postEvent(GestionPagosRezagadosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
 
+                List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
+                    .Where(x => x.IdCiclo == param.cicloId && x.IdComision == returnValue && x.IdEmpresa == param.empresaId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
+                    .ToList();
                 dbcontextTransaction.Commit();
+                Logger.LogInformation($" usuario: {param.user}, despues del commit");
+                // Si returnValue no es -1 ni 2, es 1
+                if (rezagados.Count > 0)
+                {
+                    string asunto = "Lista de Rechazados en ciclo " + rezagados.ElementAt(0).Glosa + " Rezagados, por Empresa " + rezagados.ElementAt(0).Empresa;
+                    EnvioCorreoService.EnviarCorreoRezagados(rezagados, asunto);
+                }
                 // Si returnValue no es -1 ni 2, es 1
                 return postEvent(GestionPagosRezagadosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
