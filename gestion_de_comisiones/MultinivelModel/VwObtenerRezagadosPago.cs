@@ -31,12 +31,11 @@ namespace gestion_de_comisiones.MultinivelModel
         public string DocDeIdentidad { get; set; }
         public decimal? ImportePorEmpresa { get; set; }
         public decimal ImporteNeto { get; set; }
-        #nullable enable
-        public string? FechaDePago { get; set; }
-        public int FormaDePago { get; set; }        
-        public string? MonedaDestino { get; set; }
-        public string? EntidadDestino { get; set; }
-        public string? SucursalDestino { get; set; }
-        public string? Glosa { get; set; }
+        public string FechaDePago { get; set; }
+        public int FormaDePago { get; set; }
+        public string MonedaDestino { get; set; }
+        public string EntidadDestino { get; set; }
+        public string SucursalDestino { get; set; }
+        public string Glosa { get; set; }
     }
 }
