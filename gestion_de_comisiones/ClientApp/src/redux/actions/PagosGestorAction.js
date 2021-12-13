@@ -177,8 +177,8 @@ export async function handleObtenerPagosTransferencias(
       empresaId
     };
     
-    requestPost("gestionPagos/handleObtenerPagosTransferencias", data, dispatch).then(
-      (response) => {
+    requestPost("gestionPagos/handleObtenerPagosTransferencias", data, dispatch)
+    .then((response) => {
         resolve(response);
       }
     );
@@ -263,6 +263,27 @@ export async function ConfirmarCierrePago(userName,usuarioId, idCiclo, dispatch)
     };
      
     requestPost( "gestionPagos/CerrarPagoComision", data, dispatch).then((response) => {
+      resolve(response);
+    });
+  });
+}
+export async function BuscarFreelancerPagosTransferencias(
+  userName,
+  ci,
+  idCiclo,
+  empresaId,
+  dispatch
+) {
+  return new Promise((resolve) => {
+    const data = {
+      user: userName,
+      ci:ci,
+      cicloId: parseInt(idCiclo),
+      empresaId: empresaId,
+    };
+    console.log('llego Con: BuscarFreelancerPagosTransferencias: ', data);
+    requestPost( "gestionPagos/BuscarFreelancerPagosTransferencias", data, dispatch)
+    .then((response) => {
       resolve(response);
     });
   });
