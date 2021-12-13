@@ -523,51 +523,46 @@ namespace gestion_de_comisiones.Repository
                     Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS returnValue 2. Aun hay pagos de transferencias pendientes de pago.");
                 }
 
-                var cantidad = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEmpresa == body.empresaId &&
-                        x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS
-                    ).Count();
                 var cantidadPendientes = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEmpresa == body.empresaId &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEmpresa == body.empresaId && x.IdComision == body.comisionId &&
                     x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).Count();
-                if(cantidad == cantidadPendientes)
-                {
 
-                }
                 var cantidadRechazados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA
+                    /*  && x.IdComision == body.comisionId */ &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaRechazado).Count();
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente).Count();
                 var cantidadConfirmados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado).Count();
 
                 var sumaTotalConfirmados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado)
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalRechazados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                        //x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaRechazado)
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalPendientes = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var cantidadFechasPagosNull = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente && x.FechaDePago == null).Count();
 
                 var fechaPagosExcel = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Select(x => new { x.FechaDePago })
