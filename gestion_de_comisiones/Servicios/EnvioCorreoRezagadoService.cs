@@ -26,64 +26,65 @@ namespace gestion_de_comisiones.Servicios
         }
         private string armarMensajeCorreoRezagado(List<VwObtenerRezagadosPago> rezagados)
         {
-            String style = @"<style>
-            table.minimalistBlack {
-                font - family: 'Lucida Console', Monaco, monospace;
-            border: 3px solid #000000;
-                width: 100 %;
-                text - align: center;
-                border - collapse: collapse;
-            }
-            table.minimalistBlack td, table.minimalistBlack th {
-            border: 1px solid #000000;
-                padding: 5px 4px;
-            }
-            table.minimalistBlack tbody td {
-                font - size: 13px;
-            }
-            table.minimalistBlack thead {
-            background: #CFCFCF;
-                background: -moz - linear - gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-                background: -webkit - linear - gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-                background: linear - gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
-                border - bottom: 3px solid #000000;
-            }
-            table.minimalistBlack thead th {
-                font - size: 15px;
-                font - weight: bold;
-            color: #000000;
-                text - align: center;
-            }
-            table.minimalistBlack tfoot td {
-                font - size: 14px;
-            }
-        </ style > ",
-        body = "";
-
+            String style = @"<!DOCTYPE html>
+            <html>
+              <head>
+                <title></title>
+                <style type='text/css'>
+                  table.minimalistBlack {
+                    font - family: 'Lucida Console', Monaco, monospace;
+                    border: 3px solid #000000;
+                    width: 100 %;
+                    text - align: center;
+                    border - collapse: collapse;
+                  }
+                  table.minimalistBlack td, table.minimalistBlack th {
+                    border: 1px solid #000000;
+                    padding: 5px 4px;
+                  }
+                  table.minimalistBlack tbody td {
+                    font - size: 13px;
+                  }
+                  table.minimalistBlack thead {
+                    background: #CFCFCF;
+                    background: -moz - linear - gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+                    background: -webkit - linear - gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+                    background: linear - gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+                    border - bottom: 3px solid #000000;
+                  }
+                  table.minimalistBlack thead th {
+                    font - size: 15px;
+                    font - weight: bold;
+                    color: #000000;
+                    text - align: center;
+                  }
+                  table.minimalistBlack tfoot td {
+                    font - size: 14px;
+                  }
+                </style> 
+              </head>",
+         body = "";
             foreach (VwObtenerRezagadosPago rezagado in rezagados)
             {
 
                 body += $@"<tr>
-                <td>{rezagado.NombreDeCliente}</td>
-                <td>{rezagado.DocDeIdentidad}</td>  
-                <td>{rezagado.NombreBanco}</td>                
-                <td>{rezagado.NroDeCuenta}</td>
-                <td>{rezagado.ImportePorEmpresa}</td>
-                <td>{rezagado.Empresa}</td>
-                <td>{rezagado.Glosa}</td>
-                
-                </tr>";
+                          <td>{rezagado.NombreDeCliente}</td>
+                          <td>{rezagado.DocDeIdentidad}</td>  
+                          <td>{rezagado.NombreBanco}</td>                
+                          <td>{rezagado.NroDeCuenta}</td>
+                          <td>{rezagado.ImportePorEmpresa}</td>
+                          <td>{rezagado.Empresa}</td>
+                          <td>{rezagado.Glosa}</td>
+                        </tr>";
             }
 
-            String html = $@"<p>estos son los freelancers rechazados
-            </p> 
-
-                  
-        </br> 
-        
-        <table class='minimalistBlack'>
-            <thead>
-                <tr>                    
+            String html = $@"
+              <body>
+                <p>ESTOS SON LOS FREELANCERS RECHAZADOS</p>
+                <br> 
+              <table class='minimalistBlack'>
+               <thead>
+                  <tr>                    
                     <th>NOMBRE</th>
                     <th>CEDULA IDENTIDAD</th>
                     <th>BANCO</th>
@@ -91,17 +92,18 @@ namespace gestion_de_comisiones.Servicios
                     <th>MONTO POR EMPRESA</th>
                     <th>EMPRESA</th>
                     <th>CICLO</th>                    
-                </tr>
-            </thead>
-            <tbody>
-                ${ body}
-            </tbody>
-        </table>
-        </br>
-            <p>
-            Este es un correo generado automáticamente no responda a este.
-            </p>
-        ";
+                  </tr>
+               </thead>
+                <tbody>
+                        {body}
+                </tbody>
+                </table>
+                <br>
+                <p>
+                  Este es un correo electrónico generado automáticamente, no es necesario responder.
+                </p>
+              </body>
+            </html>";
             return style + html;
         }
         private bool envioCorreoRezagados(string mensaje, string asunto, List<string> destinatarios)
