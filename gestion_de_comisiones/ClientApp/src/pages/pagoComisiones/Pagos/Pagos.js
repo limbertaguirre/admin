@@ -140,7 +140,6 @@ const Pagos = (props) => {
       verificarAcceso(perfiles, "none", history);
     }
   }, []);
-  console.log(props.location);
   const style = useStyles();
 
   const [statusBusqueda, setStatusBusqueda] = useState(false);
