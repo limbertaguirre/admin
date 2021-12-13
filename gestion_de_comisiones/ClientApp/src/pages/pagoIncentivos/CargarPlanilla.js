@@ -65,7 +65,9 @@ const PagoIncentivo = (props)=> {
       }
     })
     .then(({rows, errors})=>{
-      setDatosExcel(rows)
+      setDatosExcel(rows.map( (item)=>{
+        return { ...item, idTipoIncentivoPago : ''}
+      }))
       console.table(rows)
       console.log(errors)
     })
@@ -74,8 +76,8 @@ const PagoIncentivo = (props)=> {
   const cargarPlanilla = () => {
     let data = {
       DatosClientes: datosExcel,
-      IdCiclo : 1 ,
-      UsuarioNombre : 'srios'
+      IdCiclo : ciclo ,
+      UsuarioNombre : userName
     }
     requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
@@ -95,6 +97,7 @@ const PagoIncentivo = (props)=> {
       requestGet('IncentivoSionPay/ObtenerCiclos',data,dispatch).then((res)=>{
         if(res.code === 0){
           setListaCiclo(res.data);
+    
         }else{
             setListaCiclo([]);
             dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
@@ -107,7 +110,7 @@ const PagoIncentivo = (props)=> {
   const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState()
   const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
   const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
-  const handleChangeCiclo = (event) =>{
+  const handleChangeCiclo = (event) =>{    
     setCiclo(event.target.value);
   }
 
@@ -124,6 +127,12 @@ const PagoIncentivo = (props)=> {
   }
   const cerrarModal = () => {
     setModalCargarPlanilla(false)
+  }
+  const handleChangeTipoIncentivo = (event,index) =>{
+    let newDatosExcel = [...datosExcel]
+    newDatosExcel[index].idTipoIncentivoPago = event.target.value
+    setDatosExcel(newDatosExcel)
+    console.table(datosExcel)
   }
   return(
     <>
@@ -175,7 +184,7 @@ const PagoIncentivo = (props)=> {
             </TableRow>
           </TableHead>
           <TableBody>
-            {datosExcel.map((row) => (
+            {datosExcel.map((row,index) => (
               <TableRow
                 key={row.nro}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -192,7 +201,11 @@ const PagoIncentivo = (props)=> {
                 <TableCell align="left">{row.pais}</TableCell>
                 <TableCell align="left">{row.detalle}</TableCell>
                 <TableCell>
-                  <ComboTipoIncentivoPago listaIncentivo = {listaTipoIncentivo}/>
+                  <ComboTipoIncentivoPago
+                    listaIncentivo = {listaTipoIncentivo} 
+                    handleChangeTipoIncentivo={ (e)=> handleChangeTipoIncentivo (e,index) }
+                    valorTipoIncentivo={ row.idTipoIncentivoPago }
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -210,7 +223,7 @@ const PagoIncentivo = (props)=> {
         titulo = { 'Cargar Planilla Mensaje'}
         tipoModal = { estadoCargarPlanilla === 0 ? 'success' : 'warning' }
         mensaje = { estadoCargarPlanilla === 0 ? 'Planilla cargada correctamente' : 'Ocurrio un problema al cargar la planilla'} 
-        handleCloseConfirm = { cerrarModal} 
+        handleCloseConfirm = { cerrarModal}
       />
     </>
   )

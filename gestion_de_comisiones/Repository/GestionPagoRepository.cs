@@ -796,7 +796,8 @@ namespace gestion_de_comisiones.Repository
                 // Si returnValue no es -1 ni 2, es 1
                 if (rezagados.Count > 0)
                 {
-                    EnvioCorreoService.EnviarCorreoRezagados(rezagados);
+                    string asunto = "Rechazados ciclo " + rezagados.ElementAt(0).Glosa + " - " + rezagados.ElementAt(0).Empresa;
+                    EnvioCorreoService.EnviarCorreoRezagados(rezagados, asunto);
                     
                 }                
                 return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
