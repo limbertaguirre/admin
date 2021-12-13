@@ -96,7 +96,12 @@ namespace gestion_de_comisiones.Servicios
             <tbody>
                 ${ body}
             </tbody>
-        </table>";
+        </table>
+        </br>
+            <p>
+            Este es un correo generado autoamticamente no responda a este.
+            </p>
+        ";
             return style + html;
         }
         private bool envioCorreoRezagados(string mensaje, string asunto, List<string> destinatarios)

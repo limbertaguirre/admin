@@ -796,7 +796,7 @@ namespace gestion_de_comisiones.Repository
                 // Si returnValue no es -1 ni 2, es 1
                 if (rezagados.Count > 0)
                 {
-                    string asunto = "Lista de Rechazados en ciclo " + rezagados.ElementAt(0).Glosa + " Por Empresa " + rezagados.ElementAt(0).Empresa;
+                    string asunto = "Rechazados ciclo " + rezagados.ElementAt(0).Glosa + " - " + rezagados.ElementAt(0).Empresa;
                     EnvioCorreoService.EnviarCorreoRezagados(rezagados, asunto);
                     
                 }                
