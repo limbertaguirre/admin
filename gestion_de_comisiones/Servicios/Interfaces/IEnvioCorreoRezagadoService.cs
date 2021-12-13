@@ -7,6 +7,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
 {
     public  interface IEnvioCorreoRezagadoService
     {
-        public object EnviarCorreoRezagados(List<VwObtenerRezagadosPago> rezagados);
+        public object EnviarCorreoRezagados(List<VwObtenerRezagadosPago> rezagados, string asunto);
     }
 }
