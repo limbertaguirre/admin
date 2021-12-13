@@ -8,7 +8,7 @@ import clsx from "clsx";
 import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import { Row } from "react-flexbox-grid";
-import { Button } from "bootstrap";
+import { Alert, Button } from "bootstrap";
 import MessageTransferConfirm from "./MessageTransferConfirm";
 import { formatearNumero } from "../../../../lib/utility";
 
@@ -303,23 +303,16 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     background: "#1872b8",
     boxShadow: "2px 1px 5px #1872b8",
   },
+  input: {
+    display: 'none',
+  },
 }));
 //-----------------------------------------------------------------------------------------------
 
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const {
-    idCiclo,
-    list,
-    empresaId,
-    openModalFullScreen,
-    closeFullScreenModal,
-    seleccionarTodo,
-    selected,
-    setSelected,
-    data,
-  } = props;
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
   const [dense, setDense] = React.useState(false);
@@ -330,6 +323,8 @@ const GridTransferencia = (props) => {
     React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
+  const [ ci, setCi]= React.useState('');
+  const [ciResultado, setCiResultado] = React.useState([]);
   data.montoTotal = data.montoTotal.replace(',', '.');
 
   const handleRequestSort = (event, property) => {
@@ -377,24 +372,17 @@ const GridTransferencia = (props) => {
   const error = (message) => {
     dispatch(ActionMensaje.showMessage({ message: message, variant: "info" }));
   };
-  const [check_in, setCheck_in] = React.useState(true);
 
   const closeModalMessage = () => {
     setOpenModalConfirmation(false);
   };
-  const abrirModalCormarPagos = () => {
+  const abrirModalConfimarPagos = () => {
     setOpenModalConfirmation(true);
   };
 
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia(
-        userName,
-        idUsuario,
-        idCiclo,
-        selected,
-        empresaId
-      );
+      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId );
     }
   };
 
@@ -405,14 +393,7 @@ const GridTransferencia = (props) => {
     list,
     idEmpresa
   ) {
-    let response = await Actions.handleConfirmarPagosTransferencias(
-      userN,
-      usuarioId,
-      cicloId,
-      list,
-      idEmpresa,
-      dispatch
-    );
+    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch);
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
@@ -448,36 +429,60 @@ const GridTransferencia = (props) => {
       setTotalPagar(s.toFixed(2));
     }
   };
-const cerrarVolverCero = () =>{
-  setTotalMontoRechazados(0)
-  closeFullScreenModal()
-}
-function addFormat(nStr) {
-  nStr += '';
-  var x = nStr.split('.');
-  var x1 = x[0];
-  var x2 = x.length > 1 ? ',' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-  while (rgx.test(x1)) {
-          x1 = x1.replace(rgx, '$1' + '.' + '$2');
+  const cerrarVolverCero = () =>{
+    setTotalMontoRechazados(0)
+    closeFullScreenModal()
   }
-  return x1 + x2;
+  function addFormat(nStr) {
+    nStr += '';
+    var x = nStr.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? ',' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + '.' + '$2');
+    }
+    return x1 + x2;
+  }
+  const modalSum=(s1,s2,val)=>{
+    let suma1=0;
+    let suma2=0;
+    let ad = "";
+    if(val == 0){
+      suma1 = s1 - s2
+      ad = addFormat(suma1.toFixed(2))
+      return ad;
+    } else if( val == 1){
+      suma2 = s1 - (s1-s2)
+      ad = addFormat(suma2.toFixed(2))
+      return ad;
+    }else return "valor no válido"
+  }
+  async function buscarPorCi(){ 
+    let response= await Actions.BuscarFreelancerPagosTransferencias(userName, ci, idCiclo, empresaId, dispatch)               
+    if(response && response.code == 0){
+      console.log('Responde Con: BuscarFreelancerPagosTransferencias: ', response);
+      setCiResultado(response);
+    }       
 }
-const modalSum=(s1,s2,val)=>{
-  let suma1=0;
-  let suma2=0;
-  let ad = "";
-  if(val == 0){
-    suma1 = s1 - s2
-    ad = addFormat(suma1.toFixed(2))
-    return ad;
-  } else if( val == 1){
-    suma2 = s1 - (s1-s2)
-    ad = addFormat(suma2.toFixed(2))
-    return ad;
-  }else return "valor no válido"
-}
-
+  const BuscarFreelancerPagosTransferencias=()=>{
+    if(ci != ""){ 
+        buscarPorCi();
+    }else{
+      error('¡Introduzca carnet de identidad!');
+      window.location.reload();
+    }
+  }
+const onChange= (e) => {
+  const textSearch = e.target.name;
+  const value = e.target.value;
+  if (textSearch === "idCiclo") {
+    idCiclo(value);        
+  }
+    if (textSearch === "txtBusqueda") {
+    setCi(value);
+  }
+};
   return (
     <Core.Dialog
       fullScreen
@@ -506,19 +511,18 @@ const modalSum=(s1,s2,val)=>{
         <Core.Grid container className={classes.gridContainer}>
           <Core.Grid item xs={12} md={4}></Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-            {/* {statusBusqueda&&
             <Core.TextField
-              label="Buscar freelancer"
+              label="Buscar"
               type={"text"}
               variant="outlined"
               placeholder={"Buscar por carnet identidad"}
               name="txtBusqueda"
-              value={txtBusqueda}
-              //onChange={onChangeSelectCiclo}
+              value={ci}
+              onChange={onChange}
               fullWidth
               onKeyPress={(ev) => {
                 if (ev.key === "Enter") {
-                  //buscarFreelanzer();
+                  BuscarFreelancerPagosTransferencias();
                 }
               }}
               InputProps={{
@@ -529,7 +533,6 @@ const modalSum=(s1,s2,val)=>{
                 ),
               }}
             />
-            } */}
           </Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
             <Core.Button
@@ -538,7 +541,7 @@ const modalSum=(s1,s2,val)=>{
               variant="contained"
               color="primary"
               className={classes.submitCargar}
-              onClick={() => selected.length > 0 ? abrirModalCormarPagos() : error( "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!" )}>
+              onClick={() => selected.length > 0 ? abrirModalConfimarPagos() : error( "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!" )}>
               {"Confirmar transferencias "}{" "}
             </Core.Button>
           </Core.Grid>
@@ -546,95 +549,180 @@ const modalSum=(s1,s2,val)=>{
       </Core.Card>
       <br />
 
+      {ciResultado == "" ?
       <Core.Grid container className={classes.gridContainer}>
-        <Core.Grid item xs={12} className={classes.containerSave}>
-          <Core.Paper className={classes.paper}>
-            <EnhancedTableToolbar numSelected={selected.length} />
-            <Core.TableContainer>
-              <Core.Table
-                className={classes.table}
-                aria-labelledby="tableTitle"
-                size={dense ? "small" : "medium"}
-                aria-label="enhanced table"
-              >
-                <EnhancedTableHead
-                  classes={classes}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={list.length}
-                />
-                <Core.TableBody>
-                  {stableSort(list, getComparator(order, orderBy)).map(
-                    (row, index) => {
-                      const isItemSelected = isSelected(
-                        row.idComisionDetalleEmpresa
-                      );
-                      const labelId = `enhanced-table-checkbox-${index}`;
+      <Core.Grid item xs={12} className={classes.containerSave}>
+        <Core.Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <Core.TableContainer>
+            <Core.Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={list.length}
+              />
+              <Core.TableBody>
+                {stableSort(list, getComparator(order, orderBy)).map(
+                  (row, index) => {
+                    const isItemSelected = isSelected(
+                      row.idComisionDetalleEmpresa
+                    );
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                      return (
-                        <Core.TableRow
-                          hover
-                          onClick={(event) => handleClick(event, row)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.nombreDeCliente}
-                          selected={isItemSelected}
-                        >
-                          <Core.TableCell padding="Checkbox">
-                            <Core.Checkbox
-                              disabled={
-                                row.idEstadoComisionDetalleEmpresa === 2
-                                  ? true
-                                  : false
-                              }
-                              checked={isItemSelected}
-                              value={isItemSelected}
-                              inputProps={{ "aria-labelledby": labelId }}
-                            />
-                          </Core.TableCell>
-                          <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
-                          <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
-                          <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
-                          <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                          <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
-                          <Core.TableCell align="center">{row.empresa}</Core.TableCell>
-                          <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
-                              <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                              <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
-                          </Core.TableCell>
-                        </Core.TableRow>
-                      );
-                    }
-                  )}
-                  <Core.TableRow key={100000000000000}>
-                    <Core.TableCell align="center">
-                      <b></b>
-                    </Core.TableCell>
-                    <Core.TableCell align="right"></Core.TableCell>
-                    <Core.TableCell align="center">
-                      <b> </b>
-                    </Core.TableCell>
-                    <Core.TableCell align="center">
-                      <b> </b>
-                    </Core.TableCell>
-                    <Core.TableCell align="center">
-                      <b>{"TOTAL: "} </b>
-                    </Core.TableCell>
-                    <Core.TableCell align="left">
-                      <b>{addFormat(data.montoTotal)}</b>
-                    </Core.TableCell>
-                    <Core.TableCell align="center"></Core.TableCell>
-                  </Core.TableRow>
-                </Core.TableBody>
-              </Core.Table>
-            </Core.TableContainer>
-          </Core.Paper>
-        </Core.Grid>
+                    return (
+                      <Core.TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.nombreDeCliente}
+                        selected={isItemSelected}
+                      >
+                        <Core.TableCell padding="Checkbox">
+                          <Core.Checkbox
+                            disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
+                            checked={isItemSelected}
+                            value={isItemSelected}
+                            inputProps={{ "aria-labelledby": labelId }}
+                          />
+                        </Core.TableCell>
+                        <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
+                        <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
+                        <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
+                        <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
+                        <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
+                        <Core.TableCell align="center">{row.empresa}</Core.TableCell>
+                        <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
+                            <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                            <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
+                        </Core.TableCell>
+                      </Core.TableRow>
+                    );
+                  }
+                )}
+                <Core.TableRow key={100000000000000}>
+                  <Core.TableCell align="center">
+                    <b></b>
+                  </Core.TableCell>
+                  <Core.TableCell align="right"></Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b> </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b> </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b>{"TOTAL: "} </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="left">
+                    <b>{addFormat(data.montoTotal)}</b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center"></Core.TableCell>
+                </Core.TableRow>
+              </Core.TableBody>
+            </Core.Table>
+          </Core.TableContainer>
+        </Core.Paper>
       </Core.Grid>
+      </Core.Grid>
+      :
+      <Core.Grid container className={classes.gridContainer}>
+      <Core.Grid item xs={12} className={classes.containerSave}>
+        <Core.Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <Core.TableContainer>
+            <Core.Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={ciResultado.data.length}
+              />
+              <Core.TableBody>
+                {stableSort(ciResultado.data, getComparator(order, orderBy)).map(
+                  (row, index) => {
+                    const isItemSelected = isSelected(
+                      row.idComisionDetalleEmpresa
+                    );
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <Core.TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.nombreDeCliente}
+                        selected={isItemSelected}
+                      >
+                        <Core.TableCell padding="Checkbox">
+                          <Core.Checkbox
+                            disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
+                            checked={isItemSelected}
+                            value={isItemSelected}
+                            inputProps={{ "aria-labelledby": labelId }}
+                          />
+                        </Core.TableCell>
+                        <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
+                        <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
+                        <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
+                        <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
+                        <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
+                        <Core.TableCell align="center">{row.empresa}</Core.TableCell>
+                        <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
+                            <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                            <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
+                        </Core.TableCell>
+                      </Core.TableRow>
+                    );
+                  }
+                )}
+                <Core.TableRow key={100000000000000}>
+                  <Core.TableCell align="center">
+                    <b></b>
+                  </Core.TableCell>
+                  <Core.TableCell align="right"></Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b> </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b> </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center">
+                    <b>{"TOTAL: "} </b>
+                  </Core.TableCell>
+                  <Core.TableCell align="left">
+                    <b>{addFormat(data.montoTotal)}</b>
+                  </Core.TableCell>
+                  <Core.TableCell align="center"></Core.TableCell>
+                </Core.TableRow>
+              </Core.TableBody>
+            </Core.Table>
+          </Core.TableContainer>
+        </Core.Paper>
+      </Core.Grid>
+      </Core.Grid>
+      }
+      
 
       {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
