@@ -44,7 +44,7 @@ namespace gestion_de_comisiones.Repository
         {
             using (var command = contextMulti.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = $"select * from ffReportePorCiclo({idCiclo},{mode}) order by monto_neto desc";
+                command.CommandText = $"select * from fnReportePorCiclo({idCiclo},{mode}) order by monto_neto desc";
                 command.CommandType = System.Data.CommandType.Text;
                 contextMulti.Database.OpenConnection();
                 using(var resultQuery = command.ExecuteReader())
@@ -55,7 +55,7 @@ namespace gestion_de_comisiones.Repository
                         while (resultQuery.Read())
                         {
                             entities.Add(new ReporteCicloModel(
-                                Convert.ToInt32(resultQuery["id_comision_detalle"]),
+                                resultQuery["id_comision_detalle"].ToString(),
                                 resultQuery["nombres"].ToString(),
                                 resultQuery["apellidos"].ToString(),
                                 resultQuery["ci"].ToString(),
@@ -74,11 +74,11 @@ namespace gestion_de_comisiones.Repository
             //return result;
         }
 
-        public List<ReporteDetalleCicloModel> listaReporteDetalleCiclo(int idComisionDetalle)
+        public List<ReporteDetalleCicloModel> listaReporteDetalleCiclo(string idComisionDetalle)
         {
             using (var command = contextMulti.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = $"select * from ffReporteDetalleCiclo({idComisionDetalle}) order by monto_neto desc";
+                command.CommandText = $"select * from fnReporteDetalleCiclo('{idComisionDetalle}') order by monto_neto desc";
                 command.CommandType = System.Data.CommandType.Text;
                 contextMulti.Database.OpenConnection();
                 using (var resultQuery = command.ExecuteReader())
@@ -106,7 +106,7 @@ namespace gestion_de_comisiones.Repository
         {
             using (var command = contextMulti.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = $"select * from ffReporteFreelancer({idFicha}) order by monto_neto desc";
+                command.CommandText = $"select * from fnReporteFreelancer({idFicha}) order by monto_neto desc";
                 command.CommandType = System.Data.CommandType.Text;
                 contextMulti.Database.OpenConnection();
                 using (var resultQuery = command.ExecuteReader())
@@ -117,12 +117,36 @@ namespace gestion_de_comisiones.Repository
                         while (resultQuery.Read())
                         {
                             entities.Add(new ReporteFreelancerModel(
-                                Convert.ToInt32(resultQuery["id_comision_detalle"]),
+                                resultQuery["id_comision_detalle"].ToString(),
                                 resultQuery["ciclo"].ToString(),
                                 resultQuery["tipo_pago"].ToString(),
                                 float.Parse(resultQuery["monto_neto"].ToString()),
                                 resultQuery["nro_cuenta"].ToString(),
                                 resultQuery["cuenta_banco"].ToString()
+                            ));
+                        }
+                    }
+                    return entities;
+                }
+            }
+        }
+
+        public List<CicloItemModel> listaCiclosReporte()
+        {
+            using (var command = contextMulti.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = $"select * from fnCiclosParaReporte()";
+                contextMulti.Database.OpenConnection();
+                using (var resultQuery = command.ExecuteReader())
+                {
+                    List<CicloItemModel> entities = new List<CicloItemModel>();
+                    if (resultQuery.HasRows)
+                    {
+                        while (resultQuery.Read())
+                        {
+                            entities.Add(new CicloItemModel(
+                                Convert.ToInt32(resultQuery["id_ciclo"]),
+                                resultQuery["nombre"].ToString()
                             ));
                         }
                     }
