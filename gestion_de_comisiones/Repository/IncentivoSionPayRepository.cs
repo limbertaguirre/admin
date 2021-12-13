@@ -226,7 +226,16 @@ namespace gestion_de_comisiones.Repository
 
         public List<DatosPlanillaExcel> verificarIncentivosEmpresaCiNoRepetidos(PlanillaPagoIncentivo planillaIncentivo)
         {
-            int idComision = ContextMulti.GpComisions.Where((item) => item.IdCiclo == planillaIncentivo.IdCiclo).FirstOrDefault().IdComision;
+            var idComisionParam = ContextMulti.GpComisions.Where((item) => item.IdCiclo == planillaIncentivo.IdCiclo).FirstOrDefault();
+            int idComision = 0;
+            if (idComisionParam == null)
+            {
+                return null;
+            }
+            else
+            {
+                idComision = idComisionParam.IdComision;
+            }
             //List<DatosPlanillaExcel> lista = new List<DatosPlanillaExcel>();
             bool observada = false;
             foreach (DatosPlanillaExcel elem in planillaIncentivo.DatosClientes)

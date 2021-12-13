@@ -195,10 +195,10 @@ const PagoRezagado = ({ location }) => {
                           variant="contained"
                           color="primary"
                           className={style.submitCargar}
-                          onClick={() => confirmarCierrePagos()}
+                          onClick={() => null}
                         >
-                          <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
-                          PAGO
+                          <Save style={{ marginRight: "5px" }} /> CERRAR PAGOS
+                          REZAGADOS
                         </Button>
                       ) : (
                         <Tooltip
@@ -303,11 +303,10 @@ const PagoRezagado = ({ location }) => {
 
           {statusBusqueda && (
             <>
-              {
-                validarPermiso(
-                  perfiles,
-                  location.state.namePagina + permiso.CREAR
-                ) &&
+              {validarPermiso(
+                perfiles,
+                location.state.namePagina + permiso.CREAR
+              ) && (
                 <>
                   <Grid
                     item
@@ -338,9 +337,9 @@ const PagoRezagado = ({ location }) => {
                         },
                       }}
                     >
-                      <MenuItem key="1" onClick={() => abrirModal()}>
+                      {/* <MenuItem key="1" onClick={() => abrirModal()}>
                         PAGAR SION PAY
-                      </MenuItem>
+                      </MenuItem> */}
                       <MenuItem
                         key="2"
                         onClick={() => handleClickOpenTransferencias()}
@@ -350,7 +349,7 @@ const PagoRezagado = ({ location }) => {
                     </Menu>
                   </Grid>
                 </>
-              }
+              )}
             </>
           )}
         </Grid>

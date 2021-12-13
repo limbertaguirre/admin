@@ -166,7 +166,7 @@ const usePagoRezagado = () => {
     handleClose();
   };
   async function verificarConfirmarSionPay(userN, cicloId) {
-    let response = await verificarPagoSionPayXCiclo(userN, cicloId, dispatch);
+    let response = await verificarPagoSionPayXCiclo(userN, dispatch);
     if (response && response.code == 0) {
       var body = response.data;
       setOpenModalConfirm(true);
@@ -195,16 +195,16 @@ const usePagoRezagado = () => {
   };
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarPagoSionPay(userName, idUsuario, idCiclo);
+      prosesarPagoSionPay(userName, idUsuario, idComision);
     } else {
       generarSnackBar("¡Debe seleccionar un ciclo para el cierre", "info");
     }
   };
-  async function prosesarPagoSionPay(userN, usuarioId, cicloId) {
+  async function prosesarPagoSionPay(userN, usuarioId, idComision) {
     let response = await pagarComisionSionPay(
       userN,
       usuarioId,
-      cicloId,
+      idComision,
       dispatch
     );
     if (response && response.code == 0) {
@@ -308,13 +308,39 @@ const usePagoRezagado = () => {
     }
   }
 
-  const handleTransferenciasEmpresasAction = async () => {};
-  const obtenerCiclosPagos = async () => {};
-  const obtenerComisionesPagos = async () => {};
   const listarFiltrada = async () => {};
   const buscarPorCarnetFormaPago = async () => {};
-  const verificarPagoSionPayXCiclo = async () => {};
-  const pagarComisionSionPay = async () => {};
+  const verificarPagoSionPayXCiclo = async (usuarioLogin, dispatch) => {
+    let url = "/gestionPagosRezagados/PagarComisionRezagadosSionPay";
+    let response = await requestPost(
+      url,
+      { usuarioLogin, idComsion: idComision },
+      dispatch
+    );
+    if (response && response.code === 0) {
+      return response;
+    } else {
+      return null;
+    }
+  };
+  const pagarComisionSionPay = async (
+    usuarioLogin,
+    usuarioId,
+    idComsion,
+    dispatch
+  ) => {
+    let url = "/gestionPagosRezagados/PagarComisionRezagadosSionPay";
+    let response = await requestPost(
+      url,
+      { usuarioLogin, idComsion, usuarioId },
+      dispatch
+    );
+    if (response && response.code === 0) {
+      return response;
+    } else {
+      return null;
+    }
+  };
   const confirmarCierrePago = async () => {};
 
   const mensajeGenericoCiclo = () => {
