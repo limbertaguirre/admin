@@ -261,7 +261,7 @@ const GridPagos = ({
                     edge="start"
                     color="inherit"
                     aria-label="close"
-                    onClick={handleOpenFilter}
+                    onClick={() => null}
                   >
                     Filtro <FilterListIcon />
                   </IconButton>
