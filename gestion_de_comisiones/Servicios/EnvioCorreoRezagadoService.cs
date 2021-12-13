@@ -129,12 +129,12 @@ namespace gestion_de_comisiones.Servicios
             return true;
         }
 
-        public object EnviarCorreoRezagados(List<VwObtenerRezagadosPago> rezagados)
+        public object EnviarCorreoRezagados(List<VwObtenerRezagadosPago> rezagados, string asunto)
         {
             if (rezagados.Count > 0)
             {
                 string mensaje = armarMensajeCorreoRezagado(rezagados);
-                string asunto = "Lista de Rechazados en ciclo " + rezagados.ElementAt(0).Glosa + " Por Empresa " + rezagados.ElementAt(0).Empresa;
+                //string asunto = "Lista de Rechazados en ciclo " + rezagados.ElementAt(0).Glosa + " Por Empresa " + rezagados.ElementAt(0).Empresa;
                 List<String> destinatarios = new List<string>();
                 string destinatario = Config.GetValue<string>("DestinatariosRezagados");
                 destinatarios.Add(destinatario);
