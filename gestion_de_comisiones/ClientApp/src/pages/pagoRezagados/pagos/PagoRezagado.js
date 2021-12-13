@@ -195,10 +195,10 @@ const PagoRezagado = ({ location }) => {
                           variant="contained"
                           color="primary"
                           className={style.submitCargar}
-                          onClick={() => confirmarCierrePagos()}
+                          onClick={() => null}
                         >
-                          <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
-                          PAGO
+                          <Save style={{ marginRight: "5px" }} /> CERRAR PAGOS
+                          REZAGADOS
                         </Button>
                       ) : (
                         <Tooltip
