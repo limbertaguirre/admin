@@ -451,5 +451,104 @@ namespace gestion_de_comisiones.Repository
                 return false;
             }
         }
+
+        public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param)
+        {
+            try
+            {
+                int idTipoAutorizacionFormaPago = 3;
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                List<Autorizador> listAurorizadores = new List<Autorizador>();
+                List<Autorizador> autorizados = new List<Autorizador>();
+
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarAutorizadorPorComision() ");
+                var autoriza = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario && x.IdTipoAutorizacion == idTipoAutorizacionFormaPago && x.Estado == true).FirstOrDefault();
+                if (autoriza != null)
+                {
+                    autorizados = ObtenerAutorizadores(autoriza.IdUsuarioAutorizacion, idTipoAutorizacionFormaPago, param.comisionId, param.idCiclo, param.usuarioLogin);
+                    Autorizador addObjAutorizador = new Autorizador();
+                    addObjAutorizador.nombre = autoriza.Nombres;
+                    addObjAutorizador.apellido = autoriza.Apellidos;
+                    addObjAutorizador.area = autoriza.DescripcionArea;
+                    var confirmacionAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == autoriza.IdUsuarioAutorizacion && x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId).FirstOrDefault();
+                    if (confirmacionAutorizacion != null)
+                    {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = true;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision = (int)confirmacionAutorizacion.IdComision;
+                        obj.idAutorizacionComision = (int)confirmacionAutorizacion.IdAutorizacionComision;
+                        //agregamos de ultimo al autorizador
+                        addObjAutorizador.aprobado = true;
+                        autorizados.Add(addObjAutorizador);
+                        obj.autorizadores = autorizados;
+                    }
+                    else
+                    {
+                        obj.autorizador = true;
+                        obj.comisionAutorizada = false;
+                        obj.idciclo = param.idCiclo;
+                        obj.idComision = 0;//no existe relacion
+                        obj.idAutorizacionComision = 0;
+                        //agregamos de ultimo al autorizador
+                        addObjAutorizador.aprobado = false;
+                        autorizados.Add(addObjAutorizador);
+                        obj.autorizadores = autorizados;
+                    }
+                }
+                else
+                {
+                    obj.autorizador = false;
+                    obj.comisionAutorizada = false;
+                    obj.idciclo = param.idCiclo;
+                    obj.idComision = 0; //no existe relacion
+                    obj.idAutorizacionComision = 0;
+                    obj.autorizadores = autorizados;
+                }
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarAutorizadorPorComision() mensaje : {ex}");
+                AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
+                return obj;
+            }
+        }
+
+        private List<Autorizador> ObtenerAutorizadores(int idUserAutorizacion, int tipoAutorizador, int comisionId, int idCiclo, string usuarioLogin)
+        {
+            try
+            {
+                List<Autorizador> list = new List<Autorizador>();
+
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdTipoAutorizacion == tipoAutorizador && x.Estado == true && x.IdUsuarioAutorizacion != idUserAutorizacion).ToList();
+                foreach (var iten in autorizado)
+                {
+                    Autorizador obj = new Autorizador();
+                    obj.nombre = iten.Nombres;
+                    obj.apellido = iten.Apellidos;
+                    obj.area = iten.DescripcionArea;
+                    obj.idArea = iten.IdArea;
+                    var tieneAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == iten.IdUsuarioAutorizacion && x.IdCiclo == idCiclo && x.IdComision == comisionId).FirstOrDefault();
+                    if (tieneAutorizacion != null)
+                    {
+                        obj.aprobado = true;
+                    }
+                    else
+                    {
+                        obj.aprobado = false;
+                    }
+                    list.Add(obj);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizadorPorComision() mensaje : {ex}");
+                List<Autorizador> obj = new List<Autorizador>();
+                return obj;
+            }
+
+        }
     }
 }
