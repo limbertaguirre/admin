@@ -22,9 +22,10 @@ namespace gestion_de_comisiones.Repository
     {
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagosRezagadosRepository> Logger;
-        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 16;
-        private readonly int TIPO_COMISION_REZAGADOS = 2;
-        private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
+        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;
+        private readonly int TIPO_COMISION_REZAGADOS = GpTipoComision.PAGO_REZAGADOS_2;
+        private readonly int TIPO_PAGO_SIONPAY = TipoPago.SION_PAY;
+        private readonly int TIPO_PAGO_TRANSFERENCIA = TipoPago.TRANSFERENCIA;        
         private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
 
         public GestionPagosRezagadosRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagosRezagadosRepository> logger)
@@ -1039,5 +1040,99 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
+        public RespuestaSionPayModel VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                RespuestaSionPayModel model = new RespuestaSionPayModel();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarPagoSionPayCiclo() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} ");         
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).ToList();
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Count();
+                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogWarning($" usuario: {param.usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() mensaje : {ex}");
+                RespuestaSionPayModel model = new RespuestaSionPayModel { CodigoRespuesta = -1 };
+                return model;
+            }
+        }
+
+        public bool PagarSionPayComision(PagarSionPayInput param)
+        {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+
+            try
+            {
+                Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): idciclo {param.idCiclo}  ");
+                var parameterReturn = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_Comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.comisionId
+                              },                                
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idUsuario
+                              }
+                           };
+                var parameterReturn2 = new SqlParameter[] {
+                               new SqlParameter  {
+                                            ParameterName = "ReturnValue",
+                                            SqlDbType = System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Output,
+                                },
+                                new SqlParameter() {
+                                            ParameterName = "@id_Comision",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.comisionId
+                              },
+                               new SqlParameter() {
+                                            ParameterName = "@id_usuario",
+                                            SqlDbType =  System.Data.SqlDbType.Int,
+                                            Direction = System.Data.ParameterDirection.Input,
+                                            Value = param.idUsuario
+                              }
+                           };
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PAGAR_RESAGADO_SION_PAY_COMISION] @id_Comision, @id_usuario  ", parameterReturn);
+                int returnValue = (int)parameterReturn[0].Value;
+                if (returnValue > 0)
+                {
+                    var result2 = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PROCESAR_PAGO_REZAGADO_SION_PAY_UPDATE_DETALLES] @id_Comision, @id_usuario  ", parameterReturn2);
+                    int returnValue2 = (int)parameterReturn2[0].Value;
+
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO].");
+                    return true;
+                }
+                else
+                {
+                    dbcontextTransaction.Rollback();
+                    Logger.LogInformation($" usuario: {param.UsuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    return false;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch PagarSionPayComision() en pagos mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return false;
+            }
+        }
     }
 }
