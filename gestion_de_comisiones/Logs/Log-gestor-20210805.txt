@@ -1,5 +1,0 @@
-2021-08-05T09:23:40.9290636-04:00  [INF] Now listening on: "https://localhost:5001" (d826f4b8)
-2021-08-05T09:23:41.0239604-04:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
-2021-08-05T09:23:41.2963987-04:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
-2021-08-05T09:23:41.4373124-04:00  [INF] Hosting environment: "Development" (c3307c92)
-2021-08-05T09:23:41.4907232-04:00  [INF] Content root path: "C:\Users\Eliot Humerez\Documents\UIT\GESTOR_COMISIONES\WEB\gestor_de_comisiones_proyect\gestion_de_comisiones" (b5d60022)
