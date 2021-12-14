@@ -308,7 +308,7 @@ import * as utilidad from '../../../../lib/utility';
                                  <Chip label="Pagado" color="primary" variant="outlined" />
                               :
                               <> 
-                                 {row.idEstadoListadoFormaPago == 0 && <Chip label="por pagar"  color="secondary" variant="outlined"   /> }
+                                 {row.idEstadoListadoFormaPago == 0 && <Chip label="Por pagar"  color="secondary" variant="outlined"   /> }
                                  {row.idEstadoListadoFormaPago == utilidad.ID_ESTADO_LISTADO_FORMA_PAGO_RECHAZADO && <Chip label="Rechazado"  color="secondary" variant="outlined"   /> }
                               </>
                             }
