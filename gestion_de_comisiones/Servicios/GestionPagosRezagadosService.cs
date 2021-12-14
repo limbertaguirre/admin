@@ -15,7 +15,7 @@ namespace gestion_de_comisiones.Servicios
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<GestionPagosRezagadosService> Logger;
-        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 9;
+        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 16;
         private readonly int TIPO_COMISION_REZAGADOS = 2;
         private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
 

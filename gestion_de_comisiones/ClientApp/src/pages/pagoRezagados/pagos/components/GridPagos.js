@@ -380,7 +380,7 @@ const GridPagos = ({
                               <>
                                 {row.idEstadoListadoFormaPago == 0 && (
                                   <Chip
-                                    label="por pagar"
+                                    label="Por pagar"
                                     color="secondary"
                                     variant="outlined"
                                   />
