@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-CREATE proc [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_SELECCIONADAS]
+CREATE proc [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS]
     @CicloId    int,
     @EmpresaId  int,
     @UsuarioId  int,
@@ -11,13 +11,13 @@ BEGIN
         DECLARE @IMPBODY        VARCHAR (500);
         DECLARE @IMPSUBJECT     VARCHAR (500);
         DECLARE @EstadoPendiente        int,
-                @EstadoConfirmado       int,
+                @EstadoRechazado       int,
                 @TipoPagoTransferencia  int;                
         SET @EstadoPendiente    = 1;
-        SET @EstadoConfirmado   = 2;
+        SET @EstadoRechazado   = 3;
         SET @TipoPagoTransferencia = 2;
         BEGIN TRANSACTION
-            update COMISION_DETALLE_EMPRESA set estado = @EstadoConfirmado, fecha_actualizacion = GETDATE(), id_usuario = @UsuarioId
+            update COMISION_DETALLE_EMPRESA set estado = @EstadoRechazado, fecha_actualizacion = GETDATE(), id_usuario = @UsuarioId
             where id_comision_detalle_empresa = @ComisionDetalleEmpresaId
         COMMIT TRANSACTION
         RETURN 0;
@@ -36,5 +36,6 @@ BEGIN
             END
     END CATCH;    
 END
+
 
 GO

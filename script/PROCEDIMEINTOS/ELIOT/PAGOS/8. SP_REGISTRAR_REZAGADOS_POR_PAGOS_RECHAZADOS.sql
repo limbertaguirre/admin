@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS](@cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
+CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS](@estadoComision INT, @cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
 AS
 BEGIN TRANSACTION
 BEGIN TRY
@@ -16,9 +16,9 @@ BEGIN TRY
     DECLARE @nuevoIdComisionDetalleRezagado int,        
             @estadoComisionDetalleEmpresaRechazado int,
             @tipoComisionPago int,
-            @tipoComisionRezagado int,
+            @tipoComisionRezagado int,            
             @GP_EstadoComisionCerradoFormaPago int,
-            @GP_EstadoComisionRezagadoPendientePago int, @habilitado int;            
+            @GP_EstadoComisionRezagadoFormasPagos int, @habilitado int;            
 
     -- PARAMETROS DE ENTRADA
     /*set @cicloId = 88;
@@ -29,7 +29,7 @@ BEGIN TRY
     set @tipoComisionPago = 1;
     set @tipoComisionRezagado = 2;
     set @GP_EstadoComisionCerradoFormaPago = 10;
-    set @GP_EstadoComisionRezagadoPendientePago = 11;
+    set @GP_EstadoComisionRezagadoFormasPagos = @estadoComision; --9;
     set @habilitado = 1;
     --
     DECLARE @idComisionDetalle int,
@@ -53,7 +53,7 @@ BEGIN TRY
                                         inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I i on i.id_comision = c.id_comision
                                         where c.id_tipo_comision = @tipoComisionRezagado
                                         and c.id_ciclo = @cicloId
-                                        and i.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago
+                                        and i.id_estado_comision = @GP_EstadoComisionRezagadoFormasPagos
                                         group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
 
     SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
@@ -79,17 +79,17 @@ BEGIN TRY
                                                                     INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
                                                                     WHERE c.id_tipo_comision = @tipoComisionPago and c.id_ciclo = @cicloId and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago
 
-                SELECT @porcentajeRetencion AS porcentajeRetencion, ' select fila 82' 
+                SELECT @porcentajeRetencion AS porcentajeRetencion, ' select fila 82'
                 -- Nuevo registro de comision para los nuevos rezagados.
                 INSERT INTO BDMultinivel.DBO.GP_COMISION (monto_total_bruto, porcentaje_retencion, monto_total_retencion, monto_total_aplicacion, monto_total_neto, id_ciclo, id_tipo_comision, id_usuario) VALUES (
                     0, @porcentajeRetencion, 0, 0, 0, @cicloId, @tipoComisionRezagado, @usuarioId
                 )
                 SET @newIdComision = (select IDENT_CURRENT('GP_COMISION'));
                 -- Nuevo registro de para el estado de la nueva comision de los nuevos rezagados, estado = 11 (Comision Rezagado Pendiente de Pago)
-                INSERT INTO BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I (habilitado, id_comision, id_estado_comision, id_usuario) VALUES(@habilitado, @newIdComision, @GP_EstadoComisionRezagadoPendientePago, @usuarioId)
+                INSERT INTO BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I (habilitado, id_comision, id_estado_comision, id_usuario) VALUES(@habilitado, @newIdComision, @GP_EstadoComisionRezagadoFormasPagos, @usuarioId)
 
                 SELECT c.*, ' select fila 91' FROM BDMultinivel.DBO.GP_COMISION c where c.id_ciclo = @cicloId and c.id_tipo_comision = @tipoComisionRezagado order by c.id_comision desc
-                SELECT c.*, ' select fila 92' FROM BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I c where c.id_comision = @newIdComision and c.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago order by c.id_comision_estado_comision_i desc
+                SELECT c.*, ' select fila 92' FROM BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I c where c.id_comision = @newIdComision and c.id_estado_comision = @GP_EstadoComisionRezagadoFormasPagos order by c.id_comision_estado_comision_i desc
                 --RAISERROR('ELIOT CRACK', 15, 1)
             END TRY
             BEGIN CATCH
@@ -121,7 +121,7 @@ BEGIN TRY
                 DECLARE @idComisionDetalleRezagado int = ISNULL((SELECT cd.id_comision_detalle from BDMultinivel.dbo.GP_COMISION c 
                                                     inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
                                                     inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
-                                                    where cec.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago and c.id_tipo_comision = @tipoComisionRezagado and cd.id_ficha = @fichaId and c.id_ciclo = @cicloId and c.id_comision = @newIdComision), 0)
+                                                    where cec.id_estado_comision = @GP_EstadoComisionRezagadoFormasPagos and c.id_tipo_comision = @tipoComisionRezagado and cd.id_ficha = @fichaId and c.id_ciclo = @cicloId and c.id_comision = @newIdComision), 0)
                 --- 
                 SELECT @idComisionDetalleRezagado as cantComisionDetalleRezagado, ' select fila 126' as NroFila                
                 IF(@idComisionDetalleRezagado <= 0)
@@ -148,7 +148,8 @@ BEGIN TRY
                 SELECT '----------------------------------------------------------------------------------------------------------------'
                 SELECT @newIdComisionDetalle as newIdComisionDetalle, ' select fila 149' as NroFila
                 -- Referenciamos las comisiones detalle empresa con estado Rechazado al nuevo registro comision detalle.
-                UPDATE BDMultinivel.dbo.COMISION_DETALLE_EMPRESA SET id_comision_detalle = @newIdComisionDetalle WHERE id_comision_detalle_empresa = @idComisionDetalleEmpresa            
+                select top 1 * from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde
+                UPDATE BDMultinivel.dbo.COMISION_DETALLE_EMPRESA SET id_comision_detalle = @newIdComisionDetalle, estado = 1, fecha_pago = NULL WHERE id_comision_detalle_empresa = @idComisionDetalleEmpresa            
                 SELECT cde.*, ' select fila 152' as NroFila from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde WHERE cde.id_comision_detalle_empresa = @idComisionDetalleEmpresa order by cde.id_comision_detalle_empresa                
                 SELECT cde.*, ' select fila 153' as NroFila from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde WHERE cde.id_comision_detalle = @newIdComisionDetalle order by cde.id_comision_detalle_empresa
                 SELECT '----------------------------------------------------------------------------------------------------------------'
@@ -181,9 +182,9 @@ BEGIN TRY
                     select l.*, ' select fila 181' from BDMultinivel.DBO.LISTADO_FORMAS_PAGO l WHERE l.id_comisiones_detalle = @newIdComisionDetalle order by l.id_lista_formas_pago desc
                     
                     SET @newIdListaFormasPago = (select IDENT_CURRENT('LISTADO_FORMAS_PAGO'))           
-                    INSERT INTO BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) VALUES (
+                    /*INSERT INTO BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) VALUES (
                         @habilitado, @newIdListaFormasPago, @idEstadoDetalleRechazadoEnPagoTransferencia, @usuarioId
-                    )
+                    )*/
                 END
                 ELSE
                 BEGIN
@@ -211,35 +212,38 @@ BEGIN TRY
         UPDATE BDMultinivel.DBO.GP_COMISION SET monto_total_neto = monto_total_neto - @sumaTotalMontoNetoComisionDetalle
             WHERE id_comision = @idComisionAntigua  
 
-         SELECT c.*, ' select fila 214' FROM BDMultinivel.DBO.GP_COMISION C WHERE C.id_comision = @idComisionAntigua ORDER by c.id_comision desc                             
+        SELECT c.*, ' select fila 214' FROM BDMultinivel.DBO.GP_COMISION C WHERE C.id_comision = @idComisionAntigua ORDER by c.id_comision desc                             
         SELECT 'FIN----------------------------------------------------------------------------------------------------------------'
         COMMIT TRANSACTION
-        RETURN 1    
+        RETURN @newIdComision;
 END TRY
 BEGIN CATCH
     SELECT 'ENTRO AL CATCH LINEA 220'
     SELECT ERROR_NUMBER () AS ErrorNumber,
-          ERROR_SEVERITY () AS ErrorSeverity,
-          ERROR_STATE () AS ErrorState,
-          ERROR_PROCEDURE () AS ErrorProcedure,
-          ERROR_LINE () AS ErrorLine,
-          ERROR_MESSAGE () AS ErrorMessage;
+        ERROR_SEVERITY () AS ErrorSeverity,
+        ERROR_STATE () AS ErrorState,
+        ERROR_PROCEDURE () AS ErrorProcedure,
+        ERROR_LINE () AS ErrorLine,
+        ERROR_MESSAGE () AS ErrorMessage;
     declare @error int, @message varchar(4000)
     select @error = ERROR_NUMBER(), @message = ERROR_MESSAGE()
-   IF @@TRANCOUNT > 0
-      BEGIN
-         SET @IMPBODY =
+IF @@TRANCOUNT > 0
+    BEGIN
+        SET @IMPBODY =
                 concat ('SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ',
                         ' ');
-         SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo cargar las comisiones ';
-         --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
-         --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
-         --                                @body           = @IMPBODY,
-         --                                @subject        = @IMPSUBJECT;
-         ROLLBACK TRANSACTION
-         raiserror ('SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS: %d: %s', 16, 1, @error, @message) ;       
-		 return -1
-      END
+        SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo cargar las comisiones ';
+        --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+        --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+        --                                @body           = @IMPBODY,
+        --                                @subject        = @IMPSUBJECT;
+        ROLLBACK TRANSACTION
+        raiserror ('SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS: %d: %s', 16, 1, @error, @message) ;       
+        return -1
+    END
 END CATCH;
+
+
+
 
 GO
