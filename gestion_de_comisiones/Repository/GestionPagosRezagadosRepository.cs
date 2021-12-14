@@ -540,7 +540,7 @@ namespace gestion_de_comisiones.Repository
                 var sumaTotalConfirmados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
                         x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalRechazados = ContextMulti.VwObtenerRezagadosPagos
