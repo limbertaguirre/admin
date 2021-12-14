@@ -1,4 +1,4 @@
-use BDMultinivel;
+USE BDMultinivel;
 GO
 CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tipoComision INT, @estadoComision INT, @comisionId INT, @cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
     AS
@@ -43,11 +43,13 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
 
         DECLARE Detalle_Cursor1 CURSOR FOR select i.id_comisiones_detalle, i.id_comision_detalle_empresa, i.IMPORTE_POR_EMPRESA, i.id_ficha
                                             from BDMultinivel.dbo.vwObtenerRezagadosPagos i 
-                                            where i.id_ciclo = @cicloId and i.id_comision = @comisionId and i.id_empresa = @empresaId and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado and i.id_tipo_pago = @tipoPago
+                                            where i.id_ciclo = @cicloId and i.id_comision = @comisionId and i.id_empresa = @empresaId and
+                                            i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaRechazado and i.id_tipo_pago = @tipoPago and
+                                            i.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago
                                         
         DECLARE @ExisteComision as table(id_comision int, id_ciclo INT, monto_total_neto decimal(18,2), porcentaje_retencion decimal(18,2));
 
-        INSERT INTO @ExisteComision select top 1 c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
+        INSERT INTO @ExisteComision select c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
                                             from BDMultinivel.dbo.GP_COMISION c
                                             inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
                                             inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
@@ -56,8 +58,9 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                                             --and c.id_comision = @comisionId
                                             and c.id_ciclo = @cicloId
                                             and i.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago
-                                            group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, ci.fecha_creacion
-                                            order by ci.fecha_creacion asc                                    
+                                            group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion, c.fecha_creacion
+                                            order by c.fecha_creacion asc
+                   
 
         SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
         SELECT e.*, ' select fila 60' as NroFila FROM @ExisteComision e
@@ -80,7 +83,7 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                     -- Obtenenos el porcentaje de retencion 
                     SELECT TOP 1 @porcentajeRetencion = c.porcentaje_retencion FROM BDMultinivel.DBO.GP_COMISION c
                                                                         INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
-                                                                        WHERE c.id_tipo_comision = @tipoComisionPago and c.id_ciclo = @cicloId and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago
+                                                                        WHERE c.id_tipo_comision = @tipoComisionPago and c.id_ciclo = @cicloId and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago and cec.habilitado = 1
 
                     SELECT @porcentajeRetencion AS porcentajeRetencion, ' select fila 82' 
                     -- Nuevo registro de comision para los nuevos rezagados.
@@ -102,9 +105,49 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                     RAISERROR(@ERRORMESSAGE, 15, 1)
                 END CATCH
             END
+            ELSE IF(@existeCicloComisionRezagado = 1)
+            BEGIN
+                DECLARE @ESTADO_REZAGADO_FORMASPAGOS_CERRADO INT = 17;
+                DECLARE @cicloCerrado INT = (SELECT COUNT(c.id_comision) FROM BDMultinivel.DBO.GP_COMISION c 
+                                            INNER JOIN BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision 
+                                            where cec.id_estado_comision = @ESTADO_REZAGADO_FORMASPAGOS_CERRADO and cec.habilitado = 1 and c.id_ciclo = @cicloId and c.id_tipo_comision = @tipoComisionRezagado)
+                IF(@cicloCerrado = 1)
+                BEGIN
+                    SELECT top 1 @newIdComision = e.id_comision FROM @ExisteComision e
+                END
+                ELSE
+                BEGIN
+                    BEGIN TRY
+                    -- Obtenenos el porcentaje de retencion 
+                    SELECT TOP 1 @porcentajeRetencion = c.porcentaje_retencion FROM BDMultinivel.DBO.GP_COMISION c
+                                                                        INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
+                                                                        WHERE c.id_tipo_comision = @tipoComisionPago and c.id_ciclo = @cicloId and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago and cec.habilitado = 1
+
+                    SELECT @porcentajeRetencion AS porcentajeRetencion, ' select fila 82' 
+                    -- Nuevo registro de comision para los nuevos rezagados.
+                    INSERT INTO BDMultinivel.DBO.GP_COMISION (monto_total_bruto, porcentaje_retencion, monto_total_retencion, monto_total_aplicacion, monto_total_neto, id_ciclo, id_tipo_comision, id_usuario) VALUES (
+                        0, @porcentajeRetencion, 0, 0, 0, @cicloId, @tipoComisionRezagado, @usuarioId
+                    )
+                    SET @newIdComision = (select IDENT_CURRENT('GP_COMISION'));
+                    -- Nuevo registro de para el estado de la nueva comision de los nuevos rezagados, estado = 11 (Comision Rezagado Pendiente de Pago)
+                    INSERT INTO BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I (habilitado, id_comision, id_estado_comision, id_usuario) VALUES(@habilitado, @newIdComision, @GP_EstadoComisionRezagadoPendientePago, @usuarioId)
+
+                    SELECT c.*, ' select fila 91' FROM BDMultinivel.DBO.GP_COMISION c where c.id_ciclo = @cicloId and c.id_tipo_comision = @tipoComisionRezagado order by c.id_comision desc
+                    SELECT c.*, ' select fila 92' FROM BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I c where c.id_comision = @newIdComision and c.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago order by c.id_comision_estado_comision_i desc
+                    --RAISERROR('ELIOT CRACK', 15, 1)
+                END TRY
+                BEGIN CATCH
+                    SELECT 'ENTRO AL CATCH LINEA 96'
+                    SET @ERROR_INSERT = 1
+                    SET @ERRORMESSAGE = 'ERROR AL INSERTAR EN LAS TABLAS GP_COMISION | GP_COMISION_ESTADO_COMISION_I'
+                    RAISERROR(@ERRORMESSAGE, 15, 1)
+                END CATCH
+
+                END
+            END
             ELSE
             BEGIN
-                SELECT top 1 @newIdComision = e.id_comision FROM @ExisteComision e
+                SELECT top 1 @newIdComision = e.id_comision FROM @ExisteComision e order by e.id_comision desc
                 -- ACTUALIZAR TODO
                 -- @newIdComision = 85
                 select @newIdComision as newIdComision, ' select fila 107' as NroFila
@@ -151,7 +194,7 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                     SELECT '----------------------------------------------------------------------------------------------------------------'
                     SELECT @newIdComisionDetalle as newIdComisionDetalle, ' select fila 149' as NroFila
                     -- Referenciamos las comisiones detalle empresa con estado Rechazado al nuevo registro comision detalle.
-                    UPDATE BDMultinivel.dbo.COMISION_DETALLE_EMPRESA SET id_comision_detalle = @newIdComisionDetalle WHERE id_comision_detalle_empresa = @idComisionDetalleEmpresa            
+                    UPDATE BDMultinivel.dbo.COMISION_DETALLE_EMPRESA SET id_comision_detalle = @newIdComisionDetalle, estado = 1, fecha_pago = NULL WHERE id_comision_detalle_empresa = @idComisionDetalleEmpresa            
                     SELECT cde.*, ' select fila 152' as NroFila from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde WHERE cde.id_comision_detalle_empresa = @idComisionDetalleEmpresa order by cde.id_comision_detalle_empresa                
                     SELECT cde.*, ' select fila 153' as NroFila from BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde WHERE cde.id_comision_detalle = @newIdComisionDetalle order by cde.id_comision_detalle_empresa
                     SELECT '----------------------------------------------------------------------------------------------------------------'
@@ -245,3 +288,6 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
         END
     END CATCH;
 
+
+
+GO

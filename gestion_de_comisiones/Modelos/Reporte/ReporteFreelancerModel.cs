@@ -5,7 +5,7 @@ namespace gestion_de_comisiones.Modelos.Reporte
 {
     public class ReporteFreelancerModel
     {
-        public ReporteFreelancerModel(int idComisionDetalle, string ciclo, string tipoPago, float montoNeto, string nroCuenta, string cuentaBancaria)
+        public ReporteFreelancerModel(string idComisionDetalle, string ciclo, string tipoPago, float montoNeto, string nroCuenta, string cuentaBancaria)
         {
             this.idComisionDetalle = idComisionDetalle;
             this.ciclo = ciclo;
@@ -16,7 +16,7 @@ namespace gestion_de_comisiones.Modelos.Reporte
         }
 
         [Column("id_comision_detalle")]
-        public int idComisionDetalle { get; private set; }
+        public string idComisionDetalle { get; private set; }
 
         [Column("ciclo")]
         public string ciclo { get; private set; }
