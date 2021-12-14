@@ -12,5 +12,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object AplicarMetodoPago(AplicarMetodoOutput param);
         public object VerificarCierreFormaPago(VerificarCierreFormaPagoParam param);
         public object CerrarFormaDePago(CierreformaPagoInput param);
+        public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
     }
 }

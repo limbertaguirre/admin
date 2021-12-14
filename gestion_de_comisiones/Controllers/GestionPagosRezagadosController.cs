@@ -182,5 +182,34 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo} ");
+                return Ok(Service.VerificarPagoSionPayCiclo(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  verificarPagosSionPayFormaPagoCiclo() controller {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar los pagos por sion pay" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult PagarComisionSionPay([FromBody] PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}");
+                return Ok(Service.PagarSionPayComisionTodo(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.UsuarioLogin} error catch  BuscarComisionNombre() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
     }
 }

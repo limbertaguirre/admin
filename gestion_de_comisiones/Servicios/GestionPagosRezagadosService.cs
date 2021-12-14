@@ -260,5 +260,40 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarPagoSionPayCiclo() ");                
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(param);
+                if (comisiones.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
+                if (comisiones.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
+                return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() el nro de  pagos en sion pay: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al verificar los pagos realizados", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object PagarSionPayComisionTodo(PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio FormaPagoService => getCiclos()");
+                var pay = Repository.PagarSionPayComision(param);
+                if (pay)
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }
