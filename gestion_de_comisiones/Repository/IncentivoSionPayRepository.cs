@@ -180,12 +180,14 @@ namespace gestion_de_comisiones.Repository
                 ContextMulti.GpComisionDetalleEstadoIs.AddRange(comisionesDetallesEstados);
                 ContextMulti.SaveChanges();
 
-                List<IncentivoPagoComision> incentivosPagosComisiones = armarIncentivosPagosComisiones(comisionesDetalle);
-                ContextMulti.IncentivoPagoComisions.AddRange(incentivosPagosComisiones);
+                
+
+                List<ComisionDetalleEmpresa>  comisionesDetalleEmpresaPersistir = armarComisionesDetalleEmpresaPersistir(planillaIncentivo.DatosClientes, comisionesDetalle);
+                ContextMulti.ComisionDetalleEmpresas.AddRange(comisionesDetalleEmpresaPersistir);
                 ContextMulti.SaveChanges();
 
-                List<ComisionDetalleEmpresa>  comisionesDetallePersistir = armarComisionesDetalleEmpresaPersistir(planillaIncentivo.DatosClientes, comisionesDetalle);
-                ContextMulti.ComisionDetalleEmpresas.AddRange(comisionesDetallePersistir);
+                List<IncentivoPagoComision> incentivosPagosComisiones = armarIncentivosPagosComisiones(comisionesDetalle, planillaIncentivo.DatosClientes, comisionesDetalleEmpresaPersistir);
+                ContextMulti.IncentivoPagoComisions.AddRange(incentivosPagosComisiones);
                 ContextMulti.SaveChanges();
 
                 List<ListadoFormasPago> formasPagos = armarListadoFormasPago(comisionesDetalle);
@@ -209,14 +211,18 @@ namespace gestion_de_comisiones.Repository
            
         }
 
-        private List<IncentivoPagoComision> armarIncentivosPagosComisiones(List<GpComisionDetalle> comisionesDetalle)
+        private List<IncentivoPagoComision> armarIncentivosPagosComisiones(List<GpComisionDetalle> comisionesDetalle, List<DatosPlanillaExcel> planillaDatosClientes, List<ComisionDetalleEmpresa> comisionesDetalleEmpresaPersistir)
         {
             List<IncentivoPagoComision> lista = new List<IncentivoPagoComision>();
             foreach (GpComisionDetalle elem in comisionesDetalle)
-            {
+            {   
+                string ciCliente = ContextMulti.Fichas.Where((item) => item.IdFicha == elem.IdFicha ).FirstOrDefault().Ci;
+                int idComisionDetalle = comisionesDetalle.Where((item) => item.IdFicha == elem.IdFicha && item.IdComision == elem.IdComision).FirstOrDefault().IdComisionDetalle;
+                int idEmpresa = comisionesDetalleEmpresaPersistir.Where((item) => item.IdComisionDetalle == idComisionDetalle).FirstOrDefault().IdEmpresa;
+                int idTipoIncentivo = planillaDatosClientes.Where((item) => item.IdEmpresa == idEmpresa && item.CiCliente == ciCliente).FirstOrDefault().IdTipoIncentivoPago;              
                 IncentivoPagoComision incentivoPagoComi = new IncentivoPagoComision()
                 {
-                    IdTipoIncentivoPago = 1,
+                    IdTipoIncentivoPago = idTipoIncentivo,
                     IdComisionDetalle = elem.IdComisionDetalle
                 };
                 lista.Add(incentivoPagoComi);

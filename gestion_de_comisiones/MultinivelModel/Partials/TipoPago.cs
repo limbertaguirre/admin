@@ -11,6 +11,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public const int TRANSFERENCIA = 2;
         public const int CHEQUE= 3;
         public const int NINGUNO = 4;
-
+        public const int ESTADO_COMISION_DETALLE_EMPRESA_CONFIRMADO = 2;
     }
 }
