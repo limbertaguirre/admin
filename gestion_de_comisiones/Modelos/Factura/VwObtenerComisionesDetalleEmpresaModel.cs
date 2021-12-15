@@ -7,7 +7,7 @@ namespace gestion_de_comisiones.Modelos.Factura
 {
     public class VwObtenerComisionesDetalleEmpresaModel
     {
-        public VwObtenerComisionesDetalleEmpresaModel(int idComisionDetalleEmpresa, int idComisionDetalle, string empresa, decimal monto, decimal? montoAFacturar, decimal? montoTotalFacturar, string respaldoPath, string nroAutorizacion, int idEmpresa, bool estadoDetalleEmpresa, decimal ventasPersonales, decimal ventasGrupales, decimal residual, decimal retencion, decimal montoNeto, bool siFacturo)
+        public VwObtenerComisionesDetalleEmpresaModel(int idComisionDetalleEmpresa, int idComisionDetalle, string empresa, decimal monto, decimal? montoAFacturar, decimal? montoTotalFacturar, string respaldoPath, string nroAutorizacion, int idEmpresa, int estadoDetalleEmpresa, decimal ventasPersonales, decimal ventasGrupales, decimal residual, decimal retencion, decimal montoNeto, bool siFacturo)
         {
             IdComisionDetalleEmpresa = idComisionDetalleEmpresa;
             IdComisionDetalle = idComisionDetalle;
@@ -36,7 +36,7 @@ namespace gestion_de_comisiones.Modelos.Factura
         public string RespaldoPath { get; set; }
         public string NroAutorizacion { get; set; }
         public int IdEmpresa { get; set; }
-        public bool EstadoDetalleEmpresa { get; set; }
+        public int EstadoDetalleEmpresa { get; set; }
         public decimal VentasPersonales { get; set; }
         public decimal VentasGrupales { get; set; }
         public decimal Residual { get; set; }

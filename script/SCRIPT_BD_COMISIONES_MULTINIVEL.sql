@@ -1452,7 +1452,7 @@ go
 			fecha_bloquedo datetime NULL,
 			fecha_desbloqueo datetime NULL,
 			net_session_id varchar(255) NULL,
-			estado int NULL,
+			estado int NOT  NULL,
 			)
 		EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'id_control_usuario'
 		EXECUTE sp_addextendedproperty 'MS_Description', 'Usuario que intenta iniciar session (Dominio).', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'usuario'

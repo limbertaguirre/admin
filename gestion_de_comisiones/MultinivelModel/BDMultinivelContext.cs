@@ -106,7 +106,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<AplicacionDetalleProducto>(entity =>
             {
                 entity.HasKey(e => e.IdAplicacionDetalleProducto)
-                    .HasName("PK__APLICACI__DE63A1C5804E6A9A");
+                    .HasName("PK__APLICACI__DE63A1C56534C493");
 
                 entity.ToTable("APLICACION_DETALLE_PRODUCTO");
 
@@ -172,7 +172,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Area>(entity =>
             {
                 entity.HasKey(e => e.IdArea)
-                    .HasName("PK__AREA__8A8C837B080A0512");
+                    .HasName("PK__AREA__8A8C837BCAFB192A");
 
                 entity.ToTable("AREA");
 
@@ -215,9 +215,14 @@ namespace gestion_de_comisiones.MultinivelModel
 
             modelBuilder.Entity<AsignacionEmpresaPago>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.IdAsignacionEmpresaPago)
+                    .HasName("PK__ASIGNACI__05B4D3C3AFF03538");
 
                 entity.ToTable("ASIGNACION_EMPRESA_PAGO");
+
+                entity.Property(e => e.IdAsignacionEmpresaPago)
+                    .HasColumnName("id_asignacion_empresa_pago")
+                    .HasComment("Llave primaria incremental de la tabla ASIGNACION_EMPRESA_PAGO.");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(250)
@@ -234,15 +239,17 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("fecha_creacion")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.IdAsignacionEmpresaPago)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("id_asignacion_empresa_pago");
+                entity.Property(e => e.IdEmpresa)
+                    .HasColumnName("id_empresa")
+                    .HasComment("Llave foranea a la tabla EMPRESA.");
 
-                entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
+                entity.Property(e => e.IdTipoPago)
+                    .HasColumnName("id_tipo_pago")
+                    .HasComment("Llave foranea a la tabla TIPO DE PAGO.");
 
-                entity.Property(e => e.IdTipoPago).HasColumnName("id_tipo_pago");
-
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnName("id_usuario")
+                    .HasComment("Llave foranea a la tabla USUARIO.");
 
                 entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
             });
@@ -250,7 +257,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<AutorizacionComision>(entity =>
             {
                 entity.HasKey(e => e.IdAutorizacionComision)
-                    .HasName("PK__AUTORIZA__AF468D67366B473B");
+                    .HasName("PK__AUTORIZA__AF468D671175C8AE");
 
                 entity.ToTable("AUTORIZACION_COMISION");
 
@@ -293,7 +300,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<AutorizacionesArea>(entity =>
             {
                 entity.HasKey(e => e.IdAutorizacionesArea)
-                    .HasName("PK__AUTORIZA__28E9D5F80D56E3F4");
+                    .HasName("PK__AUTORIZA__28E9D5F8B33EF508");
 
                 entity.ToTable("AUTORIZACIONES_AREA");
 
@@ -333,7 +340,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Banco>(entity =>
             {
                 entity.HasKey(e => e.IdBanco)
-                    .HasName("PK__BANCO__70BD1642EF7DF022");
+                    .HasName("PK__BANCO__70BD16428F6D8D09");
 
                 entity.ToTable("BANCO");
 
@@ -380,7 +387,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Bitacora>(entity =>
             {
                 entity.HasKey(e => e.IdBitacora)
-                    .HasName("PK__BITACORA__7E4268B02BC43AA7");
+                    .HasName("PK__BITACORA__7E4268B0E6B753F7");
 
                 entity.ToTable("BITACORA");
 
@@ -418,7 +425,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<BitacoraDetalle>(entity =>
             {
                 entity.HasKey(e => e.IdBitacoraDetalle)
-                    .HasName("PK__BITACORA__8597C44B2533E627");
+                    .HasName("PK__BITACORA__8597C44B5004EB02");
 
                 entity.ToTable("BITACORA_DETALLE");
 
@@ -471,7 +478,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ciclo>(entity =>
             {
                 entity.HasKey(e => e.IdCiclo)
-                    .HasName("PK__CICLO__A78E2FA368237D6C");
+                    .HasName("PK__CICLO__A78E2FA33BBB0EB6");
 
                 entity.ToTable("CICLO");
 
@@ -524,7 +531,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ciudad>(entity =>
             {
                 entity.HasKey(e => e.IdCiudad)
-                    .HasName("PK__CIUDAD__B7DC4CD55462025E");
+                    .HasName("PK__CIUDAD__B7DC4CD5DD784043");
 
                 entity.ToTable("CIUDAD");
 
@@ -537,7 +544,7 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("codigo")
-                    .HasDefaultValueSql("(N'')");
+                    .HasDefaultValueSql("('')");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
@@ -568,7 +575,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<ComisionDetalleEmpresa>(entity =>
             {
                 entity.HasKey(e => e.IdComisionDetalleEmpresa)
-                    .HasName("PK__COMISION__A81C75CC86ED4C2F");
+                    .HasName("PK__COMISION__A81C75CC81C339FB");
 
                 entity.ToTable("COMISION_DETALLE_EMPRESA");
 
@@ -578,7 +585,7 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.Estado)
                     .HasColumnName("estado")
-                    .HasComment("Es el estado de la tabla activo (1) e inactico (0)");
+                    .HasComment("Es el estado que pueda tener la tupla (1 Pendiente, 2 Confirmado, 3 Rechazado/Anulado)");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
@@ -662,39 +669,49 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<ControlUsuario>(entity =>
             {
                 entity.HasKey(e => e.IdControlUsuario)
-                    .HasName("PK__CONTROL___E299BFDC11DA6221");
+                    .HasName("PK__CONTROL___E299BFDC74E017B7");
 
                 entity.ToTable("CONTROL_USUARIO");
 
-                entity.Property(e => e.IdControlUsuario).HasColumnName("id_control_usuario");
+                entity.Property(e => e.IdControlUsuario)
+                    .HasColumnName("id_control_usuario")
+                    .HasComment("Llave primaria de la tabla.");
 
-                entity.Property(e => e.CantidadIntentos).HasColumnName("cantidad_intentos");
+                entity.Property(e => e.CantidadIntentos)
+                    .HasColumnName("cantidad_intentos")
+                    .HasComment("Cantidad de intentos que el usuario fallo al iniciar session");
 
-                entity.Property(e => e.Estado).HasColumnName("estado");
+                entity.Property(e => e.Estado)
+                    .HasColumnName("estado")
+                    .HasComment("Estado del usuario.");
 
                 entity.Property(e => e.FechaBloquedo)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_bloquedo");
+                    .HasColumnName("fecha_bloquedo")
+                    .HasComment("Fecha de bloqueo del usuario");
 
                 entity.Property(e => e.FechaDesbloqueo)
                     .HasColumnType("datetime")
-                    .HasColumnName("fecha_desbloqueo");
+                    .HasColumnName("fecha_desbloqueo")
+                    .HasComment("Fecha de desbloqueo del usuario.");
 
                 entity.Property(e => e.NetSessionId)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("net_session_id");
+                    .HasColumnName("net_session_id")
+                    .HasComment("Id del aps.net core.");
 
                 entity.Property(e => e.Usuario)
                     .HasMaxLength(255)
                     .IsUnicode(false)
-                    .HasColumnName("usuario");
+                    .HasColumnName("usuario")
+                    .HasComment("Usuario que intenta iniciar session (Dominio).");
             });
 
             modelBuilder.Entity<Empresa>(entity =>
             {
                 entity.HasKey(e => e.IdEmpresa)
-                    .HasName("PK__EMPRESA__4A0B7E2CC3AC941A");
+                    .HasName("PK__EMPRESA__4A0B7E2C6F69FE36");
 
                 entity.ToTable("EMPRESA");
 
@@ -779,7 +796,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<EstadoListadoFormaPago>(entity =>
             {
                 entity.HasKey(e => e.IdEstadoListadoFormaPago)
-                    .HasName("PK__ESTADO_L__3EB39F9E7A02C945");
+                    .HasName("PK__ESTADO_L__3EB39F9E6E321E9B");
 
                 entity.ToTable("ESTADO_LISTADO_FORMA_PAGO");
 
@@ -815,7 +832,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Ficha>(entity =>
             {
                 entity.HasKey(e => e.IdFicha)
-                    .HasName("PK__FICHA__427B0F8A46173EE2");
+                    .HasName("PK__FICHA__427B0F8A4FDE47E3");
 
                 entity.ToTable("FICHA");
 
@@ -966,7 +983,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<FichaIncentivo>(entity =>
             {
                 entity.HasKey(e => e.IdFichaIncentivo)
-                    .HasName("PK__FICHA_IN__8B56473858A8A954");
+                    .HasName("PK__FICHA_IN__8B564738CF0878CF");
 
                 entity.ToTable("FICHA_INCENTIVO");
 
@@ -1007,7 +1024,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<FichaNivelI>(entity =>
             {
                 entity.HasKey(e => e.IdFichaNivelI)
-                    .HasName("PK__FICHA_NI__2944BB1A381BF002");
+                    .HasName("PK__FICHA_NI__2944BB1AF1DEA71B");
 
                 entity.ToTable("FICHA_NIVEL_I");
 
@@ -1047,7 +1064,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<FichaTipoBajaI>(entity =>
             {
                 entity.HasKey(e => e.IdFichaTipoBajaI)
-                    .HasName("PK__FICHA_TI__CD4CE5D4389C7194");
+                    .HasName("PK__FICHA_TI__CD4CE5D4A95B58E2");
 
                 entity.ToTable("FICHA_TIPO_BAJA_I");
 
@@ -1097,7 +1114,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpClienteVendedorI>(entity =>
             {
                 entity.HasKey(e => new { e.Id, e.IdCliente })
-                    .HasName("PK__GP_CLIEN__74641BB00B04DD06");
+                    .HasName("PK__GP_CLIEN__74641BB05A06B841");
 
                 entity.ToTable("GP_CLIENTE_VENDEDOR_I");
 
@@ -1133,7 +1150,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpComision>(entity =>
             {
                 entity.HasKey(e => e.IdComision)
-                    .HasName("PK__GP_COMIS__B25ABED041E80B88");
+                    .HasName("PK__GP_COMIS__B25ABED099BEA923");
 
                 entity.ToTable("GP_COMISION");
 
@@ -1194,7 +1211,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpComisionDetalle>(entity =>
             {
                 entity.HasKey(e => e.IdComisionDetalle)
-                    .HasName("PK__GP_COMIS__89C1F9943DB42F93");
+                    .HasName("PK__GP_COMIS__89C1F994CE23336E");
 
                 entity.ToTable("GP_COMISION_DETALLE");
 
@@ -1255,7 +1272,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpComisionDetalleEstadoI>(entity =>
             {
                 entity.HasKey(e => e.IdComisionDetalleEstadoI)
-                    .HasName("PK__GP_COMIS__3C036DC3349E9B35");
+                    .HasName("PK__GP_COMIS__3C036DC37ECCCB59");
 
                 entity.ToTable("GP_COMISION_DETALLE_ESTADO_I");
 
@@ -1295,7 +1312,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpComisionEstadoComisionI>(entity =>
             {
                 entity.HasKey(e => e.IdComisionEstadoComisionI)
-                    .HasName("PK__GP_COMIS__9D60F2EB08FE25A4");
+                    .HasName("PK__GP_COMIS__9D60F2EBC8DC1718");
 
                 entity.ToTable("GP_COMISION_ESTADO_COMISION_I");
 
@@ -1450,7 +1467,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpEstadoProrrateoDetalle>(entity =>
             {
                 entity.HasKey(e => e.IdGpEstadoProrrateoDetalle)
-                    .HasName("PK__GP_ESTAD__A98DDADAF6D82794");
+                    .HasName("PK__GP_ESTAD__A98DDADA8612B057");
 
                 entity.ToTable("GP_ESTADO_PRORRATEO_DETALLE");
 
@@ -1486,7 +1503,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpEstadoProrrateoDetalleIncentivo>(entity =>
             {
                 entity.HasKey(e => e.IdGpEstadoProrrateoDetalleIncentivo)
-                    .HasName("PK__GP_ESTAD__4082A0B608D2D87F");
+                    .HasName("PK__GP_ESTAD__4082A0B690C451FE");
 
                 entity.ToTable("GP_ESTADO_PRORRATEO_DETALLE_INCENTIVO");
 
@@ -1522,7 +1539,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpPorrateroDetalleIncentivo>(entity =>
             {
                 entity.HasKey(e => e.IdGpPorrateroDetalleIncentivo)
-                    .HasName("PK__GP_PORRA__6CC4685CED80B09A");
+                    .HasName("PK__GP_PORRA__6CC4685CFDFCD0C3");
 
                 entity.ToTable("GP_PORRATERO_DETALLE_INCENTIVO");
 
@@ -1586,7 +1603,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<GpProrrateoDetalle>(entity =>
             {
                 entity.HasKey(e => e.IdGpPorrateoDetalle)
-                    .HasName("PK__GP_PRORR__94C19122452EA3CA");
+                    .HasName("PK__GP_PRORR__94C19122F9AAC136");
 
                 entity.ToTable("GP_PRORRATEO_DETALLE");
 
@@ -1694,7 +1711,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Incentivo>(entity =>
             {
                 entity.HasKey(e => e.IdIncentivo)
-                    .HasName("PK__INCENTIV__6035F00C63745B69");
+                    .HasName("PK__INCENTIV__6035F00C9F4E33E2");
 
                 entity.ToTable("INCENTIVO");
 
@@ -1751,7 +1768,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<IncentivoPagoComision>(entity =>
             {
                 entity.HasKey(e => e.IdDetalle)
-                    .HasName("PK__INCENTIV__4F1332DEF036D49D");
+                    .HasName("PK__INCENTIV__4F1332DECF9AEB04");
 
                 entity.ToTable("INCENTIVO_PAGO_COMISION");
 
@@ -1771,7 +1788,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<ListadoFormasPago>(entity =>
             {
                 entity.HasKey(e => e.IdListaFormasPago)
-                    .HasName("PK__LISTADO___31038ED87050839D");
+                    .HasName("PK__LISTADO___31038ED81C587A11");
 
                 entity.ToTable("LISTADO_FORMAS_PAGO");
 
@@ -1812,7 +1829,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<LogDetalleComisionEmpresaFail>(entity =>
             {
                 entity.HasKey(e => e.IdDetalleComisioEmpresaFail)
-                    .HasName("PK__LOG_DETA__60ED7DCF764EEAAF");
+                    .HasName("PK__LOG_DETA__60ED7DCFF821D2A9");
 
                 entity.ToTable("LOG_DETALLE_COMISION_EMPRESA_FAIL");
 
@@ -1858,7 +1875,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<LogPagoMasivoSionPayComisionOEmpresaFail>(entity =>
             {
                 entity.HasKey(e => e.IdSionPayComisioEmpresaFail)
-                    .HasName("PK__LOG_PAGO__8A08B05F83A5A23E");
+                    .HasName("PK__LOG_PAGO__8A08B05F9733AFC6");
 
                 entity.ToTable("LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL");
 
@@ -1933,7 +1950,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Modulo>(entity =>
             {
                 entity.HasKey(e => e.IdModulo)
-                    .HasName("PK__MODULO__B2584DFCD233ECA4");
+                    .HasName("PK__MODULO__B2584DFCB777C2C9");
 
                 entity.ToTable("MODULO");
 
@@ -2023,7 +2040,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Pagina>(entity =>
             {
                 entity.HasKey(e => e.IdPagina)
-                    .HasName("PK__PAGINA__A2A7C7B61E3AE76D");
+                    .HasName("PK__PAGINA__A2A7C7B6F00535C7");
 
                 entity.ToTable("PAGINA");
 
@@ -2080,14 +2097,14 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Pai>(entity =>
             {
                 entity.HasKey(e => e.IdPais)
-                    .HasName("PK__PAIS__0941A3A7FBF42D2A");
+                    .HasName("PK__PAIS__0941A3A7A15B5421");
 
                 entity.ToTable("PAIS");
 
                 entity.Property(e => e.IdPais)
                     .ValueGeneratedNever()
                     .HasColumnName("id_pais")
-                    .HasComment("Llave primaria incremental de la tabla PAIS.");
+                    .HasComment("Llave primaria  de la tabla PAIS.");
 
                 entity.Property(e => e.FechaActualizacion)
                     .HasColumnType("datetime")
@@ -2115,7 +2132,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Permiso>(entity =>
             {
                 entity.HasKey(e => e.IdPermiso)
-                    .HasName("PK__PERMISO__228F224FE073BDB3");
+                    .HasName("PK__PERMISO__228F224F7CC050EE");
 
                 entity.ToTable("PERMISO");
 
@@ -2154,7 +2171,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Proyecto>(entity =>
             {
                 entity.HasKey(e => e.IdProyecto)
-                    .HasName("PK__PROYECTO__F38AD81D2629FA23");
+                    .HasName("PK__PROYECTO__F38AD81D83E2B0BB");
 
                 entity.ToTable("PROYECTO");
 
@@ -2201,7 +2218,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Rol>(entity =>
             {
                 entity.HasKey(e => e.IdRol)
-                    .HasName("PK__ROL__6ABCB5E0BA44DD37");
+                    .HasName("PK__ROL__6ABCB5E09C593A33");
 
                 entity.ToTable("ROL");
 
@@ -2245,7 +2262,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<RolPaginaI>(entity =>
             {
                 entity.HasKey(e => e.IdRolPaginaI)
-                    .HasName("PK__ROL_PAGI__657F32AEC7127D73");
+                    .HasName("PK__ROL_PAGI__657F32AEF97CB176");
 
                 entity.ToTable("ROL_PAGINA_I");
 
@@ -2285,7 +2302,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<RolPaginaPermisoI>(entity =>
             {
                 entity.HasKey(e => e.IdRolPaginaPermisoI)
-                    .HasName("PK__ROL_PAGI__31BAAF48EEEC7CF3");
+                    .HasName("PK__ROL_PAGI__31BAAF4817FE4209");
 
                 entity.ToTable("ROL_PAGINA_PERMISO_I");
 
@@ -2325,7 +2342,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Sucursal>(entity =>
             {
                 entity.HasKey(e => e.IdSucursal)
-                    .HasName("PK__SUCURSAL__4C75801375F604CA");
+                    .HasName("PK__SUCURSAL__4C758013B435C9B3");
 
                 entity.ToTable("SUCURSAL");
 
@@ -2373,7 +2390,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoAplicacione>(entity =>
             {
                 entity.HasKey(e => e.IdTipoAplicaciones)
-                    .HasName("PK__TIPO_APL__D56E6A9C84679F7C");
+                    .HasName("PK__TIPO_APL__D56E6A9CFAAF6BCB");
 
                 entity.ToTable("TIPO_APLICACIONES");
 
@@ -2417,7 +2434,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoAutorizacion>(entity =>
             {
                 entity.HasKey(e => e.IdTipoAutorizacion)
-                    .HasName("PK__TIPO_AUT__84026FCDABAD5854");
+                    .HasName("PK__TIPO_AUT__84026FCD802BC2AF");
 
                 entity.ToTable("TIPO_AUTORIZACION");
 
@@ -2502,7 +2519,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoIncentivo>(entity =>
             {
                 entity.HasKey(e => e.IdTipoIncentivo)
-                    .HasName("PK__TIPO_INC__FAEB36E63245C4D6");
+                    .HasName("PK__TIPO_INC__FAEB36E65F862C76");
 
                 entity.ToTable("TIPO_INCENTIVO");
 
@@ -2538,7 +2555,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoIncentivoPago>(entity =>
             {
                 entity.HasKey(e => e.IdTipoIncentivo)
-                    .HasName("PK__TIPO_INC__FAEB36E6CED1D531");
+                    .HasName("PK__TIPO_INC__FAEB36E6DF580E96");
 
                 entity.ToTable("TIPO_INCENTIVO_PAGO");
 
@@ -2563,7 +2580,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoPago>(entity =>
             {
                 entity.HasKey(e => e.IdTipoPago)
-                    .HasName("PK__TIPO_PAG__F7E781E5E745E024");
+                    .HasName("PK__TIPO_PAG__F7E781E560879837");
 
                 entity.ToTable("TIPO_PAGO");
 
@@ -2615,7 +2632,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.HasKey(e => e.IdUsuario)
-                    .HasName("PK__USUARIO__4E3E04AD9213F3C4");
+                    .HasName("PK__USUARIO__4E3E04AD447C88A5");
 
                 entity.ToTable("USUARIO");
 
@@ -2695,7 +2712,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<UsuarioAutorizacion>(entity =>
             {
                 entity.HasKey(e => e.IdUsuarioAutorizacion)
-                    .HasName("PK__USUARIO___59E0A6D595D89408");
+                    .HasName("PK__USUARIO___59E0A6D5CEBB4E05");
 
                 entity.ToTable("USUARIO_AUTORIZACION");
 
@@ -2734,11 +2751,11 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<UsuariosRole>(entity =>
             {
                 entity.HasKey(e => e.IdUsuariosRoles)
-                    .HasName("PK__USUARIOS__720F812BFD584C1E");
+                    .HasName("PK__USUARIOS__720F812B5F74CCF6");
 
                 entity.ToTable("USUARIOS_ROLES");
 
-                entity.HasIndex(e => e.IdUsuario, "UQ__USUARIOS__4E3E04AC0E614934")
+                entity.HasIndex(e => e.IdUsuario, "UQ__USUARIOS__4E3E04ACF08C7B12")
                     .IsUnique();
 
                 entity.Property(e => e.IdUsuariosRoles)
@@ -2777,7 +2794,7 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<Venta>(entity =>
             {
                 entity.HasKey(e => e.IdVenta)
-                    .HasName("PK__VENTA__459533BF4FADE8A0");
+                    .HasName("PK__VENTA__459533BFC5E7E722");
 
                 entity.ToTable("VENTA");
 
