@@ -261,12 +261,13 @@ const useFormaPagoRezagado = () => {
   };
 
   async function buscarFrelancerPorCi() {
-    let response = await Actions.buscarPorCarnetFormaPago(
-      userName,
-      idCiclo,
-      txtBusqueda,
-      dispatch
-    );
+    let url = "/formasPagosRezagados/BuscarComisionCarnetFormaPago";
+    let body = {
+      usuarioLogin: userName,
+      idCiclo: parseInt(idCiclo),
+      nombreCriterio: txtBusqueda,
+    };
+    let response = await requestPost(url, body, dispatch);
     if (response && response.code == 0) {
       let data = response.data;
       setPendienteFormaPago(data.pendienteFormaPago);
@@ -280,12 +281,17 @@ const useFormaPagoRezagado = () => {
   };
   async function filtrarComisionPorFormaPago(idTipoFormaPago) {
     if (idCiclo && idCiclo !== 0) {
-      let response = await Actions.ListarComisionFormaPagoFiltrada(
-        userName,
-        idCiclo,
-        idTipoFormaPago,
-        dispatch
+      const cicloObjectSelected = ciclos.find(
+        (item) => item.idCiclo === idCiclo
       );
+      let url = "/formasPagosRezagados/FiltrarComisionPagoPorTipoPago";
+      let body = {
+        usuarioLogin: userName,
+        idCiclo,
+        idTipoPago: idTipoFormaPago,
+        comisionId: cicloObjectSelected.idComision,
+      };
+      let response = await requestPost(url, body, dispatch);
       if (response && response.code == 0) {
         let data = response.data;
         setPendienteFormaPago(data.pendienteFormaPago);
@@ -436,11 +442,15 @@ const useFormaPagoRezagado = () => {
 
   async function ApiCerrarFormaDePago(userNa, idUser, idCICLO) {
     if (idCICLO && idCICLO !== 0) {
+      const cicloObjectSelected = ciclos.find(
+        (item) => item.idCiclo === idCiclo
+      );
       let url = "/formasPagosRezagados/CerrarFormaDePago";
       let body = {
         usuarioLogin: userName,
         idUsuario: idUsuario,
         idCiclo: parseInt(idCiclo),
+        comisionId: cicloObjectSelected.idComision,
       };
       let response = await requestPost(url, body, dispatch);
 
@@ -475,6 +485,10 @@ const useFormaPagoRezagado = () => {
     setNameComboSeleccionado("");
     recargarGetCiclos();
   };
+
+  const cicloSeleccionado = idCiclo
+    ? ciclos.find((item) => item.idCiclo === idCiclo)
+    : null;
 
   return {
     pendienteFormaPago,
@@ -515,6 +529,7 @@ const useFormaPagoRezagado = () => {
     perfiles,
     verificarConfirmarFomaPago,
     txtBusqueda,
+    cicloSeleccionado,
   };
 };
 

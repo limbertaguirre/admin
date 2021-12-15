@@ -157,6 +157,7 @@ const FormaPagoRezagado = ({ location }) => {
     perfiles,
     verificarConfirmarFomaPago,
     txtBusqueda,
+    cicloSeleccionado,
   } = useFormaPagoRezagado();
 
   const style = useStyles();
@@ -348,6 +349,7 @@ const FormaPagoRezagado = ({ location }) => {
         pendienteFormaPago={pendienteFormaPago}
         permisoCrear={true}
         permisoActualizar={true}
+        idComision={cicloSeleccionado ? cicloSeleccionado.idComision : null}
         // permisoActualizar={validarPermiso(
         //   perfiles,
         //   location.state.namePagina + permiso.ACTUALIZAR
