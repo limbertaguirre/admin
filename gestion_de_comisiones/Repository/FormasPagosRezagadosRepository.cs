@@ -456,7 +456,7 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                int idTipoAutorizacionFormaPago = 3;
+                int idTipoAutorizacionFormaPago = 4;
                 AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
                 List<Autorizador> listAurorizadores = new List<Autorizador>();
                 List<Autorizador> autorizados = new List<Autorizador>();
