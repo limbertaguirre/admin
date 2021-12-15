@@ -821,7 +821,7 @@ create table COMISION_DETALLE_EMPRESA
     monto decimal(18,2) not null,
 	estado TINYINT,
 	respaldo_path varchar(500),
-	nro_autorizacion varchar,
+	nro_autorizacion varchar(100),
 	monto_a_facturar decimal(18,2),
 	monto_total_facturar decimal(18,2),
 	id_comision_detalle int not null,
