@@ -20,6 +20,7 @@ const PagoIncentivo = (props)=> {
   const dispatch = useDispatch()
   const {userName, idUsuario} = useSelector((stateSelector)=>{ return stateSelector.load});
   const ESTADO_ERROR_PLANILLA = 1;
+  const FILA_OBSERVADA = 1;
   const changeInputFile = (event) => {
     console.log(event.target.files)
     const schema = {
@@ -121,10 +122,6 @@ const PagoIncentivo = (props)=> {
       IdCiclo : ciclo ,
       UsuarioNombre : userName
     }
-    let newDatosExcel = [...datosExcel]
-    newDatosExcel[1].estadoFila = 1
-    setDatosExcel(newDatosExcel)
-
     if(ciclo == '' ){
       setEstadoCargarPlanilla(ESTADO_ERROR_PLANILLA)
       setModalCargarPlanilla(true)
@@ -136,6 +133,16 @@ const PagoIncentivo = (props)=> {
         console.log(response)
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
+        if(response.code === 1 ){
+          setMensajeErrorModal(response.message)
+            response.data.map((item,index) =>{
+              if(item.observada === true){
+                let newDatosExcel = [...datosExcel]
+                newDatosExcel[index].estadoFila = FILA_OBSERVADA
+                setDatosExcel(newDatosExcel)
+              }
+            })
+        }
       })
       .catch((error)=>{
         console.log(error)
