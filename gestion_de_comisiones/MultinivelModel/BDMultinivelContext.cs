@@ -1751,15 +1751,21 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<IncentivoPagoComision>(entity =>
             {
                 entity.HasKey(e => e.IdDetalle)
-                    .HasName("PK__INCENTIV__4F1332DE5FA0A3FC");
+                    .HasName("PK__INCENTIV__4F1332DEF036D49D");
 
                 entity.ToTable("INCENTIVO_PAGO_COMISION");
 
-                entity.Property(e => e.IdDetalle).HasColumnName("id_detalle");
+                entity.Property(e => e.IdDetalle)
+                    .HasColumnName("id_detalle")
+                    .HasComment("Llave primaria de la tabla.");
 
-                entity.Property(e => e.IdComisionDetalle).HasColumnName("id_comision_detalle");
+                entity.Property(e => e.IdComisionDetalle)
+                    .HasColumnName("id_comision_detalle")
+                    .HasComment("llave foranea hacia la tabla GP_COMISION_DETALLE");
 
-                entity.Property(e => e.IdTipoIncentivoPago).HasColumnName("id_tipo_incentivo_pago");
+                entity.Property(e => e.IdTipoIncentivoPago)
+                    .HasColumnName("id_tipo_incentivo_pago")
+                    .HasComment("llave foranea hacia la tabla TIPO_INCENTIVO_PAGO");
             });
 
             modelBuilder.Entity<ListadoFormasPago>(entity =>
@@ -2532,22 +2538,26 @@ namespace gestion_de_comisiones.MultinivelModel
             modelBuilder.Entity<TipoIncentivoPago>(entity =>
             {
                 entity.HasKey(e => e.IdTipoIncentivo)
-                    .HasName("PK__TIPO_INC__FAEB36E609168A93");
+                    .HasName("PK__TIPO_INC__FAEB36E6CED1D531");
 
                 entity.ToTable("TIPO_INCENTIVO_PAGO");
 
-                entity.Property(e => e.IdTipoIncentivo).HasColumnName("id_tipo_incentivo");
+                entity.Property(e => e.IdTipoIncentivo)
+                    .HasColumnName("id_tipo_incentivo")
+                    .HasComment("Llave primaria de la tabla.");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
                     .HasMaxLength(300)
                     .IsUnicode(false)
-                    .HasColumnName("descripcion");
+                    .HasColumnName("descripcion")
+                    .HasComment("indica el nombre o descripcion del tipo Incentivo Pago");
 
                 entity.Property(e => e.Estado)
                     .HasMaxLength(30)
                     .IsUnicode(false)
-                    .HasColumnName("estado");
+                    .HasColumnName("estado")
+                    .HasComment("indica el estado del tipoIncentivo ejm: INACTIVO, ACTIVO");
             });
 
             modelBuilder.Entity<TipoPago>(entity =>
