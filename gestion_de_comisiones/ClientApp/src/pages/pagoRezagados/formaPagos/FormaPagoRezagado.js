@@ -1,4 +1,40 @@
 import React from "react";
+import {
+  withStyles,
+  emphasize,
+  Chip,
+  makeStyles,
+  Grid,
+  Typography,
+  Button,
+  Tooltip,
+  Zoom,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  InputAdornment,
+  Select,
+  Card,
+  Breadcrumbs,
+  TextField,
+} from "@material-ui/core";
+import {
+  Home,
+  CheckCircleOutline,
+  Save,
+  Search,
+  CloudUpload,
+  HelpOutline,
+} from "@material-ui/icons";
+import * as permiso from "../../../routes/permiso";
+import SnackbarSion from "../../../components/message/SnackbarSion";
+import useFormaPagoRezagado from "../../../hooks/useFormaPagoRezagado";
+import TipoPagosModal from "./components/TipoPagosModal";
+import GridFormaPagos from "./components/GridFormaPagos";
+import ConfirmarCierrePagoModal from "./components/ConfirmarCierrePagoModal";
+import VistaListaAutorizados from "./components/VistaListaAutorizados";
+import imageFac from "../../../../src/assets/img/pendiente.png";
+import { validarPermiso } from "../../../lib/accesosPerfiles";
 
 const StyledBreadcrumb = withStyles((theme) => ({
   root: {
@@ -82,6 +118,47 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormaPagoRezagado = ({ location }) => {
+  const {
+    pendienteFormaPago,
+    autorizadorObjeto,
+    statusBusqueda,
+    buscarFreelanzer,
+    ciclos,
+    seleccionarNombreCombo,
+    handleOnGetAplicaciones,
+    openSnackbar,
+    closeSnackbar,
+    tipoSnackbar,
+    mensajeSnackbar,
+    listaComisionesAPagar,
+    listaComisionPaginacionNueva,
+    setListaComisionPaginacionNueva,
+    selecionarDetalleFrelances,
+    seleccionarTipoFiltroBusqueda,
+    idCiclo,
+    openTipoPago,
+    cerrarModalTipoPagoModal,
+    confirmarTipoPago,
+    listTipoPagos,
+    idtipoPagoSelect,
+    handleChangeRadio,
+    openModalAutorizadores,
+    nameComboSeleccionado,
+    cerrarModalListaAutorizadosConfirm,
+    confirmarModalAutorizacion,
+    openCierrePagoModal,
+    cancelarModalConfirmarCierre,
+    confirmarCierrePagoModal,
+    listadoConfirm,
+    habilitadoCierrePago,
+    listadoSeleccionado,
+    idCicloSelected,
+    onChangeSelectCiclo,
+    perfiles,
+    verificarConfirmarFomaPago,
+    txtBusqueda,
+  } = useFormaPagoRezagado();
+
   const style = useStyles();
   return (
     <>
@@ -94,7 +171,7 @@ const FormaPagoRezagado = ({ location }) => {
             key={1}
             component="a"
             label="Gestión de rezagado"
-            icon={<HomeIcon fontSize="small" />}
+            icon={<Home fontSize="small" />}
           />
           <StyledBreadcrumb key={2} component="a" label="Pago de comisiones" />
           <StyledBreadcrumb key={3} label="Forma de pagos" />
@@ -122,7 +199,7 @@ const FormaPagoRezagado = ({ location }) => {
                 >
                   <>
                     {"PAGO APROBADO "}
-                    <CheckCircleOutlineIcon />{" "}
+                    <CheckCircleOutline />{" "}
                   </>
                 </Button>
               ) : (
@@ -134,7 +211,7 @@ const FormaPagoRezagado = ({ location }) => {
                 >
                   <>
                     {"PENDIENTE APROBACION "}
-                    <HelpOutlineIcon />{" "}
+                    <HelpOutline />{" "}
                   </>
                 </Button>
               )}
@@ -148,34 +225,36 @@ const FormaPagoRezagado = ({ location }) => {
           <Grid item xs={12} md={3} className={style.containerSave}>
             {statusBusqueda && (
               <>
-                {validarPermiso(
-                  perfiles,
-                  location.state.namePagina + permiso.CREAR
-                ) ? (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={style.submitSAVE}
-                    onClick={() => verificarConfirmarFomaPago()}
-                  >
-                    <SaveIcon style={{ marginRight: "5px" }} /> CERRAR FORMA
-                    PAGO
-                  </Button>
-                ) : (
-                  <Tooltip
-                    disableFocusListener
-                    disableTouchListener
-                    TransitionComponent={Zoom}
-                    title={"Sin Acceso"}
-                  >
-                    <Button variant="contained">
-                      {" "}
-                      <SaveIcon style={{ marginRight: "5px" }} /> CERRAR FORMA
-                      PAGO
+                {
+                  // validarPermiso(
+                  //   perfiles,
+                  //   location.state.namePagina + permiso.CREAR
+                  // )
+                  true ? (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      className={style.submitSAVE}
+                      onClick={() => verificarConfirmarFomaPago()}
+                    >
+                      <Save style={{ marginRight: "5px" }} /> CERRAR FORMA PAGO
                     </Button>
-                  </Tooltip>
-                )}
+                  ) : (
+                    <Tooltip
+                      disableFocusListener
+                      disableTouchListener
+                      TransitionComponent={Zoom}
+                      title={"Sin Acceso"}
+                    >
+                      <Button variant="contained">
+                        {" "}
+                        <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
+                        PAGO
+                      </Button>
+                    </Tooltip>
+                  )
+                }
               </>
             )}
           </Grid>
@@ -198,7 +277,7 @@ const FormaPagoRezagado = ({ location }) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon />
+                      <Search />
                     </InputAdornment>
                   ),
                 }}
@@ -246,7 +325,7 @@ const FormaPagoRezagado = ({ location }) => {
               className={style.submitCargar}
               onClick={() => handleOnGetAplicaciones()}
             >
-              {"CARGAR "} <CloudUploadIcon style={{ marginLeft: "12px" }} />
+              {"CARGAR "} <CloudUpload style={{ marginLeft: "12px" }} />
             </Button>
           </Grid>
         </Grid>
@@ -267,14 +346,16 @@ const FormaPagoRezagado = ({ location }) => {
         seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
         idCiclo={idCiclo}
         pendienteFormaPago={pendienteFormaPago}
-        permisoActualizar={validarPermiso(
-          perfiles,
-          location.state.namePagina + permiso.ACTUALIZAR
-        )}
-        permisoCrear={validarPermiso(
-          perfiles,
-          location.state.namePagina + permiso.CREAR
-        )}
+        permisoCrear={true}
+        permisoActualizar={true}
+        // permisoActualizar={validarPermiso(
+        //   perfiles,
+        //   location.state.namePagina + permiso.ACTUALIZAR
+        // )}
+        // permisoCrear={validarPermiso(
+        //   perfiles,
+        //   location.state.namePagina + permiso.CREAR
+        // )}
       />
       <TipoPagosModal
         open={openTipoPago}
