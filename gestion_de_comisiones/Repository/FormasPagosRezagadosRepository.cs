@@ -624,5 +624,43 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+
+        public object GetComisionesPorFormaPago(FormaPagosDisponiblesInputModel param)
+        {
+            try
+            {
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+
+                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
+                int idEstadoDetalleNoPresentaFactura = 6;
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
+                FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
+                LisFormaPagos.Add(nuevoNinguno);
+                foreach (var item in LisFormaPagos)
+                {
+                    if (ListComisiones != null)
+                    {
+                        FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
+                        obj.idTipoPago = item.IdTipoPago;
+                        obj.nombre = item.Nombre;
+                        obj.icono = item.Icono;
+                        int canti = ListComisiones.Where(x => x.IdTipoPago == item.IdTipoPago).Count();
+                        obj.cantidad = canti;
+                        list.Add(obj);
+                    }
+                }
+
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                return list;
+            }
+        }
     }
 }
