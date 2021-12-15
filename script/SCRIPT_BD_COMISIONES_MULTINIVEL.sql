@@ -1513,8 +1513,8 @@ GO
       
 	---------------------------------------------------------------------------------------------------------------------------------------------
 	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
-		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
-		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
+			--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+			--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
 
 		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
 				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
