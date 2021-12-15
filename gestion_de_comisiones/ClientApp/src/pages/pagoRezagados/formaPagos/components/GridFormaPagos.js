@@ -224,11 +224,11 @@ const GridFormaPagos = ({
   };
 
   async function ApiListarTiposPagos(event) {
-    let url = "/formasPagosRezagados/ObtenerFormasPagos";
+    let url = "/formasPagosRezagados/GetFormaPagosDisponibles";
     let body = {
       usuarioLogin: userName,
       idCiclo,
-      idComision,
+      comisionId: idComision,
     };
     let respuesta = await requestPost(url, body, dispatch);
     if (respuesta && respuesta.code == 0) {

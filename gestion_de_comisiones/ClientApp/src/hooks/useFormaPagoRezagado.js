@@ -288,7 +288,7 @@ const useFormaPagoRezagado = () => {
       let body = {
         usuarioLogin: userName,
         idCiclo,
-        idTipoPago: idTipoFormaPago,
+        idTipoPago: parseInt(idTipoFormaPago),
         comisionId: cicloObjectSelected.idComision,
       };
       let response = await requestPost(url, body, dispatch);
