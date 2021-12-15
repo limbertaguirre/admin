@@ -1,5 +1,5 @@
 
-alter PROCEDURE [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO]
+CREATE PROCEDURE [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO]
      @id_Ciclo     int,
      @id_usuario int,
 	 @id_tipo_comision int

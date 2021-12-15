@@ -232,7 +232,7 @@ namespace gestion_de_comisiones.Repository
 
         public List<DatosPlanillaExcel> verificarIncentivosEmpresaCiNoRepetidos(PlanillaPagoIncentivo planillaIncentivo)
         {
-            var idComisionParam = ContextMulti.GpComisions.Where((item) => item.IdCiclo == planillaIncentivo.IdCiclo).FirstOrDefault();
+            var idComisionParam = ContextMulti.GpComisions.Where((item) => item.IdCiclo == planillaIncentivo.IdCiclo).OrderByDescending((item1) => item1.IdComision).FirstOrDefault();
             int idComision = 0;
             if (idComisionParam == null)
             {
@@ -294,7 +294,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTipoIncentivo ");
-                var ciclos = ContextMulti.TipoIncentivoPagoes.OrderByDescending(x => x.IdTipoIncentivo).Take(2);
+                var ciclos = ContextMulti.TipoIncentivoPagoes.OrderByDescending(x => x.IdTipoIncentivo).ToList();
                 return ciclos;
             }
             catch (Exception ex)
