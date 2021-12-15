@@ -82,8 +82,8 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
-      ----- correr insert primera vej, PAIS  Y CIUADAD	 
-     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+      ----- correr insert primera vej, PAIS  Y CIUADAD	 la condicion es porq esa ciudad esta duplicada en 
+     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE(),'' from BDComisiones.dbo.PECIUDAD c   where IDCIUDAD != 4090
 
 		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
 		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
@@ -206,20 +206,20 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_actualizacion'
 go
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon','1',1,null,1); --padre
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon','1',1,null,1);--padre
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config','3',1,null,1); --padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon',1,1,null,1); --padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon',1,1,null,1);--padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config',3,1,null,1); --padre
 
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon','1',1,1,1);--hijo
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de roles','gestionRolesIcon','1',1,3,1);--hijo	 
-	 --insert INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES('Usuarios','gestionClienteIcon',2,1,3,1,GETDATE(),GETDATE()); --hijo
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon',1,1,1,1);--hijo
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon',1,1,2,1);--hijo
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de roles','gestionRolesIcon',1,1,3,1);--hijo	 
+	 --insert INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES('Usuarios','gestionClienteIcon',2,1,3,1); --hijo
 
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Reportes','config','2',1,null,1); --padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Reportes','config',2,1,null,1); --padre
 	 --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pagos de comisiones','pagoComisionesIcon',1,1,8,1); --hijo reporte
 
 	 --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de incentivos','pagoComisionesIcon',2,1,1,1); --hijo
-     --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de rezagados', 'pagoComisionesIcon', 3, 1, 1, 2); --hijo
+  --   INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de rezagados', 'pagoComisionesIcon', 3, 1, 1, 2); --hijo
 	
 go
 create table PAGINA
@@ -249,21 +249,21 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizaci
 go
 ----add modulo antes estos hacen referencia a los id de los modulos hijos
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturación','/facturacion','facIcon',1,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga Aplicaciones','/cargar-aplicaciones','facIcon',2,1,4,1);  
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',4,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos','/pagos-gestor','facIcon',5,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturación','/facturacion','facIcon',1,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga Aplicaciones','/cargar-aplicaciones','facIcon',2,1,4,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',4,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos','/pagos-gestor','facIcon',5,1,4,1);
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,5,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,5,1);  
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Asignación de roles','/usuario/asignar-roless','facIcon',1,1,7,1);  
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por ciclo','/reporte/ciclos','facIcon',1,1,9,1);  
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por freelancer','/reporte/freelancer','facIcon',2,1,9,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Asignación de roles','/usuario/asignar-roless','facIcon',1,1,7,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por ciclo','/reporte/ciclos','facIcon',1,1,9,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por freelancer','/reporte/freelancer','facIcon',2,1,9,1);  
 
---     insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);
---     INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos Rezagados', '/pago/rezagados', 'facIcon', 1, 1, 11, 2);  
+		--insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos Rezagados', '/pago/rezagados', 'facIcon', 1, 1, 11, 2);  
 
 go
 create table PERMISO
@@ -643,10 +643,10 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_actualizacion'
 go
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
 
 go
 create table FICHA_TIPO_BAJA_I
@@ -821,7 +821,7 @@ create table COMISION_DETALLE_EMPRESA
     monto decimal(18,2) not null,
 	estado TINYINT,
 	respaldo_path varchar(500),
-	nro_autorizacion varchar,
+	nro_autorizacion varchar(100),
 	monto_a_facturar decimal(18,2),
 	monto_total_facturar decimal(18,2),
 	id_comision_detalle int not null,
@@ -920,10 +920,10 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_actualizacion'
 go
-      insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(1, 'Para pagar',1)
-      insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(2, 'Error al pagar',1)
-      insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(3, 'Pago exitoso',1)
-	  insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(4, 'Rechazado en Pagos por Transferencias',1)
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(1, 'Para pagar',1)
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(2, 'Error al pagar',1)
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(3, 'Pago exitoso',1)
+	  --insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(4, 'Rechazado en Pagos por Transferencias',1)
 go
 CREATE TABLE TIPO_PAGO(
   id_tipo_pago int NOT NULL PRIMARY KEY,
@@ -945,8 +945,8 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'fecha_actualizacion'
 
 go
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'sionpay')
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'transfer')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'sionpay')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'transfer')
    
 go
 CREATE TABLE EMPRESA(
@@ -1191,11 +1191,11 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_actualizacion'
 go
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(4,'Expensas', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(4,'Expensas', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
 
 go
 CREATE TABLE APLICACION_DETALLE_PRODUCTO(
@@ -1340,9 +1340,9 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
 go
-    insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
-	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
-	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
+ --   insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
+	--insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
+	--insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
 go
 CREATE TABLE AUTORIZACIONES_AREA(
   id_autorizaciones_area int NOT NULL PRIMARY KEY identity,
@@ -1513,8 +1513,8 @@ GO
       
 	---------------------------------------------------------------------------------------------------------------------------------------------
 	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
-		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
-		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
+			--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+			--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
 
 		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
 				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
