@@ -11,7 +11,7 @@ namespace gestion_de_comisiones.Repository.Interfaces
     {
         public object GetCiclos(string usuario);
         List<VwObtenercomisionesFormaPago> GetComisionesRezagados(ComisionesPagosInput param);
-        bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo);
+        bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo, int comisionId);
         List<TipoPagoInputmodel> GetListarFormaPagos(ParamFormaPagosOutputModel param);
         public bool AplicarFormaPago(AplicarMetodoOutput param);
         public ConfirmarPagoOutPut VerificarCierreFormaPago(VerificarCierreFormaPagoParam param);
@@ -19,5 +19,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
         public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param);
         public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListFormaPago(BuscarInputModel param);
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param);
     }
 }

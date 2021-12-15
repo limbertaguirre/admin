@@ -54,7 +54,7 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio FormasPagosRezagadosService => GetComisionesDePagos() ");              
                 var comisiones = Repository.GetComisionesRezagados(param);
                 // preguntar
-                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.idComision);
                 obj.lista = comisiones;
                 //obj.pendienteFormaPago = pendiente;
                 return Respuesta.ReturnResultdo(0, "ok", obj);
@@ -71,7 +71,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarFormasPagos()");
-                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.comisionId);
                 if (tieneUnaComisionAprobada)
                     return Respuesta.ReturnResultdo(1, "ESTA ACCIÓN NO SE PUDO COMPLETAR, MOTIVO : PROCESO DE AUTORIZACIÓN EN CURSO.", "");
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", (List<TipoPagoInputmodel>) Repository.GetListarFormaPagos(param));
@@ -92,7 +92,7 @@ namespace gestion_de_comisiones.Servicios
                 {
                     return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "SELECCIONE UNA FORMA DE PAGO", "");
                 }
-                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                var tieneUnaComisionAprobada = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.comisionId);
                 if (tieneUnaComisionAprobada)
                 {
                     return Respuesta.ReturnResultdo(1, "ESTA ACCIÓN NO SE PUDO COMPLETAR, MOTIVO : PROCESO DE AUTORIZACIÓN EN CURSO.", "");
@@ -169,7 +169,7 @@ namespace gestion_de_comisiones.Servicios
                 var result = Repository.ConfirmarAutorizacion(param);
                 if (result == true)
                 {
-                    obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                    obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.idComision);
                     //obj.lista = comisiones;
                     return Respuesta.ReturnResultdo(0, "se autorizo la comision", obj);
                 }
@@ -193,7 +193,7 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
                 ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();                
                 var comisiones = Repository.GetComisionesPorCarnetListFormaPago(param);
-                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.comisionId);
                 obj.lista = comisiones;
                 return Respuesta.ReturnResultdo(0, "ok", obj);
             }
@@ -201,6 +201,43 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInputModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();           
+                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.comisionId);
+                obj.lista = comisiones;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object GetFormasPagosPendientes(ComisionesPagosInput param)
+        {
+            try
+            {
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio AplicacionesService => getAplicacionesPendientes() ");               
+                var comisiones = Repository.GetComisionesRezagados(param);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param.usuarioLogin, param.idCiclo, param.idComision);
+                obj.lista = comisiones;
+                //obj.pendienteFormaPago = pendiente;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch AplicacionesService => getAplicacionesPendientes() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la lista de ciclos de las aplicaciones", "problemas en el servidor, intente mas tarde");
             }
         }
     }

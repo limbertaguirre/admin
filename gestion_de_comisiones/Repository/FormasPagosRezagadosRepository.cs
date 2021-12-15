@@ -104,13 +104,13 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo)
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(string usuarioLogin, int idCiclo, int comisionId)
         {
             try
             {
                 Logger.LogWarning($" usuario: {usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + idCiclo + " ");
                 int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
-                var cantidad = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                var cantidad = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdComision == comisionId && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
                 if (cantidad > 0)
                 {
                     return true;
@@ -601,6 +601,25 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisionesPorCarnet() mensaje : {ex}");
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
+                return list;
+            }
+        }
+
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository FiltrarComisionPagoPorTipoPago() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoPago == param.idTipoPago).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch FiltrarComisionPagoPorTipoPago() mensaje : {ex}");
                 List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }

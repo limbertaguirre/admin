@@ -171,5 +171,38 @@ namespace gestion_de_comisiones.Controllers
 				return Ok(Result);
 			}
 		}
-    }
+
+		[HttpPost]
+		public ActionResult FiltrarComisionPagoPorTipoPago([FromBody] FiltroComisionTipoPagoInputModel param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+				return Ok(Service.FiltrarComisionesPorTipoPago(param));
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+				return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por tipo de pago" });
+			}
+		}
+
+		[HttpPost]
+		public ActionResult ObtenerFormasPagos([FromBody] ComisionesPagosInput param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario request : {param.usuarioLogin} inicio el controller AplicacionesController => Index() parametro: idciclo:{param.idCiclo}");
+				var resulcliente = Service.GetFormasPagosPendientes(param);
+				Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
+				return Ok(resulcliente);
+			}
+			catch
+			{
+				Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller forma pagos AplicacionesController()  => Index() ");
+				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las pendiente para forma de pagos." };
+				return Ok(Result);
+			}
+		}
+	}
 }
