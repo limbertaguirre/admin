@@ -354,14 +354,18 @@ const useFormaPagoRezagado = () => {
     idAutorizacionComision
   ) {
     if (idCiclo && idCiclo !== 0) {
-      let response = await Actions.ConfirmarAutorizacion(
-        userNa,
-        idUser,
-        idCiclo,
-        idComision,
-        idAutorizacionComision,
-        dispatch
+      let url = "/formasPagosRezagados/ConfirmarAutorizacion";
+      const cicloObjectSelected = ciclos.find(
+        (item) => item.idCiclo === idCiclo
       );
+      let body = {
+        usuarioLogin: userNa,
+        idUsuario: idUser,
+        idCiclo,
+        idComision: cicloObjectSelected.idComision,
+        idAutorizacionComision,
+      };
+      let response = await requestPost(url, body, dispatch);
       if (response && response.code == 0) {
         let data = response.data;
         setOpenModalAutorizadores(false);
