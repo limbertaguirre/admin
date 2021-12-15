@@ -263,7 +263,8 @@ go
 	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por freelancer','/reporte/freelancer','facIcon',2,1,9,1);  
 
 		--insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);
-		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos Rezagados', '/pago/rezagados', 'facIcon', 1, 1, 11, 2);  
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago rezagado', '/forma-pago/rezagados', 'facIcon', 1, 1, 11, 2);  
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos Rezagados', '/pago/rezagados', 'facIcon', 2, 1, 11, 2);
 
 go
 create table PERMISO
