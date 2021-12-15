@@ -136,11 +136,17 @@ const useFormaPagoRezagado = () => {
   const RecargarListadoComisionesSinActualizarPagina = () => {
     if (idCiclo && idCiclo !== 0) {
       setIdCicloSelected(idCiclo);
+      let cicloObjectSelected = ciclos.find((item) => item.idCiclo === idCiclo);
       const data = {
         usuarioLogin: userName,
         idCiclo: idCiclo,
+        idComision: cicloObjectSelected.idComision,
       };
-      requestPost("Pagos/ObtenerFormasPagos", data, dispatch).then((res) => {
+      requestPost(
+        "formasPagosRezagados/GetComisionesRezagados",
+        data,
+        dispatch
+      ).then((res) => {
         if (res.code === 0) {
           let data = res.data;
           setPendienteFormaPago(data.pendienteFormaPago);
@@ -185,10 +191,15 @@ const useFormaPagoRezagado = () => {
   };
 
   async function listarTiposPagos(ciSeleccionado) {
-    let respuesta = await Actions.listarFormaPagos(
-      userName,
-      ciSeleccionado,
-      idCiclo,
+    const cicloObjectSelected = ciclos.find((item) => item.idCiclo === idCiclo);
+    let respuesta = await requestPost(
+      "/formasPagosRezagados/GetListarFormaPagos",
+      {
+        usuarioLogin: userName,
+        carnet: ciSeleccionado,
+        idCiclo: idCiclo,
+        comisionId: cicloObjectSelected.idComision,
+      },
       dispatch
     );
     if (respuesta && respuesta.code == 0) {
@@ -213,12 +224,21 @@ const useFormaPagoRezagado = () => {
 
   async function funcionConfirmarTipoPago() {
     if (idcomisionDetalleSelect != 0) {
-      let response = await Actions.aplicarFormaPago(
-        userName,
-        idcomisionDetalleSelect,
-        idtipoPagoSelect,
-        idUsuario,
-        idCiclo,
+      const cicloObjectSelected = ciclos.find(
+        (item) => item.idCiclo === idCiclo
+      );
+      let body = {
+        usuarioLogin: userName,
+        idComisionDetalle: parseInt(idcomisionDetalleSelect),
+        idtipoPago: parseInt(idtipoPagoSelect),
+        idUsuario: idUsuario,
+        idCiclo: idCiclo,
+        comisionId: cicloObjectSelected.idComision,
+      };
+
+      let response = await requestPost(
+        "/formasPagosRezagados/aplicarMetodoPagoComision",
+        body,
         dispatch
       );
       if (response && response.code == 0) {
@@ -286,10 +306,15 @@ const useFormaPagoRezagado = () => {
     autorizadores: [],
   });
   async function ApiVerificarAutorizador(user, cicloId, idUser, dispatch) {
-    let respuesta = await Actions.VerificarAutorizadorComision(
-      user,
-      cicloId,
-      idUser,
+    const cicloObjectSelected = ciclos.find((item) => item.idCiclo === cicloId);
+    let respuesta = await requestPost(
+      "/formasPagosRezagados/VerificarAutorizadorPorComision",
+      {
+        usuarioLogin: user,
+        idCiclo: cicloId,
+        idComision: cicloObjectSelected.idComision,
+        idUsuario: idUser,
+      },
       dispatch
     );
     if (respuesta && respuesta.code == 0) {
@@ -372,12 +397,13 @@ const useFormaPagoRezagado = () => {
   };
   async function ApiVerificarConfirmarFormaPago(userNa, idUser, idCICLO) {
     if (idCICLO && idCICLO !== 0) {
-      let response = await Actions.VerificarCierreFormaPago(
-        userNa,
-        idUser,
-        idCICLO,
-        dispatch
-      );
+      let url = "/formasPagosRezagados/VerificarCierreFormaPago";
+      let body = {
+        usuarioLogin: userName,
+        idUsuario: idUsuario,
+        idCiclo: parseInt(idCiclo),
+      };
+      let response = await requestPost(url, body, dispatch);
 
       if (response && response.code == 0) {
         let data = response.data;
@@ -406,12 +432,13 @@ const useFormaPagoRezagado = () => {
 
   async function ApiCerrarFormaDePago(userNa, idUser, idCICLO) {
     if (idCICLO && idCICLO !== 0) {
-      let response = await Actions.CerrarFormaPago(
-        userNa,
-        idUser,
-        idCICLO,
-        dispatch
-      );
+      let url = "/formasPagosRezagados/CerrarFormaDePago";
+      let body = {
+        usuarioLogin: userName,
+        idUsuario: idUsuario,
+        idCiclo: parseInt(idCiclo),
+      };
+      let response = await requestPost(url, body, dispatch);
 
       if (response && response.code == 0) {
         setOpenCierrePagoModal(false); //cierra el modal
