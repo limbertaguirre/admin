@@ -133,12 +133,24 @@ const PagoIncentivo = (props)=> {
         console.log(response)
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
+        if(response.code === 0 ){
+            response.data.map((item,index) =>{            
+                let newDatosExcel = [...datosExcel]
+                newDatosExcel[index].estadoFila = 0
+                setDatosExcel(newDatosExcel)
+          });
+        }
+
         if(response.code === 1 ){
           setMensajeErrorModal(response.message)
             response.data.map((item,index) =>{
               if(item.observada === true){
                 let newDatosExcel = [...datosExcel]
                 newDatosExcel[index].estadoFila = FILA_OBSERVADA
+                setDatosExcel(newDatosExcel)
+              }else{
+                let newDatosExcel = [...datosExcel]
+                newDatosExcel[index].estadoFila = 0
                 setDatosExcel(newDatosExcel)
               }
             })
