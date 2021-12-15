@@ -156,5 +156,20 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+		[HttpPost]
+		public ActionResult BuscarComisionCarnetFormaPago([FromBody] BuscarInputModel param)
+		{
+			try
+			{
+				Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+				return Ok(Service.ListarComisionesFormaPagoPorCarnet(param));
+			}
+			catch
+			{
+				Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+				var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+				return Ok(Result);
+			}
+		}
     }
 }

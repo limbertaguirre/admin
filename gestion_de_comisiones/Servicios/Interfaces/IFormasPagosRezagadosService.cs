@@ -1,4 +1,5 @@
 ﻿using System;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 
@@ -14,5 +15,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object CerrarFormaDePago(CierreformaPagoInput param);
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
         public object ConfirmarAutorizacionPagos(ConfirmarAutorizacionParam param);
+        public object ListarComisionesFormaPagoPorCarnet(BuscarInputModel param);
     }
 }

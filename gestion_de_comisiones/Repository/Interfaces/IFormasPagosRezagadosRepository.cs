@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.MultinivelModel;
@@ -17,5 +18,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public bool CerrarFormaDePago(CierreformaPagoInput param);
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param);
         public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param);
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListFormaPago(BuscarInputModel param);
     }
 }
