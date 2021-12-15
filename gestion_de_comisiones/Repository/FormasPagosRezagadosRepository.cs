@@ -466,10 +466,12 @@ namespace gestion_de_comisiones.Repository
                 if (autoriza != null)
                 {
                     autorizados = ObtenerAutorizadores(autoriza.IdUsuarioAutorizacion, idTipoAutorizacionFormaPago, param.comisionId, param.idCiclo, param.usuarioLogin);
-                    Autorizador addObjAutorizador = new Autorizador();
-                    addObjAutorizador.nombre = autoriza.Nombres;
-                    addObjAutorizador.apellido = autoriza.Apellidos;
-                    addObjAutorizador.area = autoriza.DescripcionArea;
+                    Autorizador addObjAutorizador = new Autorizador
+                    {
+                        nombre = autoriza.Nombres,
+                        apellido = autoriza.Apellidos,
+                        area = autoriza.DescripcionArea
+                    };
                     var confirmacionAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdEstadoAutorizacionComision == 0 && x.IdUsuarioAutorizacion == autoriza.IdUsuarioAutorizacion && x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId).FirstOrDefault();
                     if (confirmacionAutorizacion != null)
                     {
@@ -549,6 +551,36 @@ namespace gestion_de_comisiones.Repository
                 return obj;
             }
 
+        }
+
+        public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param)
+        {
+            try
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ConfirmarAutorizacion() ");
+                int estadoAutorizacionComision = 0; //aprobado
+                var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario).FirstOrDefault();
+                var verificarAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.idComision && x.IdUsuario == autorizado.IdUsuario && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).FirstOrDefault();
+                if (verificarAutorizacion == null)
+                {                    
+                    AutorizacionComision obj = new AutorizacionComision();
+                    obj.IdComision = param.idComision;
+                    obj.IdUsuarioAutorizacion = autorizado.IdUsuarioAutorizacion;
+                    obj.IdEstadoAutorizacionComision = estadoAutorizacionComision;
+                    obj.Descripcion = "";
+                    obj.IdUsuarioModificacion = param.idUsuario;
+                    obj.FechaCreacion = DateTime.Now;
+                    obj.FechaActualizacion = DateTime.Now;
+                    ContextMulti.AutorizacionComisions.Add(obj);
+                    ContextMulti.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
+                return false;
+            }
         }
     }
 }

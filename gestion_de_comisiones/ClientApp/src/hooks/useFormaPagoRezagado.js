@@ -312,7 +312,7 @@ const useFormaPagoRezagado = () => {
       {
         usuarioLogin: user,
         idCiclo: cicloId,
-        idComision: cicloObjectSelected.idComision,
+        comisionId: cicloObjectSelected.idComision,
         idUsuario: idUser,
       },
       dispatch
