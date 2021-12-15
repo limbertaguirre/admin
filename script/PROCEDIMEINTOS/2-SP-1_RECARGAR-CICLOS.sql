@@ -22,7 +22,7 @@ BEGIN TRANSACTION;
    DECLARE @ESTADOitem INT;
    DECLARE @ListaCiclos as table( lciclo_id  INT, snombre VARCHAR (100), dtfechainicio datetime, dtfechafin datetime, lestado int);
 
-	insert into @ListaCiclos SELECT  * FROM OPENQUERY( [10.2.10.222], 'select lciclo_id,snombre, dtfechainicio, dtfechafin, lestado  from grdsion.administracionciclo');   
+	insert into @ListaCiclos SELECT  * FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select lciclo_id,snombre, dtfechainicio, dtfechafin, lestado  from grdsion.administracionciclo');   
 	
 			DECLARE CICLO_CURSOR CURSOR FOR 
 			Select lciclo_id, snombre, dtfechainicio,dtfechafin, lestado from @ListaCiclos
