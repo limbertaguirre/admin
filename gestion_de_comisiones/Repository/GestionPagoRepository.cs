@@ -29,13 +29,13 @@ namespace gestion_de_comisiones.Repository
         {
             this.ContextMulti = multinivelDbContext;
             this.Logger = logger;
-           
+
             this.EnvioCorreoService = envioCorreoService;
         }
         public GestionPagoRepository()
         {
 
-        }        
+        }
         public object GetCiclos(string usuario, int idEstadoComision, int idTipoComisionPagoComision)
         {
             try
@@ -63,7 +63,7 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogInformation($" usuario: {usuario}, idEstadoComision: {idEstadoComision} getCiclos() ");
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision== comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision ).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -84,10 +84,11 @@ namespace gestion_de_comisiones.Repository
 
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
-                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();               
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 foreach (var item in LisFormaPagos)
                 {
-                    if (ListComisiones != null) {
+                    if (ListComisiones != null)
+                    {
                         FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
                         obj.idTipoPago = item.IdTipoPago;
                         obj.nombre = item.Nombre;
@@ -98,7 +99,9 @@ namespace gestion_de_comisiones.Repository
                     }
                 }
                 return list;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetFiltroComisionesPorFormaPago() mensaje : {ex}");
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
                 return list;
@@ -115,10 +118,12 @@ namespace gestion_de_comisiones.Repository
                 if (param.nombreCriterio != "")
                 {
                     var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision ).ToList();
-                    var lista = ListComisiones.Where(x => x.IdTipoPago !=0 &&  x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == idTipoComisionPagoComision && x.IdEstadoComision == idEstadoComision).ToList();
+                    var lista = ListComisiones.Where(x => x.IdTipoPago != 0 && x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                     return lista;
-                } else {
+                }
+                else
+                {
                     return list;
                 }
             }
@@ -192,7 +197,7 @@ namespace gestion_de_comisiones.Repository
                     return false;
                 }
 
-               
+
             }
             catch (Exception ex)
             {
@@ -206,16 +211,16 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                RespuestaSionPayModel model = new RespuestaSionPayModel();              
+                RespuestaSionPayModel model = new RespuestaSionPayModel();
                 Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarPagoSionPayCiclo() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");     
-                    var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision  && x.IdEstadoComision == idEstadoComision ).ToList();
-                    model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false ).Count();
-                    model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
-                    model.CodigoRespuesta = 1; //valor positivo
-                    Logger.LogWarning($" usuario: {param.usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
-                return model;              
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{idEstadoComision}");
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision).ToList();
+                model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Count();
+                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPagoSionPay && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.CodigoRespuesta = 1; //valor positivo
+                Logger.LogWarning($" usuario: {param.usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
+                return model;
             }
             catch (Exception ex)
             {
@@ -249,16 +254,16 @@ namespace gestion_de_comisiones.Repository
                       }
                  )
                 .Where(x => x.usuario == param.usuarioLogin && x.idTipoPago == idTipoPagoTransferencia)
-                .Select(u => new 
+                .Select(u => new
                 {
                     u.empresaId
                 })
                 .ToList();
 
                 int[] ids = new int[empresasIds.Count];
-                for(int i = 0; i < empresasIds.Count; i++)
+                for (int i = 0; i < empresasIds.Count; i++)
                 {
-                    ids[i] = (int) empresasIds[i].empresaId;
+                    ids[i] = (int)empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
                     .Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == idTipoComision && x.IdTipoPago == idTipoPagoTransferencia && x.IdEstadoComision == IdEstadoComisionCerradoFormaPago && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
@@ -283,7 +288,8 @@ namespace gestion_de_comisiones.Repository
         public object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body)
         {
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
-            try {
+            try
+            {
                 Logger.LogWarning($" usuario: {body.user} inicio el repository handleDownloadFileEmpresas() ");
                 Logger.LogWarning($" usuario: {body.user} handleDownloadFileEmpresas parametros: idciclo: {body.cicloId}, fecha: {body.date.ToString("yyyyMMdd")}");
 
@@ -349,7 +355,7 @@ namespace gestion_de_comisiones.Repository
                     .ToList();
 
                 Logger.LogWarning($"handleDownloadFileEmpresas Count: {info.Count}");
-                if(info.Count == 0)
+                if (info.Count == 0)
                 {
 
                 }
@@ -371,7 +377,7 @@ namespace gestion_de_comisiones.Repository
                     range.AutoFilter = true;
                     ws.AutoFilter.ApplyFilter();
                     NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands; ;
-                    CultureInfo provider = new CultureInfo("is-IS");                    
+                    CultureInfo provider = new CultureInfo("is-IS");
 
                     for (int i = 2; i <= info.Count + 1; i++)
                     {
@@ -386,8 +392,8 @@ namespace gestion_de_comisiones.Repository
                         ws.Cells[i, 4].AutoFitColumns(1);
                         ws.Cells[i, 5].Value = Convert.ToString(f.DocDeIdentidad);
                         ws.Cells[i, 5].AutoFitColumns(1);
-                        double dd = (double) f.ImportePorEmpresa;
-                        string dd2 = dd.ToString("N2", new CultureInfo("is-IS"));                       
+                        double dd = (double)f.ImportePorEmpresa;
+                        string dd2 = dd.ToString("N2", new CultureInfo("is-IS"));
                         ws.Cells[i, 6].Value = Decimal.Parse(dd2, style, provider);
                         //ws.Cells[i, 7].Value = body.date.ToString("dd/MM/yyyy");
                         ws.Cells[i, 7].Value = f.FechaDePago;
@@ -426,7 +432,8 @@ namespace gestion_de_comisiones.Repository
 
         public bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
         {
-            try {
+            try
+            {
                 Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
@@ -468,12 +475,14 @@ namespace gestion_de_comisiones.Repository
                 if (returnValue == 0)
                 {
                     return true;
-                } else
+                }
+                else
                 {
                     return false;
                 }
                 //return 0;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
                 List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
@@ -528,7 +537,8 @@ namespace gestion_de_comisiones.Repository
                 {
                     Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 1. No hay pagos de transferencias pendientes de pago y se registro en tabla detalle forma de pagos.");
                     recargarCicloActual = true;
-                } else if (returnValue == 2)
+                }
+                else if (returnValue == 2)
                 {
                     Logger.LogInformation($" result: {result}, repository handleVerificarPagosTransferenciasTodos(): SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_CONFIRMADAS returnValue 2. Aun hay pagos de transferencias pendientes de pago.");
                 }
@@ -562,7 +572,8 @@ namespace gestion_de_comisiones.Repository
 
                 var empresa = (ContextMulti.Empresas
                     .Where(x => x.IdEmpresa == body.empresaId)
-                    .Select(u => new {
+                    .Select(u => new
+                    {
                         u.Nombre
                     }).FirstOrDefault()).Nombre;
 
@@ -579,19 +590,20 @@ namespace gestion_de_comisiones.Repository
                         }
                     )
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoComision == tipoPagoComisiones)
-                    .Select(u => new {
+                    .Select(u => new
+                    {
                         u.Nombre
                     }).FirstOrDefault()).Nombre;
 
                 VerificarPagosTransferenciasOutput o = new VerificarPagosTransferenciasOutput();
 
-                double ddd = (double) sumaTotalConfirmados;
+                double ddd = (double)sumaTotalConfirmados;
                 string sumaTotalConfirmadosSS = ddd.ToString("N2", new CultureInfo("is-IS"));
 
-                double dd = (double) sumaTotalPendientes;
+                double dd = (double)sumaTotalPendientes;
                 string sumaTotalPendientesSS = dd.ToString("N2", new CultureInfo("is-IS"));
 
-                double d = (double) sumaTotalRechazados;
+                double d = (double)sumaTotalRechazados;
                 string sumaTotalRechazadosSS = d.ToString("N2", new CultureInfo("is-IS"));
 
                 if (cantidadPendientes > 0)
@@ -601,7 +613,8 @@ namespace gestion_de_comisiones.Repository
                     o.empresa = empresa;
                     o.totalPendientes = cantidadPendientes;
                     o.montoTotalPendientes = sumaTotalPendientesSS;
-                } else if(cantidadPendientes == 0 && (cantidadRechazados > 0 || cantidadConfirmados > 0))
+                }
+                else if (cantidadPendientes == 0 && (cantidadRechazados > 0 || cantidadConfirmados > 0))
                 {
                     o.type = VerificarPagosTransferenciasOutput.CONFIRMADOS_O_RECHAZADOS;
                     o.ciclo = ciclo;
@@ -610,7 +623,7 @@ namespace gestion_de_comisiones.Repository
                     o.totalRechazados = cantidadRechazados;
                     o.totalEnviadosConfirmar = cantidadRechazados + cantidadConfirmados;
                     o.montoTotalConfirmados = sumaTotalConfirmadosSS;
-                    o.montoTotalRechazados = sumaTotalRechazadosSS;                    
+                    o.montoTotalRechazados = sumaTotalRechazadosSS;
                 }
                 o.descargarExcel = fechaPagosExcel?.FechaDePago?.ToString();
                 o.recargarCicloActual = recargarCicloActual;
@@ -620,10 +633,12 @@ namespace gestion_de_comisiones.Repository
                 {
                     // No se confirmo TODAS las transacciones para esta empresa en este ciclo
                     return postEvent(GestionPagosEvent.EXISTEN_PENDIENTES, o, $"Hay pendientes para confirmar el pago por transferencia de este ciclo ({ciclo}) para la empresa {empresa}.");
-                } else if (cantidadRechazados > 0)
+                }
+                else if (cantidadRechazados > 0)
                 {
                     return postEvent(GestionPagosEvent.EXISTEN_RECHAZADOS, o, $"Hay rechazados en este ciclo ({ciclo}) para la empresa {empresa}.");
-                } else
+                }
+                else
                 {
                     return postEvent(GestionPagosEvent.NO_EXISTEN_PENDIENTES_NI_RECHAZADOS, o, $"Se confirmaron todos los pagos por transferencia de este ciclo ({ciclo}) para la empresa {empresa}.");
                 }
@@ -656,11 +671,11 @@ namespace gestion_de_comisiones.Repository
         {
             GestionPagosEvent e = new GestionPagosEvent();
             e.eventType = type;
-            if(file != null)
+            if (file != null)
             {
                 e.file = file;
             }
-            if(errorMessage != null)
+            if (errorMessage != null)
             {
                 e.message = errorMessage;
             }
@@ -703,14 +718,14 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferencias(): idciclo {body.cicloId}  ");
-                
+
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
                     .Select(u => new
                     {
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
-               
+
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio confirmarTransferidosSeleccionados en repository handleConfirmarPagosTransferencias()");
                 if (!confirmarTransferidosSeleccionados(body, usuarioId))
                 {
@@ -776,7 +791,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3].Value}");
                 Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4].Value}");
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @EstadoComision, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
-                int returnValue = (int) parameterReturn[0].Value;
+                int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
@@ -785,8 +800,8 @@ namespace gestion_de_comisiones.Repository
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
                 }
-                
-                
+
+
                 List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdComision == returnValue && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
                             x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
@@ -803,7 +818,7 @@ namespace gestion_de_comisiones.Repository
                 return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
             catch (Exception ex)
-            {                
+            {
                 Logger.LogWarning($" usuario: {body.user} CATCH handleConfirmarPagosTransferencias() mensaje : {ex}");
                 dbcontextTransaction.Rollback();
                 return postEvent(GestionPagosEvent.ERROR, $"NO se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
@@ -823,7 +838,8 @@ namespace gestion_de_comisiones.Repository
 
         private bool confirmarTransferidosSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId)
         {
-            try {
+            try
+            {
                 Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosSeleccionados() body.confirmados.Count: {body.confirmados.Count}");
                 for (int i = 0; i < body.confirmados.Count; i++)
                 {
@@ -867,25 +883,27 @@ namespace gestion_de_comisiones.Repository
                     if (returnValue == 1)
                     {
                         return false;
-                    }                
+                    }
                 }
                 return true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} CATCH confirmarTransferidosSeleccionados(): {ex}");
                 return false;
             }
         }
-       
+
         private bool confirmarTransferidosNoSeleccionados(ConfirmarPagosTransferenciasInput body, dynamic usuarioId, List<VwObtenerInfoExcelFormatoBanco> l)
         {
-            try {
-            Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");                                
-            for (int i = 0; i < l.Count; i++)
+            try
             {
-                VwObtenerInfoExcelFormatoBanco o = l[i];
-                Logger.LogInformation($" repository confirmarTransferidosNoSeleccionados() para RECHAZAR IdComisionDetalleEmpresa: {o.IdComisionDetalleEmpresa}");
-                var parameterReturn = new SqlParameter[] {
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository confirmarTransferidosNoSeleccionados() : {l.Count}");
+                for (int i = 0; i < l.Count; i++)
+                {
+                    VwObtenerInfoExcelFormatoBanco o = l[i];
+                    Logger.LogInformation($" repository confirmarTransferidosNoSeleccionados() para RECHAZAR IdComisionDetalleEmpresa: {o.IdComisionDetalleEmpresa}");
+                    var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
                                             SqlDbType = System.Data.SqlDbType.Int,
@@ -917,18 +935,19 @@ namespace gestion_de_comisiones.Repository
                               }
                            };
 
-                //Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
-                int returnValue = (int)parameterReturn[0].Value;
+                    //Logger.LogInformation($" result: {body.confirmados[i]}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS @ComisionDetalleEmpresaId {body.confirmados[i]}  ");
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS] @CicloId,  @EmpresaId, @UsuarioId, @ComisionDetalleEmpresaId", parameterReturn);
+                    int returnValue = (int)parameterReturn[0].Value;
 
-                Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS returnValue {returnValue} ");
-                if (returnValue == 1)
-                {
-                    return false;
+                    Logger.LogInformation($" result: {result}, inicio repository confirmarTransferidosNoSeleccionados():  SP_RECHAZAR_TRANSFERENCIAS_NO_SELECCIONADAS returnValue {returnValue} ");
+                    if (returnValue == 1)
+                    {
+                        return false;
+                    }
                 }
-            }
                 return true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {body.user} CATCH confirmarTransferidosNoSeleccionados(): {ex}");
                 return false;
@@ -959,14 +978,17 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + idCiclo + " ");
                 int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
                 var cantidad = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
-                if (cantidad > 0){
+                if (cantidad > 0)
+                {
                     return true;
                 }
-                else{
+                else
+                {
                     return false;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.LogWarning($" usuario: {usuarioLogin} error catch ConfirmarAutorizacion() mensaje : {ex}");
                 return false;
             }
@@ -1003,13 +1025,13 @@ namespace gestion_de_comisiones.Repository
                 RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel();
                 Logger.LogInformation($" usuario: {usuarioLogin} inicio el cierre de transaccion repository VerificarTransaccionRechazadoMontoCero() ");
                 Logger.LogInformation($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {idTipoComisionPagoComision}");
-                Logger.LogInformation($" usuario: {usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");               
+                Logger.LogInformation($" usuario: {usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == idEstadoComision && x.IdEstadoListadoFormaPago == idEstadoDEtalleListadoFormaPago).ToList();
 
                 //cantidad debe volver monto cero ya que fueron resagados las transferencias
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.MontoNeto > 0).Count();
-                if(model.Cantidad > 0)
+                if (model.Cantidad > 0)
                 {
                     Logger.LogInformation($" usuario: {usuarioLogin} HUBO transacciones rechazados con monto mayor a cero verifique");
                     Logger.LogInformation($" usuario: {usuarioLogin} exiten rechazado con monto mayor a cero :  {JsonConvert.SerializeObject(ListComisiones)} ");
@@ -1099,6 +1121,29 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogError($" usuario: {param.user} error catch BuscarFreelancerPagosTransferencias() mensaje : {ex}");
                 return false;
+            }
+        }
+
+        public List<RespuestaDetalleComision> ObtenerDetalleComision(ParametrosDetalleComision param)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {param.Usuario} -  inicio el ObtenerDetalleComision() ");
+                var resultado = ContextMulti.ComisionDetalleEmpresas.Join(ContextMulti.Empresas, ComisionDetalleEmpresa => ComisionDetalleEmpresa.IdEmpresa, Empresa => Empresa.IdEmpresa,
+                    (ComisionDetalleEmpresa, Empresa) =>
+                        new RespuestaDetalleComision
+                        {
+                            NombreEmprea = Empresa.Nombre,
+                            MontoComision = ComisionDetalleEmpresa.MontoNeto,
+                            IdDetalleComision = ComisionDetalleEmpresa.IdComisionDetalle,
+                            EstaPagado = (ComisionDetalleEmpresa.Estado == TipoPago.ESTADO_COMISION_DETALLE_EMPRESA_CONFIRMADO || ComisionDetalleEmpresa.IdMovimiento > 0) ? true : false
+                        }).Where(x => x.IdDetalleComision == param.IdDetalleComision).ToList();
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($" usuario: {param.Usuario} error catch BuscarFreelancerPagosTransferencias() mensaje : {ex}");
+                return null;
             }
         }
     }
