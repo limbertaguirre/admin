@@ -20,5 +20,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public bool ConfirmarAutorizacion(ConfirmarAutorizacionParam param);
         public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListFormaPago(BuscarInputModel param);
         public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInputModel param);
+        public object GetComisionesPorFormaPago(FormaPagosDisponiblesInputModel param);
     }
 }
