@@ -278,6 +278,7 @@ namespace gestion_de_comisiones.Controllers
         [HttpPost]
         public ActionResult ObtenerDetalleComisionEmpresa([FromBody] ParametrosDetalleComision param)
         {
+            Logger.LogInformation($"usuario : {param.Usuario} inicio el controller ObtenerDetalleComisionEmpresa() Parametros: IdDetalleComision:{param.IdDetalleComision}");
             return Ok(new GenericDataJson<List<RespuestaDetalleComision>> { Code = 0, Message = "Ejecutado sin error.", Data = Service.ObtenerDetalleComision(param) });
         }
     }
