@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-CREATE PROCEDURE [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]
+ALTER PROCEDURE [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]
     @comision_id int,
     @id_Ciclo int,
     @id_usuario int
@@ -19,7 +19,7 @@ BEGIN TRY
 
    DECLARE @ID_USUARIO_LOGUEADO INT;
    DECLARE @TIPO_PAGO_NO_TIENE_FORMA_PAGO INT;
-   DECLARE @ID_TIPO_COMISION_PAGOCOMISION INT;
+   DECLARE @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO INT;
    DECLARE @ID_CICLO_VARI INT;
    DECLARE @ESTADO_COMISION_DETALLE_SI_FACTURA INT;
    DECLARE @ESTADO_COMISION_DETALLE_NO_PRESENTA_FACTURA INT;
@@ -32,24 +32,24 @@ BEGIN TRY
    DECLARE @ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE INT;
 
    SET @ID_USUARIO_LOGUEADO= @id_usuario; 
-   SET @ID_TIPO_COMISION_PAGOCOMISION=1;               --//GP_TIPO_COMISION
-   set @TIPO_COMISION_PAGO_REZAGADO_TABLE=2;           --//GP_TIPO_COMISION  
-   SET @TIPO_PAGO_NO_TIENE_FORMA_PAGO= 0;  --cuando no esta registrado en la forma de pago
+   SET @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO = 2;               --//GP_TIPO_COMISION
+   set @TIPO_COMISION_PAGO_REZAGADO_TABLE = 2;           --//GP_TIPO_COMISION  
+   SET @TIPO_PAGO_NO_TIENE_FORMA_PAGO = 0;  --cuando no esta registrado en la forma de pago
    SET @ID_CICLO_VARI=@id_Ciclo; 
-   SET @ESTADO_COMISION_DETALLE_SI_FACTURA=2;          --//GP_ESTADO_COMISION_DETALLE
-   SET @ESTADO_COMISION_DETALLE_NO_PRESENTA_FACTURA=6; --// GP_ESTADO_COMISION_DETALLE
-   SET @ESTADO_DESAHABILITADO=0;
-   SET @ESTADO_HABILITADO=1;
+   SET @ESTADO_COMISION_DETALLE_SI_FACTURA = 2;          --//GP_ESTADO_COMISION_DETALLE
+   SET @ESTADO_COMISION_DETALLE_NO_PRESENTA_FACTURA = 6; --// GP_ESTADO_COMISION_DETALLE
+   SET @ESTADO_DESAHABILITADO = 0;
+   SET @ESTADO_HABILITADO = 1;
    SET @ESTADO_COMISION_CERRADO_FORMA_PAGO_TABLE= 16;  -- //GP_ESTADO_COMISION
-   SET @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE= 9; -- //GP_ESTADO_COMISION
+   SET @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE = 9; -- //GP_ESTADO_COMISION
    SET @ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE=8;
 
-   SET @NRO_SIN_FORMA_DE_PAGO=0
+   SET @NRO_SIN_FORMA_DE_PAGO = 0
 
           --estado 2 si facturo 6 no presenta factura
-        select @NRO_SIN_FORMA_DE_PAGO=COUNT(idComisionDetalle) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO and vwF.idComision = @comision_id
-          
-		INSERT INTO @DetallecomisionesSinFormaPagos  select idComisionDetalle, idFicha, ci from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO
+        select @NRO_SIN_FORMA_DE_PAGO=COUNT(idComisionDetalle) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO and vwF.idComision = @comision_id
+
+		INSERT INTO @DetallecomisionesSinFormaPagos  select idComisionDetalle, idFicha, ci from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO
 		  IF @NRO_SIN_FORMA_DE_PAGO > 0
 		  BEGIN
 		      ---obtener idcomision actual
@@ -60,12 +60,12 @@ BEGIN TRY
 
 				   select @ID_COMISION_ACTUAL = CO.id_comision  from BDMultinivel.dbo.GP_COMISION CO
 				   inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I COE ON COE.id_comision = CO.id_comision
-				   where id_ciclo= @ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION and id_estado_comision=@ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE and CO.id_comision = @comision_id
+				   where id_ciclo= @ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_estado_comision=@ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE and CO.id_comision = @comision_id
 
 				   --obtener totales
-						select @TOTAL_NETO_COMISION_NUEVO_RECHAZADO = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=1 and id_tipo_pago=0 --total los resagados forma de pagos
-						select @TOTAL_NETO_COMISION_ACTUAL = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where  vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=1 and id_tipo_pago != 0 --total los que tienen pagado
-				   
+						select @TOTAL_NETO_COMISION_NUEVO_RECHAZADO = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago = 0 --total los resagados forma de pagos
+						select @TOTAL_NETO_COMISION_ACTUAL = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where  vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago != 0 --total los que tienen pagado
+                
 				   -- actualizar el monto neto de comision actual 				   
 					   UPDATE BDMultinivel.dbo.GP_COMISION  
 					   SET monto_total_neto =@TOTAL_NETO_COMISION_ACTUAL  where id_comision=@ID_COMISION_ACTUAL 
@@ -75,7 +75,7 @@ BEGIN TRY
 			  DECLARE @IDCOMISION_SCOPE INT;
 			  SET @IDCOMISION_SCOPE = 0;
 			  DECLARE @monto_total_bruto DECIMAL(18,2); DECLARE @porcentaje_retencion DECIMAL(18,2); DECLARE @monto_total_retencion DECIMAL(18,2); DECLARE @monto_total_aplicacion DECIMAL(18,2); DECLARE @monto_total_neto DECIMAL(18,2); 
-			  select @monto_total_bruto= monto_total_bruto,@porcentaje_retencion=porcentaje_retencion, @monto_total_retencion=monto_total_retencion,@monto_total_aplicacion=monto_total_aplicacion, @monto_total_neto=monto_total_neto  from BDMultinivel.dbo.GP_COMISION co where  co.id_ciclo=@ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_PAGOCOMISION
+			  select @monto_total_bruto= monto_total_bruto,@porcentaje_retencion=porcentaje_retencion, @monto_total_retencion=monto_total_retencion,@monto_total_aplicacion=monto_total_aplicacion, @monto_total_neto=monto_total_neto  from BDMultinivel.dbo.GP_COMISION co where  co.id_ciclo=@ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO
 			  ----------------------------------------------------------------------------------
 			  --actualizar la comision estado desactiva y agregar a estado cerrado forma de pago
 			  declare @id_comision_estado_detalle int; set @id_comision_estado_detalle= 0;
@@ -83,7 +83,7 @@ BEGIN TRY
 
 			  select @id_comision_estado_detalle= GCO.id_comision_estado_comision_i, @id_comision_selec= GPCO.id_comision from BDMultinivel.dbo.GP_COMISION GPCO
 			  inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GCO on GCO.id_comision = GPCO.id_comision
-			  where GPCO.id_ciclo = @ID_CICLO_VARI and GPCO.id_tipo_comision= @ID_TIPO_COMISION_PAGOCOMISION and GPCO.id_comision = @comision_id
+			  where GPCO.id_ciclo = @ID_CICLO_VARI and GPCO.id_tipo_comision= @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and GPCO.id_comision = @comision_id
 
 			    IF @id_comision_estado_detalle > 0
 				BEGIN
@@ -115,7 +115,7 @@ BEGIN TRY
 					GETDATE(),  --fecha_creacion,
 					GETDATE()  --fecha_actualizacion
 				  );
-				  SET @IDCOMISION_SCOPE = SCOPE_IDENTITY ();
+				  SET @IDCOMISION_SCOPE = (select IDENT_CURRENT('GP_COMISION'));
 				  --agregar detalle de estado comision rezagado  en pendiente de forma de pago
 					  INSERT INTO BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I(habilitado,id_comision, id_estado_comision, id_usuario, fecha_creacion, fecha_actualizacion )
 						VALUES(
@@ -160,12 +160,11 @@ BEGIN TRY
 
 				-------------------------------------------------------------------------------------------------------------
 		  END
-		    ELSE
+		  ELSE
 		  BEGIN		  
 			     COMMIT TRANSACTION;		    
 		         return 1
 		  END
-
 			 COMMIT TRANSACTION;		    
 			 return 2           
 

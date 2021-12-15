@@ -29,6 +29,7 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import Chip from "@material-ui/core/Chip";
 import ImageIconPagos from "../../../../components/ImageIconPagos";
 import * as utilidad from "../../../../lib/utility";
+import DetalleComision from '../../../pagoComisiones/DetalleComision';
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",
@@ -396,6 +397,7 @@ const GridPagos = ({
                               </>
                             )}
                           </TableCell>
+                          <TableCell align="center"><DetalleComision idComisionDetalle={row.idComisionDetalle} nombreFreelance={row.nombre} docId={row.ci}></DetalleComision></TableCell>
                         </TableRow>
                       ))}
 

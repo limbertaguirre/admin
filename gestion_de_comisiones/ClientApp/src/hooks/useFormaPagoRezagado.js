@@ -408,10 +408,14 @@ const useFormaPagoRezagado = () => {
   async function ApiVerificarConfirmarFormaPago(userNa, idUser, idCICLO) {
     if (idCICLO && idCICLO !== 0) {
       let url = "/formasPagosRezagados/VerificarCierreFormaPago";
+      const cicloObjectSelected = ciclos.find(
+        (item) => item.idCiclo === idCiclo
+      );
       let body = {
         usuarioLogin: userName,
         idUsuario: idUsuario,
         idCiclo: parseInt(idCiclo),
+        comisionId: cicloObjectSelected.idComision
       };
       let response = await requestPost(url, body, dispatch);
 

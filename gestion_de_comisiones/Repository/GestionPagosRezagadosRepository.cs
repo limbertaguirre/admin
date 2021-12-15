@@ -44,8 +44,8 @@ namespace gestion_de_comisiones.Repository
                 using (var command = ContextMulti.Database.GetDbConnection().CreateCommand())
                 {
                     command.CommandText = $"select case COUNT(r.id_ciclo) " +
-                                        "when 1 then(select rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo) " +
-                                        "when 2 then(select top 1 rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo) end as id_comision, "+
+                                        $"when 1 then(select rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}) " +
+                                        $"when 2 then(select top 1 rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}) end as id_comision, " +
                                         "r.id_ciclo from BDMultinivel.dbo.VwObtenerCiclosRezagados r " +
                                         $"where r.id_estado_comision = {ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS} and r.id_tipo_comision = {TIPO_COMISION_REZAGADOS} " +
                                         "group by r.id_ciclo";
