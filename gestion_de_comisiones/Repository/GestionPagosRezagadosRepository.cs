@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 using gestion_de_comisiones.MultinivelModel;
@@ -1132,6 +1133,40 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {param.UsuarioLogin} error catch PagarSionPayComision() en pagos mensaje : {ex.Message}");
                 dbcontextTransaction.Rollback();
                 return false;
+            }
+        }
+
+        public object GetFiltroComisionesPorFormaPago(FiltroFormaPagosInput param)
+        {
+            try
+            {
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetFiltroComisionesPorFormaPago() ");
+                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+
+                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).ToList();
+                List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
+                foreach (var item in LisFormaPagos)
+                {
+                    if (ListComisiones != null)
+                    {
+                        FormaPagoDisponiblesModel obj = new FormaPagoDisponiblesModel();
+                        obj.idTipoPago = item.IdTipoPago;
+                        obj.nombre = item.Nombre;
+                        obj.icono = item.Icono;
+                        int canti = ListComisiones.Where(x => x.IdTipoPago == item.IdTipoPago).Count();
+                        obj.cantidad = canti;
+                        list.Add(obj);
+                    }
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetFiltroComisionesPorFormaPago() mensaje : {ex}");
+                List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
+                return list;
             }
         }
     }

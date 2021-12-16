@@ -18,5 +18,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
         public object PagarSionPayComisionTodo(PagarSionPayInput param);
+        public object GetFormaPagosDisponibles(FiltroFormaPagosInput param);
     }
 }

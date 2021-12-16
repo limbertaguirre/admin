@@ -21,5 +21,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public RespuestaSionPayModel ValidarCantidadComisionRezagada(PagoRezagadoInput param, int idEstadoComision, int idTipoComision, int idTipoFormaPagoSionPay);
         RespuestaSionPayModel VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
         public bool PagarSionPayComision(PagarSionPayInput param);
+        public object GetFiltroComisionesPorFormaPago(FiltroFormaPagosInput param);
     }
 }

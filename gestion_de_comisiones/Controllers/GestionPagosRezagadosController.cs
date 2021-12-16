@@ -211,5 +211,36 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
+
+        public ActionResult GetFiltroFormaPagosDisponibles([FromBody] FiltroFormaPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller GetFiltroFormaPagosDisponibles()  ");
+                return Ok(Service.GetFormaPagosDisponibles(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  GetFiltroFormaPagosDisponibles() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al obtener los listros de forma de pagos" });
+            }
+        }
+
+        // POST: gestionPagos/BuscarComisionCarnetFormaPago
+        [HttpPost]
+        public ActionResult BuscarComisionCarnetFormaPago([FromBody] BuscarComisionInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+                return Ok(Service.ListarComisionesFormaPagoPorCarnet(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(Result);
+            }
+        }
     }
 }
