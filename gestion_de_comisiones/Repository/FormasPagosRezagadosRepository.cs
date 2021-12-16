@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
@@ -37,7 +38,8 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                Logger.LogInformation($" usuario: {username}, inicio repository FormasPagosRezagadosRepository -> getCiclos() ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> getCiclos() ");
+                Logger.LogInformation($"username: {username}");
                 List<int> cicloRezagadoDoble = new List<int>();
                 using (var command = ContextMulti.Database.GetDbConnection().CreateCommand())
                 {
@@ -88,9 +90,10 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                List<VwObtenercomisione> list = new List<VwObtenercomisione>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository obtenerComisionesPendientes() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo: {param.idCiclo} , idComision: {param.idComision}");                
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetComisionesRezagados() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();                
+
                 int idEstadoDetalleSifacturo = 2; // Si factur[o la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;                
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.idComision && x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
@@ -98,7 +101,7 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch GetComisiones() mensaje : {ex.Message}");
+                Logger.LogWarning($"CATCH FormasPagosRezagadosRepository -> GetComisionesRezagados() mensaje : {ex.Message}");
                 List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
             }
@@ -108,7 +111,8 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                Logger.LogWarning($" usuario: {usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + idCiclo + " ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> VerificarSiExisteAutorizacionFormaPagoCiclo() ");
+                Logger.LogInformation($"usuario: {usuarioLogin}, idCiclo: {idCiclo}, comisionId: {comisionId}");
                 int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
                 var cantidad = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == idCiclo && x.IdComision == comisionId && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
                 if (cantidad > 0)
@@ -133,7 +137,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<TipoPagoInputmodel> newList = new List<TipoPagoInputmodel>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ListarFormaPagos() ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetListarFormaPagos() ");
+                Utils.Utils.ShowValueFields(param, Logger);
                 var tipopagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new TipoPagoInputmodel(p.IdTipoPago, p.Nombre, p.Icono)).ToList();
                 var verifi = ContextMulti.VwVerificarCuentasUsuarios.Where(x => x.Ci == param.carnet).FirstOrDefault();
                 foreach (var list in tipopagos)
@@ -185,9 +190,11 @@ namespace gestion_de_comisiones.Repository
 
         public bool AplicarFormaPago(AplicarMetodoOutput param)
         {
-            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
-            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
 
+            Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> AplicarFormaPago() ");
+            Utils.Utils.ShowValueFields(param, Logger);
+
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
                 bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");
@@ -228,7 +235,9 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 ConfirmarPagoOutPut obj = new ConfirmarPagoOutPut();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} iniciando la funcion VerificarSiExisteAprobacion " + "parametros: " + "idciclo: " + param.idCiclo + " ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> VerificarCierreFormaPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+
                 int tipoAutorizacionFormaPago = 4; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
@@ -251,7 +260,9 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> VerificarCierreFormaPago() ");
+                Logger.LogInformation($"usuarioLogin: {usuarioLogin}, tipoAutorizador: {tipoAutorizador}, comisionId: {comisionId}, idCiclo: {idCiclo}");
+
                 List<Autorizador> list = new List<Autorizador>();
                 var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdTipoAutorizacion == tipoAutorizador && x.Estado == true).ToList();
                 foreach (var iten in autorizado)
@@ -287,7 +298,8 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                Logger.LogWarning($" usuario: {usuarioLogin} inicio el ListarAutorizadoresPorTipoAutorizacion() ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> VerificarAutorizacionPorArea() ");
+                Logger.LogInformation($"usuarioLogin: {usuarioLogin}, lista size: {lista.Count}");
                 List<Autorizador> list = new List<Autorizador>();
                 var autorizado = lista.GroupBy(p => new { p.idArea }).Select(g => new { idArea = g.Key.idArea, cantidad = g.Count() }).ToList();
                 bool habilitado = true;
@@ -305,7 +317,8 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {usuarioLogin} error catch VerificarAutorizacionPorArea() mensaje : {ex}");
+                Logger.LogWarning($"CATCH VerificarAutorizacionPorArea() Message : {ex.Message}");
+                Logger.LogWarning($"CATCH VerificarAutorizacionPorArea() StackTrace : {ex.StackTrace}");
                 return false;
             }
         }
@@ -368,8 +381,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
-                Logger.LogWarning($" usuario: {usuarioLogin} inicio el repository ConsultarCierreInfoFormaPagos() ");
-                Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo} , idEstado:{idEstadoComision}");               
+                Logger.LogWarning($"Inicio el repository ConsultarCierreInfoFormaPagos() ");
+                Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo}, comisionId: {comisionId}, idEstadoComision: {idEstadoComision}, idEstadoDetalleSifacturo: {idEstadoDetalleSifacturo}, idEstadoDetalleNoPresentaFactura: {idEstadoDetalleNoPresentaFactura}");               
 
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comisionId && x.IdEstadoComision == idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
@@ -399,11 +412,13 @@ namespace gestion_de_comisiones.Repository
         }
 
         public bool CerrarFormaDePago(CierreformaPagoInput param)
-        {
-            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el RegistrarDecuentoComision() en repos");
+        {           
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> CerrarFormaDePago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -457,6 +472,9 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> VerificarAutorizadorPorComision() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+
                 int idTipoAutorizacionFormaPago = 4;
                 AutorizadorRespuestaModel obj = new AutorizadorRespuestaModel();
                 List<Autorizador> listAurorizadores = new List<Autorizador>();
@@ -558,7 +576,9 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository ConfirmarAutorizacion() ");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> ConfirmarAutorizacion() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+
                 int estadoAutorizacionComision = 0; //aprobado
                 var autorizado = ContextMulti.VwListarAutorizacionesTipoes.Where(x => x.IdUsuario == param.idUsuario).FirstOrDefault();
                 var verificarAutorizacion = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.idComision && x.IdUsuario == autorizado.IdUsuario && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).FirstOrDefault();
@@ -588,9 +608,10 @@ namespace gestion_de_comisiones.Repository
         {
             try
             {
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetComisionesPorCarnetListFormaPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
                 var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
@@ -611,8 +632,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository FiltrarComisionPagoPorTipoPago() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> FiltrarComisionPagoPorTipoPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoPago == param.idTipoPago).ToList();
                 return ListComisiones;
             }
@@ -629,8 +650,8 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetComisionesPorCarnet() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetComisionesPorFormaPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
 
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;
