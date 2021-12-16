@@ -29,7 +29,8 @@ import PaymentIcon from "@material-ui/icons/Payment";
 import Chip from "@material-ui/core/Chip";
 import ImageIconPagos from "../../../../components/ImageIconPagos";
 import * as utilidad from "../../../../lib/utility";
-import DetalleComision from '../../../pagoComisiones/DetalleComision';
+import DetalleComision from "../../../pagoComisiones/DetalleComision";
+import { requestPost } from "../../../../service/request";
 const StyledMenu = withStyles({
   paper: {
     border: "1px solid #d3d4d5",
@@ -124,6 +125,7 @@ const GridPagos = ({
   selecionarDetalleFrelances,
   seleccionarTipoFiltroBusqueda,
   idCiclo,
+  cicloSeleccionado,
   permisoActualizar,
   permisoCrear,
 }) => {
@@ -223,12 +225,14 @@ const GridPagos = ({
   };
 
   async function ApiListarTiposPagos(event) {
-    let respuesta = await getFiltroFormaPagoDisponibles(
-      userName,
+    let url = "/gestionPagosRezagados/GetFiltroFormaPagosDisponibles";
+    let body = {
+      usuarioLogin: userName,
       idCiclo,
-      dispatch
-    );
-    if (respuesta && respuesta.code == 0) {
+      comisionId: cicloSeleccionado.idComision,
+    };
+    let respuesta = await requestPost(url, body, dispatch);
+    if (respuesta && respuesta.code === 0) {
       setListFormaPago(respuesta.data);
       setAnchorEl(event);
     }
@@ -262,7 +266,7 @@ const GridPagos = ({
                     edge="start"
                     color="inherit"
                     aria-label="close"
-                    onClick={() => null}
+                    onClick={handleOpenFilter}
                   >
                     Filtro <FilterListIcon />
                   </IconButton>
@@ -397,7 +401,13 @@ const GridPagos = ({
                               </>
                             )}
                           </TableCell>
-                          <TableCell align="center"><DetalleComision idComisionDetalle={row.idComisionDetalle} nombreFreelance={row.nombre} docId={row.ci}></DetalleComision></TableCell>
+                          <TableCell align="center">
+                            <DetalleComision
+                              idComisionDetalle={row.idComisionDetalle}
+                              nombreFreelance={row.nombre}
+                              docId={row.ci}
+                            ></DetalleComision>
+                          </TableCell>
                         </TableRow>
                       ))}
 
