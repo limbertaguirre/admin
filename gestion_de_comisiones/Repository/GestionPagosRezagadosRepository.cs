@@ -1169,5 +1169,33 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListPagos(BuscarComisionInput param)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
+                Logger.LogInformation($"Inicio repository GestionPagosRezagadosRepository - GetComisionesPorCarnetListPagos");
+                Utils.Utils.ShowValueFields(param, Logger);
+                
+                if (param.nombreCriterio != "")
+                {
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).ToList();
+                    var lista = ListComisiones.Where(x => x.IdTipoPago != 0 && x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
+                    return lista;
+                }
+                else
+                {
+                    return list;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"CATCH GetComisionesPorCarnetListPagos() Message: {ex.Message}");
+                Logger.LogWarning($"CATCH GetComisionesPorCarnetListPagos() StackTrace: {ex.StackTrace}");
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
+                return list;
+            }
+        }
     }
 }

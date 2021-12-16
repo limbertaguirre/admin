@@ -309,5 +309,21 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de filtro de forma de pago", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");               
+                var comisiones = Repository.GetComisionesPorCarnetListPagos(param);
+
+                return Respuesta.ReturnResultdo(0, "ok", comisiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

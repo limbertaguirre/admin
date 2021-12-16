@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Modelos.GestionPagosRezagados;
+using gestion_de_comisiones.MultinivelModel;
 
 namespace gestion_de_comisiones.Repository.Interfaces
 {
@@ -22,5 +24,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         RespuestaSionPayModel VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
         public bool PagarSionPayComision(PagarSionPayInput param);
         public object GetFiltroComisionesPorFormaPago(FiltroFormaPagosInput param);
+        public List<VwObtenercomisionesFormaPago> GetComisionesPorCarnetListPagos(BuscarComisionInput param);
     }
 }
