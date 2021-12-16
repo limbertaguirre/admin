@@ -1141,11 +1141,10 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository GetFiltroComisionesPorFormaPago() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS}");
+                Logger.LogWarning($"Inicio repository GestionPagosRezagadosRepository - GetFiltroComisionesPorFormaPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
 
-                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 foreach (var item in LisFormaPagos)
                 {
@@ -1195,6 +1194,48 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($"CATCH GetComisionesPorCarnetListPagos() StackTrace: {ex.StackTrace}");
                 List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
                 return list;
+            }
+        }
+
+        public List<VwObtenercomisionesFormaPago> FiltrarComisionPagoPorTipoPago(FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
+                Logger.LogWarning($"Inicio el repository FiltrarComisionPagoPorTipoPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoPago == param.idTipoPago).ToList();
+                return ListComisiones;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"CATCH FiltrarComisionPagoPorTipoPago() Message : {ex.Message}");
+                Logger.LogWarning($"CATCH FiltrarComisionPagoPorTipoPago() StackTrace : {ex.StackTrace}");
+                List<VwObtenercomisionesFormaPago> list = new List<VwObtenercomisionesFormaPago>();
+                return list;
+            }
+        }
+
+        public bool VerificarSiExisteAutorizacionFormaPagoCiclo(FiltroComisionTipoPagoInput param)
+        {
+            try
+            {                
+                int estadoAutorizacionComision = 0; //estado aprobado de la tabla ESTADO_AUTORIZACION_COMISION
+                var cantidad = ContextMulti.VwVerificarAutorizacionComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId && x.IdEstadoAutorizacionComision == estadoAutorizacionComision).Count();
+                if (cantidad > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"CATCH VerificarSiExisteAutorizacionFormaPagoCiclo() Message : {ex.Message}");
+                Logger.LogWarning($"CATCH VerificarSiExisteAutorizacionFormaPagoCiclo() StackTrace : {ex.StackTrace}");
+                return false;
             }
         }
     }

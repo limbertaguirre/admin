@@ -1385,12 +1385,6 @@ go
 
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
-go
-/*
-    INSERTS MANUAL QUEMADOS    
-*/
-    -- INSERT INTO BDMultinivel.DBO.USUARIO_AUTORIZACION (id_usuario, id_tipo_autorizacion, estado, id_usuario_modificacion) VALUES (2, 4, 1 , 1)
-    -- INSERT INTO BDMultinivel.DBO.USUARIO_AUTORIZACION (id_usuario, id_tipo_autorizacion, estado, id_usuario_modificacion) VALUES (6, 4, 1 , 1)
 GO
 CREATE TABLE ESTADO_AUTORIZACION_COMISION(
   id_estado_autorizacion_comision int NOT NULL,

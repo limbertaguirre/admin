@@ -242,5 +242,20 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+
+        [HttpPost]
+        public ActionResult FiltrarComisionPagoPorTipoPago([FromBody] FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+                return Ok(Service.FiltrarComisionesPorTipoPago(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller mensaje:  {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por filtro tipo de pago" });
+            }
+        }        
     }
 }
