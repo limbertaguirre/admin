@@ -1341,9 +1341,10 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
 go
- --   insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
-	--insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
-	--insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
+    insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
+	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
+	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
+    insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(4,'FORMA DE PAGO REZAGADOS', 1, 1);
 go
 CREATE TABLE AUTORIZACIONES_AREA(
   id_autorizaciones_area int NOT NULL PRIMARY KEY identity,
@@ -1384,7 +1385,7 @@ go
 
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
-go
+GO
 CREATE TABLE ESTADO_AUTORIZACION_COMISION(
   id_estado_autorizacion_comision int NOT NULL,
   nombre varchar(50) not null,
@@ -1423,6 +1424,12 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'
 go
+/*
+    Inserts quemados manual
+*/
+    -- INSERT INTO BDMultinivel.DBO.AUTORIZACION_COMISION (id_comision, id_usuario_autorizacion, id_estado_autorizacion_comision, descripcion, id_usuario_modificacion) VALUES (1163, 4, 0, '', 1)
+    -- INSERT INTO BDMultinivel.DBO.AUTORIZACION_COMISION (id_comision, id_usuario_autorizacion, id_estado_autorizacion_comision, descripcion, id_usuario_modificacion) VALUES (1163, 5, 0, '', 1)
+GO
         create table ASIGNACION_EMPRESA_PAGO
         (
             id_asignacion_empresa_pago int not null primary key IDENTITY,
