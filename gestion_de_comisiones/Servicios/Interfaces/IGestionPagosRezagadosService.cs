@@ -16,5 +16,10 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         object handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
         public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         public object PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
+        public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
+        public object PagarSionPayComisionTodo(PagarSionPayInput param);
+        public object GetFormaPagosDisponibles(FiltroFormaPagosInput param);
+        public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param);
+        public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInput param);
     }
 }

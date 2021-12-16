@@ -182,5 +182,80 @@ namespace gestion_de_comisiones.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult VerificarPagosSionPayFormaPagoCiclo([FromBody] VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo} ");
+                return Ok(Service.VerificarPagoSionPayCiclo(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  verificarPagosSionPayFormaPagoCiclo() controller {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar los pagos por sion pay" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult PagarComisionSionPay([FromBody] PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}");
+                return Ok(Service.PagarSionPayComisionTodo(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.UsuarioLogin} error catch  BuscarComisionNombre() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
+            }
+        }
+
+        public ActionResult GetFiltroFormaPagosDisponibles([FromBody] FiltroFormaPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller GetFiltroFormaPagosDisponibles()  ");
+                return Ok(Service.GetFormaPagosDisponibles(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  GetFiltroFormaPagosDisponibles() controller ");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al obtener los listros de forma de pagos" });
+            }
+        }
+
+        // POST: gestionPagos/BuscarComisionCarnetFormaPago
+        [HttpPost]
+        public ActionResult BuscarComisionCarnetFormaPago([FromBody] BuscarComisionInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterio busqueda: {param.nombreCriterio}");
+                return Ok(Service.ListarComisionesFormaPagoPorCarnet(param));
+            }
+            catch
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
+                return Ok(Result);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult FiltrarComisionPagoPorTipoPago([FromBody] FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
+                return Ok(Service.FiltrarComisionesPorTipoPago(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller mensaje:  {ex.Message}");
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por filtro tipo de pago" });
+            }
+        }        
     }
 }
