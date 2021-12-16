@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-ALTER PROCEDURE [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]
+CREATE PROCEDURE [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]
     @comision_id int,
     @id_Ciclo int,
     @id_usuario int
