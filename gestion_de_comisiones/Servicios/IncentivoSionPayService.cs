@@ -79,5 +79,35 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object ObtenerTipoPagos(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoPagos()");
+                var tiposPagos = Repository.ObtenerTiposPagos(usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposPagos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoPagos(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de Pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
+                var tiposIncentivos = Repository.ObtenerTipoIncentivosPagosSegunCiclo(nroCicloMensual, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposIncentivos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

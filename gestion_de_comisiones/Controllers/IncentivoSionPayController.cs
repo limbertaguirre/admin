@@ -74,5 +74,40 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(result);
             }
         }
+        // GET: IncentivoSionPay/ObtenerTipoPagos
+        public ActionResult ObtenerTipoPagos([FromHeader] string usuarioLogin)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller ObtenerTipoPagos()");
+                var listaTipoPagos = Service.ObtenerTipoPagos(usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ObtenerTipoPagos()");
+                return Ok(listaTipoPagos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(result);
+            }
+        }
+
+        // GET: IncentivoSionPay/ObtenerTipoIncentivosSegunCicloMensual
+        public ActionResult ObtenerTipoIncentivosSegunCicloMensual([FromHeader] string usuarioLogin, int nroCicloMensual)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller ObtenerTipoPagos()");
+                var listaTipoIncentivos = Service.ObtenerTipoIncentivosPagosSegunCiclo(nroCicloMensual, usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ObtenerTipoPagos()");
+                return Ok(listaTipoIncentivos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(result);
+            }
+        }
     }
 }
