@@ -323,7 +323,6 @@ const GridTransferencia = (props) => {
     React.useState(false);
   const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
-  const [ ci, setCi]= React.useState('');
   const [ciResultado, setCiResultado] = React.useState([]);
   data.montoTotal = data.montoTotal.replace(',', '.');
 
@@ -458,31 +457,20 @@ const GridTransferencia = (props) => {
       return ad;
     }else return "valor no válido"
   }
-  async function buscarPorCi(){ 
-    let response= await Actions.BuscarFreelancerPagosTransferencias(userName, ci, idCiclo, empresaId, dispatch)               
-    if(response && response.code == 0){
-      console.log('Responde Con: BuscarFreelancerPagosTransferencias: ', response);
-      setCiResultado(response);
-    }       
+
+
+  // --------------------------------------BUSCADOR PREDICTIVO--------------------------------
+  const [resultado, setResultado] = React.useState([])
+  React.useEffect(()=>{
+     setResultado(list);
+    }, [list])
+  
+function searchingTerm(term){
+  return function(x){
+    return x.docDeIdentidad.includes(term) || !term;
+  }
 }
-  const BuscarFreelancerPagosTransferencias=()=>{
-    if(ci != ""){ 
-        buscarPorCi();
-    }else{
-      error('¡Introduzca carnet de identidad!');
-      window.location.reload();
-    }
-  }
-const onChange= (e) => {
-  const textSearch = e.target.name;
-  const value = e.target.value;
-  if (textSearch === "idCiclo") {
-    idCiclo(value);        
-  }
-    if (textSearch === "txtBusqueda") {
-    setCi(value);
-  }
-};
+// --------------------------------------------------------------------------------------------
   return (
     <Core.Dialog
       fullScreen
@@ -511,20 +499,14 @@ const onChange= (e) => {
         <Core.Grid container className={classes.gridContainer}>
           <Core.Grid item xs={12} md={4}></Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-            <Core.TextField
+            {resultado && <Core.TextField
               label="Buscar"
               type={"text"}
               variant="outlined"
               placeholder={"Buscar por carnet identidad"}
               name="txtBusqueda"
-              value={ci}
-              onChange={onChange}
               fullWidth
-              onKeyPress={(ev) => {
-                if (ev.key === "Enter") {
-                  BuscarFreelancerPagosTransferencias();
-                }
-              }}
+              onChange={e => setCiResultado(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <Core.InputAdornment position="start">
@@ -532,7 +514,7 @@ const onChange= (e) => {
                   </Core.InputAdornment>
                 ),
               }}
-            />
+            />}
           </Core.Grid>
           <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
             <Core.Button
@@ -548,8 +530,6 @@ const onChange= (e) => {
         </Core.Grid>
       </Core.Card>
       <br />
-
-      {ciResultado == "" ?
       <Core.Grid container className={classes.gridContainer}>
       <Core.Grid item xs={12} className={classes.containerSave}>
         <Core.Paper className={classes.paper}>
@@ -568,16 +548,15 @@ const onChange= (e) => {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={list.length}
+                rowCount={resultado.length}
               />
               <Core.TableBody>
-                {stableSort(list, getComparator(order, orderBy)).map(
+                {stableSort(resultado, getComparator(order, orderBy)).filter(searchingTerm(ciResultado)).map(
                   (row, index) => {
                     const isItemSelected = isSelected(
                       row.idComisionDetalleEmpresa
                     );
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                       <Core.TableRow
                         hover
@@ -634,96 +613,7 @@ const onChange= (e) => {
           </Core.TableContainer>
         </Core.Paper>
       </Core.Grid>
-      </Core.Grid>
-      :
-      <Core.Grid container className={classes.gridContainer}>
-      <Core.Grid item xs={12} className={classes.containerSave}>
-        <Core.Paper className={classes.paper}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <Core.TableContainer>
-            <Core.Table
-              className={classes.table}
-              aria-labelledby="tableTitle"
-              size={dense ? "small" : "medium"}
-              aria-label="enhanced table"
-            >
-              <EnhancedTableHead
-                classes={classes}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={ciResultado.data.length}
-              />
-              <Core.TableBody>
-                {stableSort(ciResultado.data, getComparator(order, orderBy)).map(
-                  (row, index) => {
-                    const isItemSelected = isSelected(
-                      row.idComisionDetalleEmpresa
-                    );
-                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                    return (
-                      <Core.TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.nombreDeCliente}
-                        selected={isItemSelected}
-                      >
-                        <Core.TableCell padding="Checkbox">
-                          <Core.Checkbox
-                            disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
-                            checked={isItemSelected}
-                            value={isItemSelected}
-                            inputProps={{ "aria-labelledby": labelId }}
-                          />
-                        </Core.TableCell>
-                        <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
-                        <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
-                        <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
-                        <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                        <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
-                        <Core.TableCell align="center">{row.empresa}</Core.TableCell>
-                        <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
-                            <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                            <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
-                        </Core.TableCell>
-                      </Core.TableRow>
-                    );
-                  }
-                )}
-                <Core.TableRow key={100000000000000}>
-                  <Core.TableCell align="center">
-                    <b></b>
-                  </Core.TableCell>
-                  <Core.TableCell align="right"></Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b>{"TOTAL: "} </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="left">
-                    <b>{addFormat(data.montoTotal)}</b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center"></Core.TableCell>
-                </Core.TableRow>
-              </Core.TableBody>
-            </Core.Table>
-          </Core.TableContainer>
-        </Core.Paper>
-      </Core.Grid>
-      </Core.Grid>
-      }
-      
-
+      </Core.Grid>     
       {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
