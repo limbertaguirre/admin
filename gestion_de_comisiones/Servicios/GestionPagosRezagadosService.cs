@@ -350,10 +350,8 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
 
-                int idEstadoComision = 10; //VARIABLE
-                int idTipoComisionPagoComision = 1; //parametro
-                int idTipoFormaPagoSionPay = 1; //parametro
-                int idTipoFormaPagoTransferencia = 2; //parametro
+                int idTipoFormaPagoSionPay = 1;
+                int idTipoFormaPagoTransferencia = 2;
 
                 RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param, idTipoFormaPagoSionPay);
                 if (sionPay.CodigoRespuesta == -1)
@@ -365,20 +363,20 @@ namespace gestion_de_comisiones.Servicios
                 if (transacion.CodigoRespuesta == -1)
                     return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
                 if (transacion.Cantidad > 0)
-                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia, verifique los montos", transacion);
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes en los Pagos de trasferencias, verifique los montos ", transacion);
 
                 RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param, idTipoFormaPagoTransferencia);
                 if (verificarMonto.CodigoRespuesta == -1)
                     return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
                 if (verificarMonto.Cantidad > 0)
-                    return Respuesta.ReturnResultdo(1, "Pago Pendientes verificar los monto de las transferencias ", verificarMonto);
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes, verificar los montos de las transferencias ", verificarMonto);
 
-                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param, idTipoComisionPagoComision);
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param);
                 if (cerrarPago < 0)
-                    return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+                    return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre.", "");
                 if (cerrarPago == 2)
-                    return Respuesta.ReturnResultdo(0, "la comision se cerro con exito", "");
-                return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+                    return Respuesta.ReturnResultdo(0, "La comisión se cerró con exito.", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre.", "");
             }
             catch (Exception ex)
             {

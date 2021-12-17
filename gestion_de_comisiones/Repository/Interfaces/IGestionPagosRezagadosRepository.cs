@@ -29,6 +29,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public bool VerificarSiExisteAutorizacionFormaPagoCiclo(FiltroComisionTipoPagoInput param);
         public RespuestaPorTipoPagoModel VerificarTipoPagoCiclo(CerrarPagoParam param, int tipoPagoId);
         public RespuestaPorTipoPagoModel VerificarTransaccionRechazadoMontoCero(CerrarPagoParam param, int idTipoFormaPago);
-        public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param, int idTipoComision);
+        public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param);
     }
 }
