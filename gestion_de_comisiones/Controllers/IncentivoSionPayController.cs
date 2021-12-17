@@ -1,6 +1,7 @@
 ﻿using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.Incentivo;
+using gestion_de_comisiones.Modelos.IncentivoSionPay;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -63,7 +64,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller obtenerTipoIncentivo()");
-                var listaTipoIncentivo= Service.ObtenerTipoIncentivo(usuarioLogin);               
+                var listaTipoIncentivo= Service.ObtenerTipoIncentivo(usuarioLogin);
                 Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerCiclos()");
                 return Ok(listaTipoIncentivo);
             }
@@ -107,6 +108,24 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
+            }        
+        }
+        // POST: IncentivoSionPay/RegistroTipoIncentivoPago
+        [HttpPost]
+        public ActionResult RegistroTipoIncentivoPago([FromBody] TipoIncentivoPago tipoIncentivoPago)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
+                var resultTipoIncentivoPago = Service.RegistrarTipoIncentivoPago(tipoIncentivoPago,tipoIncentivoPago.Usuario);
+                Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
+                return Ok(resultTipoIncentivoPago);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: {tipoIncentivoPago.Usuario} error catch controller  IncentivoController()  => CargarPlanillaExcel() Error: {ex.Message} ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(Result);
             }
         }
     }

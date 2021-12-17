@@ -353,8 +353,25 @@ namespace gestion_de_comisiones.Repository
                                     }
                             ).Where(x => x.idCiclo == nroCicloMensual).ToList();
             
-            return listaTipoIncentivo;
-
-        }
+            return listaTipoIncentivo;        
     }
+    public object RegistrarTipoIncentivoPago(string descripcion)
+        {
+            try
+            {
+                Logger.LogInformation($" Inicio ObtenerTipoIncentivo ");
+                TipoIncentivoPago tipoIncentivoPago = new TipoIncentivoPago();
+                tipoIncentivoPago.Descripcion = descripcion;
+                tipoIncentivoPago.Estado = "ACTIVO";
+                ContextMulti.Add(tipoIncentivoPago);
+                ContextMulti.SaveChanges();                                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex}");
+                
+                return false;
+            }            
+        }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper.Configuration;
 using gestion_de_comisiones.Modelos.Incentivo;
+using gestion_de_comisiones.Modelos.IncentivoSionPay;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -107,6 +108,20 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object RegistrarTipoIncentivoPago(TipoIncentivoPago tipoIncentivoPago, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio Service RegistrarTipoIncentivoPago()");
+                var ciclos = Repository.RegistrarTipoIncentivoPago(tipoIncentivoPago.Descripcion);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se registro el tipoIncentivoPago correctamente", "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch RegistrarTipoIncentivoPago(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al registrar tipo de incentivo", "problemas en el servidor, intente mas tarde");
             }
         }
     }
