@@ -95,7 +95,7 @@ namespace gestion_de_comisiones.MultinivelModel
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
+                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
             }
         }
 
@@ -933,6 +933,10 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("El id_banco es un identificador que hace referencia al campo id_banco de la tabla BANCO.");
 
                 entity.Property(e => e.IdCiudad).HasColumnName("id_ciudad");
+
+                entity.Property(e => e.IdTipoPago)
+                    .HasColumnName("id_tipo_pago")
+                    .HasComment("id tipo pago el FreeLancer si tiene cuenta o cuenta podra tener habilitado o seleccianado un tipo de pago");
 
                 entity.Property(e => e.IdUsuario)
                     .HasColumnName("id_usuario")
