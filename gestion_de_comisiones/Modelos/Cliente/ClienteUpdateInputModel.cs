@@ -46,8 +46,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public int idTipoBaja { get; set; }
         public string fechaBaja { get; set; }
         public string motivoBaja { get; set; }
-
-
+        public int idTipoPago { get; set; }
 
     }
 }

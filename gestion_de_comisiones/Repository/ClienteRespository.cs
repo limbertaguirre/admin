@@ -2,6 +2,7 @@
 using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Cliente;
 using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.BDSionPayModels;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Hosting;
@@ -20,10 +21,12 @@ namespace gestion_de_comisiones.Repository
         BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<ClienteRespository> Logger;
         private readonly IHostingEnvironment EEnv;
-        public ClienteRespository(ILogger<ClienteRespository> logger, IHostingEnvironment env)
+        private readonly BDPuntosCashContext ContexSionPay;
+        public ClienteRespository(ILogger<ClienteRespository> logger, IHostingEnvironment env, BDPuntosCashContext contexSionPay )
         {
             Logger = logger;
             EEnv = env;
+            ContexSionPay = contexSionPay;
         }
 
         public List<ClienteOutputModel> obtenerAllClientes(string usuario)
@@ -310,7 +313,11 @@ namespace gestion_de_comisiones.Repository
                 {
                     return Respuesta.ReturnResultdo(1, "Debe seleccionar un Banco para habilitar la cuenta", "");
                 }
-                if(ficha.tieneBaja == true && ficha.idTipoBaja == 0)
+                if (ficha.tieneCuenta == true && ficha.cuentaBancaria == "")
+                {
+                    return Respuesta.ReturnResultdo(1, "Ingrese el nro. Cuenta", "");
+                }
+                if (ficha.tieneBaja == true && ficha.idTipoBaja == 0)
                 {
                     return Respuesta.ReturnResultdo(1, "Debe seleccionar un tipo de baja, para poder dar de baja", "");
                 }
@@ -330,10 +337,22 @@ namespace gestion_de_comisiones.Repository
                 {
                     return Respuesta.ReturnResultdo(1, "La ciudad es requerida ", "");
                 }
+                if (ficha.idTipoPago != 0)
+                {
+                    if (ficha.idTipoPago == TipoPago.TRANSFERENCIA)
+                    {
+                        if (ficha.tieneCuenta == false || ficha.idBanco == 0)
+                        {
+                            return Respuesta.ReturnResultdo(1, "Habilite la cuenta y seleccione el banco", "");
+                        }
 
-
+                        if (ficha.tieneCuenta == false || ficha.cuentaBancaria == "")
+                        {
+                            return Respuesta.ReturnResultdo(1, "Habilite la cuenta, he ingrese el nro. Cuenta", "");
+                        }
+                    }                   
+                }                
                 return Respuesta.ReturnResultdo(0, "Valido para pagar", "");
-
 
             }
             catch (Exception ex)
@@ -557,6 +576,7 @@ namespace gestion_de_comisiones.Repository
                             }
 
                             //---------------------------------------------------------
+                            objCli.IdTipoPago = ficha.idTipoPago;
                             objCli.Nombres = ficha.nombre;
                             objCli.Apellidos = ficha.apellido;
                             objCli.Ci = ficha.ci;
@@ -604,15 +624,28 @@ namespace gestion_de_comisiones.Repository
                     TipoPagoModel NewObj = new TipoPagoModel();
                     if ( obj.IdTipoPago == TipoPago.SION_PAY)
                     {
-                       // var CuentaSionPay= 
+                        var ficha = contextMulti.Fichas.Where(x => x.IdFicha == param.idCliente).FirstOrDefault();
+                        var CuentaSionPay = ContexSionPay.Cuentas.Where(x => x.IdUsuario == ficha.Ci).FirstOrDefault();
+                        NewObj.IdTipoPago = obj.IdTipoPago;
+                        NewObj.Nombre = obj.Nombre;
+                        if (CuentaSionPay != null)
+                        {                         
+                            NewObj.Estado = true;
+                        }
+                        else
+                        {
+                            NewObj.Estado = false;
+                        }
+                        lista.Add(NewObj);
                     }
                     else
                     {
                         NewObj.IdTipoPago = obj.IdTipoPago;
                         NewObj.Nombre = obj.Nombre;
-                        NewObj.Estado = true; 
+                        NewObj.Estado = true;
+                        lista.Add(NewObj);
                     }
-                    lista.Add(NewObj);
+                    
 
                 }
                 return lista;
