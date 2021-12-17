@@ -188,7 +188,21 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
-
+        //POST Cliente/ObtenerTipoPagosFreelancer
+        [HttpPost]
+        public ActionResult ObtenerTipoPagosFreelancer([FromBody] ClienteInputObtenerModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller ObtenerTipoPagosFreelancer() parametros body:  {JsonConvert.SerializeObject(param)}  ");              
+                return Ok(Service.ObtenerTipoPagosXFreelancer(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch  ObtenerTipoPagosFreelancer() controller {ex.Message}");                
+                return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al actualizar al cliente" });
+            }
+        }
 
     }
 }
