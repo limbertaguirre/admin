@@ -100,7 +100,7 @@ namespace gestion_de_comisiones.Repository
             {
                 FichaClienteOutPutModel objCliente = new FichaClienteOutPutModel();
                 Logger.LogInformation($" usuario: {usuario} inicio el obtenerClienteXID() idcliente : {idCliente}");
-                var objCli = contextMulti.Fichas.Where(x => x.IdFicha == idCliente).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+                ClienteModel objCli = contextMulti.Fichas.Where(x => x.IdFicha == idCliente).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.IdTipoPago)).FirstOrDefault();
 
                 if (objCli != null)
                 {                    
@@ -128,11 +128,8 @@ namespace gestion_de_comisiones.Repository
                     objCliente.RazonSocial = objCli.RazonSocial;
                     objCliente.Nit = objCli.Nit;
                     objCliente.FacturaHabilitado = objCli.FacturaHabilitado;
-
-
+                    objCliente.IdTipoPago = objCli.IdTipoPago;
                     
-
-                    //---------------------------------------------
                     var objCiudad = contextMulti.Ciudads.Where(x => x.IdCiudad == objCli.IdCiudad).Select(p => new { p.IdCiudad, p.Nombre, p.IdPais }).FirstOrDefault();
                     if(objCiudad != null)
                     {
@@ -594,7 +591,40 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
-  
+
+        public List<TipoPagoModel> ObtenerTipoPagosXFreelancer(ClienteInputObtenerModel param)
+        {
+            try
+            {
+                List<TipoPagoModel> lista = new List<TipoPagoModel>();
+                Logger.LogInformation($" usuario: {param.usuarioLogin} inicio el tiposdeBajasClientes id ficha: {param.idCliente}");
+                var LisTipoPagos = contextMulti.TipoPagoes.Where(x => x.Estado == true).ToList();
+                foreach(var obj in LisTipoPagos)
+                {
+                    TipoPagoModel NewObj = new TipoPagoModel();
+                    if ( obj.IdTipoPago == TipoPago.SION_PAY)
+                    {
+                       // var CuentaSionPay= 
+                    }
+                    else
+                    {
+                        NewObj.IdTipoPago = obj.IdTipoPago;
+                        NewObj.Nombre = obj.Nombre;
+                        NewObj.Estado = true; 
+                    }
+                    lista.Add(NewObj);
+
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ObtenerTipoPagosXFreelancer() mensaje : {ex.Message}");
+                //List<TipoPagoModel> lista = new List<TipoPagoModel>();
+                return new List<TipoPagoModel>(); 
+            }
+        }
+
     }
 }
 

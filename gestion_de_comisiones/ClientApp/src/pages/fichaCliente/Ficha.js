@@ -139,6 +139,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
     obtenerCliente(parseInt(props.location.state.idCliente));
+    obtenerTipoPagos(userName,props.location.state.idCliente, dispatch );
     obtenerNiveles();
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
@@ -182,6 +183,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [fechaBaja, setFechaBaja]= useState(moment().format("YYYY/MM/DD"));
     const [idTipoBaja, setIdTipoBaja]= useState(0);
     const [motivoBaja, setMotivoBaja]= useState("");
+    const [idTipoPago, setIdTipoPago]= useState(0);
+    const[listTipoPagos, setListTipoPagos]=useState([]);
     
     const[checkTieneCuenta, setCheckTieneCuenta]= useState(false);
     const[checkTieneFactura, setCheckTieneFactura]= useState(false);
@@ -203,7 +206,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
       const data={usuarioLogin:userName, idCliente: idCliente };
       requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{         
             if(res.code === 0){              
-               let data= res.data;               
+               let data= res.data;    
+               console.log('ficha= ', data);           
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
@@ -242,6 +246,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );
                setCodigoBanco(data.codigoBanco);
                setCheckTieneCuenta(data.tieneCuentaBancaria);
+               setIdTipoPago(data.idTipoPago);
                            
             }else{
                // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
@@ -436,6 +441,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
         }.bind(this);
 
     }
+    const obtenerTipoPagos = async (userNombre, idcliente) => {
+      let respuesta = await ActionCliente.ObtenerTipoPagoDisponibles(userNombre, idcliente, dispatch);
+      if (respuesta && respuesta.code == 0) {
+          console.log('listado pagos :',respuesta);
+          setListTipoPagos(respuesta.data);
+      } 
+    };
 
      
     return (
@@ -765,22 +777,38 @@ const StyledBreadcrumb = withStyles((theme) => ({
             </Grid>   
             <Grid  item xs={12} md={6}  >
                 <Grid  container item xs={12} className={style.divCenter}>
-                       <Grid item xs={3} >
-                            {avatar !== ""? 
-                           <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
-                             : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> {nombre === null?"P": nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
-                       </Grid>
-                       <Grid item xs={2} >
-                         
-                           {/* <div className={style.divPhoto}> */} 
-                              <label >
-                                <input style={{display: 'none'}} type="file" accept="image/*" onChange={onChangeFile} />                           
-                                <AddPhotoAlternateIcon className={style.photoIcons} /> 
-                              </label>
-                           {/* </div> */}
-                         
-                        </Grid>
-                        
+                    {/* mover componente de foto */}
+                    {/* <Grid item xs={3} >
+                        {avatar !== ""? 
+                        <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
+                          : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> {nombre === null?"P": nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
+                    </Grid>
+                    <Grid item xs={2} >                                                    
+                          <label >
+                            <input style={{display: 'none'}} type="file" accept="image/*" onChange={onChangeFile} />                           
+                            <AddPhotoAlternateIcon className={style.photoIcons} /> 
+                          </label>                                                    
+                    </Grid> */}     
+                    <FormControl  variant="outlined"  
+                      fullWidth  
+                      //error={CiudadError} 
+                      className={style.TextFiel}
+                      >
+                        <InputLabel id="demo-simple-select-outlined-labelbanco">Banco</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-outlined-labelbanco"                         
+                            value={idBanco}
+                            name="idBanco"
+                            onChange={_onChangeregistro}
+                            label="Banco"
+                            >
+                            <MenuItem value={0}>
+                                <em>Seleccione el tipo pago a recibir</em>
+                            </MenuItem>
+                            {listTipoPagos.map((value,index)=> ( <MenuItem key={index} value={value.idTipoPago}>{value.nombre}</MenuItem> ))}  
+                        </Select>
+                      {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                    </FormControl>
                </Grid> 
                <Grid item xs={12}   >
                         <TextField                            

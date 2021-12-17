@@ -195,3 +195,15 @@ import * as Action from './messageAction';
               })   
     }
   }
+
+  export async function ObtenerTipoPagoDisponibles( userName, idCliente, dispatch) {
+    return new Promise((resolve) => {
+        const data = {
+                    usuarioLogin: userName,                  
+                    idCliente: parseInt(idCliente),                  
+                   };
+        requestPost( "Cliente/ObtenerTipoPagosFreelancer", data, dispatch) .then((response) => {
+        resolve(response);
+        });
+    });
+}
