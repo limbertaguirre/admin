@@ -2,6 +2,7 @@
 using gestion_de_comisiones.Modelos;
 using gestion_de_comisiones.Modelos.Cliente;
 using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.BDSionPayModels;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
 using Microsoft.AspNetCore.Hosting;
@@ -20,10 +21,12 @@ namespace gestion_de_comisiones.Repository
         BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<ClienteRespository> Logger;
         private readonly IHostingEnvironment EEnv;
-        public ClienteRespository(ILogger<ClienteRespository> logger, IHostingEnvironment env)
+        private readonly BDPuntosCashContext ContexSionPay;
+        public ClienteRespository(ILogger<ClienteRespository> logger, IHostingEnvironment env, BDPuntosCashContext contexSionPay )
         {
             Logger = logger;
             EEnv = env;
+            ContexSionPay = contexSionPay;
         }
 
         public List<ClienteOutputModel> obtenerAllClientes(string usuario)
@@ -100,7 +103,7 @@ namespace gestion_de_comisiones.Repository
             {
                 FichaClienteOutPutModel objCliente = new FichaClienteOutPutModel();
                 Logger.LogInformation($" usuario: {usuario} inicio el obtenerClienteXID() idcliente : {idCliente}");
-                var objCli = contextMulti.Fichas.Where(x => x.IdFicha == idCliente).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion)).FirstOrDefault();
+                ClienteModel objCli = contextMulti.Fichas.Where(x => x.IdFicha == idCliente).Select(p => new ClienteModel(p.IdFicha, p.Codigo, p.Nombres, p.Apellidos, p.Ci, p.CorreoElectronico, p.FechaRegistro, p.TelOficina, p.TelMovil, p.TelFijo, p.Direccion, p.FechaNacimiento, p.Contrasena, p.Comentario, p.Avatar, p.TieneCuentaBancaria, p.IdBanco, p.CuentaBancaria, p.FacturaHabilitado, p.RazonSocial, p.Nit, p.Estado, p.IdCiudad, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, p.IdTipoPago)).FirstOrDefault();
 
                 if (objCli != null)
                 {                    
@@ -128,11 +131,8 @@ namespace gestion_de_comisiones.Repository
                     objCliente.RazonSocial = objCli.RazonSocial;
                     objCliente.Nit = objCli.Nit;
                     objCliente.FacturaHabilitado = objCli.FacturaHabilitado;
-
-
+                    objCliente.IdTipoPago = objCli.IdTipoPago;
                     
-
-                    //---------------------------------------------
                     var objCiudad = contextMulti.Ciudads.Where(x => x.IdCiudad == objCli.IdCiudad).Select(p => new { p.IdCiudad, p.Nombre, p.IdPais }).FirstOrDefault();
                     if(objCiudad != null)
                     {
@@ -313,7 +313,11 @@ namespace gestion_de_comisiones.Repository
                 {
                     return Respuesta.ReturnResultdo(1, "Debe seleccionar un Banco para habilitar la cuenta", "");
                 }
-                if(ficha.tieneBaja == true && ficha.idTipoBaja == 0)
+                if (ficha.tieneCuenta == true && ficha.cuentaBancaria == "")
+                {
+                    return Respuesta.ReturnResultdo(1, "Ingrese el nro. Cuenta", "");
+                }
+                if (ficha.tieneBaja == true && ficha.idTipoBaja == 0)
                 {
                     return Respuesta.ReturnResultdo(1, "Debe seleccionar un tipo de baja, para poder dar de baja", "");
                 }
@@ -333,10 +337,22 @@ namespace gestion_de_comisiones.Repository
                 {
                     return Respuesta.ReturnResultdo(1, "La ciudad es requerida ", "");
                 }
+                if (ficha.idTipoPago != 0)
+                {
+                    if (ficha.idTipoPago == TipoPago.TRANSFERENCIA)
+                    {
+                        if (ficha.tieneCuenta == false || ficha.idBanco == 0)
+                        {
+                            return Respuesta.ReturnResultdo(1, "Habilite la cuenta y seleccione el banco", "");
+                        }
 
-
+                        if (ficha.tieneCuenta == false || ficha.cuentaBancaria == "")
+                        {
+                            return Respuesta.ReturnResultdo(1, "Habilite la cuenta, he ingrese el nro. Cuenta", "");
+                        }
+                    }                   
+                }                
                 return Respuesta.ReturnResultdo(0, "Valido para pagar", "");
-
 
             }
             catch (Exception ex)
@@ -560,6 +576,7 @@ namespace gestion_de_comisiones.Repository
                             }
 
                             //---------------------------------------------------------
+                            objCli.IdTipoPago = ficha.idTipoPago;
                             objCli.Nombres = ficha.nombre;
                             objCli.Apellidos = ficha.apellido;
                             objCli.Ci = ficha.ci;
@@ -594,7 +611,53 @@ namespace gestion_de_comisiones.Repository
                 }
             }
         }
-  
+
+        public List<TipoPagoModel> ObtenerTipoPagosXFreelancer(ClienteInputObtenerModel param)
+        {
+            try
+            {
+                List<TipoPagoModel> lista = new List<TipoPagoModel>();
+                Logger.LogInformation($" usuario: {param.usuarioLogin} inicio el tiposdeBajasClientes id ficha: {param.idCliente}");
+                var LisTipoPagos = contextMulti.TipoPagoes.Where(x => x.Estado == true).ToList();
+                foreach(var obj in LisTipoPagos)
+                {
+                    TipoPagoModel NewObj = new TipoPagoModel();
+                    if ( obj.IdTipoPago == TipoPago.SION_PAY)
+                    {
+                        var ficha = contextMulti.Fichas.Where(x => x.IdFicha == param.idCliente).FirstOrDefault();
+                        var CuentaSionPay = ContexSionPay.Cuentas.Where(x => x.IdUsuario == ficha.Ci).FirstOrDefault();
+                        NewObj.IdTipoPago = obj.IdTipoPago;
+                        NewObj.Nombre = obj.Nombre;
+                        if (CuentaSionPay != null)
+                        {                         
+                            NewObj.Estado = true;
+                        }
+                        else
+                        {
+                            NewObj.Estado = false;
+                        }
+                        lista.Add(NewObj);
+                    }
+                    else
+                    {
+                        NewObj.IdTipoPago = obj.IdTipoPago;
+                        NewObj.Nombre = obj.Nombre;
+                        NewObj.Estado = true;
+                        lista.Add(NewObj);
+                    }
+                    
+
+                }
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {param.usuarioLogin} error catch ObtenerTipoPagosXFreelancer() mensaje : {ex.Message}");
+                //List<TipoPagoModel> lista = new List<TipoPagoModel>();
+                return new List<TipoPagoModel>(); 
+            }
+        }
+
     }
 }
 

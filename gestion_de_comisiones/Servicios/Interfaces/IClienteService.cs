@@ -17,6 +17,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object obtenerBancoParaclientes(string usuario);
         public object obtenerNivelesCliente(string usuario);
         public object ActualizarFichaCliente(ClienteUpdateInputModel fichaClient);
+        public object ObtenerTipoPagosXFreelancer(ClienteInputObtenerModel fichaClient);
 
     }
 }

@@ -171,5 +171,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener actualizar la ficha del cliente", "problemas en el servidor, intente mas tarde");
             }
         }
+        public object ObtenerTipoPagosXFreelancer(ClienteInputObtenerModel param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ObtenerTipoPagosXFreelancer() ");
+                var TipoPagosDisponibles = Repository.ObtenerTipoPagosXFreelancer(param);
+                return Respuesta.ReturnResultdo(0, "listado de forma de pago", TipoPagosDisponibles);                              
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario : {param.usuarioLogin} error catch ObtenerTipoPagosXFreelancer(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener el tipo de pago el freelancer", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
     }
 }
