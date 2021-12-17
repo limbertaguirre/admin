@@ -226,7 +226,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio PagarComisionRezagadosSionPayTodo.");
                 //agregar verificar pago sion pay rezagado
-                int idEstadoComision = GpEstadoComision.PENDIENTE_FORMA_DE_PAGO_9;              
+                int idEstadoComision = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;              
                 int idTipoComision = GpTipoComision.PAGO_REZAGADOS_2; //parametro rezagado
                 int idTipoFormaPagoSionPay =  TipoPago.SION_PAY;
                 int idEstadoListaFormaPago = EstadoListadoFormaPago.PAGO_EXITOSO_3; 
@@ -341,6 +341,49 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object CerrarPagoComision(CerrarPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
+
+                int idEstadoComision = 10; //VARIABLE
+                int idTipoComisionPagoComision = 1; //parametro
+                int idTipoFormaPagoSionPay = 1; //parametro
+                int idTipoFormaPagoTransferencia = 2; //parametro
+
+                RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param, idTipoFormaPagoSionPay);
+                if (sionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos realizados por SION PAY.", " ");
+                if (sionPay.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes en el pago de sion pay.", sionPay);
+
+                RespuestaPorTipoPagoModel transacion = Repository.VerificarTipoPagoCiclo(param, idTipoFormaPagoTransferencia);
+                if (transacion.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (transacion.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia, verifique los montos", transacion);
+
+                RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param, idTipoFormaPagoTransferencia);
+                if (verificarMonto.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (verificarMonto.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes verificar los monto de las transferencias ", verificarMonto);
+
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param, idTipoComisionPagoComision);
+                if (cerrarPago < 0)
+                    return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+                if (cerrarPago == 2)
+                    return Respuesta.ReturnResultdo(0, "la comision se cerro con exito", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch CerrarPagoComision()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
             }
         }
     }
