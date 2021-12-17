@@ -219,13 +219,6 @@ const usePagoRezagado = () => {
         })
       );
       handleOnGetPagos();
-    } else {
-      dispatch(
-        showMessage({
-          message: response.message,
-          variant: "error",
-        })
-      );
     }
   }
 
@@ -347,14 +340,14 @@ const usePagoRezagado = () => {
   };
   const pagarComisionSionPay = async (
     usuarioLogin,
-    usuarioId,
-    idComsion,
+    idUsuario,
+    idComision,
     dispatch
   ) => {
     let url = "/gestionPagosRezagados/PagarComisionRezagadosSionPay";
     let response = await requestPost(
       url,
-      { usuarioLogin, idComsion, usuarioId },
+      { usuarioLogin, idComision, idUsuario },
       dispatch
     );
     if (response && response.code === 0) {
