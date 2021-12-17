@@ -580,6 +580,7 @@ create table FICHA
     id_usuario int not null,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	id_tipo_pago int NOT NULL default 0,
 );
 
 go
@@ -609,6 +610,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla 1 es 
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_actualizacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'id tipo pago el FreeLancer si tiene cuenta o cuenta podra tener habilitado o seleccianado un tipo de pago', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_tipo_pago'
 go
 
 create table GP_CLIENTE_VENDEDOR_I(
