@@ -108,7 +108,6 @@ const useStyles = makeStyles((theme) => ({
 
 const PagoRezagado = ({ location }) => {
   const style = useStyles();
-  console.log(location);
   const {
     idCiclo,
     openTransferenciasDialog,
@@ -337,9 +336,9 @@ const PagoRezagado = ({ location }) => {
                         },
                       }}
                     >
-                      {/* <MenuItem key="1" onClick={() => abrirModal()}>
+                      <MenuItem key="1" onClick={() => abrirModal()}>
                         PAGAR SION PAY
-                      </MenuItem> */}
+                      </MenuItem>
                       <MenuItem
                         key="2"
                         onClick={() => handleClickOpenTransferencias()}
@@ -368,8 +367,7 @@ const PagoRezagado = ({ location }) => {
         selecionarDetalleFrelances={selecionarDetalleFrelances}
         seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
         idCiclo={idCiclo}
-        // permisoActualizar={true}
-        // permisoCrear={true}
+        cicloSeleccionado={listCiclo.find((ciclo) => ciclo.idCiclo === idCiclo)}
         permisoActualizar={validarPermiso(
           perfiles,
           location.state.namePagina + permiso.ACTUALIZAR

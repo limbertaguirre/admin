@@ -119,12 +119,15 @@ const usePagoRezagado = () => {
   };
   async function filtrarComisionPorFormaPago(idTipoFormaPago) {
     if (idCiclo && idCiclo !== 0) {
-      let response = await listarFiltrada(
-        userName,
-        idCiclo,
-        idTipoFormaPago,
-        dispatch
-      );
+      const objCiclo = listCiclo.find((item) => item.idCiclo === idCiclo);
+      let url = "/gestionPagosRezagados/FiltrarComisionPagoPorTipoPago";
+      let body = {
+        usuarioLogin: userName,
+        idCiclo: parseInt(idCiclo),
+        idTipoPago: parseInt(idTipoFormaPago),
+        comisionId: objCiclo ? objCiclo.idComision : null,
+      };
+      let response = await requestPost(url, body, dispatch);
 
       if (response && response.code == 0) {
         let data = response.data;
@@ -216,13 +219,6 @@ const usePagoRezagado = () => {
         })
       );
       handleOnGetPagos();
-    } else {
-      dispatch(
-        showMessage({
-          message: response.message,
-          variant: "error",
-        })
-      );
     }
   }
 
@@ -309,12 +305,31 @@ const usePagoRezagado = () => {
   }
 
   const listarFiltrada = async () => {};
-  const buscarPorCarnetFormaPago = async () => {};
+  const buscarPorCarnetFormaPago = async (
+    userName,
+    idCiclo,
+    txtBusqueda,
+    dispatch
+  ) => {
+    let url = "/gestionPagosRezagados/BuscarComisionCarnetFormaPago";
+    let body = {
+      usuarioLogin: userName,
+      idCiclo,
+      nombreCriterio: txtBusqueda,
+      comisionId: idComision,
+    };
+    let response = await requestPost(url, body, dispatch);
+    if (response && response.code === 0) {
+      return response;
+    } else {
+      return null;
+    }
+  };
   const verificarPagoSionPayXCiclo = async (usuarioLogin, dispatch) => {
-    let url = "/gestionPagosRezagados/PagarComisionRezagadosSionPay";
+    let url = "/gestionPagosRezagados/VerificarPagosSionPayFormaPagoCiclo";
     let response = await requestPost(
       url,
-      { usuarioLogin, idComsion: idComision },
+      { usuarioLogin, comisionId: idComision, idCiclo },
       dispatch
     );
     if (response && response.code === 0) {
@@ -325,14 +340,14 @@ const usePagoRezagado = () => {
   };
   const pagarComisionSionPay = async (
     usuarioLogin,
-    usuarioId,
-    idComsion,
+    idUsuario,
+    idComision,
     dispatch
   ) => {
     let url = "/gestionPagosRezagados/PagarComisionRezagadosSionPay";
     let response = await requestPost(
       url,
-      { usuarioLogin, idComsion, usuarioId },
+      { usuarioLogin, idComision, idUsuario },
       dispatch
     );
     if (response && response.code === 0) {
