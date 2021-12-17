@@ -304,5 +304,57 @@ namespace gestion_de_comisiones.Repository
                 return list;
             }
         }
+
+        public object ObtenerTiposPagos(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
+                var tipoPagos = ContextMulti.TipoPagoes.OrderByDescending(x => x.IdTipoPago).ToList();
+                return tipoPagos;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch mensaje : {ex}");
+                List<TipoPago> list = new List<TipoPago>();
+                return list;
+            }
+        }
+
+        public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario)
+        {
+            Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
+           
+
+            var listaTipoIncentivo = ContextMulti.GpComisions.Join(ContextMulti.GpComisionDetalles,
+                GpComision => GpComision.IdComision,
+                GpComisionDetalle => GpComisionDetalle.IdComision,
+                 (GpComision, GpComisionDetalle) => new
+                 {
+                     idComision = GpComision.IdComision,
+                     idCiclo = GpComision.IdCiclo,
+                     IdComisionDetalle = GpComisionDetalle.IdComisionDetalle
+
+                 }).Join(ContextMulti.IncentivoPagoComisions,
+                            GpComisionDetalle => GpComisionDetalle.IdComisionDetalle,
+                            IncentivoPagoComision => IncentivoPagoComision.IdComisionDetalle,
+                            (GpComisionDetalle, IncentivoPagoComision) => new
+                            {
+                                IdTipoIncentivoPago = IncentivoPagoComision.IdTipoIncentivoPago,
+                                idCiclo = GpComisionDetalle.idCiclo
+                            }).Join(ContextMulti.TipoIncentivoes,
+                                    IncentivoPagoComision => IncentivoPagoComision.IdTipoIncentivoPago,
+                                    TipoIncentivo => TipoIncentivo.IdTipoIncentivo,
+                                    (IncentivoPagoComision, TipoIncentivo) =>
+                                    new
+                                    {
+                                        Nombre = TipoIncentivo.Nombre,
+                                        idCiclo = IncentivoPagoComision.idCiclo
+                                    }
+                            ).Where(x => x.idCiclo == nroCicloMensual).ToList();
+            
+            return listaTipoIncentivo;
+
+        }
     }
 }
