@@ -3,12 +3,12 @@ import { Grid, FormControl, InputLabel, Select, MenuItem } from "@material-ui/co
 const ComboTipoIncentivoPago = (props)=> {
   return(
     <FormControl fullWidth variant="outlined">
-      <InputLabel id="demo-simple-select-label">Elija el incentivo</InputLabel>
+      <InputLabel id="demo-simple-select-label">{ props.labelTipoIncentivoPago }</InputLabel>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={ props.valorTipoIncentivo === undefined ? '': props.valorTipoIncentivo }
-        label="Elija el incentivo"
+        label={ props.labelTipoIncentivoPago }
         onChange={ props.handleChangeTipoIncentivo }
       >
         { props.listaIncentivo &&
@@ -21,7 +21,4 @@ const ComboTipoIncentivoPago = (props)=> {
     </FormControl>
   )
 }
-
-
-
 export default ComboTipoIncentivoPago

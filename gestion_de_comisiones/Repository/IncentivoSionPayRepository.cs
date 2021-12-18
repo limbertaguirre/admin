@@ -14,7 +14,7 @@ namespace gestion_de_comisiones.Repository
     {
         //BDMultinivelContext contextMulti = new BDMultinivelContext();
         private readonly ILogger<IncentivoSionPayRepository> Logger;
-        private readonly int  tipoComisionIncentivo = 3;
+        private readonly int tipoComisionIncentivo = 3;
         private readonly BDMultinivelContext ContextMulti;
         public IncentivoSionPayRepository(BDMultinivelContext contextMulti, ILogger<IncentivoSionPayRepository> logger)
         {
@@ -38,27 +38,27 @@ namespace gestion_de_comisiones.Repository
             };
 
             List<GpComisionDetalle> listaAux = new List<GpComisionDetalle>();
-            List<GpComisionDetalle>  lista = DatosClientes.GroupBy(d => d.CiCliente).Select(
+            List<GpComisionDetalle> lista = DatosClientes.GroupBy(d => d.CiCliente).Select(
                                     g => new GpComisionDetalle
                                     {
                                         MontoNeto = g.Sum(s => s.Monto),
                                         MontoBruto = 0,
                                         PorcentajeRetencion = 0,
                                         MontoRetencion = 0,
-                                        MontoAplicacion = 0,                                        
+                                        MontoAplicacion = 0,
                                         IdComision = idComision,
-                                        IdFicha = ContextMulti.Fichas.Where((item) => item.Ci == g.First().CiCliente).FirstOrDefault().IdFicha, 
+                                        IdFicha = ContextMulti.Fichas.Where((item) => item.Ci == g.First().CiCliente).FirstOrDefault().IdFicha,
                                         IdUsuario = (ContextMulti.Usuarios.Where((item) => item.Usuario1 == g.First().Usuario).FirstOrDefault() != null) ? ContextMulti.Usuarios.Where((item) => item.Usuario1 == g.First().Usuario).FirstOrDefault().IdUsuario : 0,
                                         FechaCreacion = DateTime.Now,
                                         FechaActualizacion = DateTime.Now
 
                                     }
                          ).ToList();
-            
 
 
 
-             return lista;
+
+            return lista;
         }
         private List<ComisionDetalleEmpresa> armarComisionesDetalleEmpresaPersistir(List<DatosPlanillaExcel> planillaDatosClientes, List<GpComisionDetalle> comisionesDetalles)
         {
@@ -135,26 +135,26 @@ namespace gestion_de_comisiones.Repository
             return lista;
         }
 
-         public object GuardarPlanillaIncentivoSionPay(PlanillaPagoIncentivo planillaIncentivo)
+        public object GuardarPlanillaIncentivoSionPay(PlanillaPagoIncentivo planillaIncentivo)
         {
 
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
-                {
-                    GpComision elem = new GpComision();
-                    elem.MontoTotalNeto = (decimal)planillaIncentivo.DatosClientes.Sum(item => item.Monto);
-                    elem.MontoTotalAplicacion = 0;
-                    elem.MontoTotalBruto = 0;
-                    elem.MontoTotalRetencion = 0;
-                    elem.IdCiclo = planillaIncentivo.IdCiclo;
-                    elem.IdTipoComision = tipoComisionIncentivo;
-                    elem.PorcentajeRetencion = 0;
-                    elem.FechaCreacion = DateTime.Now;
-                    elem.FechaActualizacion = DateTime.Now;
-                    elem.IdUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == planillaIncentivo.UsuarioNombre).FirstOrDefault().IdUsuario;
-                    elem.IdCiclo = planillaIncentivo.IdCiclo;
-                    ContextMulti.Add(elem);
-                    ContextMulti.SaveChanges();
+            {
+                GpComision elem = new GpComision();
+                elem.MontoTotalNeto = (decimal)planillaIncentivo.DatosClientes.Sum(item => item.Monto);
+                elem.MontoTotalAplicacion = 0;
+                elem.MontoTotalBruto = 0;
+                elem.MontoTotalRetencion = 0;
+                elem.IdCiclo = planillaIncentivo.IdCiclo;
+                elem.IdTipoComision = tipoComisionIncentivo;
+                elem.PorcentajeRetencion = 0;
+                elem.FechaCreacion = DateTime.Now;
+                elem.FechaActualizacion = DateTime.Now;
+                elem.IdUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == planillaIncentivo.UsuarioNombre).FirstOrDefault().IdUsuario;
+                elem.IdCiclo = planillaIncentivo.IdCiclo;
+                ContextMulti.Add(elem);
+                ContextMulti.SaveChanges();
 
                 int idComisionGenerada = elem.IdComision,
                 estadoPendienteFacturacion = 1;
@@ -173,16 +173,16 @@ namespace gestion_de_comisiones.Repository
                 ContextMulti.SaveChanges();
 
                 List<GpComisionDetalle> comisionesDetalle = armarComisionDetallesPersistir(planillaIncentivo.DatosClientes, idComisionGenerada);
-                    ContextMulti.GpComisionDetalles.AddRange(comisionesDetalle);
-                    ContextMulti.SaveChanges();
+                ContextMulti.GpComisionDetalles.AddRange(comisionesDetalle);
+                ContextMulti.SaveChanges();
 
-                List<GpComisionDetalleEstadoI>  comisionesDetallesEstados = armarComisionesDetallesEstados(comisionesDetalle);
+                List<GpComisionDetalleEstadoI> comisionesDetallesEstados = armarComisionesDetallesEstados(comisionesDetalle);
                 ContextMulti.GpComisionDetalleEstadoIs.AddRange(comisionesDetallesEstados);
                 ContextMulti.SaveChanges();
 
-                
 
-                List<ComisionDetalleEmpresa>  comisionesDetalleEmpresaPersistir = armarComisionesDetalleEmpresaPersistir(planillaIncentivo.DatosClientes, comisionesDetalle);
+
+                List<ComisionDetalleEmpresa> comisionesDetalleEmpresaPersistir = armarComisionesDetalleEmpresaPersistir(planillaIncentivo.DatosClientes, comisionesDetalle);
                 ContextMulti.ComisionDetalleEmpresas.AddRange(comisionesDetalleEmpresaPersistir);
                 ContextMulti.SaveChanges();
 
@@ -197,29 +197,29 @@ namespace gestion_de_comisiones.Repository
 
 
                 dbcontextTransaction.Commit();
-                    return elem;
-                }
-                catch (Exception e)
-                {
-                    dbcontextTransaction.Rollback();
-                    Console.WriteLine("Error occurred.");
-                    return true;
-                }
-            
-                
+                return elem;
+            }
+            catch (Exception e)
+            {
+                dbcontextTransaction.Rollback();
+                Console.WriteLine("Error occurred.");
+                return true;
+            }
 
-           
+
+
+
         }
 
         private List<IncentivoPagoComision> armarIncentivosPagosComisiones(List<GpComisionDetalle> comisionesDetalle, List<DatosPlanillaExcel> planillaDatosClientes, List<ComisionDetalleEmpresa> comisionesDetalleEmpresaPersistir)
         {
             List<IncentivoPagoComision> lista = new List<IncentivoPagoComision>();
             foreach (GpComisionDetalle elem in comisionesDetalle)
-            {   
-                string ciCliente = ContextMulti.Fichas.Where((item) => item.IdFicha == elem.IdFicha ).FirstOrDefault().Ci;
+            {
+                string ciCliente = ContextMulti.Fichas.Where((item) => item.IdFicha == elem.IdFicha).FirstOrDefault().Ci;
                 int idComisionDetalle = comisionesDetalle.Where((item) => item.IdFicha == elem.IdFicha && item.IdComision == elem.IdComision).FirstOrDefault().IdComisionDetalle;
                 int idEmpresa = comisionesDetalleEmpresaPersistir.Where((item) => item.IdComisionDetalle == idComisionDetalle).FirstOrDefault().IdEmpresa;
-                int idTipoIncentivo = planillaDatosClientes.Where((item) => item.IdEmpresa == idEmpresa && item.CiCliente == ciCliente).FirstOrDefault().IdTipoIncentivoPago;              
+                int idTipoIncentivo = planillaDatosClientes.Where((item) => item.IdEmpresa == idEmpresa && item.CiCliente == ciCliente).FirstOrDefault().IdTipoIncentivoPago;
                 IncentivoPagoComision incentivoPagoComi = new IncentivoPagoComision()
                 {
                     IdTipoIncentivoPago = idTipoIncentivo,
@@ -249,7 +249,7 @@ namespace gestion_de_comisiones.Repository
                 var idFicha = ContextMulti.Fichas.Where((item) => item.Ci == elem.CiCliente).FirstOrDefault(); //.IdFicha
                 if (idFicha != null)
                 {
-                    var idComisionDetalle = ContextMulti.GpComisionDetalles.Where((item) => item.IdComision == idComision && item.IdFicha ==  idFicha.IdFicha).FirstOrDefault(); //.IdComisionDetalle
+                    var idComisionDetalle = ContextMulti.GpComisionDetalles.Where((item) => item.IdComision == idComision && item.IdFicha == idFicha.IdFicha).FirstOrDefault(); //.IdComisionDetalle
                     //var idComisionDetalle = ContextMulti.GpComisionDetalles.Where((item) => item.IdComision == idComision && item.IdFicha == idFicha.IdFicha).FirstOrDefault();
 
                     if (idComisionDetalle != null)
@@ -258,26 +258,26 @@ namespace gestion_de_comisiones.Repository
                         var tipoIncentivoPago = ContextMulti.IncentivoPagoComisions.Where((item) => item.IdComisionDetalle == idComisionDetalle.IdComisionDetalle).FirstOrDefault();
                         if (tipoIncentivoPago != null)
                         {
-                            if(tipoIncentivoPago.IdTipoIncentivoPago == elem.IdTipoIncentivoPago)
+                            if (tipoIncentivoPago.IdTipoIncentivoPago == elem.IdTipoIncentivoPago)
                             {
                                 observada = true;
                                 elem.Observada = true;
                                 elem.MotivoObservacion = $"ya existe un registro de este freelancers en el ciclo: ${planillaIncentivo.IdCiclo} con la misma empresa: {elem.Empresa}";
                             }
-                            
+
                         }
                     }
-                    
+
                 }
-                               
+
             }
 
-            return (observada == true)? planillaIncentivo.DatosClientes : null;
-        }       
+            return (observada == true) ? planillaIncentivo.DatosClientes : null;
+        }
         public object ObtenerCiclos(string usuario)
-        {            
-            try 
-            {                
+        {
+            try
+            {
                 var ciclos = ContextMulti.Cicloes.OrderByDescending(x => x.IdCiclo).Take(2);
                 return ciclos;
             }
@@ -286,7 +286,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($" usuario: {usuario} error catch mensaje : {ex}");
                 List<Ciclo> list = new List<Ciclo>();
                 return list;
-            }            
+            }
         }
 
         public object ObtenerTipoIncentivo(string usuario)
@@ -324,7 +324,7 @@ namespace gestion_de_comisiones.Repository
         public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario)
         {
             Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
-           
+
 
             var listaTipoIncentivo = ContextMulti.GpComisions.Join(ContextMulti.GpComisionDetalles,
                 GpComision => GpComision.IdComision,
@@ -352,9 +352,27 @@ namespace gestion_de_comisiones.Repository
                                         idCiclo = IncentivoPagoComision.idCiclo
                                     }
                             ).Where(x => x.idCiclo == nroCicloMensual).ToList();
-            
-            return listaTipoIncentivo;
 
+            return listaTipoIncentivo;
+        }
+        public object RegistrarTipoIncentivoPago(string descripcion)
+        {
+            try
+            {
+                Logger.LogInformation($" Inicio ObtenerTipoIncentivo ");
+                TipoIncentivoPago tipoIncentivoPago = new TipoIncentivoPago();
+                tipoIncentivoPago.Descripcion = descripcion;
+                tipoIncentivoPago.Estado = "ACTIVO";
+                ContextMulti.Add(tipoIncentivoPago);
+                ContextMulti.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex}");
+
+                return false;
+            }
         }
     }
 }
