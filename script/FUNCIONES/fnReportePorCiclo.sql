@@ -31,6 +31,7 @@ select DISTINCT
         (FPAGO.id_estado_listado_forma_pago =3 or 
         GCEC.id_estado_comision IN (9, 13)
         )
+        and gcec.habilitado = 1
         AND ((@MODE = 3 and (GPCOMI.id_tipo_comision = 2 or GPCOMI.id_tipo_comision=1)) or (@MODE < 3 and GPCOMI.id_tipo_comision = @MODE))
         AND CI.id_ciclo = @IDCICLO) DAT 
         group by nombres, apellidos, ci, nro_cuenta,cuenta_bancaria, nombre, id_tipo_pago)

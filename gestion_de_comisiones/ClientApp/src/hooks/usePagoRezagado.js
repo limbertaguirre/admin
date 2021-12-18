@@ -276,12 +276,17 @@ const usePagoRezagado = () => {
   };
   async function ApiVerificarConfirmarCierrePago(userNa, idUser, idCICLO) {
     if (idCICLO && idCICLO !== 0) {
-      let response = await confirmarCierrePago(
-        userNa,
-        idUser,
-        idCICLO,
-        dispatch
+      const cicloObjectSelected = listCiclo.find(
+        (item) => item.idCiclo === idCiclo
       );
+      let url = "/gestionPagosRezagados/CerrarPagoComision";
+      let body = {
+        usuarioLogin: userNa,
+        usuarioId: idUser,
+        idCiclo: idCICLO,
+        comisionId: cicloObjectSelected.idComision,
+      };
+      let response = await requestPost(url, body, dispatch);
       if (response && response.code == 0) {
         dispatch(
           showMessage({
@@ -356,7 +361,6 @@ const usePagoRezagado = () => {
       return null;
     }
   };
-  const confirmarCierrePago = async () => {};
 
   const mensajeGenericoCiclo = () => {
     setOpenSnackbar(true);
