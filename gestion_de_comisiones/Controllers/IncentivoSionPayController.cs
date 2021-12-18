@@ -36,7 +36,7 @@ namespace gestion_de_comisiones.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {planillaIncentivo.UsuarioNombre} error catch controller  IncentivoController()  => CargarPlanillaExcel() Error: {ex.Message} ");
+                Logger.LogError($"usuario request: {planillaIncentivo.UsuarioNombre} Error catch IncentivoSionPayController , CargarPlanillaExcel() Error: {ex.Message} ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(Result);
             }
@@ -51,9 +51,9 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller obtenerCiclos()  ");
                 return Ok(ciclos);
             }
-            catch
+            catch(Exception ex)
             {
-                Logger.LogError($"usuario request: {usuarioLogin} Error catch controller  ObtenerCiclo() ");
+                Logger.LogError($"usuario request: {usuarioLogin} Error catch IncentivoSionPayController , ObtenerCiclo() Error: {ex.Message}");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
             }
@@ -70,7 +70,7 @@ namespace gestion_de_comisiones.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                Logger.LogError($"usuario request: {usuarioLogin} Error catch IncentivoSionPayController , ObtenerTipoIncentivo() Error: {ex.Message} ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
             }
@@ -87,12 +87,11 @@ namespace gestion_de_comisiones.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                Logger.LogError($"usuario request: {usuarioLogin} Error catch IncentivoSionPayController , ObtenerTipoPagos() Error: {ex.Message} ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
             }
         }
-
         // GET: IncentivoSionPay/ObtenerTipoIncentivosSegunCicloMensual
         public ActionResult ObtenerTipoIncentivosSegunCicloMensual([FromHeader] string usuarioLogin, int nroCicloMensual)
         {
@@ -105,7 +104,7 @@ namespace gestion_de_comisiones.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => CargarPlanillaExcel() ");
+                Logger.LogError($"usuario request: {usuarioLogin} Error catch IncentivoSionPayController , ObtenerTipoIncentivosSegunCicloMensual() Error: {ex.Message} ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
             }        
@@ -123,7 +122,7 @@ namespace gestion_de_comisiones.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {tipoIncentivoPago.Usuario} error catch controller  IncentivoController()  => CargarPlanillaExcel() Error: {ex.Message} ");
+                Logger.LogError($"usuario request: {tipoIncentivoPago.Usuario} Error catch IncentivoSionPayController , RegistroTipoIncentivoPago() Error: {ex.Message} ");
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(Result);
             }

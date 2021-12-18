@@ -1,39 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState  } from 'react';
-import { makeStyles, Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { makeStyles, Link, Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import readXlsxFile from 'read-excel-file'
 import { requestPost ,requestGet } from '../../service/request';
 import {useDispatch, useSelector} from 'react-redux';
 import * as ActionMensaje from "../../redux/actions/messageAction";
 import ComboTipoIncentivoPago from './ComboTipoIncentivo';
+import ComboTipoPago from './ComboTipoPago';
 import ModalCargarPlanilla from './MensajeModalCargarPlanilla';
 import ModalTipoIncentivo from './ModalTipoIncentivo';
+import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
+import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 const useStyles = makeStyles((theme) => ({
   errorRow: {
     background: 'darksalmon'
   },
   normalRow:{
     background: 'white'
+  },
+  botonVerde:{
+    background: '#197e30',
+    color: 'white',
+    "&:hover": {
+      background: '#197e30',
+      color: 'white',
+    }
   }
 }));
 const PagoIncentivo = ()=> {
   const style = useStyles()
   const dispatch = useDispatch()
-  const {userName, idUsuario} = useSelector((stateSelector)=>{ return stateSelector.load});
+  const {userName} = useSelector((stateSelector)=>{ return stateSelector.load});
   const ESTADO_ERROR_PLANILLA = 1;
   const FILA_OBSERVADA = 1;
+  const ID_TIPO_PAGO_SION_PAY = 1;
   const changeInputFile = (event) => {
     const schema = {
-      'N°': {
-        prop: 'nro',
-        type: Number,
-        required: true
-      },
-      'Usuario': {
-        prop: 'usuario',
-        type: String,
-        required: true
-      },
       'Empresa': {
         prop: 'empresa',
         type: String,
@@ -101,7 +104,7 @@ const PagoIncentivo = ()=> {
         alert('Ocurrio un problema al cargar la planilla, verifique los datos')
       }else{
         setDatosExcel(rows.map( (item)=>{
-          return { ...item, idTipoIncentivoPago : '', estadoFila : 0}
+          return { ...item, idTipoIncentivoPago : '', estadoFila : 0 , idTipoPago: ''}
         }))
       }
     })
@@ -112,7 +115,6 @@ const PagoIncentivo = ()=> {
       if (datosExcel[i].idTipoIncentivoPago == '')
         filasObservadas.push(i+1)
     }
-    console.log(filasObservadas)
     return filasObservadas.length === 0
   }
   const cargarPlanilla = () => {
@@ -125,11 +127,16 @@ const PagoIncentivo = ()=> {
       setEstadoCargarPlanilla(ESTADO_ERROR_PLANILLA)
       setModalCargarPlanilla(true)
       setMensajeErrorModal("No tiene seleccionado un ciclo")
+      return
     }
+    let newDatosExcel = [...datosExcel]
+    newDatosExcel.map((item)=>{
+      item.estadoFila = 0
+    })
+    setDatosExcel(newDatosExcel)
     if (verificarTipoIncentivoSeleccionado(datosExcel)){
       requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
-        console.log(response)
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
         response.data.map((item,index) =>{
@@ -153,7 +160,9 @@ const PagoIncentivo = ()=> {
         }
       })
       .catch((error)=>{
-        console.log(error)
+        setEstadoCargarPlanilla(ESTADO_ERROR_PLANILLA)
+        setModalCargarPlanilla(true)
+        setMensajeErrorModal(error)
       })
     }else{
       setEstadoCargarPlanilla(ESTADO_ERROR_PLANILLA)
@@ -164,6 +173,7 @@ const PagoIncentivo = ()=> {
   useEffect(()=>{
     obtenerCiclos();
     obtenerTipoIncentivoPago();
+    obtenerTipoPago();
   },[])
   const obtenerCiclos = () => {
     const data={usuarioLogin:userName};
@@ -185,6 +195,8 @@ const PagoIncentivo = ()=> {
   const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
   const [ mensajeErrorModal , setMensajeErrorModal] = useState("")
   const [ openTipoIncentivoModal , setOpenTipoIncentivoModal] = useState(false)
+  const [ valorTipoIncentivoTodos , setValorIncentivoTodos] = useState("")
+  const [ valorTipoPagoTodos , setValorPagoTodos] = useState("")
   const handleChangeCiclo = (event) =>{
     setCiclo(event.target.value);
   }
@@ -193,7 +205,6 @@ const PagoIncentivo = ()=> {
     requestGet('IncentivoSionPay/ObtenerTipoIncentivo',data,dispatch).then((res)=>{
       if(res.code === 0){
         setListaTipoIncentivo(res.data);
-        console.log(res)
       }else{
           setListaCiclo([]);
           dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
@@ -202,7 +213,7 @@ const PagoIncentivo = ()=> {
   }
   const obtenerTipoPago = () => {
     const data={usuarioLogin:userName};
-    requestGet('IncentivoSionPay/ObtenerTipoIncentivo',data,dispatch).then((res)=>{
+    requestGet('IncentivoSionPay/ObtenerTipoPagos',data,dispatch).then((res)=>{
       if(res.code === 0){
         setListaTipoPago(res.data);
       }else{
@@ -214,11 +225,31 @@ const PagoIncentivo = ()=> {
   const cerrarModal = () => {
     setModalCargarPlanilla(false)
   }
-  const handleChangeTipoIncentivo = (event,index) =>{
+  const handleChangeTipoIncentivo = (event,index, cambiarTodos) =>{
     let newDatosExcel = [...datosExcel]
-    newDatosExcel[index].idTipoIncentivoPago = event.target.value
-    setDatosExcel(newDatosExcel)
-    console.table(datosExcel)
+    if(cambiarTodos === true){
+      setValorIncentivoTodos(event.target.value)
+      newDatosExcel.map((item)=>{
+        item.idTipoIncentivoPago = event.target.value
+      })
+      setDatosExcel(newDatosExcel)
+    }else{
+      newDatosExcel[index].idTipoIncentivoPago = event.target.value
+      setDatosExcel(newDatosExcel)
+    }
+  }
+  const handleChangeTipoPago = (event, index, cambiarTodos) =>{
+    let newDatosExcel = [...datosExcel]
+    if(cambiarTodos === true){
+      setValorPagoTodos(event.target.value)
+      newDatosExcel.map((item)=>{
+        item.idTipoPago = event.target.value
+      })
+      setDatosExcel(newDatosExcel)
+    }else{
+      newDatosExcel[index].idTipoPago = event.target.value
+      setDatosExcel(newDatosExcel)
+    }
   }
   const onClickInputFile = (event) =>{
     event.target.value = null
@@ -238,10 +269,8 @@ const PagoIncentivo = ()=> {
       Descripcion : descripcionTipoIncentivo,
       Usuario : userName
     }
-    console.log(data)
     requestPost('IncentivoSionPay/RegistroTipoIncentivoPago',data,dispatch)
     .then((response)=>{
-      console.log(response)
       if(response.code === 0){
         obtenerTipoIncentivoPago()
       }else{
@@ -274,19 +303,23 @@ const PagoIncentivo = ()=> {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={3}>
           <input type="file" id='contained-button-file' onClick={ onClickInputFile } accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={ changeInputFile} style={{ display: 'none'}}/>
           <label htmlFor="contained-button-file">
-            <Button variant="contained" component="span">
+            <Button variant="contained" component="span" endIcon={<CloudUploadOutlinedIcon/>} className={ style.botonVerde}>
               Cargar archivo Excel
             </Button>
           </label>
-          <Button variant="contained" component="span">
-            Descargar formato planilla Excel
-          </Button>
+        </Grid>
+        <Grid item xs={3}>
+          <Link href="/FormatoPlanillaIncentivoSionPay.xlsx" target="_blank" rel="noopener" download variant="body2">
+            <Button variant="contained" component="span" color="primary" endIcon={<CloudDownloadOutlinedIcon/>}>
+              Descargar formato planilla Excel
+            </Button>
+          </Link>
         </Grid>
         <Grid item xs={6}>
-          <Button variant="contained" component="span" onClick={ registrarTipoIncentivo }>
+          <Button variant="contained" component="span" onClick={ registrarTipoIncentivo } endIcon={<AddCircleOutlineOutlinedIcon/>} color="primary" >
             Registrar tipo incentivo
           </Button>
         </Grid>
@@ -295,6 +328,33 @@ const PagoIncentivo = ()=> {
         <TableContainer >
         <Table aria-label="simple table">
           <TableHead>
+            <TableRow>
+              <TableCell align="left"></TableCell>
+              <TableCell align="left"></TableCell>
+              <TableCell align="left"> </TableCell>
+              <TableCell align="left"> </TableCell>
+              <TableCell align="left"> </TableCell>
+              <TableCell align="left">  </TableCell>
+              <TableCell align="left">  </TableCell>
+              <TableCell align="left">  </TableCell>
+              <TableCell align="left">  </TableCell>
+              <TableCell align="left" style={{minWidth: '230px'}}>
+                <ComboTipoPago
+                  listaTipoPago = {listaTipoPago}
+                  handleChangeTipoPago={ (e)=> handleChangeTipoPago (e,1,true) }
+                  valorTipoPago = { valorTipoPagoTodos === '' ? ID_TIPO_PAGO_SION_PAY : valorTipoPagoTodos  }
+                  labelTipoPago = { 'Aplicar tipo de pago en todas las filas'}
+                />
+              </TableCell>
+              <TableCell align="left" style={{minWidth: '300px'}}>
+                <ComboTipoIncentivoPago
+                    listaIncentivo = {listaTipoIncentivo}
+                    handleChangeTipoIncentivo={ (e)=> handleChangeTipoIncentivo (e,1,true) }
+                    valorTipoIncentivo={valorTipoIncentivoTodos}
+                    labelTipoIncentivoPago={'Aplicar incentivo en todas las filas'}
+                />
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell align="left">Empresa</TableCell>
               <TableCell align="left"> Id Empresa </TableCell>
@@ -305,7 +365,8 @@ const PagoIncentivo = ()=> {
               <TableCell align="left"> Ciudad </TableCell>
               <TableCell align="left"> Pais </TableCell>
               <TableCell align="left"> Detalle </TableCell>
-              <TableCell align="left"> Tipo incentivo </TableCell>
+              <TableCell align="left"> Tipo Pago </TableCell>
+              <TableCell align="left"> Tipo incentivo</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -316,19 +377,28 @@ const PagoIncentivo = ()=> {
                 className={ row.estadoFila === 0 ? style.normalRow : style.errorRow }
               >
                 <TableCell align="left">{row.empresa}</TableCell>
-                <TableCell align="left">{row.idEmpresa}</TableCell>
+                <TableCell align="right">{row.idEmpresa}</TableCell>
                 <TableCell align="left">{row.nombreCliente}</TableCell>
                 <TableCell align="left">{row.ciCliente}</TableCell>
                 <TableCell align="left">{row.cuentaSionPay}</TableCell>
-                <TableCell align="left">{row.monto}</TableCell>
+                <TableCell align="right">{row.monto}</TableCell>
                 <TableCell align="left">{row.ciudad}</TableCell>
                 <TableCell align="left">{row.pais}</TableCell>
                 <TableCell align="left">{row.detalle}</TableCell>
                 <TableCell>
+                <ComboTipoPago
+                    listaTipoPago = {listaTipoPago}
+                    handleChangeTipoPago={ (e)=> handleChangeTipoPago (e,index, false) }
+                    valorTipoPago ={row.idTipoPago === '' ? ID_TIPO_PAGO_SION_PAY : row.idTipoPago  }
+                    labelTipoPago = {'Elige el tipo de pago'}
+                  />
+                </TableCell>
+                <TableCell>
                   <ComboTipoIncentivoPago
                     listaIncentivo = {listaTipoIncentivo}
-                    handleChangeTipoIncentivo={ (e)=> handleChangeTipoIncentivo (e,index) }
+                    handleChangeTipoIncentivo={ (e)=> handleChangeTipoIncentivo (e,index,false) }
                     valorTipoIncentivo={ row.idTipoIncentivoPago }
+                    labelTipoIncentivoPago={'Elige el incentivo'}
                   />
                 </TableCell>
               </TableRow>

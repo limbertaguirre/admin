@@ -42,9 +42,9 @@ const ModalTipoIncentivo = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {listaTipoIncentivo.map((row) => (
+              {listaTipoIncentivo.map((row,index) => (
                 <TableRow
-                  key={row.name}
+                  key={index}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell>{row.idTipoIncentivo}</TableCell>
