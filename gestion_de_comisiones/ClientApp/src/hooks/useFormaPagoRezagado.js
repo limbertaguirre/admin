@@ -5,7 +5,6 @@ import { verificarAcceso } from "../lib/accesosPerfiles";
 import { requestGet, requestPost } from "../service/request";
 import { showMessage } from "../redux/actions/messageAction";
 import * as permiso from "../routes/permiso";
-import * as Actions from "../redux/actions/FormaPagosAction";
 
 const useFormaPagoRezagado = () => {
   let history = useHistory();
@@ -44,15 +43,15 @@ const useFormaPagoRezagado = () => {
   };
 
   useEffect(() => {
-    // try {
-    //   verificarAcceso(
-    //     perfiles,
-    //     location.state.namePagina + permiso.VISUALIZAR,
-    //     history
-    //   );
-    // } catch (err) {
-    //   verificarAcceso(perfiles, "none", history);
-    // }
+    try {
+      verificarAcceso(
+        perfiles,
+        location.state.namePagina + permiso.VISUALIZAR,
+        history
+      );
+    } catch (err) {
+      verificarAcceso(perfiles, "none", history);
+    }
     handleOnGetCiclos();
   }, []);
 
@@ -415,7 +414,7 @@ const useFormaPagoRezagado = () => {
         usuarioLogin: userName,
         idUsuario: idUsuario,
         idCiclo: parseInt(idCiclo),
-        comisionId: cicloObjectSelected.idComision
+        comisionId: cicloObjectSelected.idComision,
       };
       let response = await requestPost(url, body, dispatch);
 
