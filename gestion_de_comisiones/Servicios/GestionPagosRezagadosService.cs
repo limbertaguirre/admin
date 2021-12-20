@@ -141,11 +141,12 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} inicio el servicio ConfirmarPagosRezagadosTransferencias() body: {param}");
                 GestionPagosRezagadosEvent r = Repository.ConfirmarPagosRezagadosTransferencias(param);
                 Logger.LogInformation($"GestionPagosRezagadosService Repuesta del repository ConfirmarPagosRezagadosTransferencias() eventType: {r.eventType}, message: {r.message}");
-                if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
-                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
-                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
-                    r.eventType == GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
-                    r.eventType == GestionPagosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS)
+                if (r.eventType == GestionPagosRezagadosEvent.ERROR || r.eventType == GestionPagosRezagadosEvent.ROLLBACK_ERROR ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS)
                 {
                     throw new Exception(r.message);
                 }
