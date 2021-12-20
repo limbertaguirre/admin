@@ -142,7 +142,8 @@ namespace gestion_de_comisiones.Controllers
                 Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => ObtenerIncentivosPagar() ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
-            }
+            }        
         }
+        
     }
 }

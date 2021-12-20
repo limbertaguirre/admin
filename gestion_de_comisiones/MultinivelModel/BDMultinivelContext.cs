@@ -86,6 +86,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<VwObtenerRezagadosPago> VwObtenerRezagadosPagos { get; set; }
         public virtual DbSet<VwObtenercomisione> VwObtenercomisiones { get; set; }
         public virtual DbSet<VwObtenercomisionesFormaPago> VwObtenercomisionesFormaPagoes { get; set; }
+        public virtual DbSet<VwPagosIncentivo> VwPagosIncentivos { get; set; }
         public virtual DbSet<VwTipoAutorizacion> VwTipoAutorizacions { get; set; }
         public virtual DbSet<VwVerificarAutorizacionComision> VwVerificarAutorizacionComisions { get; set; }
         public virtual DbSet<VwVerificarCuentasUsuario> VwVerificarCuentasUsuarios { get; set; }
@@ -3607,6 +3608,56 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("tipo_pago_descripcion");
+            });
+
+            modelBuilder.Entity<VwPagosIncentivo>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vwPagosIncentivos");
+
+                entity.Property(e => e.Banco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("banco");
+
+                entity.Property(e => e.CedulaIdentidad)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cedula_identidad");
+
+                entity.Property(e => e.CuentaBanco)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("cuenta_banco");
+
+                entity.Property(e => e.IdCiclo).HasColumnName("idCiclo");
+
+                entity.Property(e => e.IdTipoIncentivo).HasColumnName("id_tipo_incentivo");
+
+                entity.Property(e => e.IdTipoIncentivoPago).HasColumnName("id_tipo_incentivo_pago");
+
+                entity.Property(e => e.MontoTotalNeto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto_total_neto");
+
+                entity.Property(e => e.NombreCompleto)
+                    .IsRequired()
+                    .HasMaxLength(511)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_completo");
+
+                entity.Property(e => e.TipoIncentivo)
+                    .IsRequired()
+                    .HasMaxLength(300)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TipoPago)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("tipo_pago");
             });
 
             modelBuilder.Entity<VwTipoAutorizacion>(entity =>
