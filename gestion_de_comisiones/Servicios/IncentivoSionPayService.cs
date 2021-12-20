@@ -124,5 +124,20 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al registrar tipo de incentivo", "problemas en el servidor, intente mas tarde");
             }
         }
+
+        public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerPagosIncentivosSegunCicloIdTipoIncentivo()");
+                var incentivosAPagar = Repository.ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(nroCicloMensual, tipoIncentivo, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los incentivos a pagar", incentivosAPagar);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener ObtenerPagosIncentivosSegunCicloIdTipoIncentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

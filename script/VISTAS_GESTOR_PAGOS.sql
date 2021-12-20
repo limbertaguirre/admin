@@ -358,3 +358,45 @@ GO
 
 
 
+create view [dbo].[vwPagosIncentivos] 
+AS
+
+create view vwPagosIncentivos as
+select (f.nombres + ' ' + f.apellidos) as nombre_completo
+, f.ci as cedula_identidad
+,f.cuenta_bancaria as cuenta_banco
+, banco.nombre as banco
+,cd.monto_neto as monto_total_neto
+,ipc.id_tipo_incentivo_pago
+,tip.descripcion as  TipoIncentivo
+,tp.nombre as tipo_pago
+,c.id_ciclo as idCiclo
+,tip.id_tipo_incentivo
+
+from GP_COMISION as c
+inner join  GP_COMISION_DETALLE  as cd
+on c.id_comision = cd.id_comision
+inner join GP_COMISION_ESTADO_COMISION_I as ces
+on ces.id_comision = c.id_comision
+inner join FICHA as f
+on cd.id_ficha = f.id_ficha
+inner join GP_COMISION_DETALLE_ESTADO_I as cde
+on cd.id_comision_detalle = cde.id_comision_detalle
+inner join LISTADO_FORMAS_PAGO as lfp
+on cd.id_comision_detalle = lfp.id_comisiones_detalle
+inner join INCENTIVO_PAGO_COMISION ipc
+on cd.id_comision_detalle = ipc.id_comision_detalle
+inner join TIPO_INCENTIVO_PAGO as tip
+on ipc.id_tipo_incentivo_pago = tip.id_tipo_incentivo
+inner join TIPO_PAGO as tp
+on lfp.id_tipo_pago = tp.id_tipo_pago
+left join BANCO as banco
+on f.id_banco = banco.id_banco
+
+where c.id_tipo_comision = 3 
+and cde.id_estado_comision_detalle = 7
+--and c.id_comision=1193
+--and ces.id_estado_comision=14 
+and lfp.id_tipo_pago=1
+
+GO

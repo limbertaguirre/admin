@@ -16,5 +16,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object ObtenerTiposPagos(string usuario);
         public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario);
         public object RegistrarTipoIncentivoPago(string descripcion);
+        public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario);
     }
 }

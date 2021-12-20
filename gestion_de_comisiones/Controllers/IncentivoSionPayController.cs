@@ -29,7 +29,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario request : {planillaIncentivo.UsuarioNombre} inicio el controller AplicacionesController => Index() parametro: idciclo:{planillaIncentivo.IdCiclo}");
+                Logger.LogInformation($"usuario request : {planillaIncentivo.UsuarioNombre} inicio el controller AplicacionesController => Index() parametro: idciclo:{planillaIncentivo.IdCiclo}");                
                 var resulcliente = Service.CargarDatosPlanillaExcel(planillaIncentivo);
                 Logger.LogInformation($"usuario : {planillaIncentivo.UsuarioNombre} Fin del controller AplicacionesController => Index()");
                 return Ok(resulcliente);
@@ -127,5 +127,23 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // GET: IncentivoSionPay/ObtenerIncentivosPagar
+        public ActionResult ObtenerIncentivosPagar([FromHeader] string usuarioLogin, int nroCicloMensual, int idTipoIncentivo)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller ObtenerTipoPagos()");
+                var incentivosAPagar = Service.ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(nroCicloMensual, idTipoIncentivo, usuarioLogin);
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ObtenerTipoPagos()");
+                return Ok(incentivosAPagar);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => ObtenerIncentivosPagar() ");
+                var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(result);
+            }        
+        }
+        
     }
 }
