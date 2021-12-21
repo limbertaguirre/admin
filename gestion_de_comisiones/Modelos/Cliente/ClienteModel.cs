@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Modelos.Cliente
 {
     public class ClienteModel
     {
-        public ClienteModel(int idFicha, int codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado,int idCiudad, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
+        public ClienteModel(int idFicha, int codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool tieneCuentaBancaria, int idBanco, string cuentaBancaria, bool facturaHabilitado, string razonSocial, string nit, int estado, int idCiudad, int idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion)
         {
             IdFicha = idFicha;
             Codigo = codigo;
@@ -36,6 +36,37 @@ namespace gestion_de_comisiones.Modelos.Cliente
             IdUsuario = idUsuario;
             FechaCreacion = fechaCreacion;
             FechaActualizacion = fechaActualizacion;
+        }
+
+        public ClienteModel(int idFicha, int codigo, string nombres, string apellidos, string ci, string correoElectronico, DateTime? fechaRegistro, string telOficina, string telMovil, string telFijo, string direccion, DateTime? fechaNacimiento, string contrasena, string comentario, string avatar, bool? tieneCuentaBancaria, int? idBanco, string cuentaBancaria, bool? facturaHabilitado, string razonSocial, string nit, int? estado,int idCiudad, int? idUsuario, DateTime? fechaCreacion, DateTime? fechaActualizacion,int idTipoPago )
+        {
+            IdFicha = idFicha;
+            Codigo = codigo;
+            Nombres = nombres;
+            Apellidos = apellidos;
+            Ci = ci;
+            CorreoElectronico = correoElectronico;
+            FechaRegistro = fechaRegistro;
+            TelOficina = telOficina;
+            TelMovil = telMovil;
+            TelFijo = telFijo;
+            Direccion = direccion;
+            FechaNacimiento = fechaNacimiento;
+            Contrasena = contrasena;
+            Comentario = comentario;
+            Avatar = avatar;
+            TieneCuentaBancaria = tieneCuentaBancaria;
+            IdBanco = idBanco;
+            CuentaBancaria = cuentaBancaria;
+            FacturaHabilitado = facturaHabilitado;
+            RazonSocial = razonSocial;
+            Nit = nit;
+            Estado = estado;
+            IdCiudad = idCiudad;
+            IdUsuario = idUsuario;
+            FechaCreacion = fechaCreacion;
+            FechaActualizacion = fechaActualizacion;
+            IdTipoPago = idTipoPago;
         }
 
         [JsonPropertyName("idFicha")]
@@ -90,6 +121,8 @@ namespace gestion_de_comisiones.Modelos.Cliente
         public DateTime? FechaCreacion { get; set; }
         [JsonPropertyName("fechaActualizacion")]
         public DateTime? FechaActualizacion { get; set; }
+        [JsonPropertyName("idTipoPago")]
+        public int IdTipoPago { get; set; }
 
     }
 }

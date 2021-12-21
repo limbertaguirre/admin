@@ -17,5 +17,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public object listarNivelesClientes(string usuario);
         public Result<string> ValidarRegistros(ClienteUpdateInputModel ficha);
         public bool ActualizarFichaCliente(ClienteUpdateInputModel ficha);
+        public List<TipoPagoModel> ObtenerTipoPagosXFreelancer(ClienteInputObtenerModel param);
     }
 }

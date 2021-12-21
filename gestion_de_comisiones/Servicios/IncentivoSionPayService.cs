@@ -1,5 +1,6 @@
 ﻿using AutoMapper.Configuration;
 using gestion_de_comisiones.Modelos.Incentivo;
+using gestion_de_comisiones.Modelos.IncentivoSionPay;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -77,6 +78,65 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ObtenerTipoPagos(string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoPagos()");
+                var tiposPagos = Repository.ObtenerTiposPagos(usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposPagos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoPagos(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de Pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
+                var tiposIncentivos = Repository.ObtenerTipoIncentivosPagosSegunCiclo(nroCicloMensual, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposIncentivos);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object RegistrarTipoIncentivoPago(TipoIncentivoPago tipoIncentivoPago, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio Service RegistrarTipoIncentivoPago()");
+                var ciclos = Repository.RegistrarTipoIncentivoPago(tipoIncentivoPago.Descripcion);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se registro el tipoIncentivoPago correctamente", "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch RegistrarTipoIncentivoPago(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al registrar tipo de incentivo", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio ObtenerPagosIncentivosSegunCicloIdTipoIncentivo()");
+                var incentivosAPagar = Repository.ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(nroCicloMensual, tipoIncentivo, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los incentivos a pagar", incentivosAPagar);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener ObtenerPagosIncentivosSegunCicloIdTipoIncentivo", "problemas en el servidor, intente mas tarde");
             }
         }
     }

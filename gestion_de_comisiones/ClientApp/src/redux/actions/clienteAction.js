@@ -142,7 +142,7 @@ import * as Action from './messageAction';
     }
   }
 
-  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
+  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja, idTipoPago )=>{
     return (dispatch, getState )=>{  
                        
           const data={
@@ -182,6 +182,7 @@ import * as Action from './messageAction';
              idTipoBaja : idTipoBaja,
              fechaBaja : fechaBaja,
              motivoBaja : motivoBaja,
+             idTipoPago: idTipoPago,
            };
          
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
@@ -195,3 +196,15 @@ import * as Action from './messageAction';
               })   
     }
   }
+
+  export async function ObtenerTipoPagoDisponibles( userName, idCliente, dispatch) {
+    return new Promise((resolve) => {
+        const data = {
+                    usuarioLogin: userName,                  
+                    idCliente: parseInt(idCliente),                  
+                   };
+        requestPost( "Cliente/ObtenerTipoPagosFreelancer", data, dispatch) .then((response) => {
+        resolve(response);
+        });
+    });
+}

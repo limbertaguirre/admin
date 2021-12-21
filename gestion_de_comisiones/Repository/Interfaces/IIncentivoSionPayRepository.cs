@@ -1,4 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos.Incentivo;
+using gestion_de_comisiones.Modelos.IncentivoSionPay;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,9 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public List<DatosPlanillaExcel> verificarIncentivosEmpresaCiNoRepetidos(PlanillaPagoIncentivo planillaIncentivo);
         public object ObtenerCiclos(string usuario);        
         public object ObtenerTipoIncentivo(string usuario);
+        public object ObtenerTiposPagos(string usuario);
+        public object ObtenerTipoIncentivosPagosSegunCiclo(int nroCicloMensual, string usuario);
+        public object RegistrarTipoIncentivoPago(string descripcion);
+        public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario);
     }
 }
