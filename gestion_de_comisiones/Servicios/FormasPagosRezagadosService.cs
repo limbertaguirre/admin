@@ -138,7 +138,7 @@ namespace gestion_de_comisiones.Servicios
                 FormasPagosRezagadosEvent result = Repository.CerrarFormaDePago(param);
                 if (result.eventType == FormasPagosRezagadosEvent.SUCCESS)
                     return Respuesta.ReturnResultdo(0, "Se cerro la forma de pago correctamente.", "");
-                return Respuesta.ReturnResultdo(0, result.message, "");
+                return Respuesta.ReturnResultdo(1, result.message, "");
             }
             catch (Exception ex)
             {
