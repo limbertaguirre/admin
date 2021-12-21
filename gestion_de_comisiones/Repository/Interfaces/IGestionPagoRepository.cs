@@ -29,5 +29,6 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public RespuestaPorTipoPagoModel VerificarTransaccionRechazadoMontoCero(int idCiclo, string usuarioLogin, int idEstadoComision, int idTipoComisionPagoComision, int idTipoFormaPago);
         public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param, int idTipoComision);
         public object BuscarFreelancerPagosTransferencias(DownloadFileTransferenciaInput param);
+        public List<RespuestaDetalleComision> ObtenerDetalleComision(ParametrosDetalleComision param);
     }
 }

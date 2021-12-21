@@ -1,6 +1,8 @@
 
 ## base de datos correr primera vez
    Scaffold-DbContext "Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel   
+## base de datos de sion pay
+   Scaffold-DbContext "Server=10.2.10.15;Database=BDPuntosCash; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir SionPayModels -Tables CUENTA, USUARIO   
 
 ## tablas guardian correr primera vez
   Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=grdsion; SslMode = none;Command Timeout=3000" MySql.EntityFrameworkCore -OutputDir GuardianModels -Tables administraciondescuentociclo, administraciondescuentociclodetalle, administracionciclopresentafactura  empresa_complejo, proyecto_conexion_sufijo, administracionciclo

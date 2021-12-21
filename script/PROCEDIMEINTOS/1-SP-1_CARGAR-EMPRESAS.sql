@@ -1,5 +1,5 @@
 
-ALTER PROCEDURE [dbo].[SP_EXEC_CARGAR_EMPRESAS]
+CREATE PROCEDURE [dbo].[SP_EXEC_CARGAR_EMPRESAS]
  
 AS
 
@@ -41,7 +41,7 @@ BEGIN TRANSACTION;
 				DECLARE @EMPRESA_GUARDIAN INT;
 				SET @EMPRESA_GUARDIAN=0;
 
-				SELECT top(1) @EMPRESA_GUARDIAN=empresa_id FROM OPENQUERY( [10.2.10.222], 'select * from empresa_conexion ') WHERE id_bd= @IDEMPRESAitem
+				SELECT top(1) @EMPRESA_GUARDIAN=empresa_id FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grdsion.empresa_config ') WHERE empresa_conexion_id= @IDEMPRESAitem
 
 				insert into   BDMultinivel.dbo.EMPRESA (codigo, codigo_cnx, nombre,nombre_bd, estado, id_usuario)
 				values(

@@ -1,5 +1,5 @@
 
-ALTER PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
+CREATE PROCEDURE [dbo].[SP_PROCESAR_FACTURAS_PENDIENTES]
      @id_Ciclo     int,
      @habilitado_facturar_guardian bit,
      @usuario VARCHAR(100)

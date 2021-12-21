@@ -1,19 +1,17 @@
-import React, * as GeneralReact from "react";
+import React, {useState, useEffect, forwardRef} from "react";
 import * as Redux from "react-redux";
 import PropTypes from "prop-types";
-import * as Core from "@material-ui/core";
-import * as CoreStyles from "@material-ui/core/styles";
-import * as GeneralIcons from "@material-ui/icons";
+import {Dialog, Slide, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Checkbox, TableSortLabel, Toolbar, Typography, AppBar, IconButton, Card, Grid, Paper, Button, Chip, TextField, InputAdornment} from "@material-ui/core";
+import {makeStyles, lighten} from "@material-ui/core/styles";
+import {Close, Search}from "@material-ui/icons";
 import clsx from "clsx";
 import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
-import { Row } from "react-flexbox-grid";
-import { Alert, Button } from "bootstrap";
 import MessageTransferConfirm from "./MessageTransferConfirm";
 import { formatearNumero } from "../../../../lib/utility";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Core.Slide direction="up" ref={ref} {...props} />;
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 //-------------------------- PROPIEDADES DE LA TABLA ----------------------------------------
@@ -89,7 +87,7 @@ const headCells = [
   },
 ];
 
-const useHeaderStyles = CoreStyles.makeStyles((theme) => ({
+const useHeaderStyles = makeStyles((theme) => ({
   headerTable: {
     background: "#1872b8",
     boxShadow: "2px 1px 5px #1872b8",
@@ -118,25 +116,25 @@ function EnhancedTableHead(props) {
   return (
     <>
       <br />
-      <Core.TableHead className={style.headerTable}>
-        <Core.TableRow>
-          <Core.TableCell padding="Checkbox">
-            <Core.Checkbox
+      <TableHead className={style.headerTable}>
+        <TableRow>
+          <TableCell padding="Checkbox">
+            <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
               inputProps={{ "aria-label": "select all desserts" }}
             />
-          </Core.TableCell>
+          </TableCell>
           {headCells.map((headCell) => (
-            <Core.TableCell
+            <TableCell
               className={style.headerRow}
               key={headCell.id}
               align={headCell.numeric ? "left" : "center"}
               padding={headCell.disablePadding ? "right" : "center"}
               sortDirection={orderBy === headCell.id ? order : false}
             >
-              <Core.TableSortLabel
+              <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
@@ -150,11 +148,11 @@ function EnhancedTableHead(props) {
                       : "sorted ascending"}
                   </span>
                 ) : null}
-              </Core.TableSortLabel>
-            </Core.TableCell>
+              </TableSortLabel>
+            </TableCell>
           ))}
-        </Core.TableRow>
-      </Core.TableHead>
+        </TableRow>
+      </TableHead>
     </>
   );
 }
@@ -169,7 +167,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
+const useToolbarStyles = makeStyles((theme) => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -178,7 +176,7 @@ const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
     theme.palette.type === "light"
       ? {
           color: theme.palette.secondary.main,
-          backgroundColor: CoreStyles.lighten(
+          backgroundColor: lighten(
             theme.palette.secondary.light,
             0.85
           ),
@@ -197,35 +195,35 @@ const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
 
   return (
-    <Core.Toolbar
+    <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
     >
       {numSelected > 0 ? (
-        <Core.Typography
+        <Typography
           className={classes.title}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
           {numSelected} seleccionados
-        </Core.Typography>
+        </Typography>
       ) : (
-        <Core.Typography
+        <Typography
           className={classes.title}
           variant="h6"
           id="tableTitle"
           component="div"
         >
           Listado de transferencias
-        </Core.Typography>
+        </Typography>
       )}
 
       {
         numSelected > 0
       }
-    </Core.Toolbar>
+    </Toolbar>
   );
 };
 
@@ -233,7 +231,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-const useStyles = CoreStyles.makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     marginTop: theme.spacing(2),
@@ -313,18 +311,17 @@ const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
   const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
-  const [dense, setDense] = React.useState(false);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("docDeIdentidad");
+  const [dense, setDense] = useState(false);
   const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
     return stateSelector.load;
   });
   const [openModalConfirmation, setOpenModalConfirmation] =
-    React.useState(false);
-  const [totalPagar, setTotalPagar] = React.useState(parseFloat(data?.montoTotal).toFixed(2));
-  const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
-  const [ ci, setCi]= React.useState('');
-  const [ciResultado, setCiResultado] = React.useState([]);
+    useState(false);
+  const [totalPagar, setTotalPagar] = useState(parseFloat(data?.montoTotal).toFixed(2));
+  const [totalMontoRechazados, setTotalMontoRechazados] = useState(0);
+  const [ciResultado, setCiResultado] = useState([]);
   data.montoTotal = data.montoTotal.replace(',', '.');
 
   const handleRequestSort = (event, property) => {
@@ -458,84 +455,67 @@ const GridTransferencia = (props) => {
       return ad;
     }else return "valor no válido"
   }
-  async function buscarPorCi(){ 
-    let response= await Actions.BuscarFreelancerPagosTransferencias(userName, ci, idCiclo, empresaId, dispatch)               
-    if(response && response.code == 0){
-      console.log('Responde Con: BuscarFreelancerPagosTransferencias: ', response);
-      setCiResultado(response);
-    }       
+
+
+  // --------------------------------------BUSCADOR PREDICTIVO--------------------------------
+  const [resultado, setResultado] = useState([])
+  useEffect(()=>{
+     setResultado(list);
+    }, [list])
+  
+function searchingTerm(term){
+  return function(x){
+    return x.docDeIdentidad.includes(term) || !term;
+  }
 }
-  const BuscarFreelancerPagosTransferencias=()=>{
-    if(ci != ""){ 
-        buscarPorCi();
-    }else{
-      error('¡Introduzca carnet de identidad!');
-      window.location.reload();
-    }
-  }
-const onChange= (e) => {
-  const textSearch = e.target.name;
-  const value = e.target.value;
-  if (textSearch === "idCiclo") {
-    idCiclo(value);        
-  }
-    if (textSearch === "txtBusqueda") {
-    setCi(value);
-  }
-};
+// --------------------------------------------------------------------------------------------
   return (
-    <Core.Dialog
+    <Dialog
       fullScreen
       open={openModalFullScreen}
       onClose={closeFullScreenModal}
       TransitionComponent={Transition}
     >
-      <Core.AppBar className={classes.appBar}>
-        <Core.Toolbar>
-          <Core.IconButton
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <IconButton
             edge="start"
             color="inherit"
             onClick={cerrarVolverCero}
             aria-label="close"
           >
-            <GeneralIcons.Close />
-          </Core.IconButton>
-          <Core.Typography variant="h6" className={classes.appBar}>
+            <Close />
+          </IconButton>
+          <Typography variant="h6" className={classes.appBar}>
             CONFIRMAR TRANSFERENCIA PARA {data.list[0].empresa}
-          </Core.Typography>
-        </Core.Toolbar>
-      </Core.AppBar>
+          </Typography>
+        </Toolbar>
+      </AppBar>
       {/* --------------------------------------------------------------CABECERA-------------------------------------------------------------------- */}
 
-      <Core.Card style={{ overflow: "initial" }}>
-        <Core.Grid container className={classes.gridContainer}>
-          <Core.Grid item xs={12} md={4}></Core.Grid>
-          <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-            <Core.TextField
+      <Card style={{ overflow: "initial" }}>
+        <Grid container className={classes.gridContainer}>
+          <Grid item xs={12} md={4}></Grid>
+          <Grid item xs={12} md={4} className={classes.containerSave}>
+            {resultado && <TextField
               label="Buscar"
               type={"text"}
               variant="outlined"
               placeholder={"Buscar por carnet identidad"}
               name="txtBusqueda"
-              value={ci}
-              onChange={onChange}
               fullWidth
-              onKeyPress={(ev) => {
-                if (ev.key === "Enter") {
-                  BuscarFreelancerPagosTransferencias();
-                }
-              }}
+              onChange={e => setCiResultado(e.target.value)}
               InputProps={{
                 startAdornment: (
-                  <Core.InputAdornment position="start">
-                    <GeneralIcons.Search />
-                  </Core.InputAdornment>
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
                 ),
               }}
-            />
-          </Core.Grid>
-          <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
-            <Core.Button
+            />}
+          </Grid>
+          <Grid item xs={12} md={4} className={classes.containerCargar}>
+            <Button
               type="submit"
               fullWidth
               variant="contained"
@@ -543,19 +523,17 @@ const onChange= (e) => {
               className={classes.submitCargar}
               onClick={() => selected.length > 0 ? abrirModalConfimarPagos() : error( "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!" )}>
               {"Confirmar transferencias "}{" "}
-            </Core.Button>
-          </Core.Grid>
-        </Core.Grid>
-      </Core.Card>
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
       <br />
-
-      {ciResultado == "" ?
-      <Core.Grid container className={classes.gridContainer}>
-      <Core.Grid item xs={12} className={classes.containerSave}>
-        <Core.Paper className={classes.paper}>
+      <Grid container className={classes.gridContainer}>
+      <Grid item xs={12} className={classes.containerSave}>
+        <Paper className={classes.paper}>
           <EnhancedTableToolbar numSelected={selected.length} />
-          <Core.TableContainer>
-            <Core.Table
+          <TableContainer>
+            <Table
               className={classes.table}
               aria-labelledby="tableTitle"
               size={dense ? "small" : "medium"}
@@ -568,18 +546,17 @@ const onChange= (e) => {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={list.length}
+                rowCount={resultado.length}
               />
-              <Core.TableBody>
-                {stableSort(list, getComparator(order, orderBy)).map(
+              <TableBody>
+                {stableSort(resultado, getComparator(order, orderBy)).filter(searchingTerm(ciResultado)).map(
                   (row, index) => {
                     const isItemSelected = isSelected(
                       row.idComisionDetalleEmpresa
                     );
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
-                      <Core.TableRow
+                      <TableRow
                         hover
                         onClick={(event) => handleClick(event, row)}
                         role="checkbox"
@@ -588,142 +565,53 @@ const onChange= (e) => {
                         key={row.nombreDeCliente}
                         selected={isItemSelected}
                       >
-                        <Core.TableCell padding="Checkbox">
-                          <Core.Checkbox
+                        <TableCell padding="Checkbox">
+                          <Checkbox
                             disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
                             checked={isItemSelected}
                             value={isItemSelected}
                             inputProps={{ "aria-labelledby": labelId }}
                           />
-                        </Core.TableCell>
-                        <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
-                        <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
-                        <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
-                        <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                        <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
-                        <Core.TableCell align="center">{row.empresa}</Core.TableCell>
-                        <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
-                            <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                            <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
-                        </Core.TableCell>
-                      </Core.TableRow>
+                        </TableCell>
+                        <TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</TableCell>
+                        <TableCell align="center"> {row.docDeIdentidad}</TableCell>
+                        <TableCell align="left"> {row.nombreBanco}</TableCell>
+                        <TableCell align="left">{row.nroDeCuenta}</TableCell>
+                        <TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</TableCell>
+                        <TableCell align="center">{row.empresa}</TableCell>
+                        <TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
+                            <Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                            <Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Chip label="Rechazado" color="secondary" variant="default" /> )}
+                        </TableCell>
+                      </TableRow>
                     );
                   }
                 )}
-                <Core.TableRow key={100000000000000}>
-                  <Core.TableCell align="center">
+                <TableRow key={100000000000000}>
+                  <TableCell align="center">
                     <b></b>
-                  </Core.TableCell>
-                  <Core.TableCell align="right"></Core.TableCell>
-                  <Core.TableCell align="center">
+                  </TableCell>
+                  <TableCell align="right"></TableCell>
+                  <TableCell align="center">
                     <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
+                  </TableCell>
+                  <TableCell align="center">
                     <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
+                  </TableCell>
+                  <TableCell align="center">
                     <b>{"TOTAL: "} </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="left">
+                  </TableCell>
+                  <TableCell align="left">
                     <b>{addFormat(data.montoTotal)}</b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center"></Core.TableCell>
-                </Core.TableRow>
-              </Core.TableBody>
-            </Core.Table>
-          </Core.TableContainer>
-        </Core.Paper>
-      </Core.Grid>
-      </Core.Grid>
-      :
-      <Core.Grid container className={classes.gridContainer}>
-      <Core.Grid item xs={12} className={classes.containerSave}>
-        <Core.Paper className={classes.paper}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <Core.TableContainer>
-            <Core.Table
-              className={classes.table}
-              aria-labelledby="tableTitle"
-              size={dense ? "small" : "medium"}
-              aria-label="enhanced table"
-            >
-              <EnhancedTableHead
-                classes={classes}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={ciResultado.data.length}
-              />
-              <Core.TableBody>
-                {stableSort(ciResultado.data, getComparator(order, orderBy)).map(
-                  (row, index) => {
-                    const isItemSelected = isSelected(
-                      row.idComisionDetalleEmpresa
-                    );
-                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                    return (
-                      <Core.TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.nombreDeCliente}
-                        selected={isItemSelected}
-                      >
-                        <Core.TableCell padding="Checkbox">
-                          <Core.Checkbox
-                            disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
-                            checked={isItemSelected}
-                            value={isItemSelected}
-                            inputProps={{ "aria-labelledby": labelId }}
-                          />
-                        </Core.TableCell>
-                        <Core.TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</Core.TableCell>
-                        <Core.TableCell align="center"> {row.docDeIdentidad}</Core.TableCell>
-                        <Core.TableCell align="left"> {row.nombreBanco}</Core.TableCell>
-                        <Core.TableCell align="left">{row.nroDeCuenta}</Core.TableCell>
-                        <Core.TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</Core.TableCell>
-                        <Core.TableCell align="center">{row.empresa}</Core.TableCell>
-                        <Core.TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
-                            <Core.Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                            <Core.Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Core.Chip label="Rechazado" color="secondary" variant="default" /> )}
-                        </Core.TableCell>
-                      </Core.TableRow>
-                    );
-                  }
-                )}
-                <Core.TableRow key={100000000000000}>
-                  <Core.TableCell align="center">
-                    <b></b>
-                  </Core.TableCell>
-                  <Core.TableCell align="right"></Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b> </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center">
-                    <b>{"TOTAL: "} </b>
-                  </Core.TableCell>
-                  <Core.TableCell align="left">
-                    <b>{addFormat(data.montoTotal)}</b>
-                  </Core.TableCell>
-                  <Core.TableCell align="center"></Core.TableCell>
-                </Core.TableRow>
-              </Core.TableBody>
-            </Core.Table>
-          </Core.TableContainer>
-        </Core.Paper>
-      </Core.Grid>
-      </Core.Grid>
-      }
-      
-
+                  </TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Grid>
+      </Grid>     
       {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
         titulo={<b>DETALLE DE TRANSFERENCIA</b>}
@@ -739,7 +627,7 @@ const onChange= (e) => {
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
       />)}
-    </Core.Dialog>
+    </Dialog>
   );
   //-------------------------------------------------------------------------------------
 };

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace gestion_de_comisiones.Controllers
 {
-  //  [Authorize]
+    //  [Authorize]
     public class GestionPagosController : Controller
     {
         private readonly ILogger<GestionPagosController> Logger;
@@ -29,11 +29,11 @@ namespace gestion_de_comisiones.Controllers
             return View();
         }
         // GET: gestionPagos/GetCiclos
-      
+
         public ActionResult GetCiclos([FromHeader] string usuarioLogin)
         {
             try
-            {               
+            {
                 var r = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
                 Logger.LogInformation($"usuario : {usuarioLogin} inicio el controller obtenerCiclos()  ");
                 return Ok(Service.GetCiclos(usuarioLogin));
@@ -55,8 +55,10 @@ namespace gestion_de_comisiones.Controllers
                 var resulcliente = Service.GetComisionesDePagos(param);
                 Logger.LogInformation($"usuario : {param.usuarioLogin} Fin del controller AplicacionesController => Index()");
                 return Ok(resulcliente);
-            } catch {
-                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller forma pagos AplicacionesController()  => Index() ");                   
+            }
+            catch
+            {
+                Logger.LogError($"usuario request: {param.usuarioLogin} error catch controller forma pagos AplicacionesController()  => Index() ");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las pendiente para forma de pagos." });
             }
         }
@@ -96,12 +98,12 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}");             
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}");
                 return Ok(Service.PagarSionPayComisionTodo(param));
             }
             catch
             {
-                Logger.LogError($"usuario : {param.UsuarioLogin} error catch  BuscarComisionNombre() controller ");        
+                Logger.LogError($"usuario : {param.UsuarioLogin} error catch  BuscarComisionNombre() controller ");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" });
             }
         }
@@ -113,7 +115,8 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo} ");
                 return Ok(Service.VerificarPagoSionPayCiclo(param));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogError($"usuario : {param.usuarioLogin} error catch  verificarPagosSionPayFormaPagoCiclo() controller {ex.Message}");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al verificar los pagos por sion pay" });
@@ -233,7 +236,9 @@ namespace gestion_de_comisiones.Controllers
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller BuscarComisionNombre() parametro: idciclo:{param.idCiclo}, criterioidtipo busqueda busqueda: {param.idTipoPago}");
                 return Ok(Service.FiltrarComisionesPorTipoPago(param));
-            } catch (Exception ex){
+            }
+            catch (Exception ex)
+            {
                 Logger.LogError($"usuario : {param.usuarioLogin} error catch  BuscarComisionNombre() controller mensaje:  {ex.Message}");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones por filtro tipo de pago" });
             }
@@ -244,9 +249,11 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarPagoComision() parametro: idciclo:{param.idCiclo}");
-                 return Ok(Service.CerrarPagoComision(param));
-            } catch (Exception ex) {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el controller CerrarPagoComision() parametro: idciclo:{param.idCiclo}");
+                return Ok(Service.CerrarPagoComision(param));
+            }
+            catch (Exception ex)
+            {
                 Logger.LogError($"usuario : {param.usuarioLogin} error catch  CerrarPagoComision() controller mensaje:  {ex.Message}");
                 return Ok(new GenericDataJson<string> { Code = 1, Message = "Error intentar cerrar el pago" });
             }
@@ -266,6 +273,13 @@ namespace gestion_de_comisiones.Controllers
                 var Result = new GenericDataJson<string> { Code = 1, Message = "Error al listar las comisiones pendientes" };
                 return Ok(Result);
             }
+        }
+
+        [HttpPost]
+        public ActionResult ObtenerDetalleComisionEmpresa([FromBody] ParametrosDetalleComision param)
+        {
+            Logger.LogInformation($"usuario : {param.Usuario} inicio el controller ObtenerDetalleComisionEmpresa() Parametros: IdDetalleComision:{param.IdDetalleComision}");
+            return Ok(new GenericDataJson<List<RespuestaDetalleComision>> { Code = 0, Message = "Ejecutado sin error.", Data = Service.ObtenerDetalleComision(param) });
         }
     }
 }

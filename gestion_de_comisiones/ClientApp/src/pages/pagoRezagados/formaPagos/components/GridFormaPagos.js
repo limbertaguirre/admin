@@ -19,6 +19,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ImageIconPagos from "../../../../components/ImageIconPagos";
+import { requestPost } from "../../../../service/request";
 
 const StyledMenu = withStyles({
   paper: {
@@ -121,7 +122,7 @@ const GridFormaPagos = ({
   pendienteFormaPago,
   permisoActualizar,
   permisoCrear,
-  getFormaPagoDisponibles,
+  idComision,
 }) => {
   let style = useStyles();
   const dispatch = useDispatch();
@@ -223,7 +224,13 @@ const GridFormaPagos = ({
   };
 
   async function ApiListarTiposPagos(event) {
-    let respuesta = await getFormaPagoDisponibles(userName, idCiclo, dispatch);
+    let url = "/formasPagosRezagados/GetFormaPagosDisponibles";
+    let body = {
+      usuarioLogin: userName,
+      idCiclo,
+      comisionId: idComision,
+    };
+    let respuesta = await requestPost(url, body, dispatch);
     if (respuesta && respuesta.code == 0) {
       setListFormaPago(respuesta.data);
       setAnchorEl(event);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
+using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 using gestion_de_comisiones.MultinivelModel;
@@ -15,9 +16,9 @@ namespace gestion_de_comisiones.Servicios
     {
         ConfiguracionService Respuesta = new ConfiguracionService();
         private readonly ILogger<GestionPagosRezagadosService> Logger;
-        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = 9;
-        private readonly int TIPO_COMISION_REZAGADOS = 2;
-        private readonly int TIPO_PAGO_TRANSFERENCIA = 2;
+        private readonly int ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;
+        private readonly int TIPO_COMISION_REZAGADOS = GpTipoComision.PAGO_REZAGADOS_2;
+        private readonly int TIPO_PAGO_TRANSFERENCIA = TipoPago.TRANSFERENCIA;
 
         public GestionPagosRezagadosService(ILogger<GestionPagosRezagadosService> logger, IGestionPagosRezagadosRepository repository)
         {
@@ -260,5 +261,87 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarPagoSionPayCiclo() ");                
+                RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(param);
+                if (comisiones.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
+                if (comisiones.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
+                return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() el nro de  pagos en sion pay: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al verificar los pagos realizados", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object PagarSionPayComisionTodo(PagarSionPayInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio FormaPagoService => getCiclos()");
+                var pay = Repository.PagarSionPayComision(param);
+                if (pay)
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object GetFormaPagosDisponibles(FiltroFormaPagosInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio getFormaPagosDisponibles() ");              
+                return Respuesta.ReturnResultdo(0, "ok", Repository.GetFiltroComisionesPorFormaPago(param));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch getFormaPagosDisponibles(), error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de filtro de forma de pago", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object ListarComisionesFormaPagoPorCarnet(BuscarComisionInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");               
+                var comisiones = Repository.GetComisionesPorCarnetListPagos(param);
+                return Respuesta.ReturnResultdo(0, "ok", comisiones);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
+                ObjetoComisionesRespuesta obj = new ObjetoComisionesRespuesta();                
+                var comisiones = Repository.FiltrarComisionPagoPorTipoPago(param);
+                obj.PendienteFormaPago = Repository.VerificarSiExisteAutorizacionFormaPagoCiclo(param);
+                obj.lista = comisiones;
+                return Respuesta.ReturnResultdo(0, "ok", obj);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
     }
 }

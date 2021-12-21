@@ -18,7 +18,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public string NroAutorizacion { get; set; }
         public int IdEmpresa { get; set; }
         public int EstadoEmpresa { get; set; }
-        public bool EstadoDetalleEmpresa { get; set; }
+        public byte? EstadoDetalleEmpresa { get; set; }
         public decimal VentasPersonales { get; set; }
         public decimal VentasGrupales { get; set; }
         public decimal Residual { get; set; }

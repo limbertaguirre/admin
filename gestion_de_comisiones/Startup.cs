@@ -1,5 +1,6 @@
 using gestion_de_comisiones.GuardianModels;
 using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.BDSionPayModels;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -72,6 +73,7 @@ namespace gestion_de_comisiones
             services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
             services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
             services.AddScoped<IIncentivoSionPayService, IncentivoSionPayService>();
+            services.AddScoped<IFormasPagosRezagadosService, FormasPagosRezagadosService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -86,9 +88,11 @@ namespace gestion_de_comisiones
             services.AddScoped<IGestionPagosRezagadosRepository, GestionPagosRezagadosRepository>();
             services.AddScoped<IReporteRepository, ReporteRepository>();
             services.AddScoped<IIncentivoSionPayRepository, IncentivoSionPayRepository>();
+            services.AddScoped<IFormasPagosRezagadosRepository, FormasPagosRezagadosRepository>();
 
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
+            services.AddScoped<BDPuntosCashContext>();
 
 
             // In production, the React files will be served from this directory

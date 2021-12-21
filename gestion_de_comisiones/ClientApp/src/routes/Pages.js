@@ -16,9 +16,10 @@ import Cliente from "../pages/fichaCliente/Cliente";
 import Ficha from "../pages/fichaCliente/Ficha";
 import SetRol from "../pages/usuario/SetRol";
 import PagoRezagado from "../pages/pagoRezagados/pagos/PagoRezagado";
+import FormaPagoRezagado from "../pages/pagoRezagados/formaPagos/FormaPagoRezagado";
 import ReporteCiclo from "../pages/reporte/ReporteCiclo";
 import ReporteFreelancer from "../pages/reporte/ReporteFreelancer";
-import CargarPlanillaSionPay from '../pages/pagoIncentivos/CargarPlanilla';
+import CargarPlanillaSionPay from "../pages/pagoIncentivos/CargarPlanilla";
 
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
@@ -48,5 +49,6 @@ export default {
   ReporteCiclo,
   ReporteFreelancer,
   PagoRezagado,
-  CargarPlanillaSionPay
+  CargarPlanillaSionPay,
+  FormaPagoRezagado,
 };
