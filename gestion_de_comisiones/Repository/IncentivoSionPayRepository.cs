@@ -375,7 +375,9 @@ namespace gestion_de_comisiones.Repository
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex}");
+                Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex.Message}");
+                return false;
+            }
 
         }
 
