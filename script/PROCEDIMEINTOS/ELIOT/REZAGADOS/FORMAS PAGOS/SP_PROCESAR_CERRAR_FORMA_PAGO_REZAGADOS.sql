@@ -46,6 +46,15 @@ BEGIN TRY
 
    SET @NRO_SIN_FORMA_DE_PAGO = 0
 
+		DECLARE @CANTIDAD_FORMA_PAGO_CERRADO INT = (SELECT COUNT(C.id_comision) FROM BDMultinivel.DBO.GP_COMISION C 
+		INNER JOIN BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I CEC ON C.id_comision = CEC.id_comision
+		WHERE C.id_ciclo = @id_Ciclo AND CEC.id_estado_comision = @ESTADO_COMISION_CERRADO_FORMA_PAGO_TABLE AND CEC.habilitado = @ESTADO_HABILITADO)
+
+		IF(@CANTIDAD_FORMA_PAGO_CERRADO > 0)
+		BEGIN	
+		 	COMMIT TRANSACTION;		
+			RETURN 3
+		END
           --estado 2 si facturo 6 no presenta factura
         select @NRO_SIN_FORMA_DE_PAGO=COUNT(idComisionDetalle) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago=@TIPO_PAGO_NO_TIENE_FORMA_PAGO and vwF.idComision = @comision_id
 
@@ -60,7 +69,7 @@ BEGIN TRY
 
 				   select @ID_COMISION_ACTUAL = CO.id_comision  from BDMultinivel.dbo.GP_COMISION CO
 				   inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I COE ON COE.id_comision = CO.id_comision
-				   where id_ciclo= @ID_CICLO_VARI and id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_estado_comision=@ESTADO_COMISION_CERRADO_PRORRATEO_FORMA_PAGO_TABLE and CO.id_comision = @comision_id
+				   where co.id_ciclo= @ID_CICLO_VARI and co.id_tipo_comision=@ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and COE.id_estado_comision=@ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and CO.id_comision = @comision_id and COE.habilitado = @ESTADO_HABILITADO
 
 				   --obtener totales
 						select @TOTAL_NETO_COMISION_NUEVO_RECHAZADO = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago = 0 --total los resagados forma de pagos

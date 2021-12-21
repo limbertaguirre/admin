@@ -29,7 +29,7 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
                 <RouteRedirect exact path='/pagos-gestor' element={Pages.Pagos}  />                
                 <RouteRedirect exact path='/gestion/roles' element={Pages.GestionRol}  />     
                 <RouteRedirect path='/gestion/nuevo/roles' element={Pages.Roles} exact /> 
-                <RouteRedirect path='/gestion/edit/rol' element={Pages.EditRol} exact />        
+                <Route path='/gestion/edit/rol' component={Pages.EditRol} exact />        
                 <RouteRedirect path='/page/sin-acceso' element={Pages.SinAcceso} exact />  
                 <RouteRedirect path='/clientes' element={Pages.Cliente} exact />  
                 <RouteRedirect  path='/cliente/ficha' element={Pages.Ficha} exact />  

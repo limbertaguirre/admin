@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
@@ -134,10 +135,10 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio VerificarCierreFormaPago() ");
-                var result = Repository.CerrarFormaDePago(param);
-                if (result)
-                    return Respuesta.ReturnResultdo(0, "se cerro la forma de pago", "");
-                return Respuesta.ReturnResultdo(0, "Problemas al procesar el cierre de pagos", "");
+                FormasPagosRezagadosEvent result = Repository.CerrarFormaDePago(param);
+                if (result.eventType == FormasPagosRezagadosEvent.SUCCESS)
+                    return Respuesta.ReturnResultdo(0, "Se cerro la forma de pago correctamente.", "");
+                return Respuesta.ReturnResultdo(0, result.message, "");
             }
             catch (Exception ex)
             {

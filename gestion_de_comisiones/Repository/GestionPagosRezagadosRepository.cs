@@ -935,6 +935,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {param.UsuarioLogin}, inicio repository PagarSionPayComision(): IdComsion  {param.IdComision}  ");
+                Utils.Utils.ShowValueFields(param, Logger);
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -970,7 +971,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@id_usuario",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = param.IdComision
+                                            Value = param.IdUsuario
                               }
                            };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP2_PAGAR_RESAGADO_SION_PAY_COMISION] @id_Comision,  @id_usuario  ", parameterReturn);
@@ -1046,11 +1047,12 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 RespuestaSionPayModel model = new RespuestaSionPayModel();
-                Logger.LogWarning($" usuario: {param.usuarioLogin} inicio el repository VerificarPagoSionPayCiclo() ");
-                Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} ");         
+                Logger.LogWarning($"Inicio el repository VerificarPagoSionPayCiclo() ");
+                //Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} ");
+                Utils.Utils.ShowValueFields(param, Logger);
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).ToList();
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Count();
-                model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
+                model.totalPagoSionPay = (decimal) ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
                 model.CodigoRespuesta = 1; //valor positivo
                 Logger.LogWarning($" usuario: {param.usuarioLogin} se verifico antes del cierre validando la cantidad de no pagados en porsion pay :  {JsonConvert.SerializeObject(model)} ");
                 return model;
@@ -1297,12 +1299,12 @@ namespace gestion_de_comisiones.Repository
         }
 
         public int CerrarPagoComisionPorTipoComision(CerrarPagoParam param)
-        {
-            Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el CerrarPagoComisionPorTipoComision() ");
-            Utils.Utils.ShowValueFields(param, Logger);
+        {           
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
+                Logger.LogInformation($" usuario: {param.usuarioLogin} -  inicio el CerrarPagoComisionPorTipoComision() ");
+                Utils.Utils.ShowValueFields(param, Logger);
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",

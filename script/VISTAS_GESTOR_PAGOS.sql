@@ -268,7 +268,7 @@ go
 		inner join GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
 		inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
 		inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-		where l.monto_neto <> 0
+		where l.monto_neto <> 0 and cec.habilitado = 1
 		and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
 		group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision, l.id_tipo_pago, cec.id_estado_comision, c.id_comision
 GO
@@ -345,7 +345,7 @@ GO
 			INNER JOIN BDMultinivel.DBO.GP_TIPO_COMISION T ON CC.id_tipo_comision = T.id_tipo_comision
 			INNER JOIN BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I CE ON CE.id_comision = CC.id_comision
 			INNER JOIN BDMultinivel.DBO.GP_ESTADO_COMISION E ON E.id_estado_comision = CE.id_estado_comision
-			INNER JOIN BDMultinivel.DBO.LISTADO_FORMAS_PAGO l ON l.id_comisiones_detalle = cd.id_comision_detalle
+			LEFT JOIN BDMultinivel.DBO.LISTADO_FORMAS_PAGO l ON l.id_comisiones_detalle = cd.id_comision_detalle
 		WHERE CE.habilitado='true' and t.id_tipo_comision = 2 -- TipoComisionRezagados
 		GROUP BY cc.id_comision,
 			C.id_ciclo,

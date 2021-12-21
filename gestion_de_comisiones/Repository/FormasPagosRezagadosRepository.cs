@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
@@ -411,7 +412,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public bool CerrarFormaDePago(CierreformaPagoInput param)
+        public FormasPagosRezagadosEvent CerrarFormaDePago(CierreformaPagoInput param)
         {           
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
@@ -447,24 +448,30 @@ namespace gestion_de_comisiones.Repository
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($"Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS] returnValue: {returnValue}");
-                if (returnValue > 0)
+                if (returnValue == 1 || returnValue == 2)
                 {
                     dbcontextTransaction.Commit();
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS].");
-                    return true;
+                    return postEvent(FormasPagosRezagadosEvent.SUCCESS, "");
+                }
+                else if(returnValue == 3)
+                {
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin} -  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS].");
+                    return postEvent(FormasPagosRezagadosEvent.ERROR_CERRAR_FORMAS_PAGOS, "Primero debe cerrar pago de comisiones rezagados para cerrar el ciclo actual de formas de pago.");
                 }
                 else
                 {
                     dbcontextTransaction.Rollback();
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]");
-                    return false;
+                    return postEvent(FormasPagosRezagadosEvent.ERROR, "Ocurrió un problema al cerrar el ciclo.");
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch CerrarFormaDePago() mensaje : {ex}");
                 dbcontextTransaction.Rollback();
-                return false;
+                return postEvent(FormasPagosRezagadosEvent.ERROR, ex.Message);
             }
         }
 
@@ -681,6 +688,20 @@ namespace gestion_de_comisiones.Repository
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
                 return list;
             }
+        }        
+
+        private FormasPagosRezagadosEvent postEvent(int type, string message)
+        {
+            FormasPagosRezagadosEvent e = new FormasPagosRezagadosEvent
+            {
+                eventType = type
+            };
+            if (message != null)
+            {
+                e.message = message;
+            }
+            return e;
         }
+
     }
 }
