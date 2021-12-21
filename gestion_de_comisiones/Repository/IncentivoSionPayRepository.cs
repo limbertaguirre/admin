@@ -376,7 +376,8 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex}");
-
+                return false;
+            }
         }
 
         public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario)
