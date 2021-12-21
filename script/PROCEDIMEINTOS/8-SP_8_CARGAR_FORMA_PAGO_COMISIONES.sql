@@ -1,13 +1,20 @@
+--USE [BDMultinivel]
+--GO
+--/****** Object:  StoredProcedure [dbo].[SP_8EXEC_CARGAR_FORMA_PAGO_COMISIONES]    Script Date: 04/11/2021 04:45:27 p. m. ******/
+--SET ANSI_NULLS ON
+--GO
+--SET QUOTED_IDENTIFIER ON
+--GO
 
-ALTER PROCEDURE [dbo].[SP_8EXEC_CARGAR_FORMA_PAGO_COMISIONES]
-  @id_Ciclo     int
-AS
+--ALTER PROCEDURE [dbo].[SP_8EXEC_CARGAR_FORMA_PAGO_COMISIONES]
+--  @id_Ciclo     int
+--AS
 
-BEGIN TRY
-   BEGIN TRANSACTION;
+--BEGIN TRY
+--   BEGIN TRANSACTION;
 
-   DECLARE @IMPBODY   VARCHAR (500);
-   DECLARE @IMPSUBJECT   VARCHAR (500);
+--   DECLARE @IMPBODY   VARCHAR (500);
+--   DECLARE @IMPSUBJECT   VARCHAR (500);
  ------------------------------------------------------------------ 
    DECLARE @VW_COMISIONES_FREELANCERS as table(contacto_id INT, total DECIMAL(18,2), retencion_total DECIMAL(18,2), total_pagar DECIMAL(18,2));
 
@@ -32,12 +39,12 @@ BEGIN TRY
    SET @ESTADO_DETALLE_COMISION_NO_PRESENTA_FACTURA=6;
    SET @ESTADO_DETALLE_COMISION_SI_FACTURO= 2;
    SET @ESTADO_HABILITADO = 1;
-   SET @ESTADO_COMISION_DETALLE_PROCESADO= 1;
+   SET @ESTADO_COMISION_DETALLE_PROCESADO= 1; --pendiente
    SET @SI_FACTURO= 1;
    SET @NO_FACTURO= 0;
 
    DECLARE @CICLO_SELEC int 
-   SET @CICLO_SELEC=@id_Ciclo;
+   SET @CICLO_SELEC=84;
 
 	select TOP(1) @IDCICLO_SELECCIONADO = id_ciclo from BDMultinivel.dbo.CICLO
 	IF @IDCICLO_SELECCIONADO > 0
@@ -101,7 +108,9 @@ BEGIN TRY
 			--comision detalle frelancer
 			DECLARE @IDFICHA_SELECCIONADO INT;
 				SET @IDFICHA_SELECCIONADO=0;
-			
+			DECLARE @ID_FORMA_PAGO_SELECCIONADO INT; 
+			    SET @ID_FORMA_PAGO_SELECCIONADO= 0;
+
 			DECLARE @FRELA_TOTAL      DECIMAL(18,2);
 			DECLARE @FRELA_RETENCION  DECIMAL(18,2);
 			DECLARE @FRELA_TOTALPAGAR DECIMAL(18,2);
@@ -112,7 +121,7 @@ BEGIN TRY
 			SELECT top(1)  @FRELA_TOTAL= Sum(total), @FRELA_RETENCION= sum(retencion_total), @FRELA_TOTALPAGAR =sum(total_neto)  FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
 			SET  @FRELA_PORCENTAJE = @FRELA_RETENCION / @FRELA_TOTAL * 100			   
 				  
-				 select TOP(1) @IDFICHA_SELECCIONADO = id_ficha from BDMultinivel.dbo.FICHA where codigo= @CONTACTOITitem
+				 select TOP(1) @IDFICHA_SELECCIONADO = id_ficha, @ID_FORMA_PAGO_SELECCIONADO=id_tipo_pago from BDMultinivel.dbo.FICHA where codigo= @CONTACTOITitem
 				 IF @IDFICHA_SELECCIONADO >0
 				 BEGIN
 					  --select 'existe el cliente'
@@ -152,8 +161,23 @@ BEGIN TRY
 								@USUARIO_DEFAULT --id_usuario
 								);
 							  ----------------------------------------
+							  --agregar forma de pago-----------------
+							   
+							   IF @ID_FORMA_PAGO_SELECCIONADO > 0
+								BEGIN 
+										insert into  BDMultinivel.dbo.LISTADO_FORMAS_PAGO (monto_neto, id_tipo_pago, id_comisiones_detalle, id_usuario,fecha_creacion, fecha_actualizacion)
+										values  ( 										 
+											@FRELA_TOTALPAGAR, --monto_neto, 
+											@ID_FORMA_PAGO_SELECCIONADO,--id_tipo_pago, 
+											@COMISION_DETALLE_ID_GENERADO,--id_comisiones_detalle, 
+											@USUARIO_DEFAULT,--id_usuario,
+											GETDATE(),     --fecha_creacion, 
+											GETDATE()      --fecha_actualizacion
+										)
+								END
 
-								--BUSCAR POR CONTACTO
+							  -----------------------------------------
+								--BUSCAR POR CONTACTO-----------------
 								DECLARE @VW_COMISIONES_EMPRESA as table(contacto_id INT, total DECIMAL(18,2), retencion_total DECIMAL(18,2), total_neto DECIMAL(18,2), empresa_id int, factura_id int   );			
 								insert into @VW_COMISIONES_EMPRESA SELECT contacto_id, total, retencion_total, total_neto, empresa_id, factura_id   FROM OPENQUERY( [SRV-GUARDIAN-TEST], 'select * from grduit.comision_empresa_forma_pago_view ') where ciclo_id=@CICLO_SELEC  AND contacto_id= @CONTACTOITitem
 			
@@ -221,7 +245,7 @@ BEGIN TRY
 				BEGIN
 							-- select 'no existe el cliente'
 							insert into BDMultinivel.dbo.LOG_DETALLE_COMISION_EMPRESA_FAIL(id_ciclo,id_ficha, codigo_cliente, total_monto_bruto, descripcion )
-							values(@CICLO_SELEC,0, @CONTACTOITitem,@TOTAL_PAGARitem,'no se creo la comision del cliente, porque el contacto id no existe en fica');
+							values(@CICLO_SELEC,0, @CONTACTOITitem,@TOTAL_PAGARitem,'no se creo la comision del cliente, porque el contacto id no existe en ficha');
 							
 				END
 			
@@ -234,45 +258,45 @@ BEGIN TRY
 				CLOSE CLIENTE_CURSOR
 				DEALLOCATE CLIENTE_CURSOR	
     
-	    --  select 1 as 'exito'
-	      COMMIT TRANSACTION;
+	      select 1 as 'exito'
+	    --  COMMIT TRANSACTION;
 		END
 		 ELSE
 		BEGIN
-		--  select -2 as 'la comision ciclo  existe'
-		  ROLLBACK TRANSACTION;
+		  select -2 as 'la comision ciclo  existe'
+		--  ROLLBACK TRANSACTION;
 		END
 	END
 	  ELSE
 	BEGIN
 	 -- NO EXISTE EL CICLO
-	--	SELECT -1 AS 'NO EXISTE EL CICLO'
-		ROLLBACK TRANSACTION;
+		SELECT -1 AS 'NO EXISTE EL CICLO'
+	 --	ROLLBACK TRANSACTION;
 	END
 	-----------------------------------------------	 
 
-	--------------------------------------------
-END TRY
-BEGIN CATCH
-   SELECT ERROR_NUMBER () AS ErrorNumber,
-          ERROR_SEVERITY () AS ErrorSeverity,
-          ERROR_STATE () AS ErrorState,
-          ERROR_PROCEDURE () AS ErrorProcedure,
-          ERROR_LINE () AS ErrorLine,
-          ERROR_MESSAGE () AS ErrorMessage;
+--	--------------------------------------------
+--END TRY
+--BEGIN CATCH
+--   SELECT ERROR_NUMBER () AS ErrorNumber,
+--          ERROR_SEVERITY () AS ErrorSeverity,
+--          ERROR_STATE () AS ErrorState,
+--          ERROR_PROCEDURE () AS ErrorProcedure,
+--          ERROR_LINE () AS ErrorLine,
+--          ERROR_MESSAGE () AS ErrorMessage;
 
-   IF @@TRANCOUNT > 0
-      BEGIN
-         SET @IMPBODY =
-                concat ('SP_CARGAR_CONTACTOS ',
-                        ' ');
-         SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo cargar LOS CONTACTOS ';
-         --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
-         --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
-         --                                @body           = @IMPBODY,
-         --                                @subject        = @IMPSUBJECT;
-         ROLLBACK TRANSACTION;
+--   IF @@TRANCOUNT > 0
+--      BEGIN
+--         SET @IMPBODY =
+--                concat ('SP_CARGAR_CONTACTOS ',
+--                        ' ');
+--         SET @IMPSUBJECT = 'ALERTA PRODUCCION : no se pudo cargar LOS CONTACTOS ';
+--         --EXECUTE msdb.dbo.sp_send_dbmail @profile_name   = 'NotificacionSQL',
+--         --                                @recipients = 'desarrollo@gruposion.bo; UIT-SION@gruposion.bo',
+--         --                                @body           = @IMPBODY,
+--         --                                @subject        = @IMPSUBJECT;
+--         ROLLBACK TRANSACTION;
 
-         SELECT -1 AS 'error catch server';
-      END
-END CATCH;
+--         SELECT -1 AS 'error catch server';
+--      END
+--END CATCH;

@@ -247,7 +247,7 @@ namespace gestion_de_comisiones.Servicios
                     var pay = Repository.PagarComisionRezagadosSionPayTodo(param);
                     if (pay)
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se realizo el pago de comisiones Rezagados.", pay);
-                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas en el pago de comisiones Rezagados", pay);
                 }
                 else
                 {
@@ -289,7 +289,7 @@ namespace gestion_de_comisiones.Servicios
                 var pay = Repository.PagarSionPayComision(param);
                 if (pay)
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);
-                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al pagar con SION PAY", pay);
             }
             catch (Exception ex)
             {
