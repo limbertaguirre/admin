@@ -1345,16 +1345,16 @@ namespace gestion_de_comisiones.Repository
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario, @id_tipo_comision, @estado_comision_id  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 if (returnValue > 0)
-                {
-                    dbcontextTransaction.Commit();
+                {                    
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se cerro el pago de comision EL [SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS].");
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  respuesta sp: {returnValue}");
+                    dbcontextTransaction.Commit();
                     return returnValue;
                 }
                 else
-                {
-                    dbcontextTransaction.Rollback();
+                {                    
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
+                    dbcontextTransaction.Rollback();
                     return -1;
                 }
 
