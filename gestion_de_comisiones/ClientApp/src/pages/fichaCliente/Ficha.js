@@ -217,9 +217,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setNombre(data.nombre);
                setApellido(data.apellido);
                setCi(data.ci);
-               setTelOficina(data.telOficina === null || data.telOficina === NaN ? 0 : data.telOficina);//data.telOficina);
-               setTelMovil(data.telMovil === null || data.telMovil === NaN ? 0 : data.telMovil); //data.telMovil);
-               setTelFijo(data.telFijo === null || data.telFijo === NaN ? 0 : data.telFijo );
+               setTelOficina(typeof data.telOficina === 'number'?data.telOficina : 0  );
+               setTelMovil(typeof data.telMovil === 'number'?data.telMovil : 0 ); 
+               setTelFijo(typeof data.telFijo === 'number'?data.telFijo : 0 );
                setDireccion(data.direccion);
                setCorreoElectronico(data.correoElectronico);
                setFechaNacimiento(data.fechaNacimiento);
@@ -248,9 +248,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setCheckTieneCuenta(data.tieneCuentaBancaria);
                setIdTipoPago(data.idTipoPago);
                            
-            }else{
-               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-            }    
+            }            
           })   
     };
     const obtenerNiveles=()=>{
