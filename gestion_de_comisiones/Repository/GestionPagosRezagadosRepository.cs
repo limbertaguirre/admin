@@ -549,7 +549,7 @@ namespace gestion_de_comisiones.Repository
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
                         //x.IdComision == body.comisionId &&
                         x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado)
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalPendientes = ContextMulti.VwObtenerRezagadosPagos

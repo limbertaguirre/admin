@@ -54,6 +54,7 @@ BEGIN TRY
                                         where c.id_tipo_comision = @tipoComisionRezagado
                                         and c.id_ciclo = @cicloId
                                         and i.id_estado_comision = @GP_EstadoComisionRezagadoFormasPagos
+                                        and i.habilitado = @habilitado
                                         group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
 
     SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);

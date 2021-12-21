@@ -18,7 +18,7 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                 @tipoComisionPago int,
                 @tipoComisionRezagado int,
                 @GP_EstadoComisionCerradoFormaPago int,
-                @GP_EstadoComisionRezagadoPendientePago int, @habilitado int;            
+                @GP_EstadoComisionRezagadoPendientePago int, @habilitado int, @deshabilitado int;            
 
         -- PARAMETROS DE ENTRADA
         /*set @cicloId = 88;
@@ -31,6 +31,7 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
         set @GP_EstadoComisionCerradoFormaPago = 10;
         set @GP_EstadoComisionRezagadoPendientePago = @estadoComision; -- 11;
         set @habilitado = 1;
+        set @deshabilitado = 0;    
         --
         DECLARE @idComisionDetalle int,
                 @idComisionDetalleEmpresa int,
@@ -129,8 +130,8 @@ CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tip
                         0, @porcentajeRetencion, 0, 0, 0, @cicloId, @tipoComisionRezagado, @usuarioId
                     )
                     SET @newIdComision = (select IDENT_CURRENT('GP_COMISION'));
-                    -- Nuevo registro de para el estado de la nueva comision de los nuevos rezagados, estado = 11 (Comision Rezagado Pendiente de Pago)
-                    INSERT INTO BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I (habilitado, id_comision, id_estado_comision, id_usuario) VALUES(@habilitado, @newIdComision, @GP_EstadoComisionRezagadoPendientePago, @usuarioId)
+                    -- Nuevo registro de para el estado de la nueva comision de los nuevos rezagados, estado = 9 (Comision Rezagado Pendiente de Pago)
+                    INSERT INTO BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I (habilitado, id_comision, id_estado_comision, id_usuario) VALUES(@deshabilitado, @newIdComision, @GP_EstadoComisionRezagadoPendientePago, @usuarioId)
 
                     SELECT c.*, ' select fila 91' FROM BDMultinivel.DBO.GP_COMISION c where c.id_ciclo = @cicloId and c.id_tipo_comision = @tipoComisionRezagado order by c.id_comision desc
                     SELECT c.*, ' select fila 92' FROM BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I c where c.id_comision = @newIdComision and c.id_estado_comision = @GP_EstadoComisionRezagadoPendientePago order by c.id_comision_estado_comision_i desc
