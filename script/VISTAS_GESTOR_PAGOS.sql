@@ -377,6 +377,12 @@ select (f.nombres + ' ' + f.apellidos) as nombre_completo
 ,tp.nombre as tipo_pago
 ,c.id_ciclo as idCiclo
 ,tip.id_tipo_incentivo
+,(case WHEN (gdel.id_estado_listado_forma_pago = 3)
+  THEN 'pagado' 
+  ELSE 'no pagado'
+END)
+ AS comisionPagada
+ 
 
 from GP_COMISION as c
 inner join  GP_COMISION_DETALLE  as cd
@@ -389,6 +395,10 @@ inner join GP_COMISION_DETALLE_ESTADO_I as cde
 on cd.id_comision_detalle = cde.id_comision_detalle
 inner join LISTADO_FORMAS_PAGO as lfp
 on cd.id_comision_detalle = lfp.id_comisiones_detalle
+
+left join GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL as gdel
+on lfp.id_lista_formas_pago = gdel.id_lista_formas_pago
+
 inner join INCENTIVO_PAGO_COMISION ipc
 on cd.id_comision_detalle = ipc.id_comision_detalle
 inner join TIPO_INCENTIVO_PAGO as tip
@@ -403,5 +413,4 @@ and cde.id_estado_comision_detalle = 7
 --and c.id_comision=1193
 --and ces.id_estado_comision=14 
 and lfp.id_tipo_pago=1
-
 GO
