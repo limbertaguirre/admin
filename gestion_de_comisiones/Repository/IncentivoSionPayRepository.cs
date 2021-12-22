@@ -375,7 +375,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
-                List<PagoIncentivo> lista = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo).Select(
+                List<PagoIncentivo> lista = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo && item.ComisionPagada == "no pagado").Select(
                                     g => new PagoIncentivo
                                     {
                                        NombreCompleto = g.NombreCompleto,
@@ -491,32 +491,44 @@ namespace gestion_de_comisiones.Repository
 
         public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
-            bool pagado = true;
-            int idUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == usuario).FirstOrDefault().IdUsuario;
-            List<PagoIncentivo> incentivosPagos = new List<PagoIncentivo>();
-
-            foreach (PagoIncentivo elem in incentivosPagar)
+            //bool pagado = true;
+            if (incentivosPagar.Count == 0)
             {
-                int resultadoAuxiliar = pagarIncentivo(elem.IdComision, idUsuario, usuario);
-
-                incentivosPagos.Add(new PagoIncentivo()
-                {
-                    NombreCompleto = elem.NombreCompleto,
-                    IdComision = elem.IdComision,
-                    CedulaIdentidad = elem.CedulaIdentidad,
-                    CuentaBanco = elem.CuentaBanco,
-                    Banco = elem.Banco,
-                    MontoTotalNeto = elem.MontoTotalNeto,
-                    IdTipoIncentivoPago = elem.IdTipoIncentivoPago,
-                    TipoIncentivo = elem.TipoIncentivo,
-                    TipoPago = elem.TipoPago,
-                    IdCiclo = elem.IdCiclo,
-                    IdTipoIncentivo = elem.IdTipoIncentivo,
-                    pagado = (resultadoAuxiliar > 0)
-                }); ;
-
-
+                return incentivosPagar;
             }
+            int idUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == usuario).FirstOrDefault().IdUsuario;
+            int idComision = incentivosPagar.FirstOrDefault().IdComision;
+            int idCiclo = (int)incentivosPagar.FirstOrDefault().IdCiclo;
+            int idTipoIncentivoPago = incentivosPagar.FirstOrDefault().IdTipoIncentivoPago;
+            List <PagoIncentivo> incentivosPagos = new List<PagoIncentivo>();
+            int resultadoAuxiliar = pagarIncentivo(idComision, idUsuario, usuario);
+            if (resultadoAuxiliar > 0)
+            {
+                incentivosPagos = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == idCiclo && item.IdTipoIncentivoPago == idTipoIncentivoPago).Select(g => new PagoIncentivo
+                {
+                    NombreCompleto = g.NombreCompleto,
+                    IdComision = g.IdComision,
+                    CedulaIdentidad = g.CedulaIdentidad,
+                    CuentaBanco = g.CuentaBanco,
+                    Banco = g.Banco,
+                    MontoTotalNeto = g.MontoTotalNeto,
+                    IdTipoIncentivoPago = g.IdTipoIncentivoPago,
+                    TipoIncentivo = g.TipoIncentivo,
+                    TipoPago = g.TipoPago,
+                    IdCiclo = g.IdCiclo,
+                    IdTipoIncentivo = g.IdTipoIncentivo,
+                    pagado = (g.ComisionPagada == "pagado") ? true : false
+
+
+                }).ToList();
+            }
+            else
+            {
+                return incentivosPagar;
+            }
+            
+
+            
             return incentivosPagos;
         }
     }

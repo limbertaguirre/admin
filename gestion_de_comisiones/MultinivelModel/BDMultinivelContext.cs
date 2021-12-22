@@ -3627,6 +3627,12 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("cedula_identidad");
 
+                entity.Property(e => e.ComisionPagada)
+                    .IsRequired()
+                    .HasMaxLength(9)
+                    .IsUnicode(false)
+                    .HasColumnName("comisionPagada");
+
                 entity.Property(e => e.CuentaBanco)
                     .HasMaxLength(255)
                     .IsUnicode(false)
