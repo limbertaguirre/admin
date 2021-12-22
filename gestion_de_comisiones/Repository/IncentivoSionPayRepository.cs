@@ -357,7 +357,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" Inicio ObtenerTipoIncentivo ");
-                Modelos.IncentivoSionPay.TipoIncentivoPagoModel tipoIncentivoPago = new Modelos.IncentivoSionPay.TipoIncentivoPagoModel();
+                TipoIncentivoPagoModel tipoIncentivoPago = new TipoIncentivoPagoModel();
                 tipoIncentivoPago.Descripcion = descripcion;
                 tipoIncentivoPago.Estado = "ACTIVO";
                 ContextMulti.Add(tipoIncentivoPago);
