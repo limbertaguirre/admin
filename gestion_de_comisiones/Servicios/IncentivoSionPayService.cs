@@ -102,7 +102,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
                 var tiposIncentivos = Repository.ObtenerTipoIncentivosPagosSegunCiclo(nroCicloMensual, usuario);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposIncentivos);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los tipo de incentivo segun el ciclo", tiposIncentivos);
             }
             catch (Exception ex)
             {

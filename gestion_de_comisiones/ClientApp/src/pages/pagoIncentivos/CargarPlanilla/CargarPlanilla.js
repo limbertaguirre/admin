@@ -2,9 +2,9 @@
 import React, {useEffect, useState  } from 'react';
 import { makeStyles, Link, Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import readXlsxFile from 'read-excel-file'
-import { requestPost ,requestGet } from '../../service/request';
+import { requestPost ,requestGet } from '../../../service/request';
 import {useDispatch, useSelector} from 'react-redux';
-import * as ActionMensaje from "../../redux/actions/messageAction";
+import * as ActionMensaje from "../../../redux/actions/messageAction";
 import ComboTipoIncentivoPago from './ComboTipoIncentivo';
 import ComboTipoPago from './ComboTipoPago';
 import ModalCargarPlanilla from './MensajeModalCargarPlanilla';
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }
 }));
-const PagoIncentivo = ()=> {
+const CargarPlanilla = ()=> {
   const style = useStyles()
   const dispatch = useDispatch()
   const {userName} = useSelector((stateSelector)=>{ return stateSelector.load});
@@ -139,11 +139,6 @@ const PagoIncentivo = ()=> {
       .then((response)=>{
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
-        response.data.map((item,index) =>{
-              let newDatosExcel = [...datosExcel]
-              newDatosExcel[index].estadoFila = 0
-              setDatosExcel(newDatosExcel)
-        });
         if(response.code === 1 ){
           setMensajeErrorModal(response.message)
             response.data.map((item,index) =>{
@@ -435,4 +430,4 @@ const PagoIncentivo = ()=> {
 
 }
 
-export default PagoIncentivo;
+export default CargarPlanilla;
