@@ -117,7 +117,20 @@ const PagoIncentivo = () =>{
   }
   const realizarPago = () => { setModalOpen(true)}
   const confirmarPago = ()=>{
-    console.log("click")
+    const data = {
+      incentivosPagar : listaIncentivo,
+      usuarioLogin : userName
+    }
+    requestPost('IncentivoSionPay/PagarIncentivos',data,dispatch).then((res)=>{
+      console.table(res.data)
+      // if(res.code === 0){
+      //   setListaIncentivo(res.data);
+      //   obtenerMontoTotalIncentivo(res.data)
+      // }else{
+      //   setListaIncentivo([]);
+      //   dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
+      // }
+    })
   }
   return (
     <>

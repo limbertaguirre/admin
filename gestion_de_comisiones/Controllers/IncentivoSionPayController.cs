@@ -144,6 +144,7 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(result);
             }        
         }
+        // POST: IncentivoSionPay/PagarIncentivos
         [HttpPost]
         public ActionResult PagarIncentivos([FromBody] PagoIncentivoInput pagoIncentivo)
         {
