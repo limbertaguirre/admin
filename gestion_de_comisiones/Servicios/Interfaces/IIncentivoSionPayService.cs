@@ -1,5 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos.Incentivo;
 using gestion_de_comisiones.Modelos.IncentivoSionPay;
+using gestion_de_comisiones.MultinivelModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ObtenerTipoIncentivo(string usuario);
         public object ObtenerTipoPagos(string usuario);
         public object ObtenerTipoIncentivosPagosSegunCiclo(int  nroCicloMensual, string usuario);
-        public object RegistrarTipoIncentivoPago(TipoIncentivoPago tipoIncentivoPago,string usuario);
+        public object RegistrarTipoIncentivoPago(TipoIncentivoPagoModel tipoIncentivoPago,string usuario);
         public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario);
+        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario);
     }
 }

@@ -1554,4 +1554,8 @@ GO
 				--); 
 	---------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+--------------------------------------------SE AÑADEN AGENTES EN BDPUNTOSCASH LOS AGENTES DE PAGOS INCENTIVOS, REZAGADOS------------------------------------
+insert into BDPuntosCash.dbo.AGENTE VALUES (27, 'Pago de Comisiones por Gestor' ,'PAGO_COMISIONES_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
+insert into BDPuntosCash.dbo.AGENTE VALUES (28, 'Pago de Incentivos por Gestor' ,'PAGO_INCENTIVOS_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
    
