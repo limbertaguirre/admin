@@ -110,7 +110,7 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener tipo de incentivo", "problemas en el servidor, intente mas tarde");
             }
         }
-        public object RegistrarTipoIncentivoPago(TipoIncentivoPago tipoIncentivoPago, string usuario)
+        public object RegistrarTipoIncentivoPago(TipoIncentivoPagoModel tipoIncentivoPago, string usuario)
         {
             try
             {
@@ -138,6 +138,13 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"usuario : {usuario} error catch ObtenerTipoIncentivo(),error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al obtener ObtenerPagosIncentivosSegunCicloIdTipoIncentivo", "problemas en el servidor, intente mas tarde");
             }
+        }
+
+        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        {
+            List<PagoIncentivo> listaPagadosIncentivo = Repository.pagarIncentivos(incentivosPagar, usuario);
+
+            return listaPagadosIncentivo;
         }
     }
 }
