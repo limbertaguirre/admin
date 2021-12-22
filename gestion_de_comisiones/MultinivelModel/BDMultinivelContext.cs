@@ -3634,6 +3634,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdCiclo).HasColumnName("idCiclo");
 
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
                 entity.Property(e => e.IdTipoIncentivo).HasColumnName("id_tipo_incentivo");
 
                 entity.Property(e => e.IdTipoIncentivoPago).HasColumnName("id_tipo_incentivo_pago");

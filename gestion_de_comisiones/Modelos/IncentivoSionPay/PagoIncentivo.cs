@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace gestion_de_comisiones.MultinivelModel
+namespace gestion_de_comisiones.Modelos.IncentivoSionPay
 {
-    public partial class VwPagosIncentivo
+    public class PagoIncentivo
     {
         public string NombreCompleto { get; set; }
         public int IdComision { get; set; }
@@ -18,5 +18,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public string TipoPago { get; set; }
         public int? IdCiclo { get; set; }
         public int IdTipoIncentivo { get; set; }
+        public bool pagado { get; set; }
     }
 }

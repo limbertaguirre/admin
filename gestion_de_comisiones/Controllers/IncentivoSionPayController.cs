@@ -111,7 +111,7 @@ namespace gestion_de_comisiones.Controllers
         }
         // POST: IncentivoSionPay/RegistroTipoIncentivoPago
         [HttpPost]
-        public ActionResult RegistroTipoIncentivoPago([FromBody] TipoIncentivoPago tipoIncentivoPago)
+        public ActionResult RegistroTipoIncentivoPago([FromBody] TipoIncentivoPagoModel tipoIncentivoPago)
         {
             try
             {
@@ -144,6 +144,23 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(result);
             }        
         }
-        
+        [HttpPost]
+        public ActionResult PagarIncentivos([FromBody] List<PagoIncentivo> incentivosPagar, [FromBody] string usuarioLogin)
+        {
+            try
+            {
+                //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
+                List<PagoIncentivo> resultTipoIncentivoPago = Service.pagarIncentivos(incentivosPagar, usuarioLogin);
+                //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
+                return Ok(resultTipoIncentivoPago);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: Error catch IncentivoSionPayController , RegistroTipoIncentivoPago() Error: {ex.Message} ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(Result);
+            }
+        }
+
     }
 }

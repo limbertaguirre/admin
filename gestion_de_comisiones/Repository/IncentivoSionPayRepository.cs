@@ -8,6 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using gestion_de_comisiones.Modelos.IncentivoSionPay;
+
 namespace gestion_de_comisiones.Repository
 {
     public class IncentivoSionPayRepository : IIncentivoSionPayRepository
@@ -141,7 +146,7 @@ namespace gestion_de_comisiones.Repository
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
                 {
-                
+
                 GpComision elem = new GpComision();
                     elem.MontoTotalNeto = (decimal)planillaIncentivo.DatosClientes.Sum(item => item.Monto);
                     elem.MontoTotalAplicacion = 0;
@@ -248,29 +253,15 @@ namespace gestion_de_comisiones.Repository
             bool observada = false;
             foreach (DatosPlanillaExcel elem in planillaIncentivo.DatosClientes)
             {
-                var idFicha = ContextMulti.Fichas.Where((item) => item.Ci == elem.CiCliente).FirstOrDefault(); //.IdFicha
-                if (idFicha != null)
+
+                var elemento = ContextMulti.VwPagosIncentivos.Where((item) => item.IdCiclo == planillaIncentivo.IdCiclo && item.CedulaIdentidad == elem.CiCliente && item.IdTipoIncentivoPago == elem.IdTipoIncentivoPago).FirstOrDefault();
+                if (elemento != null)
                 {
-                    var idComisionDetalle = ContextMulti.GpComisionDetalles.Where((item) => item.IdComision == idComision && item.IdFicha == idFicha.IdFicha).FirstOrDefault(); //.IdComisionDetalle
-                    //var idComisionDetalle = ContextMulti.GpComisionDetalles.Where((item) => item.IdComision == idComision && item.IdFicha == idFicha.IdFicha).FirstOrDefault();
-
-                    if (idComisionDetalle != null)
-                    {
-                        var idEmpresa = ContextMulti.ComisionDetalleEmpresas.Where((item) => item.IdComisionDetalle == idComisionDetalle.IdComisionDetalle && item.IdEmpresa == elem.IdEmpresa).FirstOrDefault();
-                        var tipoIncentivoPago = ContextMulti.IncentivoPagoComisions.Where((item) => item.IdComisionDetalle == idComisionDetalle.IdComisionDetalle).FirstOrDefault();
-                        if (tipoIncentivoPago != null)
-                        {
-                            if (tipoIncentivoPago.IdTipoIncentivoPago == elem.IdTipoIncentivoPago)
-                            {
-                                observada = true;
-                                elem.Observada = true;
-                                elem.MotivoObservacion = $"ya existe un registro de este freelancers en el ciclo: ${planillaIncentivo.IdCiclo} con la misma empresa: {elem.Empresa}";
-                            }
-
-                        }
-                    }
-
+                    observada = true;
+                    elem.Observada = true;
+                    elem.MotivoObservacion = $"ya existe un registro de este freelancers en el ciclo: ${planillaIncentivo.IdCiclo} con la misma TipoIncentivo: {elem.IdTipoIncentivoPago}";
                 }
+                
 
             }
 
@@ -366,7 +357,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" Inicio ObtenerTipoIncentivo ");
-                TipoIncentivoPago tipoIncentivoPago = new TipoIncentivoPago();
+                Modelos.IncentivoSionPay.TipoIncentivoPagoModel tipoIncentivoPago = new Modelos.IncentivoSionPay.TipoIncentivoPagoModel();
                 tipoIncentivoPago.Descripcion = descripcion;
                 tipoIncentivoPago.Estado = "ACTIVO";
                 ContextMulti.Add(tipoIncentivoPago);
@@ -376,7 +367,9 @@ namespace gestion_de_comisiones.Repository
             catch (Exception ex)
             {
                 Logger.LogWarning($"  Error catch RegistrarTipoIncentivoPago mensaje : {ex}");
+                return false;
 
+            }
         }
 
         public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario)
@@ -384,15 +377,149 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
-                var incentivosAPagar = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo).ToList();
-                return incentivosAPagar;
+                List<PagoIncentivo> lista = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo).Select(
+                                    g => new PagoIncentivo
+                                    {
+                                       NombreCompleto = g.NombreCompleto,
+                                        IdComision = g.IdComision,
+                                        CedulaIdentidad = g.CedulaIdentidad,
+                                        CuentaBanco = g.CuentaBanco,
+                                        Banco = g.Banco,
+                                        MontoTotalNeto = g.MontoTotalNeto,
+                                        IdTipoIncentivoPago = g.IdTipoIncentivoPago,
+                                        TipoIncentivo = g.TipoIncentivo,
+                                        TipoPago = g.TipoPago,
+                                        IdCiclo = g.IdCiclo,
+                                        IdTipoIncentivo = g.IdTipoIncentivo,
+                                        pagado = false
+        
+
+                                    }
+                         ).ToList();
+
+                //var incentivosAPagar = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo).ToList();
+                return lista;
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {usuario} error catch mensaje : {ex}");
-                List<VwPagosIncentivo> list = new List<VwPagosIncentivo>();
+                List<PagoIncentivo> list = new List<PagoIncentivo>();
                 return list;
             }
+        }
+        private int pagarIncentivo(int idComision, int idUsuario, string usuario)
+        {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
+            try
+            {
+                    var parameterReturn = new SqlParameter[] {
+                                   new SqlParameter  {
+                                                ParameterName = "ReturnValue",
+                                                SqlDbType = System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Output,
+                                    },
+                                    new SqlParameter() {
+                                                ParameterName = "@id_Comision",
+                                                SqlDbType =  System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Input,
+                                                Value = idComision
+                                  },
+                                   new SqlParameter() {
+                                                ParameterName = "@id_usuario",
+                                                SqlDbType =  System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Input,
+                                                Value = idUsuario
+                                  }
+                               };
+                    var parameterReturn2 = new SqlParameter[] {
+                                   new SqlParameter  {
+                                                ParameterName = "ReturnValue",
+                                                SqlDbType = System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Output,
+                                    },
+                                    new SqlParameter() {
+                                                ParameterName = "@id_Comision",
+                                                SqlDbType =  System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Input,
+                                                Value = idComision
+                                  },
+                                   new SqlParameter() {
+                                                ParameterName = "@id_usuario",
+                                                SqlDbType =  System.Data.SqlDbType.Int,
+                                                Direction = System.Data.ParameterDirection.Input,
+                                                Value = idUsuario
+                                  }
+                               };
+                    //SP3_PAGAR_INCENTIVO_SION_PAY_COMISION
+                    var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP3_PAGAR_INCENTIVO_SION_PAY_COMISION] @id_Comision, @id_usuario", parameterReturn);
+
+                    int returnValue = (int)parameterReturn[0].Value;
+                    if (returnValue > 0)
+                    {
+                        var result2 = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP3_PROCESAR_PAGO_INCENTIVO_SION_PAY_UPDATE] @id_Comision,  @id_usuario  ", parameterReturn2);
+                        int returnValue2 = (int)parameterReturn2[0].Value;
+                        
+                        if(returnValue2 > 0)
+                        {
+                            dbcontextTransaction.Commit();
+                            Logger.LogInformation($" usuario: {usuario} -  pagarIncentivo, Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO].");
+                            return returnValue2;
+                        }
+                        else
+                        {
+                            Logger.LogInformation($" usuario: {usuario} -  pagarIncentivo, SP3_PROCESAR_PAGO_INCENTIVO_SION_PAY_UPDATE devolvio un resultado negativo: {returnValue2}");
+                            dbcontextTransaction.Rollback();
+                            return returnValue2;
+                        }
+                        
+                    }
+                    else
+                    {
+                        dbcontextTransaction.Rollback();
+                        Logger.LogInformation($" usuario: {usuario}- pagarIncentivo, SP3_PAGAR_INCENTIVO_SION_PAY_COMISION devolvio negativo: {returnValue}");
+                        return returnValue;
+                    }
+                    
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($" usuario: {usuario} error catch pagarIncentivo()  mensaje : {ex.Message}");
+                dbcontextTransaction.Rollback();
+                return -5;
+            }
+
+            
+        }
+
+        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        {
+            bool pagado = true;
+            int idUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == usuario).FirstOrDefault().IdUsuario;
+            List<PagoIncentivo> incentivosPagos = new List<PagoIncentivo>();
+
+            foreach (PagoIncentivo elem in incentivosPagar)
+            {
+                int resultadoAuxiliar = pagarIncentivo(elem.IdComision, idUsuario, usuario);
+
+                incentivosPagos.Add(new PagoIncentivo()
+                {
+                    NombreCompleto = elem.NombreCompleto,
+                    IdComision = elem.IdComision,
+                    CedulaIdentidad = elem.CedulaIdentidad,
+                    CuentaBanco = elem.CuentaBanco,
+                    Banco = elem.Banco,
+                    MontoTotalNeto = elem.MontoTotalNeto,
+                    IdTipoIncentivoPago = elem.IdTipoIncentivoPago,
+                    TipoIncentivo = elem.TipoIncentivo,
+                    TipoPago = elem.TipoPago,
+                    IdCiclo = elem.IdCiclo,
+                    IdTipoIncentivo = elem.IdTipoIncentivo,
+                    pagado = (resultadoAuxiliar > 0)
+                }); ;
+
+
+            }
+            return incentivosPagos;
         }
     }
 }
