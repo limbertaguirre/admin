@@ -685,6 +685,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                Utils.Utils.ShowValueFields(body, Logger);
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
                     .Select(u => new
@@ -1342,22 +1343,19 @@ namespace gestion_de_comisiones.Repository
                                             Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
                                 }
                 };
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario, @id_tipo_comision, @estado_comision_id  ", parameterReturn);
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario, @id_tipo_comision, @estado_comision_id ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
-                if (returnValue > 0)
-                {                    
-                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se cerro el pago de comision EL [SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS].");
-                    Logger.LogInformation($" usuario: {param.usuarioLogin}-  respuesta sp: {returnValue}");
-                    dbcontextTransaction.Commit();
-                    return returnValue;
-                }
-                else
-                {                    
+                Logger.LogInformation($"FIN SP [SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS] returnValue: {returnValue}");
+                if (returnValue == -1)
+                {
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO]");
                     dbcontextTransaction.Rollback();
-                    return -1;
+                    return -1;      
                 }
-
+                Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se cerro el pago de comision EL [SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS].");
+                //Logger.LogInformation($" usuario: {param.usuarioLogin}-  respuesta sp: {returnValue}");
+                dbcontextTransaction.Commit();
+                return returnValue;
             }
             catch (Exception ex)
             {
