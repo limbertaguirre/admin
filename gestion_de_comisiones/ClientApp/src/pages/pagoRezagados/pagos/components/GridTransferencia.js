@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect, forwardRef} from "react";
 import * as Redux from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -23,8 +23,10 @@ import {
   TableContainer,
   TableBody,
   IconButton,
+  TextField,
+  InputAdornment
 } from "@material-ui/core";
-import { Close } from "@material-ui/icons";
+import { Close, Search } from "@material-ui/icons";
 import clsx from "clsx";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
 import MessageTransferConfirm from "./MessageTransferConfirm";
@@ -319,18 +321,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 //-----------------------------------------------------------------------------------------------
 
-const GridTransferencia = ({
-  handleConfirmarPagosTransferencias,
-  idCiclo,
-  list,
-  empresaId,
-  openModalFullScreen,
-  closeFullScreenModal,
-  seleccionarTodo,
-  selected,
-  setSelected,
-  data,
-  idComision,
+const GridTransferencia = ({ handleConfirmarPagosTransferencias, idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data, idComision,
 }) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
@@ -347,6 +338,7 @@ const GridTransferencia = ({
   );
   const [totalMontoRechazados, setTotalMontoRechazados] = React.useState(0);
   data.montoTotal = data.montoTotal.replace(",", ".");
+  const [ciResultado, setCiResultado] = useState([]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -504,6 +496,19 @@ const GridTransferencia = ({
     } else return "valor no válido";
   };
 
+    // --------------------------------------BUSCADOR PREDICTIVO--------------------------------
+    const [resultado, setResultado] = useState([])
+    useEffect(()=>{
+       setResultado(list);
+      }, [list])
+    
+  function searchingTerm(term){
+    return function(x){
+      return x.docDeIdentidad.includes(term) || !term;
+    }
+  }
+  // --------------------------------------------------------------------------------------------
+
   return (
     <Dialog
       fullScreen
@@ -529,7 +534,24 @@ const GridTransferencia = ({
       <Card style={{ overflow: "initial" }}>
         <Grid container className={classes.gridContainer}>
           <Grid item xs={12} md={4}></Grid>
-          <Grid item xs={12} md={4} className={classes.containerSave}></Grid>
+          <Grid item xs={12} md={4} className={classes.containerSave}>
+          {resultado && <TextField
+              label="Buscar"
+              type={"text"}
+              variant="outlined"
+              placeholder={"Buscar por carnet identidad"}
+              name="txtBusqueda"
+              fullWidth
+              onChange={e => setCiResultado(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />}
+          </Grid>
           <Grid item xs={12} md={4} className={classes.containerCargar}>
             <Button
               type="submit"
@@ -570,10 +592,10 @@ const GridTransferencia = ({
                   orderBy={orderBy}
                   onSelectAllClick={handleSelectAllClick}
                   onRequestSort={handleRequestSort}
-                  rowCount={list.length}
+                  rowCount={resultado.length}
                 />
                 <TableBody>
-                  {stableSort(list, getComparator(order, orderBy)).map(
+                {stableSort(resultado, getComparator(order, orderBy)).filter(searchingTerm(ciResultado)).map(
                     (row, index) => {
                       const isItemSelected = isSelected(
                         row.idComisionDetalleEmpresa
@@ -602,42 +624,17 @@ const GridTransferencia = ({
                               inputProps={{ "aria-labelledby": labelId }}
                             />
                           </TableCell>
-                          <TableCell component="th" id={labelId} scope="row">
-                            {" "}
-                            {row.nombreDeCliente}
+                          <TableCell component="th" id={labelId} scope="row">{" "}{row.nombreDeCliente}
                           </TableCell>
-                          <TableCell align="center">
-                            {" "}
-                            {row.docDeIdentidad}
+                          <TableCell align="center">{" "}{row.docDeIdentidad}
                           </TableCell>
                           <TableCell align="left"> {row.nombreBanco}</TableCell>
                           <TableCell align="left">{row.nroDeCuenta}</TableCell>
-                          <TableCell align="left">
-                            {formatearNumero(
-                              parseFloat(row.importePorEmpresa).toFixed(2)
-                            )}
-                          </TableCell>
+                          <TableCell align="left"> {formatearNumero( parseFloat(row.importePorEmpresa).toFixed(2))}</TableCell>
                           <TableCell align="center">{row.empresa}</TableCell>
                           <TableCell align="center">
-                            {row.idEstadoComisionDetalleEmpresa === 2 ? (
-                              <Chip
-                                label="Pagado"
-                                color="primary"
-                                variant="default"
-                              />
-                            ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                              <Chip
-                                label="Pendiente"
-                                color="secondary"
-                                variant="default"
-                              />
-                            ) : (
-                              <Chip
-                                label="Rechazado"
-                                color="secondary"
-                                variant="default"
-                              />
-                            )}
+                            {row.idEstadoComisionDetalleEmpresa === 2 ? (<Chip label="Pagado" color="primary" variant="default"/>) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                              <Chip label="Pendiente" color="secondary" variant="default"/>) : (<Chip label="Rechazado" color="secondary" variant="default"/>)}
                           </TableCell>
                         </TableRow>
                       );
@@ -673,29 +670,12 @@ const GridTransferencia = ({
         <MessageTransferConfirm
           open={openModalConfirmation}
           titulo={<b>DETALLE DE TRANSFERENCIA</b>}
-          subTituloModal={
-            <b>
-              Ciclo: {data.list[0].glosa}
-              <br />
-              Empresa: {data.list[0].empresa}
-            </b>
-          }
+          subTituloModal={ <b> Ciclo: {data.list[0].glosa} <br /> Empresa: {data.list[0].empresa} </b> }
           mensaje={{
             confirmados: selected.length,
-            montoAPagar: modalSum(
-              parseFloat(data.montoTotal),
-              parseFloat(totalMontoRechazados),
-              0
-            ),
+            montoAPagar: modalSum( parseFloat(data.montoTotal), parseFloat(totalMontoRechazados), 0 ),
             rechazados: list.length - selected.length,
-            montoAPagarRechazados:
-              list.length - selected.length
-                ? modalSum(
-                    parseFloat(data.montoTotal),
-                    parseFloat(totalMontoRechazados),
-                    1
-                  )
-                : 0.0,
+            montoAPagarRechazados: list.length - selected.length? modalSum( parseFloat(data.montoTotal), parseFloat(totalMontoRechazados), 1 ) : 0.0,
             totalLista: list.length,
             montoTotal: addFormat(data.montoTotal),
           }}
