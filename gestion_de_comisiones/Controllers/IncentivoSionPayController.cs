@@ -145,12 +145,12 @@ namespace gestion_de_comisiones.Controllers
             }        
         }
         [HttpPost]
-        public ActionResult PagarIncentivos([FromBody] List<PagoIncentivo> incentivosPagar, [FromBody] string usuarioLogin)
+        public ActionResult PagarIncentivos([FromBody] PagoIncentivoInput pagoIncentivo)
         {
             try
             {
                 //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
-                List<PagoIncentivo> resultTipoIncentivoPago = Service.pagarIncentivos(incentivosPagar, usuarioLogin);
+                List<PagoIncentivo> resultTipoIncentivoPago = Service.pagarIncentivos(pagoIncentivo.IncentivosPagar, pagoIncentivo.UsuarioLogin);
                 //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
                 return Ok(resultTipoIncentivoPago);
             }
