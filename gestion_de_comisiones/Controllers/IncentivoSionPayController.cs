@@ -93,7 +93,7 @@ namespace gestion_de_comisiones.Controllers
             }
         }
         // GET: IncentivoSionPay/ObtenerTipoIncentivosSegunCicloMensual
-        public ActionResult ObtenerTipoIncentivosSegunCicloMensual([FromHeader] string usuarioLogin, int nroCicloMensual)
+        public ActionResult ObtenerTipoIncentivosSegunCicloMensual([FromHeader] string usuarioLogin, [FromHeader] int nroCicloMensual)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace gestion_de_comisiones.Controllers
             }
         }
         // GET: IncentivoSionPay/ObtenerIncentivosPagar
-        public ActionResult ObtenerIncentivosPagar([FromHeader] string usuarioLogin, int nroCicloMensual, int idTipoIncentivo)
+        public ActionResult ObtenerIncentivosPagar([FromHeader] string usuarioLogin, [FromHeader] int nroCicloMensual, [FromHeader] int idTipoIncentivo)
         {
             try
             {

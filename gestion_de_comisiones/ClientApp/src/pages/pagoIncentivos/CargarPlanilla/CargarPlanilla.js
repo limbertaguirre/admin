@@ -139,11 +139,6 @@ const CargarPlanilla = ()=> {
       .then((response)=>{
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
-        response.data.map((item,index) =>{
-              let newDatosExcel = [...datosExcel]
-              newDatosExcel[index].estadoFila = 0
-              setDatosExcel(newDatosExcel)
-        });
         if(response.code === 1 ){
           setMensajeErrorModal(response.message)
             response.data.map((item,index) =>{
