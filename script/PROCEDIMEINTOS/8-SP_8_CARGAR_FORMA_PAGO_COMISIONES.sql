@@ -30,6 +30,7 @@
    DECLARE @ESTADO_COMISION_DETALLE_PROCESADO int;
    DECLARE @NO_FACTURO INT;
    DECLARE @SI_FACTURO INT;
+   DECLARE @TIPO_PAGO_COMSION INT;
 
    SET @USUARIO_DEFAULT=1;
    SET @ESTADO_COMISION_CERRADO_PRORRATEO=8;
@@ -42,15 +43,16 @@
    SET @ESTADO_COMISION_DETALLE_PROCESADO= 1; --pendiente
    SET @SI_FACTURO= 1;
    SET @NO_FACTURO= 0;
+   SET @TIPO_PAGO_COMSION = 1;
 
    DECLARE @CICLO_SELEC int 
-   SET @CICLO_SELEC=84;
+   SET @CICLO_SELEC=88;
 
-	select TOP(1) @IDCICLO_SELECCIONADO = id_ciclo from BDMultinivel.dbo.CICLO
+	select TOP(1) @IDCICLO_SELECCIONADO = id_ciclo from BDMultinivel.dbo.CICLO where id_ciclo=@CICLO_SELEC
 	IF @IDCICLO_SELECCIONADO > 0
 	BEGIN
 
-	   select TOP(1) @IDCOMISION_SELECCIONADO=id_comision from BDMultinivel.dbo.GP_COMISION where id_ciclo= @IDCICLO_SELECCIONADO
+	   select TOP(1) @IDCOMISION_SELECCIONADO=id_comision from BDMultinivel.dbo.GP_COMISION where id_tipo_comision=@TIPO_PAGO_COMSION and id_ciclo= @IDCICLO_SELECCIONADO
 	   IF @IDCOMISION_SELECCIONADO = 0
 	   BEGIN
 	       DECLARE @TIPO_PAGO_COMISIONES INT;
@@ -263,7 +265,7 @@
 		END
 		 ELSE
 		BEGIN
-		  select -2 as 'la comision ciclo  existe'
+		  select -2 as 'la comision tipo pago existe'
 		--  ROLLBACK TRANSACTION;
 		END
 	END
