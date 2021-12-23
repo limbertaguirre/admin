@@ -98,8 +98,12 @@ const CargarPlanilla = ()=> {
       }
     })
     .then(({rows, errors})=>{
-      console.table(rows)
       console.log(errors)
+      if(rows.length === 0){
+        alert('La planilla no tiene contiene datos');
+        setDatosExcel([])
+        return;
+      }
       if(errors.length > 0){
         alert('Ocurrio un problema al cargar la planilla, verifique los datos')
       }else{
@@ -109,6 +113,18 @@ const CargarPlanilla = ()=> {
       }
     })
   }
+  const [datosExcel, setDatosExcel] = useState([])
+  const [ ciclo , setCiclo ] = useState('')
+  const [ listaCiclo , setListaCiclo ] = useState()
+  const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState([])
+  const [ listaTipoPago , setListaTipoPago ] = useState()
+  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
+  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
+  const [ mensajeErrorModal , setMensajeErrorModal] = useState("")
+  const [ openTipoIncentivoModal , setOpenTipoIncentivoModal] = useState(false)
+  const [ valorTipoIncentivoTodos , setValorIncentivoTodos] = useState("")
+  const [ valorTipoPagoTodos , setValorPagoTodos] = useState("")
+  const [ descripcionTipoIncentivo, setDescripcionTipoIncentivo] = useState("")
   const verificarTipoIncentivoSeleccionado = (datosClientes) =>{
     let filasObservadas = []
     for (let i = 0; i < datosClientes.length; i+=1) {
@@ -135,6 +151,7 @@ const CargarPlanilla = ()=> {
     })
     setDatosExcel(newDatosExcel)
     if (verificarTipoIncentivoSeleccionado(datosExcel)){
+      crearResumenPlanilla(datosExcel)
       requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
         setEstadoCargarPlanilla(response.code)
@@ -165,6 +182,10 @@ const CargarPlanilla = ()=> {
       setMensajeErrorModal("Seleccione un tipo de incentivo en cada fila")
     }
   }
+
+  const crearResumenPlanilla = () =>{
+    console.log('Test')
+  }
   useEffect(()=>{
     obtenerCiclos();
     obtenerTipoIncentivoPago();
@@ -181,17 +202,7 @@ const CargarPlanilla = ()=> {
         }
       })
   }
-  const [datosExcel, setDatosExcel] = useState()
-  const [ ciclo , setCiclo ] = useState('')
-  const [ listaCiclo , setListaCiclo ] = useState()
-  const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState([])
-  const [ listaTipoPago , setListaTipoPago ] = useState()
-  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
-  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
-  const [ mensajeErrorModal , setMensajeErrorModal] = useState("")
-  const [ openTipoIncentivoModal , setOpenTipoIncentivoModal] = useState(false)
-  const [ valorTipoIncentivoTodos , setValorIncentivoTodos] = useState("")
-  const [ valorTipoPagoTodos , setValorPagoTodos] = useState("")
+
   const handleChangeCiclo = (event) =>{
     setCiclo(event.target.value);
   }
@@ -273,7 +284,7 @@ const CargarPlanilla = ()=> {
       }
     })
   }
-  const [ descripcionTipoIncentivo, setDescripcionTipoIncentivo] = useState("")
+  
 
 
   return(
@@ -319,9 +330,9 @@ const CargarPlanilla = ()=> {
           </Button>
         </Grid>
     </Grid>
-      { datosExcel && (
+      { datosExcel.length > 0 && (
         <TableContainer >
-        <Table aria-label="simple table">
+        <Table aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
               <TableCell align="left"></TableCell>
@@ -338,7 +349,7 @@ const CargarPlanilla = ()=> {
                   listaTipoPago = {listaTipoPago}
                   handleChangeTipoPago={ (e)=> handleChangeTipoPago (e,1,true) }
                   valorTipoPago = { valorTipoPagoTodos === '' ? ID_TIPO_PAGO_SION_PAY : valorTipoPagoTodos  }
-                  labelTipoPago = { 'Aplicar tipo de pago en todas las filas'}
+                  labelTipoPago = { 'Aplicar en todas las filas'}
                 />
               </TableCell>
               <TableCell align="left" style={{minWidth: '300px'}}>
@@ -376,7 +387,7 @@ const CargarPlanilla = ()=> {
                 <TableCell align="left">{row.nombreCliente}</TableCell>
                 <TableCell align="left">{row.ciCliente}</TableCell>
                 <TableCell align="left">{row.cuentaSionPay}</TableCell>
-                <TableCell align="right">{row.monto}</TableCell>
+                <TableCell align="right">{row.monto.toFixed(2)}</TableCell>
                 <TableCell align="left">{row.ciudad}</TableCell>
                 <TableCell align="left">{row.pais}</TableCell>
                 <TableCell align="left">{row.detalle}</TableCell>
@@ -407,7 +418,7 @@ const CargarPlanilla = ()=> {
           <Button
             variant="contained"
             color="primary"
-            disabled={ datosExcel ? false : true}
+            disabled={ datosExcel.length > 0 ? false : true}
             onClick={ cargarPlanilla }> Cargar Datos</Button>
         </Grid>
       </Grid>
