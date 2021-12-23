@@ -357,10 +357,10 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" Inicio ObtenerTipoIncentivo ");
-                TipoIncentivoPagoModel tipoIncentivoPago = new TipoIncentivoPagoModel();
+                TipoIncentivoPago tipoIncentivoPago = new TipoIncentivoPago();
                 tipoIncentivoPago.Descripcion = descripcion;
                 tipoIncentivoPago.Estado = "ACTIVO";
-                ContextMulti.Add(tipoIncentivoPago);
+                ContextMulti.TipoIncentivoPagoes.Add(tipoIncentivoPago);
                 ContextMulti.SaveChanges();
                 return true;
             }
