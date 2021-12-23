@@ -393,7 +393,7 @@ namespace gestion_de_comisiones.Repository
         
 
                                     }
-                         ).ToList();
+                         ).ToList();                               
 
                 //var incentivosAPagar = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo).ToList();
                 return lista;
@@ -491,45 +491,84 @@ namespace gestion_de_comisiones.Repository
 
         public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
-            //bool pagado = true;
-            if (incentivosPagar.Count == 0)
+            try
             {
-                return incentivosPagar;
-            }
-            int idUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == usuario).FirstOrDefault().IdUsuario;
-            int idComision = incentivosPagar.FirstOrDefault().IdComision;
-            int idCiclo = (int)incentivosPagar.FirstOrDefault().IdCiclo;
-            int idTipoIncentivoPago = incentivosPagar.FirstOrDefault().IdTipoIncentivoPago;
-            List <PagoIncentivo> incentivosPagos = new List<PagoIncentivo>();
-            int resultadoAuxiliar = pagarIncentivo(idComision, idUsuario, usuario);
-            if (resultadoAuxiliar > 0)
-            {
-                incentivosPagos = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == idCiclo && item.IdTipoIncentivoPago == idTipoIncentivoPago).Select(g => new PagoIncentivo
+                if (incentivosPagar.Count == 0)
                 {
-                    NombreCompleto = g.NombreCompleto,
-                    IdComision = g.IdComision,
-                    CedulaIdentidad = g.CedulaIdentidad,
-                    CuentaBanco = g.CuentaBanco,
-                    Banco = g.Banco,
-                    MontoTotalNeto = g.MontoTotalNeto,
-                    IdTipoIncentivoPago = g.IdTipoIncentivoPago,
-                    TipoIncentivo = g.TipoIncentivo,
-                    TipoPago = g.TipoPago,
-                    IdCiclo = g.IdCiclo,
-                    IdTipoIncentivo = g.IdTipoIncentivo,
-                    pagado = (g.ComisionPagada == "pagado") ? true : false
+                    return incentivosPagar;
+                }
+                int idUsuario = ContextMulti.Usuarios.Where(item => item.Usuario1 == usuario).FirstOrDefault().IdUsuario;
+                int idComision = incentivosPagar.FirstOrDefault().IdComision;
+                int idCiclo = (int)incentivosPagar.FirstOrDefault().IdCiclo;
+                int idTipoIncentivoPago = incentivosPagar.FirstOrDefault().IdTipoIncentivoPago;
+                List<PagoIncentivo> incentivosPagos = new List<PagoIncentivo>();
+                int resultadoAuxiliar = pagarIncentivo(idComision, idUsuario, usuario);
 
 
-                }).ToList();
+                if (resultadoAuxiliar > 0)
+                {
+                    List<GpComisionDetalleEstadoI> detalles = ContextMulti.GpComisions.Join(ContextMulti.GpComisionDetalles,
+                                                                            GpComision => GpComision.IdComision,
+                                                                            GpComisionDetalle => GpComisionDetalle.IdComision,
+                                                                             (GpComision, GpComisionDetalle) => new
+                                                                             {
+                                                                                 idComision = GpComision.IdComision,
+                                                                                 idCiclo = GpComision.IdCiclo,
+                                                                                 IdComisionDetalle = GpComisionDetalle.IdComisionDetalle
+
+                                                                             }).Where(item => item.idCiclo == idCiclo && item.idComision == idComision).Join(ContextMulti.GpComisionDetalleEstadoIs,
+                                                                             GpComisionDetalle => GpComisionDetalle.IdComisionDetalle,
+                                                                             GpComisionDetalleEstadoI => GpComisionDetalleEstadoI.IdComisionDetalle,
+                                                                             (GpComisionDetalle, GpComisionDetalleEstadoI) => new GpComisionDetalleEstadoI
+                                                                             {
+                                                                                 IdComisionDetalle = GpComisionDetalleEstadoI.IdComisionDetalle,
+                                                                                 FechaActualizacion = GpComisionDetalleEstadoI.FechaActualizacion,
+                                                                                 FechaCreacion = GpComisionDetalleEstadoI.FechaCreacion,
+                                                                                 Habilitado = GpComisionDetalleEstadoI.Habilitado,
+                                                                                 IdUsuario = GpComisionDetalleEstadoI.IdUsuario,
+                                                                                 IdEstadoComisionDetalle = 8
+                                                                             }).ToList();
+                    //detalles.Where()
+
+
+                    ContextMulti.GpComisionDetalleEstadoIs.AddRange(detalles);
+                    ContextMulti.SaveChanges();
+                  
+
+                   incentivosPagos = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == idCiclo && item.IdTipoIncentivoPago == idTipoIncentivoPago).Select(g => new PagoIncentivo
+                    {
+                        NombreCompleto = g.NombreCompleto,
+                        IdComision = g.IdComision,
+                        CedulaIdentidad = g.CedulaIdentidad,
+                        CuentaBanco = g.CuentaBanco,
+                        Banco = g.Banco,
+                        MontoTotalNeto = g.MontoTotalNeto,
+                        IdTipoIncentivoPago = g.IdTipoIncentivoPago,
+                        TipoIncentivo = g.TipoIncentivo,
+                        TipoPago = g.TipoPago,
+                        IdCiclo = g.IdCiclo,
+                        IdTipoIncentivo = g.IdTipoIncentivo,
+                        pagado = (g.ComisionPagada == "pagado") ? true : false
+
+
+                    }).ToList();
+                }
+                else
+                {
+                    return incentivosPagar;
+                }
+
+
+
+                return incentivosPagos;
             }
-            else
+            catch(Exception ex)
             {
+                Logger.LogWarning($" usuario: {usuario} error catch pagarIncentivos()  mensaje : {ex.Message}");
                 return incentivosPagar;
             }
-            
 
             
-            return incentivosPagos;
         }
     }
 }

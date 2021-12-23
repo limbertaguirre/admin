@@ -18,6 +18,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object ObtenerTipoIncentivosPagosSegunCiclo(int  nroCicloMensual, string usuario);
         public object RegistrarTipoIncentivoPago(TipoIncentivoPagoModel tipoIncentivoPago,string usuario);
         public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario);
-        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario);
+        public object pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario);
     }
 }
