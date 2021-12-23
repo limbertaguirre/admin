@@ -140,11 +140,22 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        public object pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
-            List<PagoIncentivo> listaPagadosIncentivo = Repository.pagarIncentivos(incentivosPagar, usuario);
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio pagarIncentivos()");
+                List<PagoIncentivo> listaPagadosIncentivo = Repository.pagarIncentivos(incentivosPagar, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Problemas al registrar tipo de incentivo", listaPagadosIncentivo);
+            }
+            catch(Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error en pagarIncentivos, error: {ex.Message} ");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas alrealizar  pagarIncentivos", "problemas en el servidor, intente mas tarde");
+            }
+            
 
-            return listaPagadosIncentivo;
+            
         }
     }
 }
