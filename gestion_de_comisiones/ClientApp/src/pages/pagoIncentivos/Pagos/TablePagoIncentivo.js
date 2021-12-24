@@ -10,7 +10,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 const columns = [
-  { id: 'index', label: '', minWidth: 20 },
   { id: 'nombre', label: 'Nombre\u00a0Completo', minWidth: 100 },
   {
     id: 'carnet',
@@ -49,6 +48,10 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 440,
   },
+  tableHeaderPlanilla:{
+    background : "#1872b8",
+    color: 'white'
+  }
 });
 
 export default function TablePagoIncentivo(props) {
@@ -71,12 +74,13 @@ export default function TablePagoIncentivo(props) {
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
-            <TableRow>
+            <TableRow >
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
+                  className={classes.tableHeaderPlanilla}
                 >
                   {column.label}
                 </TableCell>
@@ -87,7 +91,6 @@ export default function TablePagoIncentivo(props) {
             {listaIncentivo.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row,index) => {
               return (
                 <TableRow>
-                  <TableCell>{ index+1} </TableCell>
                   <TableCell>{row.nombreCompleto} </TableCell>
                   <TableCell>{row.cedulaIdentidad} </TableCell>
                   <TableCell>{row.cuentaBanco} </TableCell>

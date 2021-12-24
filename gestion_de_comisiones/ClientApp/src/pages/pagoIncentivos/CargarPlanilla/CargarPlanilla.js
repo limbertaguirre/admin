@@ -26,7 +26,12 @@ const useStyles = makeStyles((theme) => ({
       background: '#197e30',
       color: 'white',
     }
+  },
+  tableHeaderPlanilla:{
+    background : "#1872b8",
+    color: 'white'
   }
+
 }));
 const CargarPlanilla = ()=> {
   const style = useStyles()
@@ -333,9 +338,8 @@ const CargarPlanilla = ()=> {
       { datosExcel.length > 0 && (
         <TableContainer >
         <Table aria-label="simple table" size="small">
-          <TableHead>
+          <TableHead  >
             <TableRow>
-              <TableCell align="left"></TableCell>
               <TableCell align="left"></TableCell>
               <TableCell align="left"> </TableCell>
               <TableCell align="left"> </TableCell>
@@ -361,18 +365,17 @@ const CargarPlanilla = ()=> {
                 />
               </TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell align="left">Empresa</TableCell>
-              <TableCell align="left"> Id Empresa </TableCell>
-              <TableCell align="left"> Nombre cliente</TableCell>
-              <TableCell align="left"> CI cliente</TableCell>
-              <TableCell align="left"> Cuenta SionPay</TableCell>
-              <TableCell align="left"> Monto ($us)</TableCell>
-              <TableCell align="left"> Ciudad </TableCell>
-              <TableCell align="left"> Pais </TableCell>
-              <TableCell align="left"> Detalle </TableCell>
-              <TableCell align="left"> Tipo Pago </TableCell>
-              <TableCell align="left"> Tipo incentivo</TableCell>
+            <TableRow className={style.tableHeaderPlanilla}>
+              <TableCell align="left" style={{ color: 'white'}}>Empresa</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Nombre Completo</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Cédula de identidad</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Nro. Cuenta</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Monto ($us)</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Ciudad </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Pais </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Detalle </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Tipo Pago </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Tipo incentivo</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -383,7 +386,6 @@ const CargarPlanilla = ()=> {
                 className={ row.estadoFila === 0 ? style.normalRow : style.errorRow }
               >
                 <TableCell align="left">{row.empresa}</TableCell>
-                <TableCell align="right">{row.idEmpresa}</TableCell>
                 <TableCell align="left">{row.nombreCliente}</TableCell>
                 <TableCell align="left">{row.ciCliente}</TableCell>
                 <TableCell align="left">{row.cuentaSionPay}</TableCell>
@@ -413,6 +415,7 @@ const CargarPlanilla = ()=> {
         </Table>
       </TableContainer>
       )}
+      <br/>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Button

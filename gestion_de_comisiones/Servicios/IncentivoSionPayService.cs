@@ -72,7 +72,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
                 var ciclos = Repository.ObtenerTipoIncentivo(usuario);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", ciclos);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los tipos de incentivos", ciclos);
             }
             catch (Exception ex)
             {
@@ -140,12 +140,12 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        public object PagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
             try
             {
                 Logger.LogInformation($"usuario : {usuario} Inicio pagarIncentivos()");
-                List<PagoIncentivo> listaPagadosIncentivo = Repository.pagarIncentivos(incentivosPagar, usuario);
+                List<PagoIncentivo> listaPagadosIncentivo = Repository.PagarIncentivos(incentivosPagar, usuario);
                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Problemas al registrar tipo de incentivo", listaPagadosIncentivo);
             }
             catch(Exception ex)

@@ -126,20 +126,18 @@ const PagoIncentivo = () =>{
       usuarioLogin : userName
     }
     requestPost('IncentivoSionPay/PagarIncentivos',data,dispatch).then((res)=>{
-      console.table(res)
-      setModalOpenRespuestaPago(true)
-      setListaIncentivoRespuestaPago(res)
-      // if(res.code === 0){
-      //   setListaIncentivo(res.data);
-      //   obtenerMontoTotalIncentivo(res.data)
-      // }else{
-      //   setListaIncentivo([]);
-      //   dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
-      // }
+      if(res.code === 0){
+        setListaIncentivoRespuestaPago(res.data)
+        setModalOpenRespuestaPago(true)
+        
+      }
     })
   }
   const clickBotonAceptarModalPago = ()=>{
     setModalOpenRespuestaPago(false)
+    setModalOpen(false)
+    setListaIncentivo([])
+    setListaTipoIncentivo([])
   }
   return (
     <>
@@ -210,7 +208,7 @@ const PagoIncentivo = () =>{
       nombreIncentivo={ nombreTipoIncentivo }
     />
     <ModalRespuestaPagoIncentivo
-      open={ modalOpenRespuestaPago }
+      open={modalOpenRespuestaPago}
       clickBotonAceptar={ clickBotonAceptarModalPago }
       listaIncentivo={ listaIncentivoRespuestaPago }
       totalUsuariosBenificiados={ listaIncentivo.length}

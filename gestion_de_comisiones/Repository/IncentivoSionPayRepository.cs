@@ -489,7 +489,7 @@ namespace gestion_de_comisiones.Repository
             
         }
 
-        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        public List<PagoIncentivo> PagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
             try
             {
