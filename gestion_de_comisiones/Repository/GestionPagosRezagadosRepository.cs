@@ -261,7 +261,7 @@ namespace gestion_de_comisiones.Repository
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS] @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
                 //var result = "Todo Ok @TipoComision, @EstadoComision, @ComisionId, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago";
                 int returnValue = (int)parameterReturn[0].Value;
-                Logger.LogInformation($" result: {result}, repository ConfirmarPagosRezagadosTransferencias fi" + $"" + $"n SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
+                Logger.LogInformation($" result: {result}, repository ConfirmarPagosRezagadosTransferencias fin SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
                     // Entro al catch del SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS hizo Rollback
