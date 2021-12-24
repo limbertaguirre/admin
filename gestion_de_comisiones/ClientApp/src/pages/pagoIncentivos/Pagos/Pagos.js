@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import * as ActionMensaje from "../../../redux/actions/messageAction";
 import TablePagoIncentivo from './TablePagoIncentivo';
 import ModalTipoIncentivo from './ModalPagoIncentivo';
+import ModalRespuestaPagoIncentivo from './ModalRespuestaPagoIncentivo';
 
 const useStyles = makeStyles((theme) => ({
   errorRow: {
@@ -23,6 +24,8 @@ const PagoIncentivo = () =>{
   const [ nombreCiclo, setNombreCiclo ] = useState("")
   const [ nombreTipoIncentivo, setNombreTipoIncentivo ] = useState("")
   const [ modalOpen, setModalOpen ] = useState(false)
+  const [ modalOpenRespuestaPago, setModalOpenRespuestaPago] = useState(false)
+  const [ listaIncentivoRespuestaPago, setListaIncentivoRespuestaPago] = useState([])
 
   const style = useStyles()
   const dispatch = useDispatch()
@@ -67,6 +70,7 @@ const PagoIncentivo = () =>{
       console.table(res.data)
       if(res.code === 0){
         setListaIncentivo(res.data);
+        console.table(res.data)
         obtenerMontoTotalIncentivo(res.data)
       }else{
         setListaIncentivo([]);
@@ -79,7 +83,7 @@ const PagoIncentivo = () =>{
     for (let item of listaIncentivo){
       montoTotal += item.montoTotalNeto
     }
-    setMontoTotalIncentivo(montoTotal)
+    setMontoTotalIncentivo(montoTotal.toFixed(2))
   }
   const handleChangeCiclo = (event) => {
     setCiclo(event.target.value)
@@ -91,7 +95,6 @@ const PagoIncentivo = () =>{
   }
   const obtenerNombreCiclo = (idCiclo)=>{
     for(let item of listaCiclo){
-      console.log(item)
       if(item.idCiclo === idCiclo){
         setNombreCiclo(item.nombre);
         return;
@@ -99,7 +102,6 @@ const PagoIncentivo = () =>{
     }
   }
   const handleChangeIncentivo = (event) => {
-    console.log(event.target.value)
     setIncentivo(event.target.value)
     obtenerNombreIncentivo(event.target.value)
     obtenerListaTipoIncentivosAPagar(ciclo,event.target.value)
@@ -122,15 +124,18 @@ const PagoIncentivo = () =>{
       usuarioLogin : userName
     }
     requestPost('IncentivoSionPay/PagarIncentivos',data,dispatch).then((res)=>{
-      console.table(res.data)
-      // if(res.code === 0){
-      //   setListaIncentivo(res.data);
-      //   obtenerMontoTotalIncentivo(res.data)
-      // }else{
-      //   setListaIncentivo([]);
-      //   dispatch(ActionMensaje.showMessage({ message: res.message, variant: "info" }));
-      // }
+      if(res.code === 0){
+        setListaIncentivoRespuestaPago(res.data)
+        setModalOpenRespuestaPago(true)
+        
+      }
     })
+  }
+  const clickBotonAceptarModalPago = ()=>{
+    setModalOpenRespuestaPago(false)
+    setModalOpen(false)
+    setListaIncentivo([])
+    setListaTipoIncentivo([])
   }
   return (
     <>
@@ -196,6 +201,14 @@ const PagoIncentivo = () =>{
       clickBotonCancelar={ modalBotonCancelar }
       clickBotonAceptar={ confirmarPago }
       montoTotalIncentivo={ montoTotalIncentivo}
+      totalUsuariosBenificiados={ listaIncentivo.length}
+      nombreCiclo={ nombreCiclo }
+      nombreIncentivo={ nombreTipoIncentivo }
+    />
+    <ModalRespuestaPagoIncentivo
+      open={modalOpenRespuestaPago}
+      clickBotonAceptar={ clickBotonAceptarModalPago }
+      listaIncentivo={ listaIncentivoRespuestaPago }
       totalUsuariosBenificiados={ listaIncentivo.length}
       nombreCiclo={ nombreCiclo }
       nombreIncentivo={ nombreTipoIncentivo }

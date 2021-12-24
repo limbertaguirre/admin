@@ -1,12 +1,21 @@
 import React, {useEffect, useState  } from 'react';
-import { Grid, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import { Grid, FormControl, InputLabel, Select, MenuItem, makeStyles, TextField } from "@material-ui/core";
+
+const useStyles = makeStyles(()=>({
+  comboStyle:{
+    padding: '4px 0px'
+  }
+}))
+
 const ComboTipoIncentivoPago = (props)=> {
+  const style = useStyles()
   return(
     <FormControl fullWidth variant="outlined">
-      <InputLabel id="demo-simple-select-label">{ props.labelTipoIncentivoPago }</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
+      <TextField
+        variant="outlined"
+        size='small'
+        id="simple-select-incentivo"
+        select
         value={ props.valorTipoIncentivo === undefined ? '': props.valorTipoIncentivo }
         label={ props.labelTipoIncentivoPago }
         onChange={ props.handleChangeTipoIncentivo }
@@ -17,7 +26,7 @@ const ComboTipoIncentivoPago = (props)=> {
             )
           )
         }
-      </Select>
+      </TextField>
     </FormControl>
   )
 }

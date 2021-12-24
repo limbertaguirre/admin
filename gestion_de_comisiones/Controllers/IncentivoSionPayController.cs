@@ -151,7 +151,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
-                object resultTipoIncentivoPago = Service.pagarIncentivos(pagoIncentivo.IncentivosPagar, pagoIncentivo.UsuarioLogin);
+                object resultTipoIncentivoPago = Service.PagarIncentivos(pagoIncentivo.IncentivosPagar, pagoIncentivo.UsuarioLogin);
                 //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
                 return Ok(resultTipoIncentivoPago);
             }
