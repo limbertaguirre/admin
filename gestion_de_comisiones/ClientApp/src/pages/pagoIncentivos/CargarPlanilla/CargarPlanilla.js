@@ -105,12 +105,12 @@ const CargarPlanilla = ()=> {
     .then(({rows, errors})=>{
       console.log(errors)
       if(rows.length === 0){
-        alert('La planilla no tiene contiene datos');
+        dispatch(ActionMensaje.showMessage({ message: 'La planilla no tiene contiene datos', variant: "info" }));
         setDatosExcel([])
         return;
       }
       if(errors.length > 0){
-        alert('Ocurrio un problema al cargar la planilla, verifique los datos')
+        dispatch(ActionMensaje.showMessage({ message: 'Ocurrio un problema al cargar la planilla, verifique los datos', variant: "info" }));
       }else{
         setDatosExcel(rows.map( (item)=>{
           return { ...item, idTipoIncentivoPago : '', estadoFila : 0 , idTipoPago: ''}
@@ -156,7 +156,6 @@ const CargarPlanilla = ()=> {
     })
     setDatosExcel(newDatosExcel)
     if (verificarTipoIncentivoSeleccionado(datosExcel)){
-      crearResumenPlanilla(datosExcel)
       requestPost('IncentivoSionPay/CargarPlanillaExcel',data, dispatch)
       .then((response)=>{
         setEstadoCargarPlanilla(response.code)
@@ -186,10 +185,6 @@ const CargarPlanilla = ()=> {
       setModalCargarPlanilla(true)
       setMensajeErrorModal("Seleccione un tipo de incentivo en cada fila")
     }
-  }
-
-  const crearResumenPlanilla = () =>{
-    console.log('Test')
   }
   useEffect(()=>{
     obtenerCiclos();
@@ -273,7 +268,7 @@ const CargarPlanilla = ()=> {
   }
   const clickBotonAceptar = () =>{
     if(descripcionTipoIncentivo === ""){
-      alert("Debe ingresar una descripcion")
+      dispatch(ActionMensaje.showMessage({ message: 'Debe ingresar una descripcion', variant: "info" }));
       return
     }
     let data={

@@ -95,7 +95,6 @@ const PagoIncentivo = () =>{
   }
   const obtenerNombreCiclo = (idCiclo)=>{
     for(let item of listaCiclo){
-      console.log(item)
       if(item.idCiclo === idCiclo){
         setNombreCiclo(item.nombre);
         return;
@@ -103,7 +102,6 @@ const PagoIncentivo = () =>{
     }
   }
   const handleChangeIncentivo = (event) => {
-    console.log(event.target.value)
     setIncentivo(event.target.value)
     obtenerNombreIncentivo(event.target.value)
     obtenerListaTipoIncentivosAPagar(ciclo,event.target.value)
