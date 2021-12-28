@@ -3354,6 +3354,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("ENTIDAD_DESTINO");
 
+                entity.Property(e => e.EstadoComisionHabilitado).HasColumnName("estado_comision_habilitado");
+
                 entity.Property(e => e.EstadoListadoFormaPagoHabilitado).HasColumnName("estado_listado_forma_pago_habilitado");
 
                 entity.Property(e => e.FechaActualizacionComision)
@@ -3383,6 +3385,8 @@ namespace gestion_de_comisiones.MultinivelModel
                 entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
 
                 entity.Property(e => e.IdComisionesDetalle).HasColumnName("id_comisiones_detalle");
+
+                entity.Property(e => e.IdDetalleEstadoListadoFormaPago).HasColumnName("id_detalle_estado_listado_forma_pago");
 
                 entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
 
@@ -3637,6 +3641,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasMaxLength(255)
                     .IsUnicode(false)
                     .HasColumnName("cuenta_banco");
+
+                entity.Property(e => e.CuentaSionPay).HasColumnName("cuentaSionPay");
 
                 entity.Property(e => e.IdCiclo).HasColumnName("idCiclo");
 
