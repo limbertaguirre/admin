@@ -383,8 +383,8 @@ select (f.nombres + ' ' + f.apellidos) as nombre_completo
 END)
  AS comisionPagada,
 (case WHEN (cuentaSpay.id_usuario is not null)
-  THEN convert(bit, 1)
-  ELSE convert(bit, 0)
+  THEN cuentaSpay.nro_cuenta
+  ELSE 's/n'
 END) as cuentaSionPay
 
 from GP_COMISION as c

@@ -3642,7 +3642,11 @@ namespace gestion_de_comisiones.MultinivelModel
                     .IsUnicode(false)
                     .HasColumnName("cuenta_banco");
 
-                entity.Property(e => e.CuentaSionPay).HasColumnName("cuentaSionPay");
+                entity.Property(e => e.CuentaSionPay)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("cuentaSionPay")
+                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                 entity.Property(e => e.IdCiclo).HasColumnName("idCiclo");
 
