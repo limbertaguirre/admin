@@ -39,7 +39,8 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
                 <RouteRedirect exact path='/forma-pago/rezagados' element={Pages.FormaPagoRezagado}  />    
                 <RouteRedirect exact path='/reporte/ciclos' element={Pages.ReporteCiclo}  />  
                 <RouteRedirect exact path='/reporte/freelancer' element={Pages.ReporteFreelancer}  />  
-                <RouteRedirect exact path='/pagos/incentivos/cargar-planilla' element={Pages.CargarPlanillaSionPay}  />  
+                <RouteRedirect exact path='/pagos/incentivos/cargar-planilla' element={Pages.CargarPlanillaSionPay}  /> 
+                <RouteRedirect exact path='/pagos/incentivos/pagar' element={Pages.PagoIncentivo}  />
                 <Route  component={Pages.NotFoundLoad} />                
             </Switch>  
           </Layout> 

@@ -2,9 +2,9 @@
 import React, {useEffect, useState  } from 'react';
 import { makeStyles, Link, Table, Grid, TableContainer, Button , TableBody , TableCell, TableHead, TableRow, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import readXlsxFile from 'read-excel-file'
-import { requestPost ,requestGet } from '../../service/request';
+import { requestPost ,requestGet } from '../../../service/request';
 import {useDispatch, useSelector} from 'react-redux';
-import * as ActionMensaje from "../../redux/actions/messageAction";
+import * as ActionMensaje from "../../../redux/actions/messageAction";
 import ComboTipoIncentivoPago from './ComboTipoIncentivo';
 import ComboTipoPago from './ComboTipoPago';
 import ModalCargarPlanilla from './MensajeModalCargarPlanilla';
@@ -26,9 +26,14 @@ const useStyles = makeStyles((theme) => ({
       background: '#197e30',
       color: 'white',
     }
+  },
+  tableHeaderPlanilla:{
+    background : "#1872b8",
+    color: 'white'
   }
+
 }));
-const PagoIncentivo = ()=> {
+const CargarPlanilla = ()=> {
   const style = useStyles()
   const dispatch = useDispatch()
   const {userName} = useSelector((stateSelector)=>{ return stateSelector.load});
@@ -98,10 +103,14 @@ const PagoIncentivo = ()=> {
       }
     })
     .then(({rows, errors})=>{
-      console.table(rows)
       console.log(errors)
+      if(rows.length === 0){
+        dispatch(ActionMensaje.showMessage({ message: 'La planilla no tiene contiene datos', variant: "info" }));
+        setDatosExcel([])
+        return;
+      }
       if(errors.length > 0){
-        alert('Ocurrio un problema al cargar la planilla, verifique los datos')
+        dispatch(ActionMensaje.showMessage({ message: 'Ocurrio un problema al cargar la planilla, verifique los datos', variant: "info" }));
       }else{
         setDatosExcel(rows.map( (item)=>{
           return { ...item, idTipoIncentivoPago : '', estadoFila : 0 , idTipoPago: ''}
@@ -109,6 +118,18 @@ const PagoIncentivo = ()=> {
       }
     })
   }
+  const [datosExcel, setDatosExcel] = useState([])
+  const [ ciclo , setCiclo ] = useState('')
+  const [ listaCiclo , setListaCiclo ] = useState()
+  const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState([])
+  const [ listaTipoPago , setListaTipoPago ] = useState()
+  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
+  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
+  const [ mensajeErrorModal , setMensajeErrorModal] = useState("")
+  const [ openTipoIncentivoModal , setOpenTipoIncentivoModal] = useState(false)
+  const [ valorTipoIncentivoTodos , setValorIncentivoTodos] = useState("")
+  const [ valorTipoPagoTodos , setValorPagoTodos] = useState("")
+  const [ descripcionTipoIncentivo, setDescripcionTipoIncentivo] = useState("")
   const verificarTipoIncentivoSeleccionado = (datosClientes) =>{
     let filasObservadas = []
     for (let i = 0; i < datosClientes.length; i+=1) {
@@ -139,11 +160,6 @@ const PagoIncentivo = ()=> {
       .then((response)=>{
         setEstadoCargarPlanilla(response.code)
         setModalCargarPlanilla(true)
-        response.data.map((item,index) =>{
-              let newDatosExcel = [...datosExcel]
-              newDatosExcel[index].estadoFila = 0
-              setDatosExcel(newDatosExcel)
-        });
         if(response.code === 1 ){
           setMensajeErrorModal(response.message)
             response.data.map((item,index) =>{
@@ -186,17 +202,7 @@ const PagoIncentivo = ()=> {
         }
       })
   }
-  const [datosExcel, setDatosExcel] = useState()
-  const [ ciclo , setCiclo ] = useState('')
-  const [ listaCiclo , setListaCiclo ] = useState()
-  const [ listaTipoIncentivo , setListaTipoIncentivo ] = useState([])
-  const [ listaTipoPago , setListaTipoPago ] = useState()
-  const [ modalCargarPlanilla, setModalCargarPlanilla] = useState(false)
-  const [ estadoCargarPlanilla, setEstadoCargarPlanilla] = useState(0)
-  const [ mensajeErrorModal , setMensajeErrorModal] = useState("")
-  const [ openTipoIncentivoModal , setOpenTipoIncentivoModal] = useState(false)
-  const [ valorTipoIncentivoTodos , setValorIncentivoTodos] = useState("")
-  const [ valorTipoPagoTodos , setValorPagoTodos] = useState("")
+
   const handleChangeCiclo = (event) =>{
     setCiclo(event.target.value);
   }
@@ -262,7 +268,7 @@ const PagoIncentivo = ()=> {
   }
   const clickBotonAceptar = () =>{
     if(descripcionTipoIncentivo === ""){
-      alert("Debe ingresar una descripcion")
+      dispatch(ActionMensaje.showMessage({ message: 'Debe ingresar una descripcion', variant: "info" }));
       return
     }
     let data={
@@ -278,7 +284,7 @@ const PagoIncentivo = ()=> {
       }
     })
   }
-  const [ descripcionTipoIncentivo, setDescripcionTipoIncentivo] = useState("")
+  
 
 
   return(
@@ -324,12 +330,11 @@ const PagoIncentivo = ()=> {
           </Button>
         </Grid>
     </Grid>
-      { datosExcel && (
+      { datosExcel.length > 0 && (
         <TableContainer >
-        <Table aria-label="simple table">
-          <TableHead>
+        <Table aria-label="simple table" size="small">
+          <TableHead  >
             <TableRow>
-              <TableCell align="left"></TableCell>
               <TableCell align="left"></TableCell>
               <TableCell align="left"> </TableCell>
               <TableCell align="left"> </TableCell>
@@ -343,7 +348,7 @@ const PagoIncentivo = ()=> {
                   listaTipoPago = {listaTipoPago}
                   handleChangeTipoPago={ (e)=> handleChangeTipoPago (e,1,true) }
                   valorTipoPago = { valorTipoPagoTodos === '' ? ID_TIPO_PAGO_SION_PAY : valorTipoPagoTodos  }
-                  labelTipoPago = { 'Aplicar tipo de pago en todas las filas'}
+                  labelTipoPago = { 'Aplicar en todas las filas'}
                 />
               </TableCell>
               <TableCell align="left" style={{minWidth: '300px'}}>
@@ -355,18 +360,17 @@ const PagoIncentivo = ()=> {
                 />
               </TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell align="left">Empresa</TableCell>
-              <TableCell align="left"> Id Empresa </TableCell>
-              <TableCell align="left"> Nombre cliente</TableCell>
-              <TableCell align="left"> CI cliente</TableCell>
-              <TableCell align="left"> Cuenta SionPay</TableCell>
-              <TableCell align="left"> Monto ($us)</TableCell>
-              <TableCell align="left"> Ciudad </TableCell>
-              <TableCell align="left"> Pais </TableCell>
-              <TableCell align="left"> Detalle </TableCell>
-              <TableCell align="left"> Tipo Pago </TableCell>
-              <TableCell align="left"> Tipo incentivo</TableCell>
+            <TableRow className={style.tableHeaderPlanilla}>
+              <TableCell align="left" style={{ color: 'white'}}>Empresa</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Nombre Completo</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Cédula de identidad</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Nro. Cuenta</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Monto ($us)</TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Ciudad </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Pais </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Detalle </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Tipo Pago </TableCell>
+              <TableCell align="left" style={{ color: 'white'}}> Tipo incentivo</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -377,11 +381,10 @@ const PagoIncentivo = ()=> {
                 className={ row.estadoFila === 0 ? style.normalRow : style.errorRow }
               >
                 <TableCell align="left">{row.empresa}</TableCell>
-                <TableCell align="right">{row.idEmpresa}</TableCell>
                 <TableCell align="left">{row.nombreCliente}</TableCell>
                 <TableCell align="left">{row.ciCliente}</TableCell>
                 <TableCell align="left">{row.cuentaSionPay}</TableCell>
-                <TableCell align="right">{row.monto}</TableCell>
+                <TableCell align="right">{row.monto.toFixed(2)}</TableCell>
                 <TableCell align="left">{row.ciudad}</TableCell>
                 <TableCell align="left">{row.pais}</TableCell>
                 <TableCell align="left">{row.detalle}</TableCell>
@@ -407,12 +410,13 @@ const PagoIncentivo = ()=> {
         </Table>
       </TableContainer>
       )}
+      <br/>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Button
             variant="contained"
             color="primary"
-            disabled={ datosExcel ? false : true}
+            disabled={ datosExcel.length > 0 ? false : true}
             onClick={ cargarPlanilla }> Cargar Datos</Button>
         </Grid>
       </Grid>
@@ -435,4 +439,4 @@ const PagoIncentivo = ()=> {
 
 }
 
-export default PagoIncentivo;
+export default CargarPlanilla;

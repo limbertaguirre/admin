@@ -30,8 +30,8 @@ const ModalTipoIncentivo = (props) => {
           <TextField onChange={handleChange} value={descripcionValue} fullWidth id="outlined-basic" label="Descripcion" variant="outlined" />
         </DialogContent>
         <DialogActions>
-          <Button onClick={clickBotonCancelar}>Atras</Button>
-          <Button onClick={clickBotonAceptar}>Registrar</Button>  
+          <Button onClick={clickBotonCancelar} variant="contained"  color="secondary">Atras</Button>
+          <Button onClick={clickBotonAceptar} variant="contained" color="primary">Registrar</Button>
         </DialogActions>
         <TableContainer  style={{ height: '250px' }} >
           <Table size="small" aria-label="a dense table">

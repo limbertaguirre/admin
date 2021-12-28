@@ -19,7 +19,8 @@ import PagoRezagado from "../pages/pagoRezagados/pagos/PagoRezagado";
 import FormaPagoRezagado from "../pages/pagoRezagados/formaPagos/FormaPagoRezagado";
 import ReporteCiclo from "../pages/reporte/ReporteCiclo";
 import ReporteFreelancer from "../pages/reporte/ReporteFreelancer";
-import CargarPlanillaSionPay from "../pages/pagoIncentivos/CargarPlanilla";
+import CargarPlanillaSionPay from "../pages/pagoIncentivos/CargarPlanilla/CargarPlanilla";
+import PagoIncentivo from "../pages/pagoIncentivos/Pagos/Pagos";
 
 // const Layout = lazy(() => import('../components/Layout'));
 // const Home = lazy( () =>  import("../pages/Home"));
@@ -51,4 +52,5 @@ export default {
   PagoRezagado,
   CargarPlanillaSionPay,
   FormaPagoRezagado,
+  PagoIncentivo
 };

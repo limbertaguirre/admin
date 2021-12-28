@@ -72,7 +72,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
                 var ciclos = Repository.ObtenerTipoIncentivo(usuario);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", ciclos);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los tipos de incentivos", ciclos);
             }
             catch (Exception ex)
             {
@@ -102,7 +102,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {usuario} Inicio ObtenerTipoIncentivo()");
                 var tiposIncentivos = Repository.ObtenerTipoIncentivosPagosSegunCiclo(nroCicloMensual, usuario);
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los ciclos", tiposIncentivos);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se obtuvo los tipo de incentivo segun el ciclo", tiposIncentivos);
             }
             catch (Exception ex)
             {
@@ -140,11 +140,22 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public List<PagoIncentivo> pagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
+        public object PagarIncentivos(List<PagoIncentivo> incentivosPagar, string usuario)
         {
-            List<PagoIncentivo> listaPagadosIncentivo = Repository.pagarIncentivos(incentivosPagar, usuario);
+            try
+            {
+                Logger.LogInformation($"usuario : {usuario} Inicio pagarIncentivos()");
+                List<PagoIncentivo> listaPagadosIncentivo = Repository.PagarIncentivos(incentivosPagar, usuario);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Problemas al registrar tipo de incentivo", listaPagadosIncentivo);
+            }
+            catch(Exception ex)
+            {
+                Logger.LogInformation($"usuario : {usuario} error en pagarIncentivos, error: {ex.Message} ");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas alrealizar  pagarIncentivos", "problemas en el servidor, intente mas tarde");
+            }
+            
 
-            return listaPagadosIncentivo;
+            
         }
     }
 }
