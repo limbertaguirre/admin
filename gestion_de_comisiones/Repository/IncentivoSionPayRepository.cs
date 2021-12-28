@@ -367,7 +367,7 @@ namespace gestion_de_comisiones.Repository
                                         IdCiclo = g.IdCiclo,
                                         IdTipoIncentivo = g.IdTipoIncentivo,
                                         pagado = false,
-                                        CuentaSionPay = (bool)g.CuentaSionPay
+                                        CuentaSionPay = g.CuentaSionPay
 
                                     }
                          ).ToList();                               
