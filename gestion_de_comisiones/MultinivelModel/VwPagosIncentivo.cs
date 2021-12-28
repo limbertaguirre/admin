@@ -19,5 +19,6 @@ namespace gestion_de_comisiones.MultinivelModel
         public int? IdCiclo { get; set; }
         public int IdTipoIncentivo { get; set; }
         public string ComisionPagada { get; set; }
+        public bool? CuentaSionPay { get; set; }
     }
 }

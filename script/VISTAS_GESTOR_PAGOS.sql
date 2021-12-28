@@ -381,8 +381,11 @@ select (f.nombres + ' ' + f.apellidos) as nombre_completo
   THEN 'pagado' 
   ELSE 'no pagado'
 END)
- AS comisionPagada
- 
+ AS comisionPagada,
+(case WHEN (cuentaSpay.id_usuario is not null)
+  THEN convert(bit, 1)
+  ELSE convert(bit, 0)
+END) as cuentaSionPay
 
 from GP_COMISION as c
 inner join  GP_COMISION_DETALLE  as cd
@@ -391,6 +394,8 @@ inner join GP_COMISION_ESTADO_COMISION_I as ces
 on ces.id_comision = c.id_comision
 inner join FICHA as f
 on cd.id_ficha = f.id_ficha
+left join BDPuntosCash.dbo.CUENTA as cuentaSpay
+on f.ci collate SQL_Latin1_General_CP1_CI_AS  = cuentaSpay.id_usuario collate SQL_Latin1_General_CP1_CI_AS
 inner join GP_COMISION_DETALLE_ESTADO_I as cde
 on cd.id_comision_detalle = cde.id_comision_detalle
 inner join LISTADO_FORMAS_PAGO as lfp

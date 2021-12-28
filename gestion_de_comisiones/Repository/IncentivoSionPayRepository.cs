@@ -319,37 +319,14 @@ namespace gestion_de_comisiones.Repository
             Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
 
 
-            var listaTipoIncentivo = ContextMulti.GpComisions.Join(ContextMulti.GpComisionDetalles,
-                GpComision => GpComision.IdComision,
-                GpComisionDetalle => GpComisionDetalle.IdComision,
-                 (GpComision, GpComisionDetalle) => new
-                 {
-                     idComision = GpComision.IdComision,
-                     idCiclo = GpComision.IdCiclo,
-                     IdComisionDetalle = GpComisionDetalle.IdComisionDetalle
+            var listaTipoIncentivo = ContextMulti.VwPagosIncentivos.Where((item) => item.IdCiclo == nroCicloMensual && item.ComisionPagada == "no pagado").Select(g => new {
+                Nombre = g.TipoIncentivo,
+                IdTipoIncentivo = g.IdTipoIncentivoPago,
+                idCiclo = g.IdCiclo
+            }).ToList().Distinct();
 
-                 }).Join(ContextMulti.IncentivoPagoComisions,
-                            GpComisionDetalle => GpComisionDetalle.IdComisionDetalle,
-                            IncentivoPagoComision => IncentivoPagoComision.IdComisionDetalle,
-                            (GpComisionDetalle, IncentivoPagoComision) => new
-                            {
-                                IdTipoIncentivoPago = IncentivoPagoComision.IdTipoIncentivoPago,
-                                idCiclo = GpComisionDetalle.idCiclo,
+                
 
-                            }).Where(item => item.idCiclo == nroCicloMensual).Join(ContextMulti.TipoIncentivoPagoes,
-                                    IncentivoPagoComision => IncentivoPagoComision.IdTipoIncentivoPago,
-                                    TipoIncentivoPago => TipoIncentivoPago.IdTipoIncentivo,
-                                    (IncentivoPagoComision, TipoIncentivoPago) =>
-                                    new
-                                    {
-                                        Nombre = TipoIncentivoPago.Descripcion,
-                                        IdTipoIncentivo = TipoIncentivoPago.IdTipoIncentivo,
-                                        idCiclo = IncentivoPagoComision.idCiclo
-                                        
-
-                                    }
-                            ).Where(x => x.idCiclo == nroCicloMensual).ToList().Distinct();
-            
             return listaTipoIncentivo;
         }
         public object RegistrarTipoIncentivoPago(string descripcion)
@@ -373,7 +350,7 @@ namespace gestion_de_comisiones.Repository
         public object ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(int nroCicloMensual, int tipoIncentivo, string usuario)
         {
             try
-            {
+            {                
                 Logger.LogInformation($" usuario: {usuario} Inicio ObtenerTiposPagos ");
                 List<PagoIncentivo> lista = ContextMulti.VwPagosIncentivos.Where(item => item.IdCiclo == nroCicloMensual && item.IdTipoIncentivo == tipoIncentivo && item.ComisionPagada == "no pagado").Select(
                                     g => new PagoIncentivo
@@ -389,8 +366,8 @@ namespace gestion_de_comisiones.Repository
                                         TipoPago = g.TipoPago,
                                         IdCiclo = g.IdCiclo,
                                         IdTipoIncentivo = g.IdTipoIncentivo,
-                                        pagado = false
-        
+                                        pagado = false,
+                                        CuentaSionPay = (bool)g.CuentaSionPay
 
                                     }
                          ).ToList();                               
