@@ -23,7 +23,8 @@ namespace gestion_de_comisiones.Repository
     {
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagosRezagadosRepository> Logger;
-        private readonly int FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;
+        private readonly int FORMA_PAGO_REZAGADO_CERRADO = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;
+        private readonly int ESTADO_COMISION_REZAGADOS = GpEstadoComision.PENDIENTE_FORMA_DE_PAGO_9;
         private readonly int TIPO_COMISION_REZAGADOS = GpTipoComision.PAGO_REZAGADOS_2;
         private readonly int TIPO_PAGO_SIONPAY = TipoPago.SION_PAY;
         private readonly int TIPO_PAGO_TRANSFERENCIA = TipoPago.TRANSFERENCIA;        
@@ -45,10 +46,10 @@ namespace gestion_de_comisiones.Repository
                 using (var command = ContextMulti.Database.GetDbConnection().CreateCommand())
                 {
                     command.CommandText = $"select case COUNT(r.id_ciclo) " +
-                                        $"when 1 then(select rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO}) " +
-                                        $"when 2 then(select top 1 rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO}) end as id_comision, " +
+                                        $"when 1 then(select rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {FORMA_PAGO_REZAGADO_CERRADO}) " +
+                                        $"when 2 then(select top 1 rr.id_comision from BDMultinivel.dbo.VwObtenerCiclosRezagados rr where rr.id_ciclo = r.id_ciclo and rr.id_estado_comision = {FORMA_PAGO_REZAGADO_CERRADO}) end as id_comision, " +
                                         "r.id_ciclo from BDMultinivel.dbo.VwObtenerCiclosRezagados r " +
-                                        $"where r.id_estado_comision = {FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO} and r.id_tipo_comision = {TIPO_COMISION_REZAGADOS} " +
+                                        $"where r.id_estado_comision = {FORMA_PAGO_REZAGADO_CERRADO} and r.id_tipo_comision = {TIPO_COMISION_REZAGADOS} " +
                                         "group by r.id_ciclo";
                     command.CommandType = System.Data.CommandType.Text;
                     ContextMulti.Database.OpenConnection();
@@ -97,7 +98,7 @@ namespace gestion_de_comisiones.Repository
                 int[] tiposPagos = { 1, 2};                                              
                 var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes
                     .Where(x => x.IdCiclo == idCiclo && x.IdComision == idComision &&
-                    x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                    x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.PagoDetalleHabilitado == true &&
                    (x.IdTipoPago == 1 || x.IdTipoPago == 2)).ToList();
                 Logger.LogInformation($"Fin GestionPagosRezagadosRepository - GetComisionesPagos");
                 return ListComisiones;
@@ -120,14 +121,14 @@ namespace gestion_de_comisiones.Repository
                 int cicloId = Convert.ToInt32(body.cicloId);
                 List<VwObtenerRezagadosPago> info = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdComision == body.comisionId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA
-                        && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO)
+                        && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO)
                     .ToList();
 
                 var montoTotal = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdComision == body.comisionId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA)
                     .Sum(x => x.ImportePorEmpresa);
 
@@ -150,7 +151,7 @@ namespace gestion_de_comisiones.Repository
             try
             {
                 Logger.LogInformation($" usuario: {param.user}, inicio repository ConfirmarPagosRezagadosTransferencias(): idciclo {param.cicloId}, idempresa{param.empresaId}, idcomision {param.comisionId}");
-
+                Utils.Utils.ShowValueFields(param, Logger);
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == param.user)
                     .Select(u => new
@@ -177,7 +178,7 @@ namespace gestion_de_comisiones.Repository
                                                       idCiclo = GpComision.idCiclo,
                                                       tipoComision = GpComision.tipoComision
                                                   }
-                                      ).Where(x => x.habilitado == true && x.idCiclo == param.cicloId && x.idEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                      ).Where(x => x.habilitado == true && x.idCiclo == param.cicloId && x.idEstadoComision == FORMA_PAGO_REZAGADO_CERRADO
                                         && x.tipoComision == TIPO_COMISION_REZAGADOS).Count();
                 
                 Logger.LogInformation($"Repository GestionPagosRezagadosRepository - ConfirmarPagosRezagadosTransferencias cantidad de registros rezagados {count}");
@@ -196,7 +197,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenerRezagadosPago> l = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == param.cicloId && x.IdEmpresa == param.empresaId &&
                         x.IdComision == param.comisionId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
                     .ToList();
 
@@ -225,7 +226,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@EstadoComision",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                            Value = ESTADO_COMISION_REZAGADOS
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@CicloId",
@@ -272,7 +273,8 @@ namespace gestion_de_comisiones.Repository
 
                 List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == param.cicloId && x.IdComision == returnValue && x.IdEmpresa == param.empresaId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
-                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
+                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado &&
+                            x.IdEstadoListadoFormaPago == 4 && x.EstadoListadoFormaPagoHabilitado == true)
                     .ToList();
                 dbcontextTransaction.Commit();
                 Logger.LogInformation($" usuario: {param.user}, despues del commit");
@@ -440,7 +442,7 @@ namespace gestion_de_comisiones.Repository
                     ids[i] = (int)empresasIds[i].empresaId;
                 }
                 var empresas = ContextMulti.VwObtenerEmpresasComisionesDetalleEmpresas
-                    .Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.idComision && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
+                    .Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.idComision && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.MontoTransferir != 0 && ids.Contains(x.IdEmpresa))
                     .Select(e => new
                     {
                         idCiclo = e.IdCiclo,
@@ -503,7 +505,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@EstadoComisionRezagadoId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                            Value = FORMA_PAGO_REZAGADO_CERRADO
                               }
                            };
                 var recargarCicloActual = false;
@@ -527,45 +529,47 @@ namespace gestion_de_comisiones.Repository
 
                 var cantidadPendientes = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdEmpresa == body.empresaId && x.IdComision == body.comisionId &&
-                    x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).Count();
+                    x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.EstadoComisionHabilitado == true).Count();
 
                 var cantidadRechazados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA
                     /*  && x.IdComision == body.comisionId */ &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente).Count();
+                        x.IdEstadoComision == 9 &&
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente &&
+                        x.EstadoComisionHabilitado == true && x.IdEstadoListadoFormaPago == 4 && x.EstadoListadoFormaPagoHabilitado == true).Count();
                 var cantidadConfirmados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.EstadoComisionHabilitado == true &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado).Count();
 
                 var sumaTotalConfirmados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.EstadoComisionHabilitado == true &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaConfirmado)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalRechazados = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA &&
                         //x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
-                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
+                        x.IdEstadoComision == 9 &&
+                        x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente &&
+                        x.EstadoComisionHabilitado == true && x.IdEstadoListadoFormaPago == 4 && x.EstadoListadoFormaPagoHabilitado == true)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalPendientes = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.EstadoComisionHabilitado == true &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var cantidadFechasPagosNull = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente && x.FechaDePago == null).Count();
 
                 var fechaPagosExcel = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA && x.IdComision == body.comisionId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendiente)
                     .Select(x => new { x.FechaDePago })
                     .FirstOrDefault();
@@ -710,7 +714,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@EstadoComisionId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                            Value = FORMA_PAGO_REZAGADO_CERRADO
                                 },
                                 new SqlParameter() {
                                             ParameterName = "@CicloId",
@@ -786,7 +790,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@EstadoComisionId",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                            Value = FORMA_PAGO_REZAGADO_CERRADO
                                },
                                new SqlParameter() {
                                             ParameterName = "@CicloId",
@@ -832,7 +836,7 @@ namespace gestion_de_comisiones.Repository
                 int estadoComisionDetalleEmpresaPendienteId = 1;
                 List<VwObtenerRezagadosPago> info = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.IdComision == body.comisionId && x.IdCiclo == cicloId && x.IdEmpresa == body.empresaId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         x.IdTipoPago == tipoPagoTransferencia && x.IdEstadoComisionDetalleEmpresa == estadoComisionDetalleEmpresaPendienteId)
                     .ToList();
 
@@ -919,7 +923,7 @@ namespace gestion_de_comisiones.Repository
                 int cicloId = Convert.ToInt32(param.cicloId);
                 var Buscar = ContextMulti.VwObtenerRezagadosPagos
                     .Where(x => x.DocDeIdentidad == param.ci && x.IdCiclo == cicloId &&
-                        x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO &&
+                        x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO &&
                         param.empresaId == x.IdEmpresa && x.IdTipoPago == TIPO_PAGO_TRANSFERENCIA)
                     .ToList();
                 return Buscar;
@@ -1051,7 +1055,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($"Inicio el repository VerificarPagoSionPayCiclo() ");
                 //Logger.LogWarning($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} ");
                 Utils.Utils.ShowValueFields(param, Logger);
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO).ToList();
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Count();
                 model.totalPagoSionPay = (decimal) ListComisiones.Where(x => x.IdTipoPago == TIPO_PAGO_SIONPAY && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
                 model.CodigoRespuesta = 1; //valor positivo
@@ -1147,7 +1151,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($"Inicio repository GestionPagosRezagadosRepository - GetFiltroComisionesPorFormaPago() ");
                 Utils.Utils.ShowValueFields(param, Logger);
 
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 foreach (var item in LisFormaPagos)
                 {
@@ -1182,7 +1186,7 @@ namespace gestion_de_comisiones.Repository
                 
                 if (param.nombreCriterio != "")
                 {
-                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).ToList();
+                    var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO).ToList();
                     var lista = ListComisiones.Where(x => x.IdTipoPago != 0 && x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                     return lista;
                 }
@@ -1207,7 +1211,7 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
                 Logger.LogWarning($"Inicio el repository FiltrarComisionPagoPorTipoPago() ");
                 Utils.Utils.ShowValueFields(param, Logger);
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO && x.IdTipoPago == param.idTipoPago).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.IdTipoPago == param.idTipoPago).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -1251,7 +1255,7 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($"Inicio repository GestionPagosRezagadosRepository - VerificarTipoPago | tipoFormaPagoId: {tipoFormaPagoId}");
                 Utils.Utils.ShowValueFields(param, Logger);                
                 //var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO).ToList();
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == tipoFormaPagoId && x.PagoDetalleHabilitado == false).Count();
                 model.totalPagoSionPay = (decimal)ListComisiones.Where(x => x.IdTipoPago == tipoFormaPagoId && x.PagoDetalleHabilitado == false).Sum(c => c.MontoNeto);
                 model.CodigoRespuesta = 1; //valor positivo
@@ -1274,10 +1278,10 @@ namespace gestion_de_comisiones.Repository
                 int idEstadoDEtalleListadoFormaPago = 4;//parametro
                 RespuestaPorTipoPagoModel model = new RespuestaPorTipoPagoModel();
                 Logger.LogInformation($" usuario: {param.usuarioLogin} inicio el cierre de transaccion repository VerificarTransaccionRechazadoMontoCero() ");
-                Logger.LogInformation($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {TIPO_COMISION_REZAGADOS}");
+                Logger.LogInformation($" usuario: {param.usuarioLogin} parametros: idciclo:{param.idCiclo} , idEstado:{FORMA_PAGO_REZAGADO_CERRADO} , idtipoFormaPago: {idTipoFormaPago}, idTipoComisionPagoComision: {TIPO_COMISION_REZAGADOS}");
                 Logger.LogInformation($" usuario: {param.usuarioLogin} verificamos en las comisiones rechazadas que no existe montos mayor a cero, ya que estas comisiones fueron rezagas y el monto de planilla tiene que estas en cero");
                 //var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == idCiclo && x.IdTipoComision == idTipoComisionPagoComision).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO && x.IdEstadoListadoFormaPago == idEstadoDEtalleListadoFormaPago).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == FORMA_PAGO_REZAGADO_CERRADO && x.IdEstadoListadoFormaPago == idEstadoDEtalleListadoFormaPago).ToList();
 
                 //cantidad debe volver monto cero ya que fueron resagados las transferencias
                 model.Cantidad = ListComisiones.Where(x => x.IdTipoPago == idTipoFormaPago && x.MontoNeto > 0).Count();
@@ -1340,7 +1344,7 @@ namespace gestion_de_comisiones.Repository
                                             ParameterName = "@estado_comision_id",
                                             SqlDbType =  System.Data.SqlDbType.Int,
                                             Direction = System.Data.ParameterDirection.Input,
-                                            Value = FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO
+                                            Value = FORMA_PAGO_REZAGADO_CERRADO
                                 }
                 };
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CERRAR_COMISION_PAGO_POR_TIPO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario, @id_tipo_comision, @estado_comision_id ", parameterReturn);

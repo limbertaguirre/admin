@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-  ALTER PROC [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS](@comisionId int, @cicloId int, @estadoComisionRezagadoId INT, @usuarioId int)
+  CREATE PROC [dbo].[SP_REGISTRAR_TODAS_TRANSFERENCIAS_PAGOS_REZAGADOS_CONFIRMADAS](@comisionId int, @cicloId int, @estadoComisionRezagadoId INT, @usuarioId int)
     AS
     BEGIN TRANSACTION
     BEGIN TRY
@@ -42,12 +42,14 @@ GO
             ELSE
             BEGIN
                 -- Deshabilitamos los estados rechazados activos.
-                UPDATE BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL SET habilitado = @deshabilitado WHERE id_lista_formas_pago in (
-                    select i.id_lista_formas_pago from BDMultinivel.dbo.vwObtenerRezagadosPagos i
-                    where i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado and i.id_comision = @comisionId 
+                UPDATE BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL SET habilitado = @deshabilitado WHERE id in (
+                    select i.id_detalle_estado_listado_forma_pago from BDMultinivel.dbo.vwObtenerRezagadosPagos i
+                    where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_estado_comision_detalle_empresa = @estadoComisionDetalleEmpresaConfirmado
                     and i.id_empresa in (select i.id_empresa from BDMultinivel.dbo.VwObtenerEmpresasComisionesDetalleEmpresa i
-                                        where i.id_comision = @cicloId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0)
-                    and i.id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL i where i.habilitado = @habilitado and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoRechazado))
+                                        where i.id_comision = @comisionId and i.id_ciclo = @cicloId and i.id_tipo_pago = @tipoPagoTransferencia and i.id_tipo_comision = @tipoComisionRezagado and i.id_estado_comision = @idEstadoComisionRezagado and i.monto_transferir <> 0)
+                    --and i.id_lista_formas_pago in (select i.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL i where i.habilitado = @habilitado and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoRechazado)
+                    and i.estado_listado_forma_pago_habilitado = @habilitado and i.id_estado_listado_forma_pago = @estadoListadoFormaPagoRechazado
+                    group by i.id_detalle_estado_listado_forma_pago)
                 /*
                     Se cambió la lógica para rechazados de transferencia en rezagados, al rechazar una transferencia, no se inserta un nuevo registro en la tabla GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL
                     Entonces debemos insertar a la tabla GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL con un estado de pago exitoso (3).
