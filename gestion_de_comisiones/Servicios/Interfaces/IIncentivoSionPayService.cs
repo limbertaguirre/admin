@@ -12,7 +12,7 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     {
         public object CargarDatosPlanillaExcel(PlanillaPagoIncentivo param);
         public object ObtenerCiclos(string usuario);
-        public object VerificarCuentaSionPay(string cuenta);
+        public object VerificarCuentaSionPay(PlanillaPagoIncentivo param);
         public object ObtenerTipoIncentivo(string usuario);
         public object ObtenerTipoPagos(string usuario);
         public object ObtenerTipoIncentivosPagosSegunCiclo(int  nroCicloMensual, string usuario);

@@ -162,6 +162,24 @@ namespace gestion_de_comisiones.Controllers
                 return Ok(Result);
             }
         }
+        // POST: IncentivoSionPay/VerificarCuentaSionPay
+        [HttpPost]
+        public ActionResult VerificarCuentaSionPay([FromBody] PlanillaPagoIncentivo listaIncentivo)
+        {
+            try
+            {
+                //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
+                object resultVerificarCuentaSionPay = Service.VerificarCuentaSionPay(listaIncentivo);
+                //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
+                return Ok(resultVerificarCuentaSionPay);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"usuario request: Error catch IncentivoSionPayController , RegistroTipoIncentivoPago() Error: {ex.Message} ");
+                var Result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
+                return Ok(Result);
+            }
+        }
 
     }
 }

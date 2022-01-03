@@ -112,9 +112,40 @@ const CargarPlanilla = ()=> {
       if(errors.length > 0){
         dispatch(ActionMensaje.showMessage({ message: 'Ocurrio un problema al cargar la planilla, verifique los datos', variant: "info" }));
       }else{
-        setDatosExcel(rows.map( (item)=>{
-          return { ...item, idTipoIncentivoPago : '', estadoFila : 0 , idTipoPago: ''}
-        }))
+        let data = {
+          DatosClientes: rows,
+          IdCiclo : 1,
+          UsuarioNombre : userName
+        }
+        requestPost('IncentivoSionPay/VerificarCuentaSionPay',data, dispatch)
+        .then((response)=>{
+          console.log(response)
+          setDatosExcel([])
+          let flagUsuarioInexistente = false;
+          let flagUsuarioSinSionPay = false;
+          response.data.map((item, index) => {
+            if(item === null){
+              flagUsuarioInexistente = true;
+            }
+            if(item !== null && item.sionPay === 'False'){
+              flagUsuarioSinSionPay = true;
+            }
+          })
+          if(flagUsuarioInexistente){
+            dispatch(ActionMensaje.showMessage({ message: 'No existe uno o mas usuarios en la lista', variant: "info" }));
+          }
+          if(flagUsuarioSinSionPay){
+            dispatch(ActionMensaje.showMessage({ message: 'Uno o mas usuarios en la lista no tienen cuenta de SionPay', variant: "info" }));
+          }
+          if(flagUsuarioSinSionPay === false && flagUsuarioInexistente === false){
+            setDatosExcel(rows.map( (item)=>{
+              return { ...item, idTipoIncentivoPago : '', estadoFila : 0 , idTipoPago: ''}
+            }))
+          }
+        })
+        .catch((error)=>{
+          console.log(error)
+        })
       }
     })
   }
