@@ -127,7 +127,6 @@ const PagoIncentivo = () =>{
       if(res.code === 0){
         setListaIncentivoRespuestaPago(res.data)
         setModalOpenRespuestaPago(true)
-        
       }
     })
   }

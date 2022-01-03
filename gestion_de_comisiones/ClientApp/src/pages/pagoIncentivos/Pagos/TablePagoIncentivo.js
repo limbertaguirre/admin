@@ -24,6 +24,12 @@ const columns = [
     format: (value) => value.toLocaleString('en-US'),
   },
   {
+    id: 'cuentaSionPay',
+    label: 'Cuenta Sion Pay',
+    minWidth: 170,
+    format: (value) => value.toLocaleString('en-US'),
+  },
+  {
     id: 'monto',
     label: 'Monto',
     minWidth: 100,
@@ -93,7 +99,8 @@ export default function TablePagoIncentivo(props) {
                 <TableRow>
                   <TableCell>{row.nombreCompleto} </TableCell>
                   <TableCell>{row.cedulaIdentidad} </TableCell>
-                  <TableCell>{row.cuentaBanco} </TableCell>
+                  <TableCell>{row.banco ? row.cuentaBanco: "No tiene cuenta bancaria"} </TableCell>
+                  <TableCell>{row.cuentaSionPay} </TableCell>
                   <TableCell align='right'>{row.montoTotalNeto.toFixed(2)} </TableCell>
                   <TableCell>{row.tipoIncentivo} </TableCell>
                   <TableCell>{row.tipoPago} </TableCell>
