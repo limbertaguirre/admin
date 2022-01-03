@@ -391,7 +391,9 @@ const GridFormaPagos = ({
                                           selecionarDetalleFrelances(
                                             `${row.idComisionDetalle}`,
                                             `${row.ci}`,
-                                            `${row.idTipoPago}`
+                                            `${row.idTipoPago}`,
+                                            `${row.idListaFormasPago}`,
+                                            `${row.idDetalleEstadoFormaPago}`
                                           )
                                         }
                                       >
@@ -423,7 +425,9 @@ const GridFormaPagos = ({
                                           selecionarDetalleFrelances(
                                             `${row.idComisionDetalle}`,
                                             `${row.ci}`,
-                                            `${row.idTipoPago}`
+                                            `${row.idTipoPago}`,
+                                            `${row.idListaFormasPago}`,
+                                            `${row.idDetalleEstadoFormaPago}`
                                           )
                                         }
                                       >

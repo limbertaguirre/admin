@@ -79,8 +79,9 @@ BEGIN TRY
 
 				   --obtener totales
 						select @TOTAL_NETO_COMISION_NUEVO_RECHAZADO = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago = 0 --total los resagados forma de pagos
-						select @TOTAL_NETO_COMISION_ACTUAL = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where  vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago != 0 --total los que tienen pagado
-                
+						select @TOTAL_NETO_COMISION_ACTUAL = sum(vwF.montoNeto) from BDMultinivel.dbo.vwObtenercomisionesFormaPago vwF where  vwF.idComision = @comision_id and vwF.id_ciclo=@ID_CICLO_VARI and vwF.id_estado_comision = @ESTADO_COMISION_PENDIENTE_FORMA_PAGO_TABLE and vwF.id_tipo_comision = @ID_TIPO_COMISION_FORMA_PAGO_REZAGADO and id_tipo_pago != 0 and 
+						((vwF.pago_detalle_habilitado = ESTADO_HABILITADO and vwF.id_estado_listado_forma_pago > 0) or (vwF.pago_detalle_habilitado = ESTADO_DESAHABILITADO and vwF.id_estado_listado_forma_pago = 0)) --total los que tienen pagado
+					
 				   -- actualizar el monto neto de comision actual 				   
 					   UPDATE BDMultinivel.dbo.GP_COMISION  
 					   SET monto_total_neto =@TOTAL_NETO_COMISION_ACTUAL  where id_comision=@ID_COMISION_ACTUAL 

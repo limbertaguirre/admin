@@ -32,6 +32,8 @@ const useFormaPagoRezagado = () => {
   const [listTipoPagos, setListTipoPagos] = useState([]);
   const [idcomisionDetalleSelect, setIdcomisionDetalleSelect] = useState(0);
   const [idtipoPagoSelect, setIdtipoPagoSelect] = useState("0");
+  const [idListaFormasPagoSelect, setIdListaFormasPagoSelect] = useState(0);
+  const [idDetalleEstadoFormaPagoSelect, setIdDetalleEstadoFormaPagoSelect] = useState(0);
 
   const [openModalAutorizadores, setOpenModalAutorizadores] = useState(false);
   const [pendienteFormaPago, setPendienteFormaPago] = useState(false);
@@ -178,11 +180,15 @@ const useFormaPagoRezagado = () => {
   const selecionarDetalleFrelances = (
     comisionDetalleId,
     ciSeleccionado,
-    idTipoPago
+    idTipoPago,
+    idListaFormasPago,
+    idDetalleEstadoFormaPago
   ) => {
     setIdtipoPagoSelect(String(idTipoPago));
     listarTiposPagos(ciSeleccionado);
     setIdcomisionDetalleSelect(comisionDetalleId);
+    setIdListaFormasPagoSelect(idListaFormasPago);
+    setIdDetalleEstadoFormaPagoSelect(idDetalleEstadoFormaPago);
   };
   const cerrarModalTipoPagoModal = () => {
     setTipoPago(false);
@@ -233,6 +239,8 @@ const useFormaPagoRezagado = () => {
         idUsuario: idUsuario,
         idCiclo: idCiclo,
         comisionId: cicloObjectSelected.idComision,
+        idListaFormasPago: parseInt(idListaFormasPagoSelect),
+        idDetalleEstadoFormaPago: parseInt(idDetalleEstadoFormaPagoSelect)
       };
 
       let response = await requestPost(

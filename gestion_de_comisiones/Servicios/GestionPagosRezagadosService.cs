@@ -155,7 +155,7 @@ namespace gestion_de_comisiones.Servicios
             catch (Exception ex)
             {
                 Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} CATCH ConfirmarPagosRezagadosTransferencias(), error {ex}");
-                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
             }
         }
 
