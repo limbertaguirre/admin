@@ -47,9 +47,18 @@ namespace gestion_de_comisiones.Servicios
             }
         }
         
-        public object VerificarCuentaSionPay(string cuenta)
+        public object VerificarCuentaSionPay(PlanillaPagoIncentivo param)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var listaCuentas = Repository.VerificarCuentaSionPay(param);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "Se verifico la cuenta de SionPay", listaCuentas);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.UsuarioNombre} error catch ObtenerCiclos(),error mensaje: {ex.Message}");
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al verificar cuenta SionPay", "Problemas en el servidor, intente mas tarde");
+            }
         }
 
         public object ObtenerCiclos(string usuario)

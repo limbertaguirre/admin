@@ -361,13 +361,7 @@ GO
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-USE [BDMultinivel];
-GO
-SET ANSI_NULLS ON;
-GO
-SET QUOTED_IDENTIFIER ON;
-GO
-ALTER view [dbo].[vwPagosIncentivos] as
+CREATE view [dbo].[vwPagosIncentivos] as
 select (f.nombres + ' ' + f.apellidos) as nombre_completo
 ,c.id_comision AS id_comision
 , f.ci as cedula_identidad
@@ -383,8 +377,11 @@ select (f.nombres + ' ' + f.apellidos) as nombre_completo
   THEN 'pagado' 
   ELSE 'no pagado'
 END)
- AS comisionPagada
- 
+ AS comisionPagada,
+(case WHEN (cuentaSpay.id_usuario is not null)
+  THEN cuentaSpay.nro_cuenta
+  ELSE 's/n'
+END) as cuentaSionPay
 
 from GP_COMISION as c
 inner join  GP_COMISION_DETALLE  as cd
@@ -393,6 +390,8 @@ inner join GP_COMISION_ESTADO_COMISION_I as ces
 on ces.id_comision = c.id_comision
 inner join FICHA as f
 on cd.id_ficha = f.id_ficha
+left join BDPuntosCash.dbo.CUENTA as cuentaSpay
+on f.ci collate SQL_Latin1_General_CP1_CI_AS  = cuentaSpay.id_usuario collate SQL_Latin1_General_CP1_CI_AS
 inner join GP_COMISION_DETALLE_ESTADO_I as cde
 on cd.id_comision_detalle = cde.id_comision_detalle
 inner join LISTADO_FORMAS_PAGO as lfp
@@ -411,8 +410,6 @@ left join BANCO as banco
 on f.id_banco = banco.id_banco
 
 where c.id_tipo_comision = 3 
-and cde.id_estado_comision_detalle = 7
---and c.id_comision=1193
---and ces.id_estado_comision=14 
+and cde.id_estado_comision_detalle = 7 
 and lfp.id_tipo_pago=1
 GO
