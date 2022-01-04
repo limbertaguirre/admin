@@ -19,5 +19,6 @@ namespace gestion_de_comisiones.Modelos.IncentivoSionPay
         public int? IdCiclo { get; set; }
         public int IdTipoIncentivo { get; set; }
         public bool pagado { get; set; }
+        public string CuentaSionPay { get; set; }
     }
 }

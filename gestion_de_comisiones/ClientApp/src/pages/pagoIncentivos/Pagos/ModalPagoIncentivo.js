@@ -35,7 +35,7 @@ const ModalTipoIncentivo = (props) => {
               <Typography>{nombreIncentivo}</Typography>    
             </Grid>
             <Grid item xs={6}>
-              <Typography align="right"><b>Total usuarios:&nbsp; </b></Typography>    
+              <Typography align="right"><b>Total ACI:&nbsp; </b></Typography>    
             </Grid>
             <Grid item xs={6}>
               <Typography>{totalUsuariosBenificiados}</Typography>    
