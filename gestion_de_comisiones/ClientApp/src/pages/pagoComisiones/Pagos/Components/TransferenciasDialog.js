@@ -77,6 +77,9 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "24px",
     paddingLeft: "24px",
   },
+  alturaGrid:{
+    height:'160px'
+  }
 }));
 
 const TransferenciasDialog = ({
@@ -84,6 +87,7 @@ const TransferenciasDialog = ({
   openDialog,
   closeTransferenciasDialog,
   empresas,
+  recargarCicloActual
 }) => {
     const style = useStyles();
     const dispatch = useDispatch();
@@ -91,17 +95,21 @@ const TransferenciasDialog = ({
     const [empresaId, setEmpresaId] = useState(-1);
     const [openModalFullScreen, setOpenModalFullScreen] = useState(false);
     const [list, setList] = useState([]);
-  const [enabledDownloadInput, setEnabledDownloadInput] = useState(false);
-  const [enabledConfirmarTodosInput, setEnabledConfirmarTodosInput] = useState(false);
-  const [enabledConfirmarSeleccionInput, setEnabledConfirmarSeleccionInput] = useState(false);
-  const [enabledDatePickerInput, setEnabledDatePickerInput] = useState(false);
-  const [selectedDate, handleDateChange] = useState(new Date());
-  const [detalleTransferencia, setDetalleTransferencia] = useState(null);
-  const [openPagosTransferenciaDetalleDialog, setOpenPagosTransferenciaDetalleDialog] = useState(false);
-  const [openModalCancel, setOpenModalCancel]= useState(false);
-  const [isConfirmDialogType, setIsConfirmDialogType]= useState(false);
-  const [selected, setSelected] = React.useState([]);
-  const [amount, setAmount] = React.useState([]);
+    const [enabledDownloadInput, setEnabledDownloadInput] = useState(false);
+    const [enabledConfirmarTodosInput, setEnabledConfirmarTodosInput] = useState(false);
+    const [enabledConfirmarSeleccionInput, setEnabledConfirmarSeleccionInput] = useState(false);
+    const [enabledDatePickerInput, setEnabledDatePickerInput] = useState(false);
+    const [selectedDate, handleDateChange] = useState(new Date());
+    const [detalleTransferencia, setDetalleTransferencia] = useState(null);
+    const [openPagosTransferenciaDetalleDialog, setOpenPagosTransferenciaDetalleDialog] = useState(false);
+    const [openModalCancel, setOpenModalCancel]= useState(false);
+    const [isConfirmDialogType, setIsConfirmDialogType]= useState(false);
+    const [selected, setSelected] = React.useState([]);
+    const [transferenciaSeleccionData, setTransferenciaSeleccionData] = React.useState(null);
+
+  useEffect(() => {    
+    empresaId == -1  &&  setInputs(false);
+  }, [empresaId]);
 
   const downloadExcel = (base64, fileName) => {
     // const contentType = "application/vnd.ms-excel";
@@ -149,10 +157,7 @@ const TransferenciasDialog = ({
         selectedDate,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleDownloadFileEmpresas ",
-        response
-      );
+
       if (response && response.code == 0) {
         downloadExcel(response.data.file, response.data.fileName);
         handleVerificarPagosTransferenciasTodos(userName, empresaId);
@@ -169,18 +174,25 @@ const TransferenciasDialog = ({
 
   const handleEmpresasSelectChange = (event) => {
     setEmpresaId(event.target.value);
-    console.log("handleEmpresasSelectChange ", event.target.value);
+    
     handleVerificarPagosTransferenciasTodos(userName, event.target.value);
   };  
 
   const handleObtenerPagosTransferencias = async (user, empresaId) =>{
     if(cicloId && cicloId !== 0 && empresaId && empresaId != -1) {  
       let response = await Actions.handleObtenerPagosTransferencias(user, cicloId, empresaId, dispatch);   
-      console.log('TransferenciasDialog.js handleObtenerPagosTransferencias ', response);   
-      if(response && response.code == 0) { 
-        setList(response.data);
-        seleccionarTodo(response.data);
-        setOpenModalFullScreen(true);
+       console.log("handleObtenerPagosTransferencias: ", response)
+      if(!response || !response.data) {
+        dispatch(ActionMensaje.showMessage({
+            message: "Hubo inconvenientes al recuperar la información. Intente nuevamente por favor.",
+            variant: "error"}));
+        return;
+      }
+      if(response.code == 0) { 
+        setTransferenciaSeleccionData(response.data);
+        setList(response.data.list);
+        seleccionarTodo(response.data.list);
+        setOpenModalFullScreen(true);      
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -200,10 +212,7 @@ const TransferenciasDialog = ({
         empresaId,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleConfirmarPagosTransferenciasTodos response ",
-        response
-      );
+     
       if (response && response.code == 0) {
         dispatch(
           ActionMensaje.showMessage({
@@ -211,8 +220,9 @@ const TransferenciasDialog = ({
             variant: "info",
           })
         );
-        setEnabledConfirmarTodosInput(false);
-        setEnabledConfirmarSeleccionInput(false);
+        // setEnabledConfirmarTodosInput(false);
+        // setEnabledConfirmarSeleccionInput(false);
+        handleVerificarPagosTransferenciasTodos(userName, empresaId);
       } else {
         dispatch(
           ActionMensaje.showMessage({
@@ -223,8 +233,9 @@ const TransferenciasDialog = ({
         setEnabledConfirmarTodosInput(true);
         setEnabledConfirmarSeleccionInput(true);
       }
+      handleClosePagosTransferenciaDetalleDialog();
     } else {
-      console.log('handleConfirmarPagosTransferenciasTodos empresaId undefined ', empresaId);
+     
     }
   };
 
@@ -243,10 +254,7 @@ const TransferenciasDialog = ({
         empresaId,
         dispatch
       );
-      console.log(
-        "TransferenciasDialog.js handleVerificarPagosTransferenciasTodos response ",
-        response
-      );
+      
       let data = {
         ...response.data,
         message: response.message
@@ -271,9 +279,7 @@ const TransferenciasDialog = ({
         } else {
           let d = data.descargarExcel.split('/');
           let s = ''.concat(d[1],'/', d[0],'/', d[2]);
-          console.log('FECHA d ', d);
-          console.log('FECHA s ', s);
-          handleDateChange(s);
+          await handleDateChange(s);
           setInputs(true);
           setEnabledDownloadInput(false);
           setEnabledDatePickerInput(false);
@@ -293,6 +299,10 @@ const TransferenciasDialog = ({
           })
         );
         setInputs(false);
+      }
+      //recargarCicloActual
+      if (response && response.data && response.data.recargarCicloActual) {
+        recargarCicloActual();
       }
     }
   };
@@ -352,7 +362,7 @@ const TransferenciasDialog = ({
             flex="1"
             direction="row"
           >
-            <Grid item xs={6} sm={6}>              
+            <Grid item xs={6} sm={6}  className={style.alturaGrid}>              
               <TextField
                 className={style.businessSelect}
                 id="outlined-select-currency"
@@ -360,7 +370,7 @@ const TransferenciasDialog = ({
                 label="Seleccione una empresa"
                 value={empresaId ? empresaId : -1}
                 onChange={handleEmpresasSelectChange}
-                helperText="El archivo se generará a partir de la empresa seleccionada.<br/>"
+                helperText="El archivo se generará a partir de la empresa seleccionada."
                 variant="outlined"
                 fullWidth
               >
@@ -371,7 +381,7 @@ const TransferenciasDialog = ({
                   })}
               </TextField>
             </Grid>            
-            <Grid item xs={6} sm={6}>              
+            <Grid item xs={6} sm={6}  className={style.alturaGrid}>              
               <MuiPickersUtilsProvider locale={esLocale} utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   autoOk
@@ -380,7 +390,7 @@ const TransferenciasDialog = ({
                   inputVariant="outlined"
                   label="Seleccione una fecha"
                   format="dd/MM/yyyy"
-                  minDate={new Date()}
+                  minDate={selectedDate}
                   helperText="Fecha en la que el banco debe realizar el pago (Esta fecha aparecerá en el archivo excel)."
                   value={selectedDate}
                   InputAdornmentProps={{ position: "start" }}
@@ -404,20 +414,21 @@ const TransferenciasDialog = ({
             {/* </Container> */}
         </DialogContent>
         <DialogActions>
-            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={() => setOpenPagosTransferenciaDetalleDialog(true)/*setOpenModalCancel(true)/*setOpenModalCancel(true)*/}>Confimar todos</Button>
+            <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={() => setOpenPagosTransferenciaDetalleDialog(true)}>Confimar todos</Button>
             <Button disabled={!enabledConfirmarSeleccionInput} className={style.dialogConfirmButton} onClick={()=>handleObtenerPagosTransferencias(userName, empresaId)}>Confirmar seleccion</Button>
             <Button className={style.dialogConfirmButton} onClick={()=>handleCloseTransferenciasDialog()}>Cerrar</Button>
         </DialogActions>         
-        <GridTransferenciaModal
+        {transferenciaSeleccionData && (<GridTransferenciaModal
           idCiclo={cicloId}
           list={list}
+          data={transferenciaSeleccionData}
           empresaId={empresaId}
           openModalFullScreen={openModalFullScreen}
           closeFullScreenModal={closeFullScreenModal}
           seleccionarTodo={seleccionarTodo}
           selected={selected}
           setSelected={setSelected}
-        />
+        />)}
         {detalleTransferencia && empresaId && (
           <PagosTransferenciaDetalleDialog
             isConfirm={isConfirmDialogType}

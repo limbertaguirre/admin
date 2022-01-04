@@ -156,7 +156,7 @@ const Prorrateo =(props)=> {
             setNameComboSeleccionado(nombre);
       }
       const buscarFreelanzer=()=>{
-        console.log('enter', txtBusqueda);
+        
         if(txtBusqueda.length >= 4){
               if(idCiclo && idCiclo !== 0){
                       const data={
@@ -188,7 +188,7 @@ const Prorrateo =(props)=> {
             idCiclo: idCiclo
            };
           requestPost('Prorrateado/ObtenerAplicacionesPendintes',data,dispatch).then((res)=>{       
-            console.log('resp: ', res)    
+              
               if(res.code === 0){  
                 setListaComisionesProrrateo(res.data);  
                   setStatusBusqueda(true);                        

@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import * as ActionCliente from '../../redux/actions/clienteAction';
 import * as moment from "moment";
 import "moment/locale/es";
-import {  Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select,MenuItem } from "@material-ui/core";
+import {  Button, Grid, TextField, Typography, FormGroup, FormControlLabel,Checkbox,FormControl, InputLabel, Select,MenuItem} from "@material-ui/core";
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import esLocale from "date-fns/locale/es";
@@ -134,11 +134,12 @@ const StyledBreadcrumb = withStyles((theme) => ({
   const {userName} =useSelector((stateSelector)=>{ return stateSelector.load});
   
   useEffect(()=>{ 
-    //console.log('paramet : ', props.location.state.namePagina + permiso.VISUALIZAR);
+    
     dispatch(ActionCliente.listaPaises());
     dispatch(ActionCliente.obtenerBajas());
     dispatch(ActionCliente.obtenerBancos());
     obtenerCliente(parseInt(props.location.state.idCliente));
+    obtenerTipoPagos(userName,props.location.state.idCliente, dispatch );
     obtenerNiveles();
     dispatch(ActionCliente.obtenerCiudadesPorPais(objCliente.idPais));
   },[])
@@ -182,6 +183,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const [fechaBaja, setFechaBaja]= useState(moment().format("YYYY/MM/DD"));
     const [idTipoBaja, setIdTipoBaja]= useState(0);
     const [motivoBaja, setMotivoBaja]= useState("");
+    const [idTipoPago, setIdTipoPago]= useState(0);
+    const[listTipoPagos, setListTipoPagos]=useState([]);
     
     const[checkTieneCuenta, setCheckTieneCuenta]= useState(false);
     const[checkTieneFactura, setCheckTieneFactura]= useState(false);
@@ -201,10 +204,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
 
     const obtenerCliente=(idCliente)=>{
       const data={usuarioLogin:userName, idCliente: idCliente };
-      requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{ 
-        console.log('clien',res);
+      requestPost('Cliente/IdObtenerCliente',data,dispatch).then((res)=>{         
             if(res.code === 0){              
-               let data= res.data;
+               let data= res.data;    
+               console.log('ficha= ', data);           
                setAvatar(data.avatar ===null || data.avatar === ""? "": data.avatar);               
                setIdPais(data.idPais);
                setIdCiudad(data.idCiudad);
@@ -214,9 +217,9 @@ const StyledBreadcrumb = withStyles((theme) => ({
                setNombre(data.nombre);
                setApellido(data.apellido);
                setCi(data.ci);
-               setTelOficina(data.telOficina);
-               setTelMovil(data.telMovil);
-               setTelFijo(data.telFijo === null? 0 : data.telFijo );
+               setTelOficina(typeof data.telOficina === 'number'?data.telOficina : 0  );
+               setTelMovil(typeof data.telMovil === 'number'?data.telMovil : 0 ); 
+               setTelFijo(typeof data.telFijo === 'number'?data.telFijo : 0 );
                setDireccion(data.direccion);
                setCorreoElectronico(data.correoElectronico);
                setFechaNacimiento(data.fechaNacimiento);
@@ -237,22 +240,20 @@ const StyledBreadcrumb = withStyles((theme) => ({
          
                setRazonSocial(data.razonSocial === null? "": data.razonSocial);
                setNit(data.nit === null? "" : data.nit);
-               setCheckTieneFactura(data.tieneCuentaBancaria);
+               setCheckTieneFactura(data.facturaHabilitado);
                
                setIdBanco(data.idBanco);
                setCuentaBancaria(data.cuentaBancaria === null? "":data.cuentaBancaria );
                setCodigoBanco(data.codigoBanco);
                setCheckTieneCuenta(data.tieneCuentaBancaria);
+               setIdTipoPago(data.idTipoPago);
                            
-            }else{
-               // dispatch(Action.showMessage({ message: res.message, variant: "error" }));
-            }    
+            }            
           })   
     };
     const obtenerNiveles=()=>{
       const data={usuarioLogin:userName };
-      requestPost('Cliente/obtenerNivelesClientes',data,dispatch).then((res)=>{ 
-        //console.log('Niveles : ', res);
+      requestPost('Cliente/obtenerNivelesClientes',data,dispatch).then((res)=>{         
             if(res.code === 0){                 
                setListNiveles(res.data);        
             }else{
@@ -346,9 +347,10 @@ const StyledBreadcrumb = withStyles((theme) => ({
       if (texfiel === "idNivel") {
          setIdNivel(value);
       }
-      
-
-      
+      if (texfiel === "idTipoPago") {
+        setIdTipoPago(value);
+     }
+            
     };
     const _onChangeFechaRegistro= (date) => {
     setFechaRegistro(moment(date).format("YYYY/MM/DD"));
@@ -363,8 +365,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     const handleChangeCheck = (event) => {
         let checkFiel= event.target.name;
         let value= event.target.checked;
-        //console.log(checkFiel);
-        //console.log(value);
+        
                       
               if(checkFiel === 'checkTieneCuenta'){
                   if(value === false){
@@ -424,7 +425,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
     }
     const ActualizarDatos=()=>{
         
-     dispatch(ActionCliente.ActualizarCliente(history, nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja))
+     dispatch(ActionCliente.ActualizarCliente(history, nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, checkTieneCuenta, idBanco, cuentaBancaria, checkTieneFactura, razonSocial, nit, checkTieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja,idTipoPago))
        
     }
 
@@ -439,6 +440,13 @@ const StyledBreadcrumb = withStyles((theme) => ({
         }.bind(this);
 
     }
+    const obtenerTipoPagos = async (userNombre, idcliente) => {
+      let respuesta = await ActionCliente.ObtenerTipoPagoDisponibles(userNombre, idcliente, dispatch);
+      if (respuesta && respuesta.code == 0) {
+          console.log('listado pagos :',respuesta);
+          setListTipoPagos(respuesta.data);
+      } 
+    };
 
      
     return (
@@ -768,22 +776,39 @@ const StyledBreadcrumb = withStyles((theme) => ({
             </Grid>   
             <Grid  item xs={12} md={6}  >
                 <Grid  container item xs={12} className={style.divCenter}>
-                       <Grid item xs={3} >
-                            {avatar !== ""? 
-                           <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
-                             : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> {nombre === null?"P": nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
-                       </Grid>
-                       <Grid item xs={2} >
-                         
-                           {/* <div className={style.divPhoto}> */} 
-                              <label >
-                                <input style={{display: 'none'}} type="file" accept="image/*" onChange={onChangeFile} />                           
-                                <AddPhotoAlternateIcon className={style.photoIcons} /> 
-                              </label>
-                           {/* </div> */}
-                         
-                        </Grid>
-                        
+                    {/* mover componente de foto */}
+                    {/* <Grid item xs={3} >
+                        {avatar !== ""? 
+                        <Avatar alt="perfil" src={avatar} className={style.fotoSise} />
+                          : <Avatar alt="perfil"  className={style.avatarNombre} > <h1> {nombre === null?"P": nombre.charAt(0).toUpperCase() } </h1> </Avatar> }
+                    </Grid>
+                    <Grid item xs={2} >                                                    
+                          <label >
+                            <input style={{display: 'none'}} type="file" accept="image/*" onChange={onChangeFile} />                           
+                            <AddPhotoAlternateIcon className={style.photoIcons} /> 
+                          </label>                                                    
+                    </Grid> */}     
+                    <FormControl  variant="outlined"  
+                      fullWidth               
+                      className={style.TextFiel}
+                      >
+                        <InputLabel id="demo-simple-select-outlined-labelbanco">Forma de pago</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-outlined-labelbanco"                         
+                            value={idTipoPago}
+                            name="idTipoPago"
+                            onChange={_onChangeregistro}
+                            label="Tipo de pago"
+                            >
+                            <MenuItem value={0}>
+                                <em>Sin tipo de pago</em>
+                            </MenuItem>
+                            {listTipoPagos.map((value,index)=> (                         
+                                  <MenuItem disabled={!value.estado} key={index} value={value.idTipoPago}>{value.nombre}</MenuItem>                            
+                             ))}  
+                        </Select>
+                      {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                    </FormControl>
                </Grid> 
                <Grid item xs={12}   >
                         <TextField                            
@@ -796,11 +821,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             multiline
                             rows={3}
                             className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
+                            onChange={_onChangeregistro}                       
                             fullWidth                             
                         />
                </Grid> 
@@ -828,8 +849,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                   <Grid item xs={12}  >
                       <Grid item xs={6}  >
                         <FormControl  variant="outlined"  
-                                fullWidth  
-                                //error={CiudadError} 
+                                fullWidth                                 
                                 className={style.TextFiel}
                                 >
                                   <InputLabel id="demo-simple-select-outlined-labelbanco">Banco</InputLabel>
@@ -845,8 +865,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                           <em>Seleccione el Banco</em>
                                       </MenuItem>
                                       {listBancos.map((value,index)=> ( <MenuItem key={index} value={value.idBanco}>{value.nombre}</MenuItem> ))}  
-                                  </Select>
-                                {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                                  </Select>                              
                               </FormControl>
                         </Grid>
                     </Grid>
@@ -858,11 +877,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             name="cuentaBancaria"
                             value={cuentaBancaria}
                             className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
+                            onChange={_onChangeregistro}                      
                             fullWidth                             
                         />
                     </Grid>
@@ -875,11 +890,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             name="codigoBanco"
                             value={codigoBanco}
                             className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
+                            onChange={_onChangeregistro}                    
                             fullWidth                             
                         />
                       
@@ -900,11 +911,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             value={razonSocial}
                             placeholder="Codigo de cliente"
                             className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
+                            onChange={_onChangeregistro}                        
                             fullWidth                             
                         />
                   </Grid>
@@ -917,11 +924,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             name="nit"
                             value={nit}
                             className={style.TextFiel}
-                            onChange={_onChangeregistro}
-                           // error={corporativoError}
-                           /*  helperText={ corporativoError &&
-                            "campo requerido"
-                            }   */                          
+                            onChange={_onChangeregistro}                         
                             fullWidth                             
                         />
                   </Grid>
@@ -942,7 +945,6 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                       label="Fecha de baja"
                                       format="yyyy/MM/dd"
                                       value={fechaBaja}
-                                    // error={fechaNacimientoError}
                                       //helperText={fechaNacimientoError &&'Ingrese un año de nacimiento valido'}
                                       InputAdornmentProps={{ position: "start" }}
                                       invalidDateMessage={'Formato de fecha no válido'}
@@ -959,8 +961,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                               <InputLabel id="demo-simple-select-outlined-labelbaja">Tipo de baja</InputLabel>
                               <Select
                                   labelId="demo-simple-select-outlined-labelbaja"
-                                  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}
-                                  id="demo-simple-select-outlined"
+                                  disabled={!validarPermiso(perfiles, props.location.state.namePagina + permiso.ACTUALIZAR)}                                  
                                   value={idTipoBaja}
                                   name="idTipoBaja"
                                   onChange={_onChangeregistro}
@@ -970,8 +971,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                                       <em>Seleccione una baja</em>
                                   </MenuItem>
                                   {listBajas.map((value,index)=> ( <MenuItem key={index} value={value.idTipoBaja}>{value.nombre}</MenuItem> ))}  
-                              </Select>
-                            {/*  <FormHelperText>{sucursalError&&'Seleccione una ciudad'}</FormHelperText> */}
+                              </Select>                          
                           </FormControl>
 
                     </Grid>
@@ -986,11 +986,7 @@ const StyledBreadcrumb = withStyles((theme) => ({
                               multiline
                               rows={3}
                               className={style.TextFiel}
-                              onChange={_onChangeregistro}
-                            // error={corporativoError}
-                            /*  helperText={ corporativoError &&
-                              "campo requerido"
-                              }   */                          
+                              onChange={_onChangeregistro}                        
                               fullWidth                             
                           />
                     </Grid>
@@ -1012,10 +1008,8 @@ const StyledBreadcrumb = withStyles((theme) => ({
                             Actualizar
                            </Button>                          
                         }
-
                </Grid> 
-          </Grid>
-       
+          </Grid>       
        <MessageConfirm open={openModalConfirm} titulo={tituloModal} subTituloModal={subTituloModal} tipoModal={tipoModal} mensaje={mensajeModal} handleCloseConfirm={handleCloseConfirm} handleCloseCancel={handleCloseCancel}  />
       </>
     );

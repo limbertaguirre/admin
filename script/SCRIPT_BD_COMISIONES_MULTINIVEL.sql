@@ -82,8 +82,8 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
-      ----- correr insert primera vej, PAIS  Y CIUADAD	 
-     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE() from BDComisiones.dbo.PECIUDAD c  
+      ----- correr insert primera vej, PAIS  Y CIUADAD	 la condicion es porq esa ciudad esta duplicada en 
+     -- insert BDMultinivel.dbo.ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE(),'' from BDComisiones.dbo.PECIUDAD c   where IDCIUDAD != 4090
 
 		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
 		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
@@ -206,14 +206,21 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'MODULO', N'COLUMN', N'fecha_actualizacion'
 go
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon','1',1,null,1); --padre
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon','1',1,null,1);--padre
-	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config','3',1,null,1); --padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pagos','gestionPagoIcon',1,1,null,1); --padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Clientes','gestionClienteIcon',1,1,null,1);--padre
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Configuraciones','config',3,1,null,1); --padre
 
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon','1',1,1,1);--hijo
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon','1',1,2,1);--hijo
-	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Roles','gestionRolesIcon','1',1,3,1);--hijo
-	 --insert INTO MODULO VALUES('Usuarios','gestionClienteIcon',2,1,3,1,GETDATE(),GETDATE());
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Pago de comisiones','pagoComisionesIcon',1,1,1,1);--hijo
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Ficha de cliente','fichaClientIcon',1,1,2,1);--hijo
+	 --insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Gestión de roles','gestionRolesIcon',1,1,3,1);--hijo	 
+	 --insert INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES('Usuarios','gestionClienteIcon',2,1,3,1); --hijo
+
+	 -- insert into MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) values('Reportes','config',2,1,null,1); --padre
+	 --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pagos de comisiones','pagoComisionesIcon',1,1,8,1); --hijo reporte
+
+	 --INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de incentivos','pagoComisionesIcon',2,1,1,1); --hijo
+  --   INSERT INTO MODULO (nombre, icono, orden, habilitado, id_modulo_padre, id_usuario) VALUES ('Pago de rezagados', 'pagoComisionesIcon', 3, 1, 1, 2); --hijo
+	
 go
 create table PAGINA
 (
@@ -242,18 +249,23 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizaci
 go
 ----add modulo antes estos hacen referencia a los id de los modulos hijos
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturación','/facturacion','facIcon',1,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga Aplicaciones','/cargar-aplicaciones','facIcon',2,1,4,1);  
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',4,1,4,1);
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos','/pagos-gestor','facIcon',5,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Facturación','/facturacion','facIcon',1,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga Aplicaciones','/cargar-aplicaciones','facIcon',2,1,4,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Prorrateo','/prorrateo','facIcon',3,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago','/forma/pago','facIcon',4,1,4,1);
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos','/pagos-gestor','facIcon',5,1,4,1);
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,5,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Cliente','/clientes','facIcon',2,1,5,1);  
 
---	   insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
---	   INSERT INTO PAGINA VALUES('Asignación de roles','/usuario/asignar-roles','facIcon',1,1,@@Identity,1,GETDATE(),GETDATE());
-  
-  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Roles','/gestion/roles','RolIcon',1,1,6,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Asignación de roles','/usuario/asignar-roless','facIcon',1,1,7,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por ciclo','/reporte/ciclos','facIcon',1,1,9,1);  
+	 --  insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Por freelancer','/reporte/freelancer','facIcon',2,1,9,1);  
+
+		--insert into PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Carga de planilla','/pagos/incentivos/cargar-planilla','facIcon',1,1,10,1);
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Forma de pago rezagado', '/forma-pago/rezagados', 'facIcon', 1, 1, 11, 2);  
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos Rezagados', '/pago/rezagados', 'facIcon', 2, 1, 11, 2);
+		--INSERT INTO PAGINA (nombre,url_pagina, icono, orden, habilitado, id_modulo, id_usuario) values('Pagos', '/pago/incentivos/pagar', 'facIcon', 2, 1, 10, 2);
 
 go
 create table PERMISO
@@ -379,6 +391,7 @@ go
 
 --insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(1,'PAGO COMISIONES', '',1)
 --insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(2,'PAGO REZAGADOS', '',1)
+--insert into BDMultinivel.dbo.GP_TIPO_COMISION(id_tipo_comision,nombre, descripcion,id_usuario) values(3,'PAGO INCENTIVOS', '',1)
 
 go
 create table CICLO
@@ -466,10 +479,16 @@ insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descr
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(7, 'PENDIENTE PORRATERO', 'PENDIENTE PORRATERO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(8, 'CERRADO PORRATEO', 'CERRADO PORRATEO',1)
 
-insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(9, 'PENDIENTE FORMA DE PAGO', 'PENDIENTE FORMA DE PAGO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(9, 'PENDIENTE FORMA DE PAGO', 'Este estado sera listado para los pagos rezagados que volvera a al estado sin formas de pagos  a elegir los rezagados',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(10, 'CERRADO FORMA DE PAGO', 'CERRADO FORMA DE PAGO',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(11, 'PENDIENTE AUTORIZACION', 'PENDIENTE AUTORIZACION',1)
 insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(12, 'AUTORIZADO', 'AUTORIZADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(13, 'PAGO DE COMISION CERRADO', 'PAGO DE COMISION CERRADO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(14, 'INCENTIVO PENDIENTE', 'INCENTIVO PENDIENTE',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(15, 'INCENTIVO PAGO', 'INCENTIVO PAGO',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(16, 'FORMA PAGO DE COMISION REZAGADO CERRADO ', 'este estado sera listado desde la pagina de pago de rezagados',1)
+insert into BDMultinivel.dbo.GP_ESTADO_COMISION(id_estado_comision, estado,descripcion,id_usuario)values(17, 'PAGO COMISION REZAGADO CERRADO', 'Es cuando el pago de comision rezagado halla sido cerrado y se les pagos por transferencia o sion pay',1)
+
 
 go
 create table GP_COMISION_ESTADO_COMISION_I
@@ -562,6 +581,7 @@ create table FICHA
     id_usuario int not null,
     fecha_creacion datetime default GETDATE(),
     fecha_actualizacion datetime default GETDATE(),
+	id_tipo_pago int NOT NULL default 0,
 );
 
 go
@@ -591,6 +611,7 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el estado de la tabla 1 es 
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'fecha_actualizacion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'id tipo pago el FreeLancer si tiene cuenta o cuenta podra tener habilitado o seleccianado un tipo de pago', 'SCHEMA', 'dbo', 'TABLE', 'FICHA', N'COLUMN', N'id_tipo_pago'
 go
 
 create table GP_CLIENTE_VENDEDOR_I(
@@ -626,10 +647,10 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del úl
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_BAJA', N'COLUMN', N'fecha_actualizacion'
 go
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
-insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja,nombre, descripcion, id_usuario) values(1,'sesion de derecho','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(2,'Suspensión temporal','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(3,'Expulsión definitiva','', 1);
+--insert into BDMultinivel.dbo.tipo_baja(id_tipo_baja, nombre, descripcion, id_usuario) values(4,'Otro caso','', 1);
 
 go
 create table FICHA_TIPO_BAJA_I
@@ -743,6 +764,8 @@ go
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(4, 'Para autorizar','previo para autorizar', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(5, 'Resagado','cuando no presenta factura o no tiene una forma de pago', 1 )
 	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(6, 'No presenta factura','el freelancer comisiona pero no presenta factura', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(7, 'Incentivo pendiente','El pago de incentivo del FreeLancer se encuentra pendiente', 1 )
+	--insert into BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE (id_estado_comision_detalle, estado, descripcion, id_usuario) values(8, 'Incentivo pagado','El pago de incentivo del FreeLancer se encuentra pagado', 1 )
 
 go
 create table GP_COMISION_DETALLE
@@ -802,7 +825,7 @@ create table COMISION_DETALLE_EMPRESA
     monto decimal(18,2) not null,
 	estado TINYINT,
 	respaldo_path varchar(500),
-	nro_autorizacion varchar,
+	nro_autorizacion varchar(100),
 	monto_a_facturar decimal(18,2),
 	monto_total_facturar decimal(18,2),
 	id_comision_detalle int not null,
@@ -901,7 +924,10 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'ESTADO_LISTADO_FORMA_PAGO', N'COLUMN', N'fecha_actualizacion'
 go
-   
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(1, 'Para pagar',1)
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(2, 'Error al pagar',1)
+   --   insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(3, 'Pago exitoso',1)
+	  --insert into ESTADO_LISTADO_FORMA_PAGO (id_estado_listado_forma_pago, descripcion,id_usuario) values(4, 'Rechazado en Pagos por Transferencias',1)
 go
 CREATE TABLE TIPO_PAGO(
   id_tipo_pago int NOT NULL PRIMARY KEY,
@@ -923,8 +949,8 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_PAGO', N'COLUMN', N'fecha_actualizacion'
 
 go
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'sionpay')
-   insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'transfer')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(1, 'Sion pay','es una billetera movil',1,0,'sionpay')
+   --insert into TIPO_PAGO (id_tipo_pago,nombre,descripcion,estado,id_usuario,icono) values(2, 'Transferencia','es una billetera movil',1,0,'transfer')
    
 go
 CREATE TABLE EMPRESA(
@@ -1169,11 +1195,11 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_APLICACIONES', N'COLUMN', N'fecha_actualizacion'
 go
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(4,'Expensas', 'true', 1);
-  insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(0,'sin definir', 'false', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(2,'Cuota', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(3,'A cuenta', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(4,'Expensas', 'true', 1);
+  --insert into BDMultinivel.dbo.TIPO_APLICACIONES( guardian_id_ciclo_descuento_tipo, descripcion, valido_guardian, id_usuario)values(5,'Otros', 'true', 1);
 
 go
 CREATE TABLE APLICACION_DETALLE_PRODUCTO(
@@ -1240,103 +1266,7 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'GP_PRORRATEO_DETALLE', N'COLUMN', N'fecha_actualizacion'
 
 go
-CREATE VIEW [dbo].[vwObtenercomisiones]
-AS
-     select 
-	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
-	        GPCOMI.id_comision AS 'idComision', 
-			GPCOMI.id_tipo_comision,
-			GPDETA.id_ficha AS 'idFicha',
-			FIC.nombres +' '+ FIC.apellidos as 'nombre',
-			FIC.ci,
-			FIC.cuenta_bancaria AS 'cuentaBancaria',
-			FIC.id_banco,
-			BA.nombre AS 'nombreBanco',
-			GPDETA.monto_bruto AS 'montoBruto' ,
-		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
-			GPDETA.monto_neto AS 'montoNeto',
-			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
-			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
-			GPCOMI.id_ciclo,
-			CI.nombre AS 'ciclo',
-			GPESTA.id_estado_comision,
-			GPDETA.monto_retencion,
-			GPDETA.monto_aplicacion
-	        from BDMultinivel.dbo.GP_COMISION GPCOMI
-	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
-			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
-			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
-			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
-			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
-			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
-			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
-			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
-GO
 
-CREATE VIEW [dbo].[vwObtenerComisionesDetalleEmpresa]
-AS
-	 select 
-	     GPDE.id_comision as 'idComision',
-	     ComiEmp.id_comision_detalle_empresa,
-		 ComiEmp.id_comision_detalle,
-	     Emp.nombre AS 'empresa',
-		 ComiEmp.monto,
-		 ComiEmp.monto_a_facturar,
-		 ComiEmp.monto_total_facturar,
-		 ComiEmp.respaldo_path,
-		 ComiEmp.nro_autorizacion,
-		 Emp.id_empresa AS 'idEmpresa',
-		 Emp.estado AS 'estadoEmpresa',
-		 ComiEmp.estado As 'estadoDetalleEmpresa',
-		 ComiEmp.ventas_personales,
-		 ComiEmp.ventas_grupales,
-		 ComiEmp.residual,
-		 ComiEmp.retencion,
-		 ComiEmp.monto_neto,		 
-		 ComiEmp.si_facturo
-     from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
-			inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA ComiEmp on ComiEmp.id_comision_detalle=GPDE.id_comision_detalle
-			inner join BDMultinivel.dbo.empresa Emp on Emp.id_empresa=ComiEmp.id_empresa
-			
-GO
-
-CREATE VIEW [dbo].[vwObtenerCiclos]
-AS
-	SELECT
-		C.id_ciclo,
-		C.nombre,
-		C.descripcion,
-		E.id_estado_comision,
-		E.estado,
-		CC.id_tipo_comision
-	FROM BDMultinivel.DBO.CICLO C
-		INNER JOIN BDMultinivel.DBO.GP_COMISION CC ON C.id_ciclo = CC.id_ciclo
-		INNER JOIN BDMultinivel.DBO.GP_TIPO_COMISION T ON CC.id_tipo_comision = T.id_tipo_comision
-		INNER JOIN BDMultinivel.DBO.GP_COMISION_ESTADO_COMISION_I CE ON CE.id_comision = CC.id_comision
-		INNER JOIN BDMultinivel.DBO.GP_ESTADO_COMISION E ON E.id_estado_comision = CE.id_estado_comision
-	WHERE CE.habilitado='true'
-go
-CREATE VIEW [dbo].[vwObtenerFicha]
-AS
-		 select 
-		  F.id_ficha as 'idFicha',
-		  F.codigo,
-		  F.nombres + ' '+F.apellidos as 'nombreCompleto',
-		  F.ci,
-		  F.tiene_cuenta_bancaria as 'tieneCuentaBancaria',
-		  CASE WHEN  F.id_banco IS NULL THEN 0 ELSE F.id_banco END As 'idBanco',	  
-		  CASE WHEN  B.nombre IS NULL THEN '' ELSE B.nombre END As 'nombreBanco',
-		  CASE WHEN   B.codigo IS NULL THEN '' ELSE  B.codigo END As 'codigoBanco',
-		   CASE WHEN   F.cuenta_bancaria IS NULL THEN '' ELSE  F.cuenta_bancaria END As 'cuentaBancaria',
-		  F.estado,
-		  F.avatar,	
-		 CASE WHEN  NI.nombre IS NULL THEN 'Asesor Comercial' ELSE NI.nombre END As 'nivel'
-		 from BDMultinivel.dbo.FICHA F
-		 left join BDMultinivel.dbo.BANCO B ON B.id_banco = F.id_banco
-		 left join BDMultinivel.dbo.FICHA_NIVEL_I FNIV ON FNIV.id_ficha=F.id_ficha 
-		 inner join BDMultinivel.dbo.NIVEL NI ON NI.id_nivel=FNIV.id_nivel
-
-GO
 CREATE TABLE LOG_DETALLE_COMISION_EMPRESA_FAIL(
   id_detalle_comisio_empresa_fail int NOT NULL PRIMARY KEY identity,
   id_ciclo int not null,
@@ -1387,87 +1317,13 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'LOG_PAGO_MASIVO_SION_PAY_COMISION_O_EMPRESA_FAIL', N'COLUMN', N'fecha_actualizacion'
 
 go
-create VIEW [dbo].[vwObtenerComisionesDetalleAplicaciones]
-AS
-	 select
-	       Ap.id_aplicacion_detalle_producto,
-		   GPDE.id_comision_detalle,
-	       AP.descripcion,
-		   AP.monto,
-		   AP.cantidad,
-		   AP.subtotal,
-		   AP.id_proyecto,
-		   CASE WHEN EMP.id_empresa IS NULL THEN 0 ELSE EMP.id_empresa END as 'id_empresa',		   
-		   CASE WHEN EMP.nombre IS NULL THEN '-' ELSE EMP.nombre END as 'nombre_empresa',
-		   CASE WHEN AP.codigo_producto='' THEN '-' ELSE AP.codigo_producto END as 'codigo_producto'	   
-     from BDMultinivel.dbo.GP_COMISION_DETALLE GPDE
-			inner join BDMultinivel.dbo.APLICACION_DETALLE_PRODUCTO AP on AP.id_comisiones_detalle=GPDE.id_comision_detalle
-			left join BDMultinivel.dbo.PROYECTO PRO on PRO.id_proyecto = AP.id_proyecto
-			left join BDMultinivel.dbo.PROYECTO EMP on EMP.id_proyecto = PRO.id_proyecto	
-go
 
-CREATE VIEW [dbo].[vwObtenerProyectoxProducto]
-AS
 
-   select  PRO.id_proyecto, PRO.nombre as 'nombreProyecto',PRO.id_empresa, GRLOTE.LOTE as 'producto', EMP.nombre as 'nombreEmpresa' from BDComisiones.dbo.vwLOTES_GRL_DOCID GRLOTE
-                  inner join BDMultinivel.dbo.proyecto PRO on PRO.proyecto_conexion_id= GRLOTE.IDPROYECTO 
-				  inner join BDMultinivel.dbo.EMPRESA EMP on EMP.id_empresa= PRO.id_empresa
- go
 
- CREATE VIEW [dbo].[vwObtenercomisionesFormaPago]
- AS
-        select 
-	        GPDETA.id_comision_detalle AS 'idComisionDetalle',
-	        GPCOMI.id_comision AS 'idComision', 
-			GPCOMI.id_tipo_comision,
-			GPDETA.id_ficha AS 'idFicha',
-			FIC.nombres +' '+ FIC.apellidos as 'nombre',
-			FIC.ci,
-			FIC.cuenta_bancaria AS 'cuentaBancaria',
-			FIC.id_banco,
-			BA.nombre AS 'nombreBanco',
-			GPDETA.monto_bruto AS 'montoBruto' ,
-		    case FIC.factura_habilitado when 1 then 'True' when 0  then'False' else  'False' END AS 'factura',
-			GPDETA.monto_neto AS 'montoNeto',
-			CASE WHEN IDESTA.id_estado_comision_detalle IS NULL THEN 0 ELSE IDESTA.id_estado_comision_detalle END As 'estadoFacturoId',
-			CASE WHEN ESTANA.estado IS NULL THEN 'No registro estado' ELSE ESTANA.estado END As 'estadoDetalleFacturaNombre',
-			GPCOMI.id_ciclo,
-			CI.nombre AS 'ciclo',
-			GPESTA.id_estado_comision,
-			GPDETA.monto_retencion,
-			GPDETA.monto_aplicacion,
-			CASE WHEN LISTFO.id_lista_formas_pago IS NULL THEN 0 ELSE LISTFO.id_lista_formas_pago END As 'id_lista_formas_pago',
-			CASE WHEN LISTFO.id_tipo_pago IS NULL THEN 0 ELSE LISTFO.id_tipo_pago END As 'id_tipo_pago',			
-			CASE WHEN TIPAGO.nombre IS NULL THEN 'NINGUNO' ELSE TIPAGO.nombre END As 'tipo_pago_descripcion',
-			CASE WHEN FPAGO.id IS NULL THEN 0 ELSE FPAGO.id END As 'id_detalle_estado_forma_pago',
-			CASE WHEN FPAGO.habilitado IS NULL THEN 'False' ELSE FPAGO.habilitado END As 'pago_detalle_habilitado',		
-			CASE WHEN FPAGO.id_estado_listado_forma_pago IS NULL THEN 0 ELSE FPAGO.id_estado_listado_forma_pago END As 'id_estado_listado_forma_pago'			
-	        from BDMultinivel.dbo.GP_COMISION GPCOMI
-	        inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I GPESTA  ON GPESTA.id_comision = GPCOMI.id_comision
-			inner join BDMultinivel.dbo.GP_COMISION_DETALLE GPDETA ON GPDETA.id_comision = GPCOMI.id_comision
-			inner join BDMultinivel.dbo.FICHA FIC ON FIC.id_ficha= GPDETA.id_ficha
-			left join BDMultinivel.dbo.BANCO BA ON BA.id_banco = FIC.id_banco
-			inner join BDMultinivel.dbo.CICLO CI ON CI.id_ciclo = GPCOMI.id_ciclo
-			left join BDMultinivel.dbo.GP_COMISION_DETALLE_ESTADO_I IDESTA ON IDESTA.id_comision_detalle=GPDETA.id_comision_detalle
-			left join BDMultinivel.dbo.GP_ESTADO_COMISION_DETALLE ESTANA ON ESTANA.id_estado_comision_detalle = IDESTA.id_estado_comision_detalle
-			left join BDMultinivel.dbo.LISTADO_FORMAS_PAGO LISTFO ON  LISTFO.id_comisiones_detalle = GPDETA.id_comision_detalle
-			left join BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago= LISTFO.id_tipo_pago
-			LEFT join BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL FPAGO ON FPAGO.id_lista_formas_pago = LISTFO.id_lista_formas_pago
-			where IDESTA.habilitado = 'true' and GPESTA.habilitado= 'true'
-go
 
-CREATE VIEW [dbo].[vwVerificarCuentasUsuario]
- AS
-	select
-	       f.ci,
-	       f.nombres,
-           f.tiene_cuenta_bancaria, 
-		   CASE WHEN u.id_usuario IS NULL THEN 'False' ELSE 'True' END As 'sionPay',
-		   CASE WHEN u.id_estado_usuario IS NULL THEN 0 ELSE u.id_estado_usuario  END As 'estadoSionPay'
-from  BDMultinivel.dbo.ficha f
-left join BDPuntosCash.dbo.USUARIO u on   u.id_usuario COLLATE Latin1_General_CI_AS =   f.ci COLLATE Latin1_General_CI_AS
 
-go
+
+
 
 CREATE TABLE TIPO_AUTORIZACION(
   id_tipo_autorizacion int NOT NULL PRIMARY KEY,
@@ -1491,6 +1347,7 @@ go
     insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(1,'SION PAY',3,1);
 	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(2,'TRANSFERENCIA',3,1);
 	insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(3,'FORMA DE PAGO',3,1);
+    insert into BDMultinivel.dbo.TIPO_AUTORIZACION(id_tipo_autorizacion,nombre,cantidad, id_usuario_modificacion)values(4,'FORMA DE PAGO REZAGADOS', 1, 1);
 go
 CREATE TABLE AUTORIZACIONES_AREA(
   id_autorizaciones_area int NOT NULL PRIMARY KEY identity,
@@ -1531,7 +1388,7 @@ go
 
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'USUARIO_AUTORIZACION', N'COLUMN', N'fecha_actualizacion'
-go
+GO
 CREATE TABLE ESTADO_AUTORIZACION_COMISION(
   id_estado_autorizacion_comision int NOT NULL,
   nombre varchar(50) not null,
@@ -1570,81 +1427,12 @@ go
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_creacion'
     EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualizacion del registro', 'SCHEMA', 'dbo', 'TABLE', 'AUTORIZACION_COMISION', N'COLUMN', N'fecha_actualizacion'
 go
-    CREATE VIEW [dbo].VW_LISTAR_AUTORIZACIONES_TIPO
-     AS
-       select USUA.id_usuario_autorizacion,AREA.id_area,AREA.nombre AS 'descripcion_area', USUA.estado, U.id_usuario, U.nombres, U.apellidos, U.usuario,TA.id_tipo_autorizacion,TA.nombre AS 'nombre_tipo_autorizacion',  USUA.fecha_creacion  FROM BDMultinivel.dbo.USUARIO_AUTORIZACION USUA 
-		    INNER JOIN BDMultinivel.dbo.USUARIO U ON USUA.id_usuario= U.id_usuario
-			INNER JOIN BDMultinivel.dbo.TIPO_AUTORIZACION TA ON TA.id_tipo_autorizacion= USUA.id_tipo_autorizacion
-			INNER JOIN BDMultinivel.dbo.AREA AREA ON AREA.id_area = U.id_area
-			where TA.estado='True'
-go
-
- CREATE VIEW [dbo].VW_TIPO_AUTORIZACION
-    AS
- select TP.id_tipo_autorizacion,tp.nombre, TP.cantidad as 'cantidad_limite',AA.cantidad as 'cantidad_aprobacion_minima_area'  from BDMultinivel.dbo.TIPO_AUTORIZACION TP
-			 inner join  BDMultinivel.dbo.AUTORIZACIONES_AREA AA on AA.id_tipo_autorizacion = TP.id_tipo_autorizacion
-			 where TP.estado='True'
-
-go
-
-CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
-  AS
-	select  UA.id_usuario_autorizacion,
-			UA.id_usuario,
-			CASE WHEN AUC.id_autorizacion_comision IS NULL THEN 0 ELSE AUC.id_autorizacion_comision  END As 'id_autorizacion_comision',
-			CASE WHEN CO.id_ciclo IS NULL THEN 0 ELSE CO.id_ciclo  END As 'id_ciclo',
-			CASE WHEN CO.id_comision IS NULL THEN 0 ELSE CO.id_comision  END As 'id_comision',
-			AUC.id_estado_autorizacion_comision,
-			AUC.descripcion
-	from BDMultinivel.dbo.USUARIO_AUTORIZACION UA
-	LEFT JOIN BDMultinivel.dbo.AUTORIZACION_COMISION AUC on AUC.id_usuario_autorizacion=UA.id_usuario_autorizacion
-	LEFT JOIN BDMultinivel.dbo.GP_COMISION CO ON Co.id_comision = AUC.id_comision
-	where UA.estado='True' 
-
-
-	go
-	CREATE VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
-		as
-		select 
-		c.id_ciclo,
-		cde.id_empresa,
-		TRIM(e.nombre) as empresa,
-		l.id_comisiones_detalle,
-		cde.id_comision_detalle_empresa,
-		cde.estado as id_estado_comision_detalle_empresa,
-		f.codigo_cnx as [CODIGO_DE_CLIENTE],
-		f.cuenta_bancaria AS [NRO_DE_CUENTA],
-		f.nombres +' '+ f.apellidos as [NOMBRE_DE_CLIENTE],
-		f.ci as [DOC_DE_IDENTIDAD],
-		sum(cde.monto_neto) as [IMPORTE_POR_EMPRESA],
-		l.monto_neto as [IMPORTE_NETO],		
-		CAST(DATEPART(DAY,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(MONTH,  cde.fecha_pago) as VARCHAR) + '/' + CAST(DATEPART(YYYY,  cde.fecha_pago) as VARCHAR) as [FECHA_DE_PAGO],
-		-- id_banco = 17 BANCO GANADERO
-		 case when isnull(b.id_banco, 0) = 17 then 1 else 3 end FORMA_DE_PAGO,
-		 case when isnull(b.id_banco, 0) = 17 then '' else '2' end MONEDA_DESTINO,
-		 case when isnull(b.id_banco, 0) = 17 then '' else b.codigo end ENTIDAD_DESTINO,
-		-- Sucursal
-		 case when isnull(b.id_banco, 0) = 17 then '' else case when isnull(ciu.id_pais, -1) = 1 then ciu.codigo else '' end end SUCURSAL_DESTINO,
-		 ci.nombre as GLOSA,
-		 l.id_tipo_pago
-		from BDMultinivel.dbo.LISTADO_FORMAS_PAGO l
-		inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-		inner join BDMultinivel.dbo.GP_COMISION c on c.id_comision = cd.id_comision
-		inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
-		inner join BDMultinivel.dbo.CICLO ci on ci.id_ciclo = c.id_ciclo
-		inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-		inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-		inner join BDMultinivel.dbo.FICHA f on f.id_ficha = cd.id_ficha
-		inner join BDMultinivel.dbo.CIUDAD ciu on ciu.id_ciudad = f.id_ciudad
-		left join BDMultinivel.dbo.BANCO b on b.id_banco = f.id_banco
-		where cde.monto_neto <> 0
-		and c.id_tipo_comision = 1
-		and cec.id_estado_comision = 10 -- CERRADO FORMA DE PAGO
-		and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-		group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo
-
-		GO
-
+/*
+    Inserts quemados manual
+*/
+    -- INSERT INTO BDMultinivel.DBO.AUTORIZACION_COMISION (id_comision, id_usuario_autorizacion, id_estado_autorizacion_comision, descripcion, id_usuario_modificacion) VALUES (1163, 4, 0, '', 1)
+    -- INSERT INTO BDMultinivel.DBO.AUTORIZACION_COMISION (id_comision, id_usuario_autorizacion, id_estado_autorizacion_comision, descripcion, id_usuario_modificacion) VALUES (1163, 5, 0, '', 1)
+GO
         create table ASIGNACION_EMPRESA_PAGO
         (
             id_asignacion_empresa_pago int not null primary key IDENTITY,
@@ -1667,32 +1455,77 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
         EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ASIGNACION_EMPRESA_PAGO', N'COLUMN', N'fecha_actualizacion'
         go
 
-        CREATE view [dbo].[vwObtenerEmpresasComisionesDetalleEmpresa]
-        as
-        select c.id_ciclo
-        , cde.id_empresa
-        , TRIM(e.nombre) as empresa
-        , c.id_tipo_comision
-        , l.id_tipo_pago
-        , sum(cde.monto_neto) monto_transferir
-        from LISTADO_FORMAS_PAGO l
-        inner join GP_COMISION_DETALLE cd on cd.id_comision_detalle = l.id_comisiones_detalle
-        inner join GP_COMISION c on c.id_comision = cd.id_comision
-        inner join BDMultinivel.dbo.COMISION_DETALLE_EMPRESA cde on cde.id_comision_detalle = cd.id_comision_detalle
-        inner join BDMultinivel.dbo.EMPRESA e on e.id_empresa = cde.id_empresa
-        where l.monto_neto <> 0
-        and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-        group by c.id_ciclo, cde.id_empresa, e.nombre , c.id_tipo_comision
-        , l.id_tipo_pago
-        GO
+		GO
+		CREATE TABLE [dbo].[CONTROL_USUARIO](
+			id_control_usuario int primary key IDENTITY(1,1) NOT NULL,
+			usuario varchar (255) NULL,
+			cantidad_intentos int NULL,
+			fecha_bloquedo datetime NULL,
+			fecha_desbloqueo datetime NULL,
+			net_session_id varchar(255) NULL,
+			estado int NOT  NULL,
+			)
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'id_control_usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Usuario que intenta iniciar session (Dominio).', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'usuario'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Cantidad de intentos que el usuario fallo al iniciar session', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'cantidad_intentos'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de bloqueo del usuario', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_bloquedo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de desbloqueo del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_desbloqueo'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Id del aps.net core.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'net_session_id'
+		EXECUTE sp_addextendedproperty 'MS_Description', 'Estado del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'estado'
+		go
+      
+
+-----------------------------------------------------------------------------------INICIO TABLA INCENTIVOS---------------------------------------------------------------
+create TABLE BDMultinivel.dbo.TIPO_INCENTIVO_PAGO(
+  id_tipo_incentivo int identity(1,1) not null primary key,
+  descripcion varchar(300) not null,
+  estado varchar(30) 
+)
 
 
-        
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_INCENTIVO_PAGO', N'COLUMN', N'id_tipo_incentivo'
+EXECUTE sp_addextendedproperty 'MS_Description', 'indica el nombre o descripcion del tipo Incentivo Pago', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_INCENTIVO_PAGO', N'COLUMN', N'descripcion'
+EXECUTE sp_addextendedproperty 'MS_Description', 'indica el estado del tipoIncentivo ejm: INACTIVO, ACTIVO', 'SCHEMA', 'dbo', 'TABLE', 'TIPO_INCENTIVO_PAGO', N'COLUMN', N'estado'
 
+CREATE TABLE BDMultinivel.dbo.INCENTIVO_PAGO_COMISION(
+    id_detalle int identity (1,1) not null primary key,
+    id_tipo_incentivo_pago int not null,
+    id_comision_detalle int not null
+)
+
+
+EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'INCENTIVO_PAGO_COMISION', N'COLUMN', N'id_detalle'
+EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea hacia la tabla TIPO_INCENTIVO_PAGO', 'SCHEMA', 'dbo', 'TABLE', 'INCENTIVO_PAGO_COMISION', N'COLUMN', N'id_tipo_incentivo_pago'
+EXECUTE sp_addextendedproperty 'MS_Description', 'llave foranea hacia la tabla GP_COMISION_DETALLE', 'SCHEMA', 'dbo', 'TABLE', 'INCENTIVO_PAGO_COMISION', N'COLUMN', N'id_comision_detalle'
+
+GO
+
+insert into BDMultinivel.dbo.TIPO_INCENTIVO_PAGO (
+   descripcion
+  ,estado
+) VALUES (
+   'INCENTIVO VENTA MEMBRESIA'  -- descripcion - varchar(300)
+  ,'ACTIVO' -- estado - varchar(30)
+)
+
+
+insert into BDMultinivel.dbo.TIPO_INCENTIVO_PAGO (
+   descripcion
+  ,estado
+) VALUES (
+   'INCENTIVO VENTA LOTES'  -- descripcion - varchar(300)
+  ,'ACTIVO' -- estado - varchar(30)
+)
+GO
+---
+
+
+-----------------------------------------------------------------------FIN TABLA INCENTIVOS--------------------------------------------------------------------
+      
 	---------------------------------------------------------------------------------------------------------------------------------------------
 	 -- -- CREAR ROL MANUAL ------------------------------------------------------------------------------------------------------------------------
-		--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
-		--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
+			--insert into BDMultinivel.dbo.ROL( nombre, descripcion, habilitado,id_usuario,fecha_creacion, fecha_actualizacion)
+			--values( 'ADMINISTRADOR', 'Usuario que tiene acceso total', 1, 1,GETDATE(), GETDATE())
 
 		  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
 				--insert into BDMultinivel.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion)
@@ -1721,3 +1554,9 @@ CREATE VIEW [dbo].[vwVerificarAutorizacionComision]
 				--GETDATE()
 				--); 
 	---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------------SE AÑADEN AGENTES EN BDPUNTOSCASH LOS AGENTES DE PAGOS INCENTIVOS, REZAGADOS------------------------------------
+insert into BDPuntosCash.dbo.AGENTE VALUES (27, 'Pago de Comisiones por Gestor' ,'PAGO_COMISIONES_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
+insert into BDPuntosCash.dbo.AGENTE VALUES (28, 'Pago de Incentivos por Gestor' ,'PAGO_INCENTIVOS_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
+   

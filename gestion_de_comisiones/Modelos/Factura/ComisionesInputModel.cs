@@ -9,5 +9,6 @@ namespace gestion_de_comisiones.Modelos.Factura
     {
         public string usuarioLogin { get; set; }
         public int idCiclo { get; set; }
+        public int comisionId { get; set; }
     }
 }

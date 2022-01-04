@@ -1,18 +1,17 @@
-import React, * as GeneralReact from "react";
+import React, {useState, useEffect, forwardRef} from "react";
 import * as Redux from "react-redux";
 import PropTypes from "prop-types";
-import * as Core from "@material-ui/core";
-import * as CoreStyles from "@material-ui/core/styles";
-import * as GeneralIcons from "@material-ui/icons";
+import {Dialog, Slide, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, Checkbox, TableSortLabel, Toolbar, Typography, AppBar, IconButton, Card, Grid, Paper, Button, Chip, TextField, InputAdornment} from "@material-ui/core";
+import {makeStyles, lighten} from "@material-ui/core/styles";
+import {Close, Search}from "@material-ui/icons";
 import clsx from "clsx";
 import * as Actions from "../../../../redux/actions/PagosGestorAction";
 import * as ActionMensaje from "../../../../redux/actions/messageAction";
-import { Row } from "react-flexbox-grid";
-import { Button } from "bootstrap";
-import MessageTransferConfirm from "../../../../components/mesageModal/MessageTransferConfirm";
+import MessageTransferConfirm from "./MessageTransferConfirm";
+import { formatearNumero } from "../../../../lib/utility";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Core.Slide direction="up" ref={ref} {...props} />;
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 //-------------------------- PROPIEDADES DE LA TABLA ----------------------------------------
@@ -25,22 +24,6 @@ function descendingComparator(a, b, orderBy) {
   }
   return 0;
 }
-
-const StyledBreadcrumb = Core.withStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.grey[100],
-    height: theme.spacing(3),
-    color: theme.palette.grey[800],
-    fontWeight: theme.typography.fontWeightRegular,
-    "&:hover, &:focus": {
-      backgroundColor: theme.palette.grey[300],
-    },
-    "&:active": {
-      boxShadow: theme.shadows[1],
-      backgroundColor: Core.emphasize(theme.palette.grey[300], 0.12),
-    },
-  },
-}))(Core.Chip);
 
 function getComparator(order, orderBy) {
   return order === "desc"
@@ -104,7 +87,7 @@ const headCells = [
   },
 ];
 
-const useHeaderStyles = CoreStyles.makeStyles((theme) => ({
+const useHeaderStyles = makeStyles((theme) => ({
   headerTable: {
     background: "#1872b8",
     boxShadow: "2px 1px 5px #1872b8",
@@ -133,28 +116,29 @@ function EnhancedTableHead(props) {
   return (
     <>
       <br />
-      <Core.TableHead className={style.headerTable}>
-        <Core.TableRow>
-          <Core.TableCell padding="Checkbox">
-            <Core.Checkbox
+      <TableHead className={style.headerTable}>
+        <TableRow>
+          <TableCell padding="Checkbox">
+            <Checkbox
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
               inputProps={{ "aria-label": "select all desserts" }}
             />
-          </Core.TableCell>
+          </TableCell>
           {headCells.map((headCell) => (
-            <Core.TableCell
+            <TableCell
               className={style.headerRow}
               key={headCell.id}
               align={headCell.numeric ? "left" : "center"}
               padding={headCell.disablePadding ? "right" : "center"}
               sortDirection={orderBy === headCell.id ? order : false}
             >
-              <Core.TableSortLabel
+              <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : "asc"}
                 onClick={createSortHandler(headCell.id)}
+                style={{ color: "white" }}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
@@ -164,11 +148,11 @@ function EnhancedTableHead(props) {
                       : "sorted ascending"}
                   </span>
                 ) : null}
-              </Core.TableSortLabel>
-            </Core.TableCell>
+              </TableSortLabel>
+            </TableCell>
           ))}
-        </Core.TableRow>
-      </Core.TableHead>
+        </TableRow>
+      </TableHead>
     </>
   );
 }
@@ -183,7 +167,7 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
+const useToolbarStyles = makeStyles((theme) => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -192,7 +176,7 @@ const useToolbarStyles = CoreStyles.makeStyles((theme) => ({
     theme.palette.type === "light"
       ? {
           color: theme.palette.secondary.main,
-          backgroundColor: CoreStyles.lighten(
+          backgroundColor: lighten(
             theme.palette.secondary.light,
             0.85
           ),
@@ -211,38 +195,35 @@ const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
 
   return (
-    <Core.Toolbar
+    <Toolbar
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
     >
       {numSelected > 0 ? (
-        <Core.Typography
+        <Typography
           className={classes.title}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
           {numSelected} seleccionados
-        </Core.Typography>
+        </Typography>
       ) : (
-        <Core.Typography
+        <Typography
           className={classes.title}
           variant="h6"
           id="tableTitle"
           component="div"
         >
           Listado de transferencias
-        </Core.Typography>
+        </Typography>
       )}
 
       {
         numSelected > 0
-        //? (<Core.Tooltip title="Aceptar transferencias"><Core.IconButton aria-label="next">Aceptar<GeneralIcons.NavigateNext fontSize={"large"}/></Core.IconButton></Core.Tooltip>) :
-        //(<Core.Tooltip title="Filter list"><Core.IconButton aria-label="filter list"><GeneralIcons.FilterList /></Core.IconButton></Core.Tooltip>)
-        //''
       }
-    </Core.Toolbar>
+    </Toolbar>
   );
 };
 
@@ -250,12 +231,17 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-const useStyles = CoreStyles.makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     marginTop: theme.spacing(2),
   },
   appBar: {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    background: "linear-gradient(90deg, #2E3B55, #1872b8)",
     position: "relative",
   },
   paper: {
@@ -263,7 +249,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    maxWidth: "100%",
   },
   visuallyHidden: {
     border: 0,
@@ -275,6 +261,7 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
+    color: "white",
   },
   gridContainer: {
     paddingLeft: theme.spacing(1),
@@ -314,19 +301,28 @@ const useStyles = CoreStyles.makeStyles((theme) => ({
     background: "#1872b8",
     boxShadow: "2px 1px 5px #1872b8",
   },
+  input: {
+    display: 'none',
+  },
 }));
 //-----------------------------------------------------------------------------------------------
 
 const GridTransferencia = (props) => {
   const classes = useStyles();
   const dispatch = Redux.useDispatch();
-  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected} = props;
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("docDeIdentidad");
-  const [dense, setDense] = React.useState(false);
-  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {return stateSelector.load;});
-  const [openModalConfirmation, setOpenModalConfirmation] = React.useState(false);
-  const [totalPagar, setTotalPagar] = React.useState(0);
+  const { idCiclo, list, empresaId, openModalFullScreen, closeFullScreenModal, seleccionarTodo, selected, setSelected, data } = props;
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("docDeIdentidad");
+  const [dense, setDense] = useState(false);
+  const { userName, idUsuario } = Redux.useSelector((stateSelector) => {
+    return stateSelector.load;
+  });
+  const [openModalConfirmation, setOpenModalConfirmation] =
+    useState(false);
+  const [totalPagar, setTotalPagar] = useState(parseFloat(data?.montoTotal).toFixed(2));
+  const [totalMontoRechazados, setTotalMontoRechazados] = useState(0);
+  const [ciResultado, setCiResultado] = useState([]);
+  data.montoTotal = data.montoTotal.replace(',', '.');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -337,13 +333,18 @@ const GridTransferencia = (props) => {
   const handleSelectAllClick = (event) => {
     //Aqui seleccionamos todos.
     if (event.target.checked) {
+      setTotalPagar(data.montoTotal);
+      setTotalMontoRechazados(0);
       seleccionarTodo();
       return;
     }
+    setTotalPagar(0);
+    setTotalMontoRechazados(data.montoTotal);
     setSelected([]);
   };
 
-  const handleClick = (event, idComisionDetalleEmpresa) => {
+  const handleClick = (event, freelacerObject) => {
+    let idComisionDetalleEmpresa = freelacerObject.idComisionDetalleEmpresa;
     const selectedIndex = selected.indexOf(idComisionDetalleEmpresa);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -359,6 +360,7 @@ const GridTransferencia = (props) => {
       );
     }
     setSelected(newSelected);
+    handleSum(freelacerObject);
   };
 
   const isSelected = (idComisionDetalleEmpresa) =>
@@ -367,24 +369,28 @@ const GridTransferencia = (props) => {
   const error = (message) => {
     dispatch(ActionMensaje.showMessage({ message: message, variant: "info" }));
   };
-  const [check_in, setCheck_in] = React.useState(true);
 
   const closeModalMessage = () => {
     setOpenModalConfirmation(false);
   };
-  const abrirModalCormarPagos = () => {
+  const abrirModalConfimarPagos = () => {
     setOpenModalConfirmation(true);
   };
 
   const confirmarModal = () => {
     if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId);
+      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId );
     }
   };
 
-  async function prosesarConfirmarTransferencia( userN, usuarioId, cicloId, list, idEmpresa ) 
-  {
-    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch );
+  async function prosesarConfirmarTransferencia(
+    userN,
+    usuarioId,
+    cicloId,
+    list,
+    idEmpresa
+  ) {
+    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch);
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(
@@ -394,7 +400,6 @@ const GridTransferencia = (props) => {
         })
       );
       closeFullScreenModal();
-      //handleOnGetPagos();
     } else {
       dispatch(
         ActionMensaje.showMessage({
@@ -405,270 +410,224 @@ const GridTransferencia = (props) => {
     }
   }
 
-  React.useEffect(()=>{    
-    if(list.length > 0){
-        let neutro = 0;
-        
-         console.log("QUE ES ESTO?: ",neutro)
-        setTotalPagar(neutro);
+  const handleSum = (data) => {
+    const isItemSelected = isSelected(data.idComisionDetalleEmpresa);
+    let s = 0;
+    let t = 0;
+    if (!isItemSelected) {
+        s = parseFloat(totalPagar) + parseFloat(data.importePorEmpresa);
+        t = parseFloat(totalMontoRechazados) - parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
+    } else {
+        s = parseFloat(totalPagar) - parseFloat(data.importePorEmpresa);
+        t = parseFloat(totalMontoRechazados) + parseFloat(data.importePorEmpresa);
+      setTotalMontoRechazados(t.toFixed(2));
+      setTotalPagar(s.toFixed(2));
     }
-  },[list])
+  };
+  const cerrarVolverCero = () =>{
+    setTotalMontoRechazados(0)
+    closeFullScreenModal()
+  }
+  function addFormat(nStr) {
+    nStr += '';
+    var x = nStr.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? ',' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + '.' + '$2');
+    }
+    return x1 + x2;
+  }
+  const modalSum=(s1,s2,val)=>{
+    let suma1=0;
+    let suma2=0;
+    let ad = "";
+    if(val == 0){
+      suma1 = s1 - s2
+      ad = addFormat(suma1.toFixed(2))
+      return ad;
+    } else if( val == 1){
+      suma2 = s1 - (s1-s2)
+      ad = addFormat(suma2.toFixed(2))
+      return ad;
+    }else return "valor no válido"
+  }
 
-  // const handleOnGetPagos = () => {
-  //   if (idCiclo && idCiclo !== 0) {
-  //     setIdCicloSelected(idCiclo);
-  //     cargarComisionesPagos(userName, idCiclo);
-  //   } else {
-  //     // generarSnackBar('¡Debe Seleccionar un ciclo para cargar las comisiones!','warning')
-  //     /*  setOpenSnackbar(true);
-  //     setMensajeSnackbar('¡Debe Seleccionar un ciclo para cargar las comisiones!');
-  //     settipTSnackbar('warning'); */
-  //   }
-  // };
-  // async function cargarComisionesPagos(userNa, cicloId) {
-  //   let respuesta = await Actions.ObtenerComisionesPagos(
-  //     userNa,
-  //     cicloId,
-  //     dispatch
-  //   );
-  //   console.log('cargarComisionesPagos: ',respuesta);
-  //   if (respuesta && respuesta.code == 0) {
-  //     setListaComisionesAPagar(respuesta.data);
-  //     setStatusBusqueda(true);
-  //   } else {
-  //     dispatch(
-  //       ActionMensaje.showMessage({
-  //         message: respuesta.message,
-  //         variant: "error",
-  //       })
-  //     );
-  //   }
-  // }
 
-  // const importe = list.map((row)=> [row.idComisionDetalleEmpresa, row.importePorEmpresa]);
-  // console.log("Listado? importe: ",importe)
+  // --------------------------------------BUSCADOR PREDICTIVO--------------------------------
+  const [resultado, setResultado] = useState([])
+  useEffect(()=>{
+     setResultado(list);
+    }, [list])
+  
+function searchingTerm(term){
+  return function(x){
+    return x.docDeIdentidad.includes(term) || !term;
+  }
+}
+// --------------------------------------------------------------------------------------------
   return (
-    <Core.Dialog
+    <Dialog
       fullScreen
       open={openModalFullScreen}
       onClose={closeFullScreenModal}
       TransitionComponent={Transition}
     >
-      <Core.AppBar className={classes.appBar}>
-        <Core.Toolbar>
-          <Core.IconButton
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <IconButton
             edge="start"
             color="inherit"
-            onClick={closeFullScreenModal}
+            onClick={cerrarVolverCero}
             aria-label="close"
           >
-            <GeneralIcons.Close />
-          </Core.IconButton>
-          <Core.Typography variant="h6" className={classes.title}>
-            CONFIRMAR TRANSFERENCIA
-          </Core.Typography>
-        </Core.Toolbar>
-      </Core.AppBar>
+            <Close />
+          </IconButton>
+          <Typography variant="h6" className={classes.appBar}>
+            CONFIRMAR TRANSFERENCIA PARA {data.list[0].empresa}
+          </Typography>
+        </Toolbar>
+      </AppBar>
       {/* --------------------------------------------------------------CABECERA-------------------------------------------------------------------- */}
-      <div
-        style={{ paddingLeft: "0px", paddingRight: "0px", paddingTop: "10px" }}
-      >
-        <Core.Breadcrumbs aria-label="breadcrumb">
-          {/* <StyledBreadcrumb
-            key={1}
-            component="a"
-            label="Confirmar selección"
-            icon={<GeneralIcons.Home fontSize="small" />}
-          /> */}
-        </Core.Breadcrumbs>
-      </div>
-      <br />
 
-      <Core.Card style={{ overflow: "initial" }}>
-        <Core.Grid container className={classes.gridContainer}>
-          <Core.Grid item xs={12} md={4}></Core.Grid>
-          <Core.Grid item xs={12} md={4} className={classes.containerSave}>
-            {/* {statusBusqueda&&
-            <Core.TextField
-              label="Buscar freelancer"
+      <Card style={{ overflow: "initial" }}>
+        <Grid container className={classes.gridContainer}>
+          <Grid item xs={12} md={4}></Grid>
+          <Grid item xs={12} md={4} className={classes.containerSave}>
+            {resultado && <TextField
+              label="Buscar"
               type={"text"}
               variant="outlined"
               placeholder={"Buscar por carnet identidad"}
               name="txtBusqueda"
-              value={txtBusqueda}
-              //onChange={onChangeSelectCiclo}
               fullWidth
-              onKeyPress={(ev) => {
-                if (ev.key === "Enter") {
-                  //buscarFreelanzer();
-                }
-              }}
+              onChange={e => setCiResultado(e.target.value)}
               InputProps={{
                 startAdornment: (
-                  <Core.InputAdornment position="start">
-                    <GeneralIcons.Search />
-                  </Core.InputAdornment>
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
                 ),
               }}
-            />
-            } */}
-          </Core.Grid>
-          <Core.Grid item xs={12} md={4} className={classes.containerCargar}>
-            <Core.Button
+            />}
+          </Grid>
+          <Grid item xs={12} md={4} className={classes.containerCargar}>
+            <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submitCargar}
-              onClick={() =>
-                selected.length > 0
-                  ? abrirModalCormarPagos()
-                  : error(
-                      "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!"
-                    )
-              }
-            >
+              onClick={() => selected.length > 0 ? abrirModalConfimarPagos() : error( "¡Al menos, debe seleccionar una cuenta para continuar con la transferencia!" )}>
               {"Confirmar transferencias "}{" "}
-            </Core.Button>
-          </Core.Grid>
-        </Core.Grid>
-      </Core.Card>
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
       <br />
-
-      <Core.Grid container className={classes.gridContainer}>
-        <Core.Grid item xs={12} className={classes.containerSave}>
-          <Core.Paper className={classes.paper}>
-            <EnhancedTableToolbar numSelected={selected.length} />
-            <Core.TableContainer>
-              <Core.Table
-                className={classes.table}
-                aria-labelledby="tableTitle"
-                size={dense ? "small" : "medium"}
-                aria-label="enhanced table"
-              >
-                <EnhancedTableHead
-                  classes={classes}
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
-                  onRequestSort={handleRequestSort}
-                  rowCount={list.length}
-                />
-                <Core.TableBody>
-                  {stableSort(list, getComparator(order, orderBy)).map(
-                    (row, index) => {
-                      const isItemSelected = isSelected(
-                        row.idComisionDetalleEmpresa
-                      );
-                      const labelId = `enhanced-table-checkbox-${index}`;
-
-                      return (
-                        <Core.TableRow
-                          hover
-                          onClick={(event) =>
-                            handleClick(event, row.idComisionDetalleEmpresa)
-                          }
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.nombreDeCliente}
-                          selected={isItemSelected}
-                        >
-                          <Core.TableCell padding="Checkbox">
-                            <Core.Checkbox
-                              disabled={
-                                row.idEstadoComisionDetalleEmpresa === 2
-                                  ? true
-                                  : false
-                              }
-                              checked={isItemSelected}
-                              value={isItemSelected}
-                              inputProps={{ "aria-labelledby": labelId }}
-                            />
-                          </Core.TableCell>
-                          <Core.TableCell
-                            component="th"
-                            id={labelId}
-                            scope="row"
-                          >
-                            {row.nombreDeCliente}
-                          </Core.TableCell>
-                          <Core.TableCell align="center">
-                            {row.docDeIdentidad}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.nombreBanco}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.nroDeCuenta}
-                          </Core.TableCell>
-                          <Core.TableCell align="left">
-                            {row.importePorEmpresa}
-                          </Core.TableCell>
-                          <Core.TableCell align="center">
-                            {row.empresa}
-                          </Core.TableCell>
-                          {/* <Core.TableCell align="center">{row.formaPago}</Core.TableCell> */}
-                          <Core.TableCell align="center">
-                            {row.idEstadoComisionDetalleEmpresa === 2 ? (
-                              <Core.Chip
-                                label="Pagado"
-                                color="primary"
-                                variant="default"
-                              />
-                            ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
-                              <Core.Chip
-                                label="Pendiente"
-                                color="secondary"
-                                variant="default"
-                              />
-                            ) : (
-                              <Core.Chip
-                                label="Rechazado"
-                                color="secondary"
-                                variant="default"
-                              />
-                            )}
-                          </Core.TableCell>
-                        </Core.TableRow>
-                      );
-                    }
-                  )}
-                  <Core.TableRow key={100000000000000}>
-                    <Core.TableCell align="center"><b></b></Core.TableCell>
-                    <Core.TableCell align="right"></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{" "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="center"><b>{"TOTAL: "}{" "}</b></Core.TableCell>
-                    <Core.TableCell align="left"><b>{totalPagar.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}</b></Core.TableCell>
-                    <Core.TableCell align="center"></Core.TableCell>
-                  </Core.TableRow>
-                </Core.TableBody>
-              </Core.Table>
-            </Core.TableContainer>
-          </Core.Paper>
-        </Core.Grid>
-      </Core.Grid>
-
-      <MessageTransferConfirm
+      <Grid container className={classes.gridContainer}>
+      <Grid item xs={12} className={classes.containerSave}>
+        <Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <TableContainer>
+            <Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={resultado.length}
+              />
+              <TableBody>
+                {stableSort(resultado, getComparator(order, orderBy)).filter(searchingTerm(ciResultado)).map(
+                  (row, index) => {
+                    const isItemSelected = isSelected(
+                      row.idComisionDetalleEmpresa
+                    );
+                    const labelId = `enhanced-table-checkbox-${index}`;
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.nombreDeCliente}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="Checkbox">
+                          <Checkbox
+                            disabled={row.idEstadoComisionDetalleEmpresa === 2? true: false}
+                            checked={isItemSelected}
+                            value={isItemSelected}
+                            inputProps={{ "aria-labelledby": labelId }}
+                          />
+                        </TableCell>
+                        <TableCell component="th" id={labelId} scope="row" > {row.nombreDeCliente}</TableCell>
+                        <TableCell align="center"> {row.docDeIdentidad}</TableCell>
+                        <TableCell align="left"> {row.nombreBanco}</TableCell>
+                        <TableCell align="left">{row.nroDeCuenta}</TableCell>
+                        <TableCell align="left">{formatearNumero(parseFloat(row.importePorEmpresa).toFixed(2))}</TableCell>
+                        <TableCell align="center">{row.empresa}</TableCell>
+                        <TableCell align="center">{row.idEstadoComisionDetalleEmpresa === 2 ? (
+                            <Chip label="Pagado" color="primary" variant="default" /> ) : row.idEstadoComisionDetalleEmpresa === 1 ? (
+                            <Chip label="Pendiente" color="secondary" variant="default" /> ) : ( <Chip label="Rechazado" color="secondary" variant="default" /> )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }
+                )}
+                <TableRow key={100000000000000}>
+                  <TableCell align="center">
+                    <b></b>
+                  </TableCell>
+                  <TableCell align="right"></TableCell>
+                  <TableCell align="center">
+                    <b> </b>
+                  </TableCell>
+                  <TableCell align="center">
+                    <b> </b>
+                  </TableCell>
+                  <TableCell align="center">
+                    <b>{"TOTAL: "} </b>
+                  </TableCell>
+                  <TableCell align="left">
+                    <b>{addFormat(data.montoTotal)}</b>
+                  </TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Grid>
+      </Grid>     
+      {data &&( <MessageTransferConfirm
         open={openModalConfirmation}
-        titulo={"CONFIRMAR"}
-        subTituloModal={"PAGO POR TRANSFERENCIA"}
-        tipoModal={"info"}
-        mensaje={
-          <div>
-            <p>Se realizará la transferencia a:</p>  
-            <b>Seleccionados: </b>{selected.length}  <br />
-            <b>Con monto total: </b>{totalPagar.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2, })}<br />
-            {/* Para la empresa: {empresaId}<br /> */}
-            
-          </div>
-        }
+        titulo={<b>DETALLE DE TRANSFERENCIA</b>}
+        subTituloModal={<b>Ciclo: {data.list[0].glosa}<br/>Empresa: {data.list[0].empresa}</b>}
+        mensaje={{
+          confirmados: selected.length,
+          montoAPagar: modalSum(parseFloat(data.montoTotal),parseFloat(totalMontoRechazados), 0),
+          rechazados: list.length - selected.length,
+          montoAPagarRechazados: (list.length - selected.length)?modalSum(parseFloat(data.montoTotal), parseFloat(totalMontoRechazados), 1):0.00,
+          totalLista: list.length,
+          montoTotal: addFormat(data.montoTotal),
+        }}
         handleCloseConfirm={confirmarModal}
         handleCloseCancel={closeModalMessage}
-      />
-    </Core.Dialog>
+      />)}
+    </Dialog>
   );
   //-------------------------------------------------------------------------------------
 };

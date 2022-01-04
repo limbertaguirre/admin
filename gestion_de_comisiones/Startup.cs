@@ -1,5 +1,6 @@
 using gestion_de_comisiones.GuardianModels;
 using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.BDSionPayModels;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -41,7 +42,7 @@ namespace gestion_de_comisiones
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
-           { 
+           {
                x.RequireHttpsMetadata = false;
                x.SaveToken = true;
                x.TokenValidationParameters = new TokenValidationParameters
@@ -51,7 +52,7 @@ namespace gestion_de_comisiones
                    ValidateIssuer = false,
                    ValidateAudience = false
                };
-            });
+           });
 
             //services.AddAutoMapper(typeof(MappingProfiles));
 
@@ -67,6 +68,12 @@ namespace gestion_de_comisiones
             services.AddScoped<IProrrateadoService, ProrrateadoService>();
             services.AddScoped<IFormaPagoService, FormaPagoService>();
             services.AddScoped<IGestionPagosService, GestionPagosService>();
+            services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
+            services.AddScoped<IReporteService, ReporteService>();
+            services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
+            services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
+            services.AddScoped<IIncentivoSionPayService, IncentivoSionPayService>();
+            services.AddScoped<IFormasPagosRezagadosService, FormasPagosRezagadosService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -78,10 +85,14 @@ namespace gestion_de_comisiones
             services.AddScoped<IProrrateadoRepository, ProrrateadoRepository>();
             services.AddScoped<IFormaPagoRepository, FormaPagoRespository>();
             services.AddScoped<IGestionPagoRepository, GestionPagoRepository>();
-
+            services.AddScoped<IGestionPagosRezagadosRepository, GestionPagosRezagadosRepository>();
+            services.AddScoped<IReporteRepository, ReporteRepository>();
+            services.AddScoped<IIncentivoSionPayRepository, IncentivoSionPayRepository>();
+            services.AddScoped<IFormasPagosRezagadosRepository, FormasPagosRezagadosRepository>();
 
             services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
+            services.AddScoped<BDPuntosCashContext>();
 
 
             // In production, the React files will be served from this directory
@@ -98,8 +109,15 @@ namespace gestion_de_comisiones
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                await next();
+            });
+
             //var path = Directory.GetCurrentDirectory();
-           // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
+            // loggerFactory.AddFile($"{path}\\Logs\\Log-gestor.txt");
             loggerFactory.AddFile("./Logs/Log-gestor-{Date}.txt");
 
             if (env.IsDevelopment())
@@ -118,8 +136,8 @@ namespace gestion_de_comisiones
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-           // app.UseAuthentication();
-           // app.UseAuthorization(); descomentar para que funcione el leer el token
+            app.UseAuthentication();
+            app.UseAuthorization(); // descomentar para que funcione el leer el token
 
             app.UseEndpoints(endpoints =>
             {

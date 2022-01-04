@@ -9,7 +9,7 @@ import * as Action from './messageAction';
           
     const headers={usuarioLogin:getState().load.userName};
     requestGet('Cliente/ObtenerClientes',headers,dispatch).then((res)=>{ 
-    //console.log('obtener clientes', res);
+    
         if(res.code === 0){  
             dispatch({
                 type:Types.LISTA_CLIENTES,
@@ -25,10 +25,10 @@ import * as Action from './messageAction';
   }
   export const buscarClientesXnombre= (criterio)=>{
     return (dispatch, getState )=>{        
-        console.log('buscarcliente  clien'); 
+        
           const data={usuarioLogin:getState().load.userName, criterio: criterio };
           requestPost('Cliente/BuscarCliente',data,dispatch).then((res)=>{ 
-            console.log('buscarcliente', res);
+            
                 if(res.code === 0){  
                     dispatch({
                         type:Types.BUSQUEDA_NOMBRE_CLIENTE,
@@ -142,8 +142,9 @@ import * as Action from './messageAction';
     }
   }
 
-  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja )=>{
-    return (dispatch, getState )=>{                
+  export const ActualizarCliente= (history,nuevoAvatar, avatar,idFicha, codigo, nombre, apellido, ci, telOficina, telMovil, telFijo, direccion,  idCiudad, idPais, correoElectronico, fechaNacimiento, codigoPatrocinador, nombrePatrocinador, idNivel, idNivelDetalle, comentario, tieneCuenta, idBanco, cuentaBancaria, tieneFactura, razonSocial, nit, tieneBaja, idFichaTipoBaja,idTipoBaja, fechaBaja, motivoBaja, idTipoPago )=>{
+    return (dispatch, getState )=>{  
+                       
           const data={
              usuarioNameLogueado:getState().load.userName,
              usuarioIDLogueado: getState().load.idUsuario,
@@ -154,9 +155,9 @@ import * as Action from './messageAction';
              nombre:nombre,
              apellido: apellido,
              ci:ci,
-             telOficina:parseInt(telOficina === ""? 0 : telOficina),
-             telMovil : parseInt(telMovil === ""? 0 : telMovil),
-             telFijo : parseInt(telFijo === ""? 0 : telFijo),
+             telOficina:parseInt(isNaN(telOficina)? telOficina:0 ),
+             telMovil : parseInt( isNaN(telMovil)? telMovil:0 ), 
+             telFijo : parseInt(isNaN(telFijo)? telFijo:0 ), 
              direccion : (direccion),
              idCiudad : idCiudad,
              idPais :idPais,
@@ -181,10 +182,11 @@ import * as Action from './messageAction';
              idTipoBaja : idTipoBaja,
              fechaBaja : fechaBaja,
              motivoBaja : motivoBaja,
+             idTipoPago: idTipoPago,
            };
-
+         
           requestPost('Cliente/ActualizarCliente',data,dispatch).then((res)=>{ 
-             console.log('actualizar cliente res:  : ', res);
+           
                 if(res.code === 0){                        
                   dispatch(Action.showMessage({ message: res.message, variant: "success" }));     
                   history.goBack();     
@@ -194,3 +196,15 @@ import * as Action from './messageAction';
               })   
     }
   }
+
+  export async function ObtenerTipoPagoDisponibles( userName, idCliente, dispatch) {
+    return new Promise((resolve) => {
+        const data = {
+                    usuarioLogin: userName,                  
+                    idCliente: parseInt(idCliente),                  
+                   };
+        requestPost( "Cliente/ObtenerTipoPagosFreelancer", data, dispatch) .then((response) => {
+        resolve(response);
+        });
+    });
+}

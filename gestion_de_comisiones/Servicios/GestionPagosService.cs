@@ -33,29 +33,33 @@ namespace gestion_de_comisiones.Servicios
                 int idEstadoCerradoformaPago = 10; //rametro
                 int idTipoComisionPagoComision = 1; //parametro
                 List<CicloDto> ciclos = (List<CicloDto>)Repository.GetCiclos(usuario, idEstadoCerradoformaPago, idTipoComisionPagoComision);
-                if (ciclos.Count > 0) {
+                if (ciclos.Count > 0)
+                {
                     return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", ciclos);
-                } else {
-                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", ciclos);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles.", ciclos);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.LogInformation($"usuario : {usuario} error catch obtenerlistCiclos() al obtener para pagos,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "problemas al obtener la lista de ciclos de pagos", "problemas en el servidor, intente mas tarde");
             }
         }
-      
+
         public object GetComisionesDePagos(ComisionesPagosInput param)
         {
             try
             {
-               
+
                 Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio FormaPagoService => getCiclos()");
                 int idEstadoCerradoformaPago = 10; //rametro
                 int idTipoComisionPagoComision = 1; //parametro
-                var  comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoCerradoformaPago, idTipoComisionPagoComision);                
-                 return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
-            
+                var comisiones = Repository.GetComisionesPagos(param.usuarioLogin, param.idCiclo, idEstadoCerradoformaPago, idTipoComisionPagoComision);
+                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "ok", comisiones);
+
             }
             catch (Exception ex)
             {
@@ -84,13 +88,13 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");              
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio ListarComisionesFormaPagoPorCarnet() ");
                 int idEstadoComisionSiFacturo = 10; //VARIABLE
                 int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
                 int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
                 int idTipoComisionPagoComision = 1; //parametro
                 var comisiones = Repository.GetComisionesPorCarnetListPagos(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision);
-                           
+
                 return Respuesta.ReturnResultdo(0, "ok", comisiones);
             }
             catch (Exception ex)
@@ -103,11 +107,11 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio FormaPagoService => getCiclos()");              
+                Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio FormaPagoService => getCiclos()");
                 var pay = Repository.PagarSionPayComision(param);
-                if (pay)                
-                return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);               
-                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "No hay ciclos disponibles para la de pagos.", pay);                
+                if (pay)
+                    return Respuesta.ReturnResultdo(ConfiguracionService.SUCCESS, "se pago con sion pay a todos", pay);
+                return Respuesta.ReturnResultdo(ConfiguracionService.ERROR, "Problemas al pagar por sion pay", pay);
             }
             catch (Exception ex)
             {
@@ -127,11 +131,13 @@ namespace gestion_de_comisiones.Servicios
                 int idTipoFormaPagoSionPay = 1; //parametro
                 RespuestaSionPayModel comisiones = Repository.VerificarPagoSionPayCiclo(param, idEstadoComisionSiFacturo, idEstadoDetalleSifacturo, idEstadoDetalleNoPresentaFactura, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
                 if (comisiones.CodigoRespuesta == -1)
-                 return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
-                if (comisiones.Cantidad > 0 )
-                 return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
-                 return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);                              
-            } catch (Exception ex) {
+                    return Respuesta.ReturnResultdo(1, "problemas al verificar los pagos realizados por SION PAY", " ");
+                if (comisiones.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(0, "valido para pagar", comisiones);
+                return Respuesta.ReturnResultdo(1, "Ya se ha procesado los pagos SION PAY", comisiones);
+            }
+            catch (Exception ex)
+            {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} error catch VerificarPagoSionPayCiclo() el nro de  pagos en sion pay: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener al verificar los pagos realizados", "problemas en el servidor, intente mas tarde");
             }
@@ -146,7 +152,9 @@ namespace gestion_de_comisiones.Servicios
                 if (empresas.Count > 0)
                 {
                     return Respuesta.ReturnResultdo(0, "ok", empresas);
-                } else { 
+                }
+                else
+                {
                     return Respuesta.ReturnResultdo(1, "No tiene empresas asignadas para transferir.", "");
                 }
             }
@@ -162,11 +170,11 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleDownloadFileEmpresas() ");
-                GestionPagosEvent r = (GestionPagosEvent) Repository.handleDownloadFileEmpresas(body);
-                if(r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
+                GestionPagosEvent r = (GestionPagosEvent)Repository.handleDownloadFileEmpresas(body);
+                if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR)
                 {
                     throw new Exception(r.message);
-                } 
+                }
                 return Respuesta.ReturnResultdo(0, "ok", r.file);
             }
             catch (Exception ex)
@@ -181,7 +189,7 @@ namespace gestion_de_comisiones.Servicios
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
-                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);                
+                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);
                 if (confirm)
                 {
                     return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
@@ -202,20 +210,23 @@ namespace gestion_de_comisiones.Servicios
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.user} inicio el servicio handleConfirmarPagosTransferencias() ");
+                Logger.LogInformation($"GestionPagosServices - usuario : {param.user} inicio el servicio handleConfirmarPagosTransferencias() body: {param}");
                 GestionPagosEvent r = Repository.handleConfirmarPagosTransferencias(param);
+                Logger.LogInformation($"GestionPagosServices Repuesta del repository handleConfirmarPagosTransferencias() eventType: {r.eventType}, message: {r.message}");
                 if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
                     r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
-                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS)
+                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
+                    r.eventType == GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS)
                 {
                     throw new Exception(r.message);
-                }                                
-                return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");                                
+                }
+                return Respuesta.ReturnResultdo(0, r.message, "");
             }
             catch (Exception ex)
             {
-                Logger.LogInformation($"usuario : {param.user} CATCH handleConfirmarPagosTransferencias(), error {ex}");
-                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
+                Logger.LogInformation($"GestionPagosServices - usuario : {param.user} CATCH handleConfirmarPagosTransferencias(), error {ex}");
+                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
             }
         }
 
@@ -266,7 +277,8 @@ namespace gestion_de_comisiones.Servicios
                 else if (@event.eventType == GestionPagosEvent.NO_EXISTEN_PENDIENTES_NI_RECHAZADOS)
                 {
                     return Respuesta.ReturnResultdo(0, @event.message, @event.dataVerify);
-                } else
+                }
+                else
                 {
                     throw new Exception(@event.message);
                 }
@@ -297,5 +309,74 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
+        public object CerrarPagoComision(CerrarPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
+
+                int idEstadoComision = 10; //VARIABLE
+                int idTipoComisionPagoComision = 1; //parametro
+                int idTipoFormaPagoSionPay = 1; //parametro
+                int idTipoFormaPagoTransferencia = 2; //parametro
+                                                      //
+                RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoSionPay);
+                if (sionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos realizados por SION PAY.", " ");
+                if (sionPay.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes en el pago de sion pay.", sionPay);
+
+                RespuestaPorTipoPagoModel transacion = Repository.VerificarTipoPagoCiclo(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if (transacion.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (transacion.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes en los Pagos de trasferencia, verifique los montos", transacion);
+
+                RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param.idCiclo, param.usuarioLogin, idEstadoComision, idTipoComisionPagoComision, idTipoFormaPagoTransferencia);
+                if (verificarMonto.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (verificarMonto.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pago Pendientes verificar los monto de las transferencias ", verificarMonto);
+
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param, idTipoComisionPagoComision);
+                if (cerrarPago < 0)
+                    return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+                if (cerrarPago == 2)
+                    return Respuesta.ReturnResultdo(0, "la comision se cerro con exito", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre", "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch CerrarPagoComision()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
+            }
+        }
+        public object BuscarFreelancerPagosTransferencias(DownloadFileTransferenciaInput param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.user} inicio el servicio BuscarFreelancerPagosTransferencias() ");
+                var file = Repository.BuscarFreelancerPagosTransferencias(param);
+                if (file == null)
+                {
+                    return Respuesta.ReturnResultdo(1, "No se encontraron resultados", file);
+                }
+                else
+                {
+                    return Respuesta.ReturnResultdo(0, "Resultado encontrado", file);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.user} error catch BuscarFreelancerPagosTransferencias()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "Error de conexion", "Ocurrió algo inesperado con la comunicación con el servidor.");
+            }
+        }
+
+        public List<RespuestaDetalleComision> ObtenerDetalleComision(ParametrosDetalleComision param)
+        {
+            return Repository.ObtenerDetalleComision(param);
+        }
     }
 }
