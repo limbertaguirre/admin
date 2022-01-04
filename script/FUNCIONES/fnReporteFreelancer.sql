@@ -3,7 +3,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create function [dbo].[fnReporteFreelancer](@IDFICHA int)
+CREATE function [dbo].[fnReporteFreelancer](@IDFICHA int)
 returns TABLE
 as
 return(
@@ -24,7 +24,8 @@ from BDMultinivel.dbo.GP_COMISION_DETALLE GPCD
     LEFT JOIN BDMultinivel.dbo.TIPO_PAGO TIPAGO ON TIPAGO.id_tipo_pago = LISTFO.id_tipo_pago
     LEFT JOIN BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL FPAGO  ON FPAGO.id_lista_formas_pago = LISTFO.id_lista_formas_pago
     LEFT JOIN BDPuntosCash.dbo.CUENTA CU ON CU.id_usuario COLLATE Modern_Spanish_CI_AS = FIC.Ci
- where (TIPAGO.id_tipo_pago = 1 or TIPAGO.id_tipo_pago = 2) 
+where (TIPAGO.id_tipo_pago = 1 or TIPAGO.id_tipo_pago = 2) 
+    AND gcec.habilitado = 1
     AND(FPAGO.id_estado_listado_forma_pago = 3 or GCEC.id_estado_comision IN (9, 13))
     AND GPCD.id_ficha = @IDFICHA
 ) DAT group by ciclo, tipo_pago, nro_cuenta, cuenta_banco)

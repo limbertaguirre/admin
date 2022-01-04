@@ -175,12 +175,12 @@ const FormaPagoRezagado = ({ location }) => {
             icon={<Home fontSize="small" />}
           />
           <StyledBreadcrumb key={2} component="a" label="Pago de comisiones" />
-          <StyledBreadcrumb key={3} label="Forma de pagos" />
+          <StyledBreadcrumb key={3} label="Forma de pago rezagado" />
         </Breadcrumbs>
       </div>
       <br />
       <Typography variant="h4" gutterBottom>
-        {"Forma de pagos"}
+        Forma de pago rezagado
       </Typography>
       <Grid container item xs={12} justify="flex-end">
         {pendienteFormaPago && (
@@ -226,36 +226,32 @@ const FormaPagoRezagado = ({ location }) => {
           <Grid item xs={12} md={3} className={style.containerSave}>
             {statusBusqueda && (
               <>
-                {
-                  // validarPermiso(
-                  //   perfiles,
-                  //   location.state.namePagina + permiso.CREAR
-                  // )
-                  true ? (
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      className={style.submitSAVE}
-                      onClick={() => verificarConfirmarFomaPago()}
-                    >
+                {validarPermiso(
+                  perfiles,
+                  location.state.namePagina + permiso.CREAR
+                ) ? (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={style.submitSAVE}
+                    onClick={() => verificarConfirmarFomaPago()}
+                  >
+                    <Save style={{ marginRight: "5px" }} /> CERRAR FORMA PAGO
+                  </Button>
+                ) : (
+                  <Tooltip
+                    disableFocusListener
+                    disableTouchListener
+                    TransitionComponent={Zoom}
+                    title={"Sin Acceso"}
+                  >
+                    <Button variant="contained">
+                      {" "}
                       <Save style={{ marginRight: "5px" }} /> CERRAR FORMA PAGO
                     </Button>
-                  ) : (
-                    <Tooltip
-                      disableFocusListener
-                      disableTouchListener
-                      TransitionComponent={Zoom}
-                      title={"Sin Acceso"}
-                    >
-                      <Button variant="contained">
-                        {" "}
-                        <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
-                        PAGO
-                      </Button>
-                    </Tooltip>
-                  )
-                }
+                  </Tooltip>
+                )}
               </>
             )}
           </Grid>
@@ -347,17 +343,15 @@ const FormaPagoRezagado = ({ location }) => {
         seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
         idCiclo={idCiclo}
         pendienteFormaPago={pendienteFormaPago}
-        permisoCrear={true}
-        permisoActualizar={true}
         idComision={cicloSeleccionado ? cicloSeleccionado.idComision : null}
-        // permisoActualizar={validarPermiso(
-        //   perfiles,
-        //   location.state.namePagina + permiso.ACTUALIZAR
-        // )}
-        // permisoCrear={validarPermiso(
-        //   perfiles,
-        //   location.state.namePagina + permiso.CREAR
-        // )}
+        permisoActualizar={validarPermiso(
+          perfiles,
+          location.state.namePagina + permiso.ACTUALIZAR
+        )}
+        permisoCrear={validarPermiso(
+          perfiles,
+          location.state.namePagina + permiso.CREAR
+        )}
       />
       <TipoPagosModal
         open={openTipoPago}
