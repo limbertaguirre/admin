@@ -69,7 +69,7 @@ let ConfirmarPago = ({
               <br />
               <br />
               <Typography variant="caption" display="block" gutterBottom>
-                {mensaje}
+                <strong></strong>{mensaje}
               </Typography>
               <br />
             </Alert>

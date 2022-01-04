@@ -141,11 +141,12 @@ namespace gestion_de_comisiones.Servicios
                 Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} inicio el servicio ConfirmarPagosRezagadosTransferencias() body: {param}");
                 GestionPagosRezagadosEvent r = Repository.ConfirmarPagosRezagadosTransferencias(param);
                 Logger.LogInformation($"GestionPagosRezagadosService Repuesta del repository ConfirmarPagosRezagadosTransferencias() eventType: {r.eventType}, message: {r.message}");
-                if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
-                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
-                    r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
-                    r.eventType == GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
-                    r.eventType == GestionPagosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS)
+                if (r.eventType == GestionPagosRezagadosEvent.ERROR || r.eventType == GestionPagosRezagadosEvent.ROLLBACK_ERROR ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS ||
+                    r.eventType == GestionPagosRezagadosEvent.EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS)
                 {
                     throw new Exception(r.message);
                 }
@@ -154,7 +155,7 @@ namespace gestion_de_comisiones.Servicios
             catch (Exception ex)
             {
                 Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} CATCH ConfirmarPagosRezagadosTransferencias(), error {ex}");
-                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
+                return Respuesta.ReturnResultdo(1, ex.Message, "problemas en el servidor, intente mas tarde");
             }
         }
 
@@ -226,7 +227,7 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.UsuarioLogin} inicio el servicio PagarComisionRezagadosSionPayTodo.");
                 //agregar verificar pago sion pay rezagado
-                int idEstadoComision = GpEstadoComision.PENDIENTE_FORMA_DE_PAGO_9;              
+                int idEstadoComision = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;              
                 int idTipoComision = GpTipoComision.PAGO_REZAGADOS_2; //parametro rezagado
                 int idTipoFormaPagoSionPay =  TipoPago.SION_PAY;
                 int idEstadoListaFormaPago = EstadoListadoFormaPago.PAGO_EXITOSO_3; 
@@ -341,6 +342,47 @@ namespace gestion_de_comisiones.Servicios
             {
                 Logger.LogInformation($"usuario : {param.usuarioLogin} error catch ListarComisionesFormaPagoPorCarnet() al obtener lista de ciclos ,error mensaje: {ex.Message}");
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de comisiones", "problemas en el servidor, intente mas tarde");
+            }
+        }
+
+        public object CerrarPagoComision(CerrarPagoParam param)
+        {
+            try
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} inicio el servicio CerrarPagoComision() ");
+
+                int idTipoFormaPagoSionPay = 1;
+                int idTipoFormaPagoTransferencia = 2;
+
+                RespuestaPorTipoPagoModel sionPay = Repository.VerificarTipoPagoCiclo(param, idTipoFormaPagoSionPay);
+                if (sionPay.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos realizados por SION PAY.", " ");
+                if (sionPay.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes en el pago de sion pay.", sionPay);
+
+                RespuestaPorTipoPagoModel transacion = Repository.VerificarTipoPagoCiclo(param, idTipoFormaPagoTransferencia);
+                if (transacion.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (transacion.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes en los Pagos de trasferencias, verifique los montos ", transacion);
+
+                RespuestaPorTipoPagoModel verificarMonto = Repository.VerificarTransaccionRechazadoMontoCero(param, idTipoFormaPagoTransferencia);
+                if (verificarMonto.CodigoRespuesta == -1)
+                    return Respuesta.ReturnResultdo(1, "Problemas al verificar los pagos por transferencias.", " ");
+                if (verificarMonto.Cantidad > 0)
+                    return Respuesta.ReturnResultdo(1, "Pagos pendientes, verificar los montos de las transferencias ", verificarMonto);
+
+                var cerrarPago = Repository.CerrarPagoComisionPorTipoComision(param);
+                if (cerrarPago < 0)
+                    return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre.", "");
+                if (cerrarPago == 2)
+                    return Respuesta.ReturnResultdo(0, "La comisión se cerró con exito.", "");
+                return Respuesta.ReturnResultdo(1, "Problemas al ejecutar el cierre.", "");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogInformation($"usuario : {param.usuarioLogin} error catch CerrarPagoComision()  {ex.Message}");
+                return Respuesta.ReturnResultdo(1, "problemas al obtener al cerrar la comision", "problemas en el servidor, intente mas tarde");
             }
         }
     }

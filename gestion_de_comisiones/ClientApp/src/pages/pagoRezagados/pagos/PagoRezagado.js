@@ -108,7 +108,6 @@ const useStyles = makeStyles((theme) => ({
 
 const PagoRezagado = ({ location }) => {
   const style = useStyles();
-  console.log(location);
   const {
     idCiclo,
     openTransferenciasDialog,
@@ -184,37 +183,34 @@ const PagoRezagado = ({ location }) => {
               <Grid item xs={12} sm={3} md={3} className={style.containerSave}>
                 {statusBusqueda && (
                   <>
-                    {
-                      // validarPermiso(
-                      //   perfiles,
-                      //   location.state.namePagina + permiso.CREAR
-                      // )
-                      true ? (
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          className={style.submitCargar}
-                          onClick={() => null}
-                        >
-                          <Save style={{ marginRight: "5px" }} /> CERRAR PAGOS
-                          REZAGADOS
+                    {validarPermiso(
+                      perfiles,
+                      location.state.namePagina + permiso.CREAR
+                    ) ? (
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={style.submitCargar}
+                        onClick={confirmarCierrePagos}
+                      >
+                        <Save style={{ marginRight: "5px" }} /> CERRAR PAGOS
+                        REZAGADOS
+                      </Button>
+                    ) : (
+                      <Tooltip
+                        disableFocusListener
+                        disableTouchListener
+                        TransitionComponent={Zoom}
+                        title={"Sin Acceso"}
+                      >
+                        <Button variant="contained">
+                          {" "}
+                          <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
+                          PAGO
                         </Button>
-                      ) : (
-                        <Tooltip
-                          disableFocusListener
-                          disableTouchListener
-                          TransitionComponent={Zoom}
-                          title={"Sin Acceso"}
-                        >
-                          <Button variant="contained">
-                            {" "}
-                            <Save style={{ marginRight: "5px" }} /> CERRAR FORMA
-                            PAGO
-                          </Button>
-                        </Tooltip>
-                      )
-                    }
+                      </Tooltip>
+                    )}
                   </>
                 )}
               </Grid>
@@ -337,9 +333,9 @@ const PagoRezagado = ({ location }) => {
                         },
                       }}
                     >
-                      {/* <MenuItem key="1" onClick={() => abrirModal()}>
+                      <MenuItem key="1" onClick={() => abrirModal()}>
                         PAGAR SION PAY
-                      </MenuItem> */}
+                      </MenuItem>
                       <MenuItem
                         key="2"
                         onClick={() => handleClickOpenTransferencias()}
@@ -368,8 +364,7 @@ const PagoRezagado = ({ location }) => {
         selecionarDetalleFrelances={selecionarDetalleFrelances}
         seleccionarTipoFiltroBusqueda={seleccionarTipoFiltroBusqueda}
         idCiclo={idCiclo}
-        // permisoActualizar={true}
-        // permisoCrear={true}
+        cicloSeleccionado={listCiclo.find((ciclo) => ciclo.idCiclo === idCiclo)}
         permisoActualizar={validarPermiso(
           perfiles,
           location.state.namePagina + permiso.ACTUALIZAR

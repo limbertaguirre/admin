@@ -547,5 +547,17 @@ namespace gestion_de_comisiones.Repository
 
             
         }
+
+        public object VerificarCuentaSionPay(PlanillaPagoIncentivo planillaIncentivo)
+        {
+            List<VwVerificarCuentasUsuario> listaUsuariosVerificados = new List<VwVerificarCuentasUsuario>();
+            foreach(var incentivo in planillaIncentivo.DatosClientes)
+            {
+                VwVerificarCuentasUsuario usuario = new VwVerificarCuentasUsuario();
+                usuario = ContextMulti.VwVerificarCuentasUsuarios.Where(item => item.Ci == incentivo.CiCliente).FirstOrDefault();
+                listaUsuariosVerificados.Add(usuario);
+            }
+            return listaUsuariosVerificados;
+        }
     }
 }

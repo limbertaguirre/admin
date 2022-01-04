@@ -23,6 +23,7 @@ namespace gestion_de_comisiones.Repository
 
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagoRepository> Logger;
+        private readonly int ESTADO_COMISION_REZAGADOS = GpEstadoComision.PENDIENTE_FORMA_DE_PAGO_9;
 
         private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
         public GestionPagoRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagoRepository> logger)
@@ -546,7 +547,8 @@ namespace gestion_de_comisiones.Repository
                 var cantidadPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1).Count();
                 var cantidadRechazados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1).Count();
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1 && x.IdTipoComision == 2
+                    && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS && x.EstadoComisionHabilitado == true).Count();
                 var cantidadConfirmados = ContextMulti.VwObtenerInfoExcelFormatoBancoes
                     .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 2).Count();
 
@@ -555,7 +557,7 @@ namespace gestion_de_comisiones.Repository
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalRechazados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1)
+                    .Where(x => x.IdCiclo == body.cicloId && x.IdTipoPago == 2 && x.IdTipoComision == 2 && x.IdEmpresa == body.empresaId && x.IdEstadoComisionDetalleEmpresa == 1 && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS && x.EstadoComisionHabilitado == true)
                     .Sum(x => x.ImportePorEmpresa);
 
                 var sumaTotalPendientes = ContextMulti.VwObtenerInfoExcelFormatoBancoes
@@ -745,7 +747,7 @@ namespace gestion_de_comisiones.Repository
                 }
 
                 // SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS
-                int estadoComisionRezagadoId = 9;
+                int estadoComisionRezagadoId = ESTADO_COMISION_REZAGADOS;
                 Logger.LogInformation($" Iniciando carga de parametros de entrada para ejecutar el SP SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
                 Logger.LogInformation($" UsuarioId: {usuarioId}, CicloId: {body.cicloId}, EmpresaId: {body.empresaId}");
                 var parameterReturn = new SqlParameter[] {

@@ -52,8 +52,9 @@ BEGIN TRY
                                         inner join BDMultinivel.dbo.GP_COMISION_DETALLE cd on cd.id_comision = c.id_comision
                                         inner join BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I i on i.id_comision = c.id_comision
                                         where c.id_tipo_comision = @tipoComisionRezagado
-                                        and c.id_ciclo = @cicloId
+                                        and c.id_ciclo = @cicloId                                        
                                         and i.id_estado_comision = @GP_EstadoComisionRezagadoFormasPagos
+                                        and i.habilitado = @habilitado
                                         group by c.id_comision, c.id_ciclo, c.monto_total_neto, c.porcentaje_retencion
 
     SET @existeCicloComisionRezagado = (select COUNT(*) from @ExisteComision);
@@ -207,7 +208,7 @@ BEGIN TRY
         -- Actualizamos el monto total neto de la comision con la suma del monto neto de los antiguos registros de la comision detalle 
         DECLARE @idComisionAntigua int = (SELECT TOP 1 c.id_comision FROM BDMultinivel.dbo.GP_COMISION c
                                 INNER JOIN BDMultinivel.dbo.GP_COMISION_ESTADO_COMISION_I cec on cec.id_comision = c.id_comision
-                                WHERE id_ciclo = @cicloId and id_tipo_comision = @tipoComisionPago and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago)
+                                WHERE id_ciclo = @cicloId and id_tipo_comision = @tipoComisionPago and cec.id_estado_comision = @GP_EstadoComisionCerradoFormaPago and cec.habilitado = @habilitado)
 
         UPDATE BDMultinivel.DBO.GP_COMISION SET monto_total_neto = monto_total_neto - @sumaTotalMontoNetoComisionDetalle
             WHERE id_comision = @idComisionAntigua  
@@ -242,6 +243,8 @@ IF @@TRANCOUNT > 0
         return -1
     END
 END CATCH;
+
+
 
 
 

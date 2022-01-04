@@ -62,7 +62,7 @@ const ModalTipoIncentivo = (props) => {
                       >
                         <TableCell>{row.nombreCompleto} </TableCell>
                         <TableCell>{row.cedulaIdentidad}</TableCell>
-                        <TableCell>{row.cuentaBanco}</TableCell>
+                        <TableCell>{row.cuentaSionPay}</TableCell>
                         <TableCell align="right">{row.montoTotalNeto.toFixed(2)}</TableCell>
                         <TableCell>{row.pagado ? "Pagado" : "No pagado" }</TableCell>
                       </TableRow>
