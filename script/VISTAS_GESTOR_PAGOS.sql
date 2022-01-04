@@ -414,8 +414,6 @@ left join BANCO as banco
 on f.id_banco = banco.id_banco
 
 where c.id_tipo_comision = 3 
-and cde.id_estado_comision_detalle = 7
---and c.id_comision=1193
---and ces.id_estado_comision=14 
+and cde.id_estado_comision_detalle = 7 
 and lfp.id_tipo_pago=1
 GO
