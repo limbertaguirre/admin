@@ -1,4 +1,3 @@
-
 CREATE PROCEDURE [dbo].[SP3_PROCESAR_PAGO_INCENTIVO_SION_PAY_UPDATE]
      @id_Comision     int,
      @id_usuario int
@@ -26,6 +25,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 	DECLARE @AGENTE_GESTOR_EN_SION_PAY INT;
 	DECLARE @ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3 INT;
 	DECLARE @NO_EXISTE_COMISION_ID INT;
+  DECLARE @DESCRIPCION_TIPO_INCENTIVO_PAGO VARCHAR(100);
 	
 	set @ID_COMISION_PARAM=@id_Comision
 	SET @IDCICLO=0
@@ -40,19 +40,28 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 	SET @AGENTE_GESTOR_EN_SION_PAY=27; --EN PUNTOSCASH AGENTE
 	SET @ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3 = 3; --Estado_Listado_Forma_Pago
 	SET @NO_EXISTE_COMISION_ID = -2;
+  SET @DESCRIPCION_TIPO_INCENTIVO_PAGO='';
 
 	  
 	  SELECT @USUARIO_LOGUADO= usuario, @USUARIO_NOMBRE= nombres + ' '+apellidos FROM BDMultinivel.dbo.USUARIO where id_usuario=@IDUSUARIO	  
 	  SELECT @ID_COMISION_SELECTED= id_comision, @IDCICLO=id_ciclo from BDMultinivel.dbo.GP_COMISION WHERE id_comision=@ID_COMISION_PARAM and id_tipo_comision=@PARAM_ID_TIPO_COMISION_PAGO_COMISION
 	  IF @ID_COMISION_SELECTED >0
 	  BEGIN
-
+      
+                                
 		  SELECT @DESCRIPCION_CICLO= nombre FROM  BDMultinivel.dbo.CICLO WHERE id_ciclo=@IDCICLO
+      
+      SELECT TOP 1 @DESCRIPCION_TIPO_INCENTIVO_PAGO = TIP.descripcion 
+      FROM BDMultinivel.dbo.GP_COMISION_DETALLE CD      
+      INNER JOIN INCENTIVO_PAGO_COMISION AS IPC ON CD.id_comision_detalle = IPC.id_comision_detalle
+      INNER JOIN TIPO_INCENTIVO_PAGO AS TIP ON IPC.id_tipo_incentivo_pago = TIP.id_tipo_incentivo
+      where CD.id_comision= @ID_COMISION_SELECTED
 		  -----------------------
 		  DECLARE @Result NVARCHAR(20)
 		  SET @Result = CONCAT( SUBSTRING(@DESCRIPCION_CICLO, 1, 3), ' ',REVERSE(LEFT(REVERSE(@DESCRIPCION_CICLO), CHARINDEX(' ', REVERSE(@DESCRIPCION_CICLO))-1 )) )
-		  SET @DESCRIPCION_CICLO = CONCAT('Pago - Incentivo  - ', @Result)
+		  SET @DESCRIPCION_CICLO = CONCAT(CONCAT('Pago - Incentivo  - ', @DESCRIPCION_TIPO_INCENTIVO_PAGO), @Result)
 		  ---------------------------------------
+      
 		  insert into @COMISIONES  select id_comision, CD.id_comision_detalle,FIC.id_ficha,FIC.nombres +' '+ FIC.apellidos AS 'nombre', FIC.ci,TIPO.id_tipo_pago, TIPO.nombre as 'tipo_pago', CIU.nombre AS 'ciudad', PAI.nombre AS 'pais',  LIFO.id_lista_formas_pago  from BDMultinivel.dbo.GP_COMISION_DETALLE CD 
 			INNER JOIN BDMultinivel.dbo.LISTADO_FORMAS_PAGO LIFO ON LIFO.id_comisiones_detalle= CD.id_comision_detalle
 			INNER JOIN  BDMultinivel.dbo.TIPO_PAGO TIPO ON TIPO.id_tipo_pago= LIFO.id_tipo_pago
@@ -124,7 +133,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 							DECLARE @2_IDEMPRESA_item INT;
 							DECLARE @2_IDCOMPROBANTEGENERICO_item INT;
 							DECLARE @2_IDMOVIMIENTO_item INT;
-
+                
 								DECLARE COMISION_2_CURSOR CURSOR FOR 
 								Select id_comision_detalle_empresa, monto_neto, id_empresa, id_comprobante_generico, id_movimiento from @2_COMISIONES_empresas
 								OPEN COMISION_2_CURSOR
@@ -148,7 +157,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 												select @SIONPAY_IDCOMISIONDETALLE= id_comisiones_detalle, @SIONPAY_NROCUENTA= nro_cuenta,@SIONPAY_MONTO= monto from BDPuntosCash.dbo.COMISIONES_DETALLE 
 												where lciclo_id = @IDCICLO and id_comisiones_estado_maestro_detalle = 1 and id_movimiento = 0 and doc_id=@2DE_CARNET_ITEM and id_empresa=@2_IDEMPRESA_CNX
 												ORDER BY doc_id, monto DESC												
-
+                        
 											---VERIFICAMOS EL DETALLE DE COMISION SI VIENE NULL FUE PROCESADO Y  YA NO EXISTE CON ESTE ESTADO
 											IF @SIONPAY_IDCOMISIONDETALLE >0
 											BEGIN
@@ -156,6 +165,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 												DECLARE @CUENTAID INT; DECLARE @SALDOACTUAL DECIMAL(18,2); DECLARE @SALDOANTERIOR DECIMAL(18,2);
 												SET @CUENTAID=0; SET @SALDOACTUAL=0; SET @SALDOANTERIOR=0;
 												SELECT @CUENTAID= id_cuenta, @SALDOACTUAL= saldo_actual FROM BDPuntosCash.DBO.CUENTA WHERE nro_cuenta=@SIONPAY_NROCUENTA
+                        
 												IF @CUENTAID > 0 --TIENE CUENTA
 												BEGIN
 														DECLARE @IDMOVIMIENTO_GENERIC INT;
@@ -166,7 +176,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 														SET @SALDOANTERIOR= @SALDOACTUAL;
 														SET @SALDOACTUAL= @SALDOACTUAL + @SIONPAY_MONTO;
 														UPDATE BDPuntosCash.DBO.CUENTA  SET saldo_actual=@SALDOACTUAL WHERE id_cuenta= @CUENTAID;
-
+                            
 														INSERT INTO BDPuntosCash.dbo.movimiento(id_cuenta, id_agente, id_tipo_movimiento,monto,saldo_actual,saldo_anterior, fecha, descripcion, id_estado_movimiento)
 																VALUES(
 																@CUENTAID, -- idCuenta, //19,//
@@ -184,16 +194,21 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 													update BDPuntosCash.DBO.COMISIONES_DETALLE set id_movimiento= @IDMOVIMIENTO_GENERIC, fecha_movimiento =GETDATE(), id_comisiones_estado_maestro_detalle=1 WHERE id_comisiones_detalle=@SIONPAY_IDCOMISIONDETALLE
 													-- --GENERAR COMPROBANTE MEDIANTE SP-----------------------------
 														BEGIN TRY
-														   
+														    
+                                											
 																DECLARE @RESPUESTA INT;
-																EXEC BDConexionADVEL.dbo.SP_GENERARCOMPROBANTE_RECARGA_COMISIONES 	@IDMOVIMIENTO_GENERIC	, @RESPUESTA OUTPUT, 	@2_IDEMPRESA_CNX
+																/*EXEC BDConexionADVEL.dbo.SP_GENERARCOMPROBANTE_RECARGA_COMISIONES 	@IDMOVIMIENTO_GENERIC	, @RESPUESTA OUTPUT, 	@2_IDEMPRESA_CNX
 																IF @RESPUESTA > 1
 																BEGIN
+                                
 																SET @IDCOMPROBANTE_NEW_GENERICO= @RESPUESTA;
-																END
+                                
+																END*/
+                                
 														     
 														END TRY
 														BEGIN CATCH
+                                  
 																	SET @IMPBODY =  concat(' ERROR NO SE PUEDO GENERAR , exec [SP_2_PROCESAR_PAGO_SION_PAY_UPDATE_DETALLES] EL IDMOVIMIENTO :   ', @IDMOVIMIENTO_GENERIC  );
 																SET @IMPSUBJECT = CONCAT('ALERTA PRODUCCION : NO SE PUDO GENERAR COMPROBANTE ' , @IDMOVIMIENTO_GENERIC);
 																	--EXECUTE  msdb.dbo.sp_send_dbmail @profile_name = 'NotificacionSQL', 
@@ -203,7 +218,7 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 													   	END CATCH
 													-- --ACTUALIZAR DETALLE EMPRESA MULTINIVEL: IDMOVIMIENTO, Y COMPROBANT @IDCOMPROBANTE_NEW_GENERICO
 													update  BDMultinivel.dbo.COMISION_DETALLE_EMPRESA set id_movimiento = @IDMOVIMIENTO_GENERIC, id_comprobante_generico= @IDCOMPROBANTE_NEW_GENERICO, fecha_pago= GETDATE() where id_comision_detalle_empresa= @2_IDCOMISIONEMPRESA_item
-
+                          
 												END
 											END																							
 										
@@ -261,3 +276,4 @@ BEGIN CATCH
 		 return -1
       END
 END CATCH;
+GO
