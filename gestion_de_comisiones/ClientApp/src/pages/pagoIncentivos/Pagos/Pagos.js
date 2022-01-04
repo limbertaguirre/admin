@@ -50,7 +50,6 @@ const PagoIncentivo = () =>{
       nroCicloMensual: parseInt(idCiclo)
     };
     requestGet('IncentivoSionPay/ObtenerTipoIncentivosSegunCicloMensual',data,dispatch).then((res)=>{
-      console.log(res)
       if(res.code === 0){
         setListaTipoIncentivo(res.data);
         res.data.length === 0 && dispatch(ActionMensaje.showMessage({ message: "No se encontraron incentivos en este ciclo", variant: "info" }));
@@ -67,10 +66,8 @@ const PagoIncentivo = () =>{
       idTipoIncentivo: idTipoIncentivo
     }
     requestGet('IncentivoSionPay/ObtenerIncentivosPagar',data,dispatch).then((res)=>{
-      console.table(res.data)
       if(res.code === 0){
         setListaIncentivo(res.data);
-        console.table(res.data)
         obtenerMontoTotalIncentivo(res.data)
       }else{
         setListaIncentivo([]);

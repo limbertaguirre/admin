@@ -132,14 +132,14 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller ObtenerTipoPagos()");
+                Logger.LogInformation($"usuario : {usuarioLogin} Inicio el controller IncentivoSionPayController -> ObtenerIncentivosPagar()");
                 var incentivosAPagar = Service.ObtenerPagosIncentivosSegunCicloIdTipoIncentivo(nroCicloMensual, idTipoIncentivo, usuarioLogin);
-                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller ObtenerTipoPagos()");
+                Logger.LogInformation($"usuario : {usuarioLogin} Fin del controller IncentivoSionPayController -> ObtenerIncentivosPagar()");
                 return Ok(incentivosAPagar);
             }
             catch (Exception ex)
             {
-                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => ObtenerIncentivosPagar() ");
+                Logger.LogError($"usuario request: {usuarioLogin} error catch controller  IncentivoController()  => ObtenerIncentivosPagar() Error: {ex.Message} ");
                 var result = new GenericDataJson<string> { Code = 1, Message = "Error al cargar plantillas." };
                 return Ok(result);
             }        
@@ -150,9 +150,9 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
+                Logger.LogInformation($"usuario request : {pagoIncentivo.UsuarioLogin} Inicio el controller AplicacionesController ");
                 object resultTipoIncentivoPago = Service.PagarIncentivos(pagoIncentivo.IncentivosPagar, pagoIncentivo.UsuarioLogin);
-                //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
+                Logger.LogInformation($"usuario : {pagoIncentivo.UsuarioLogin} Fin del controller AplicacionesController => Index()");
                 return Ok(resultTipoIncentivoPago);
             }
             catch (Exception ex)
@@ -168,9 +168,9 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                //Logger.LogInformation($"usuario request : {tipoIncentivoPago.Usuario} Inicio el controller AplicacionesController ");
+                Logger.LogInformation($"usuario request : {listaIncentivo.UsuarioNombre} Inicio el controller IncentivoSionPayController -> VerificarCuentaSionPay() ");
                 object resultVerificarCuentaSionPay = Service.VerificarCuentaSionPay(listaIncentivo);
-                //Logger.LogInformation($"usuario : {tipoIncentivoPago.Usuario} Fin del controller AplicacionesController => Index()");
+                Logger.LogInformation($"usuario : {listaIncentivo.UsuarioNombre} Fin del controller IncentivoSionPayController -> VerificarCuentaSionPay()");
                 return Ok(resultVerificarCuentaSionPay);
             }
             catch (Exception ex)

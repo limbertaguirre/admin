@@ -103,7 +103,6 @@ const CargarPlanilla = ()=> {
       }
     })
     .then(({rows, errors})=>{
-      console.log(errors)
       if(rows.length === 0){
         dispatch(ActionMensaje.showMessage({ message: 'La planilla no tiene contiene datos', variant: "info" }));
         setDatosExcel([])
@@ -119,7 +118,6 @@ const CargarPlanilla = ()=> {
         }
         requestPost('IncentivoSionPay/VerificarCuentaSionPay',data, dispatch)
         .then((response)=>{
-          console.log(response)
           setDatosExcel([])
           let flagUsuarioInexistente = false;
           let flagUsuarioSinSionPay = false;
@@ -144,7 +142,6 @@ const CargarPlanilla = ()=> {
           }
         })
         .catch((error)=>{
-          console.log(error)
         })
       }
     })
