@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Modelos.Factura;
 using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
@@ -25,6 +26,7 @@ namespace gestion_de_comisiones.Repository
         private readonly int TIPO_PAGO_TRANSFERENCIA = TipoPago.TRANSFERENCIA;
         private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
         private readonly IConfiguration Config;
+        private readonly int FORMA_PAGO_REZAGADO_CERRADO = GpEstadoComision.FORMA_PAGO_DE_COMISION_REZAGADO_CERRADO;
 
         public FormasPagosRezagadosRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, IConfiguration config ,ILogger<FormasPagosRezagadosRepository> logger)
         {
@@ -92,11 +94,9 @@ namespace gestion_de_comisiones.Repository
             {
                 Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetComisionesRezagados() ");
                 Utils.Utils.ShowValueFields(param, Logger);
-                List<VwObtenercomisione> list = new List<VwObtenercomisione>();                
-
-                int idEstadoDetalleSifacturo = 2; // Si factur[o la comision detalle
-                int idEstadoDetalleNoPresentaFactura = 6;                
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.idComision && x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                List<VwObtenercomisione> list = new List<VwObtenercomisione>();                                           
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.idComision && x.IdCiclo == param.idCiclo &&
+                    x.IdTipoComision == TIPO_COMISION_REZAGADOS && ((x.PagoDetalleHabilitado == true && x.IdEstadoListadoFormaPago > 0) || (x.PagoDetalleHabilitado == false && x.IdEstadoListadoFormaPago == 0))).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -189,14 +189,14 @@ namespace gestion_de_comisiones.Repository
         }
 
         public bool AplicarFormaPago(AplicarMetodoOutput param)
-        {
-
-            Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> AplicarFormaPago() ");
-            Utils.Utils.ShowValueFields(param, Logger);
-
+        {            
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
+                Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> AplicarFormaPago() ");
+                Utils.Utils.ShowValueFields(param, Logger);
+                int ESTADO_PAGO_RECHAZADO = 4;
+                int ESTADO_PARA_PAGAR = 1;
                 bool aplicarDescuentoGuardian = Config.GetValue<bool>("RegistrarDescuentoGuardian");
                 var objDetalle = ContextMulti.ListadoFormasPagoes.Where(x => x.IdComisionesDetalle == param.idComisionDetalle).FirstOrDefault();
                 if (objDetalle != null)
@@ -204,6 +204,24 @@ namespace gestion_de_comisiones.Repository
                     objDetalle.IdTipoPago = param.idTipoPago;
                     objDetalle.FechaActualizacion = DateTime.Now;
                     ContextMulti.SaveChanges();
+
+                    if(param.idDetalleEstadoFormaPago > 0)
+                    {
+                        var detalle = ContextMulti.GpDetalleEstadoListadoFormaPagols.Where(x => x.Id == param.idDetalleEstadoFormaPago).FirstOrDefault();                       
+                        if(detalle != null && detalle.Habilitado && detalle.IdEstadoListadoFormaPago == ESTADO_PAGO_RECHAZADO)
+                        {
+                            detalle.Habilitado = false;
+                            GpDetalleEstadoListadoFormaPagol o = new GpDetalleEstadoListadoFormaPagol
+                            {
+                                Habilitado = true,
+                                IdListaFormasPago = param.idListaFormasPago,
+                                IdEstadoListadoFormaPago = ESTADO_PARA_PAGAR,
+                                IdUsuario = param.idUsuario
+                            };
+                            ContextMulti.GpDetalleEstadoListadoFormaPagols.Add(o);
+                            ContextMulti.SaveChanges();
+                        }
+                    }                    
                 }
                 else
                 {
@@ -384,7 +402,8 @@ namespace gestion_de_comisiones.Repository
                 Logger.LogWarning($"Inicio el repository ConsultarCierreInfoFormaPagos() ");
                 Logger.LogWarning($" usuario: {usuarioLogin} parametros: idciclo:{idCiclo}, comisionId: {comisionId}, idEstadoComision: {idEstadoComision}, idEstadoDetalleSifacturo: {idEstadoDetalleSifacturo}, idEstadoDetalleNoPresentaFactura: {idEstadoDetalleNoPresentaFactura}");               
 
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comisionId && x.IdEstadoComision == idEstadoComision && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comisionId && x.IdEstadoComision == idEstadoComision &&
+                ((x.PagoDetalleHabilitado == true && x.IdEstadoListadoFormaPago > 0) || (x.PagoDetalleHabilitado == false && x.IdEstadoListadoFormaPago == 0))).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Sin Asignar", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
                 LisFormaPagos.Add(nuevoNinguno);
@@ -411,13 +430,28 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public bool CerrarFormaDePago(CierreformaPagoInput param)
+        public FormasPagosRezagadosEvent CerrarFormaDePago(CierreformaPagoInput param)
         {           
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
                 Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> CerrarFormaDePago() ");
                 Utils.Utils.ShowValueFields(param, Logger);
+                int cantidadFormaPagoRezagadosCerrados = hayFormaPagoRezagadosCerrados(param);
+                Logger.LogInformation($"Repository FormasPagosRezagadosRepository -> Fin hayFormaPagoRezagadosCerrados");
+                Logger.LogInformation($"Repository FormasPagosRezagadosRepository -> respuesta hayFormaPagoRezagadosCerrados(): {cantidadFormaPagoRezagadosCerrados}");
+                if (cantidadFormaPagoRezagadosCerrados > 0)
+                {
+                    var cycleName = ContextMulti.Cicloes
+                        .Where(x => x.IdCiclo == param.idCiclo)
+                        .Select(u => new
+                        {
+                            u.Nombre
+                        }).FirstOrDefault();
+                        
+                    string message = $"Es necesario que cierre el ciclo de {cycleName.Nombre}, de la etapa PAGO DE COMISIONES REZAGADOS para poder continuar con el cierre de la etapa actual.";
+                    return postEvent(FormasPagosRezagadosEvent.EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS, message);
+                }
 
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
@@ -447,25 +481,58 @@ namespace gestion_de_comisiones.Repository
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS] @comision_id, @id_ciclo, @id_usuario  ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($"Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS] returnValue: {returnValue}");
-                if (returnValue > 0)
+                if (returnValue == 1 || returnValue == 2)
                 {
                     dbcontextTransaction.Commit();
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS].");
-                    return true;
+                    return postEvent(FormasPagosRezagadosEvent.SUCCESS, "");
+                }
+                else if(returnValue == 3)
+                {
+                    dbcontextTransaction.Commit();
+                    Logger.LogInformation($" usuario: {param.usuarioLogin} -  Se proceso la forma de pago DE FORMA EXISTOSA EL [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS].");
+                    return postEvent(FormasPagosRezagadosEvent.ERROR_CERRAR_FORMAS_PAGOS, "Primero debe cerrar pago de comisiones rezagados para cerrar el ciclo actual de formas de pago.");
                 }
                 else
                 {
                     dbcontextTransaction.Rollback();
                     Logger.LogInformation($" usuario: {param.usuarioLogin}-  NO ROLLBACK EN EL SP [SP_PROCESAR_CERRAR_FORMA_PAGO_REZAGADOS]");
-                    return false;
+                    return postEvent(FormasPagosRezagadosEvent.ERROR, "Ocurrió un problema al cerrar el ciclo.");
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWarning($" usuario: {param.usuarioLogin} error catch CerrarFormaDePago() mensaje : {ex}");
                 dbcontextTransaction.Rollback();
-                return false;
+                return postEvent(FormasPagosRezagadosEvent.ERROR, ex.Message);
             }
+        }
+
+        private int hayFormaPagoRezagadosCerrados(CierreformaPagoInput param)
+        {
+            Logger.LogInformation($"Repository GestionPagosRezagadosRepository - Inicio hayFormaPagoRezagadosCerrados");
+            Utils.Utils.ShowValueFields(param, Logger);
+            return ContextMulti.GpComisions.Join(ContextMulti.Cicloes,
+                                            GpComision => GpComision.IdCiclo,
+                                            Ciclo => Ciclo.IdCiclo,
+                                        (GpComision, Ciclo) => new
+                                        {
+                                            idComision = GpComision.IdComision,
+                                            tipoComision = GpComision.IdTipoComision,
+                                            idCiclo = Ciclo.IdCiclo
+                                        }).Join(ContextMulti.GpComisionEstadoComisionIs,
+                                                GpComision => GpComision.idComision,
+                                                GpComisionEstadoComisionI => GpComisionEstadoComisionI.IdComision,
+                                                (GpComision, GpComisionEstadoComisionI) => new
+                                                {
+                                                    idEstadoComision = GpComisionEstadoComisionI.IdEstadoComision,
+                                                    habilitado = GpComisionEstadoComisionI.Habilitado,
+                                                    idComision = GpComision.idComision,
+                                                    idCiclo = GpComision.idCiclo,
+                                                    tipoComision = GpComision.tipoComision
+                                                }
+                                    ).Where(x => x.habilitado == true && x.idCiclo == param.idCiclo && x.idEstadoComision == FORMA_PAGO_REZAGADO_CERRADO
+                                      && x.tipoComision == TIPO_COMISION_REZAGADOS).Count();            
         }
 
         public object VerificarAutorizadorPorComision(AutorizacionVerificarParam param)
@@ -612,10 +679,9 @@ namespace gestion_de_comisiones.Repository
                 Utils.Utils.ShowValueFields(param, Logger);
 
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
-                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
-                int idEstadoDetalleNoPresentaFactura = 6;// estado de la tabla detalle de comision
-                var comision = ContextMulti.GpComisions.Where(x => x.IdCiclo == param.idCiclo && x.IdTipoComision == TIPO_COMISION_REZAGADOS).FirstOrDefault();
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == comision.IdComision && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo &&
+                x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoComision == TIPO_COMISION_REZAGADOS &&
+                ((x.PagoDetalleHabilitado == true && x.IdEstadoListadoFormaPago > 0) || (x.PagoDetalleHabilitado == false && x.IdEstadoListadoFormaPago == 0))).ToList();
                 var lista = ListComisiones.Where(x => x.Ci.Contains(param.nombreCriterio.Trim())).ToList();
                 return lista;
             }
@@ -634,7 +700,8 @@ namespace gestion_de_comisiones.Repository
                 List<VwObtenercomisionesFormaPagoes> list = new List<VwObtenercomisionesFormaPagoes>();
                 Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> FiltrarComisionPagoPorTipoPago() ");
                 Utils.Utils.ShowValueFields(param, Logger);
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoPago == param.idTipoPago).ToList();
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdCiclo == param.idCiclo && x.IdComision == param.comisionId && x.IdTipoComision == TIPO_COMISION_REZAGADOS && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && x.IdTipoPago == param.idTipoPago &&
+                ((x.PagoDetalleHabilitado == true && x.IdEstadoListadoFormaPago > 0) || (x.PagoDetalleHabilitado == false && x.IdEstadoListadoFormaPago == 0))).ToList();
                 return ListComisiones;
             }
             catch (Exception ex)
@@ -652,10 +719,10 @@ namespace gestion_de_comisiones.Repository
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
                 Logger.LogInformation($"Inicio repository FormasPagosRezagadosRepository -> GetComisionesPorFormaPago() ");
                 Utils.Utils.ShowValueFields(param, Logger);
-
-                int idEstadoDetalleSifacturo = 2; //variable , si facturo la comision detalle
-                int idEstadoDetalleNoPresentaFactura = 6;
-                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS && (x.EstadoFacturoId == idEstadoDetalleSifacturo || x.EstadoFacturoId == idEstadoDetalleNoPresentaFactura)).ToList();
+               
+                var ListComisiones = ContextMulti.VwObtenercomisionesFormaPagoes.Where(x => x.IdComision == param.comisionId && x.IdEstadoComision == ESTADO_COMISION_REZAGADOS_FORMAS_PAGOS &&
+                    x.IdTipoComision == TIPO_COMISION_REZAGADOS &&
+                    ((x.PagoDetalleHabilitado == true && x.IdEstadoListadoFormaPago > 0) || (x.PagoDetalleHabilitado == false && x.IdEstadoListadoFormaPago == 0))).ToList();
                 List<FormaPagoModel> LisFormaPagos = ContextMulti.TipoPagoes.Where(x => x.Estado == true).Select(p => new FormaPagoModel(p.IdTipoPago, p.Nombre, p.Descripcion, p.IdUsuario, p.FechaCreacion, p.FechaActualizacion, (bool)p.Estado, p.Icono)).ToList();
                 FormaPagoModel nuevoNinguno = new FormaPagoModel() { IdTipoPago = 0, Nombre = "Ninguno", Descripcion = "", IdUsuario = 1, Estado = true, Icono = "ningunPago" };
                 LisFormaPagos.Add(nuevoNinguno);
@@ -681,6 +748,20 @@ namespace gestion_de_comisiones.Repository
                 List<FormaPagoDisponiblesModel> list = new List<FormaPagoDisponiblesModel>();
                 return list;
             }
+        }        
+
+        private FormasPagosRezagadosEvent postEvent(int type, string message)
+        {
+            FormasPagosRezagadosEvent e = new FormasPagosRezagadosEvent
+            {
+                eventType = type
+            };
+            if (message != null)
+            {
+                e.message = message;
+            }
+            return e;
         }
+
     }
 }

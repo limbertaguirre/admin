@@ -98,6 +98,10 @@ DECLARE @COMISIONES as table(id_comision int, idComisionDetalle  int, idFicha IN
 									 GETDATE() --fecha_actualizacion
 								   );
 							END
+							ELSE
+							BEGIN
+								 UPDATE BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL  SET id_estado_listado_forma_pago=@ID_ESTADO_LISTA_FORMA_PAGO_EXISTOSO_3, fecha_actualizacion= GETDATE()  where id=@DETALLE_ESTADO_LISTADO_FORMA_PAGO
+							END
 					-------------------------------------------------------------------------------
 					DECLARE @2_CANTIDADempresas INT;
 					DECLARE @2_CUENTA_SIONPAY VARCHAR(100);

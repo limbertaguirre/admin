@@ -13,5 +13,7 @@ namespace gestion_de_comisiones.Modelos.FormaPago
         public int idTipoPago { get; set; }
         public int idCiclo { get; set; }
         public int comisionId { get; set; }
+        public int idListaFormasPago { get; set; }
+        public int idDetalleEstadoFormaPago { get; set; }
     }
 }

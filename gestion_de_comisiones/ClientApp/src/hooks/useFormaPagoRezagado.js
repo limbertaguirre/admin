@@ -5,7 +5,6 @@ import { verificarAcceso } from "../lib/accesosPerfiles";
 import { requestGet, requestPost } from "../service/request";
 import { showMessage } from "../redux/actions/messageAction";
 import * as permiso from "../routes/permiso";
-import * as Actions from "../redux/actions/FormaPagosAction";
 
 const useFormaPagoRezagado = () => {
   let history = useHistory();
@@ -33,6 +32,8 @@ const useFormaPagoRezagado = () => {
   const [listTipoPagos, setListTipoPagos] = useState([]);
   const [idcomisionDetalleSelect, setIdcomisionDetalleSelect] = useState(0);
   const [idtipoPagoSelect, setIdtipoPagoSelect] = useState("0");
+  const [idListaFormasPagoSelect, setIdListaFormasPagoSelect] = useState(0);
+  const [idDetalleEstadoFormaPagoSelect, setIdDetalleEstadoFormaPagoSelect] = useState(0);
 
   const [openModalAutorizadores, setOpenModalAutorizadores] = useState(false);
   const [pendienteFormaPago, setPendienteFormaPago] = useState(false);
@@ -44,15 +45,15 @@ const useFormaPagoRezagado = () => {
   };
 
   useEffect(() => {
-    // try {
-    //   verificarAcceso(
-    //     perfiles,
-    //     location.state.namePagina + permiso.VISUALIZAR,
-    //     history
-    //   );
-    // } catch (err) {
-    //   verificarAcceso(perfiles, "none", history);
-    // }
+    try {
+      verificarAcceso(
+        perfiles,
+        location.state.namePagina + permiso.VISUALIZAR,
+        history
+      );
+    } catch (err) {
+      verificarAcceso(perfiles, "none", history);
+    }
     handleOnGetCiclos();
   }, []);
 
@@ -179,11 +180,15 @@ const useFormaPagoRezagado = () => {
   const selecionarDetalleFrelances = (
     comisionDetalleId,
     ciSeleccionado,
-    idTipoPago
+    idTipoPago,
+    idListaFormasPago,
+    idDetalleEstadoFormaPago
   ) => {
     setIdtipoPagoSelect(String(idTipoPago));
     listarTiposPagos(ciSeleccionado);
     setIdcomisionDetalleSelect(comisionDetalleId);
+    setIdListaFormasPagoSelect(idListaFormasPago);
+    setIdDetalleEstadoFormaPagoSelect(idDetalleEstadoFormaPago);
   };
   const cerrarModalTipoPagoModal = () => {
     setTipoPago(false);
@@ -234,6 +239,8 @@ const useFormaPagoRezagado = () => {
         idUsuario: idUsuario,
         idCiclo: idCiclo,
         comisionId: cicloObjectSelected.idComision,
+        idListaFormasPago: parseInt(idListaFormasPagoSelect),
+        idDetalleEstadoFormaPago: parseInt(idDetalleEstadoFormaPagoSelect)
       };
 
       let response = await requestPost(
@@ -415,7 +422,7 @@ const useFormaPagoRezagado = () => {
         usuarioLogin: userName,
         idUsuario: idUsuario,
         idCiclo: parseInt(idCiclo),
-        comisionId: cicloObjectSelected.idComision
+        comisionId: cicloObjectSelected.idComision,
       };
       let response = await requestPost(url, body, dispatch);
 
