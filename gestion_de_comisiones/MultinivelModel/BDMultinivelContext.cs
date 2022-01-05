@@ -1,6 +1,8 @@
 ﻿using System;
+using gestion_de_comisiones.Servicios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -8,14 +10,21 @@ namespace gestion_de_comisiones.MultinivelModel
 {
     public partial class BDMultinivelContext : DbContext
     {
-        public BDMultinivelContext()
+        public BDMultinivelContext(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
-
+        public IConfiguration Configuration { get; }
         public BDMultinivelContext(DbContextOptions<BDMultinivelContext> options)
             : base(options)
         {
         }
+
+        public BDMultinivelContext()
+        {
+        }
+
+        SeguridadService Seguridad = new SeguridadService();
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
@@ -95,8 +104,9 @@ namespace gestion_de_comisiones.MultinivelModel
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
+                string conexEnc = Configuration.GetConnectionString("ConnectionBD");              
+                optionsBuilder.UseSqlServer(Seguridad.DesEncriptarAes("tSALHdk0DPD6pvV5RElJ023gvxC+dQWG7La6z//aKuA4flsEKrRTqw3R22cuxz8hl4U8IGvCJNdkvuMT38CYqZaiQrA416W5KljoDd59WZ8="));                
+                // optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
             }
         }
 
