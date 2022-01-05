@@ -8,5 +8,6 @@ namespace gestion_de_comisiones.Servicios.Interfaces
     public interface ISeguridadService
     {
         public string EncriptarAes(string Cadena);
+        public string DesEncriptarAes(string Cadena);
     }
 }
