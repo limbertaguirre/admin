@@ -279,11 +279,13 @@ GO
 	c.id_comision,
 	c.id_tipo_comision,
 	cec.id_estado_comision,
+    cec.habilitado estado_comision_habilitado,
 	c.id_ciclo,
 	ci.nombre,
 	cde.id_empresa,
 	TRIM(e.nombre) as empresa,
 	l.id_lista_formas_pago,
+    dl.id id_detalle_estado_listado_forma_pago,
 	dl.id_estado_listado_forma_pago,
 	dl.habilitado estado_listado_forma_pago_habilitado,
 	l.id_comisiones_detalle,
@@ -326,7 +328,7 @@ GO
 	--and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
 	group by l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, f.cuenta_bancaria, b.nombre, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa,
 	e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago, l.id_lista_formas_pago, c.id_comision, ci.nombre, c.fecha_creacion, c.fecha_actualizacion,
-	dl.id_estado_listado_forma_pago, dl.habilitado, c.id_tipo_comision, f.id_ficha, cec.id_estado_comision
+	dl.id_estado_listado_forma_pago, dl.habilitado, c.id_tipo_comision, f.id_ficha, cec.id_estado_comision, cec.habilitado, dl.id
 
 GO
     CREATE VIEW [dbo].[vwObtenerCiclosRezagados]
