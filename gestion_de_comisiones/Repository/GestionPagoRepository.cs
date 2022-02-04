@@ -24,14 +24,20 @@ namespace gestion_de_comisiones.Repository
         private readonly BDMultinivelContext ContextMulti;
         private readonly ILogger<GestionPagoRepository> Logger;
         private readonly int ESTADO_COMISION_REZAGADOS = GpEstadoComision.PENDIENTE_FORMA_DE_PAGO_9;
+        private readonly int[] IDS_EMPRESAS_ACTIVAS = new int[4] { 2, 3, 7, 11};
+        private readonly int TIPO_PAGO_TRANSFERENCIA = TipoPago.TRANSFERENCIA;
 
         private readonly IEnvioCorreoRezagadoService EnvioCorreoService;
-        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, ILogger<GestionPagoRepository> logger)
+        private readonly IGenerarComprobanteBancoService GenerarComprobanteBancoService;
+        private const int CONFIRMAR_TODOS = 1;
+        private const int CONFIRMAR_SELECCION = 2;
+
+        public GestionPagoRepository(BDMultinivelContext multinivelDbContext, IEnvioCorreoRezagadoService envioCorreoService, IGenerarComprobanteBancoService generarComprobanteBancoService, ILogger<GestionPagoRepository> logger)
         {
             this.ContextMulti = multinivelDbContext;
             this.Logger = logger;
-
             this.EnvioCorreoService = envioCorreoService;
+            this.GenerarComprobanteBancoService = generarComprobanteBancoService;
         }
         public GestionPagoRepository()
         {
@@ -47,7 +53,7 @@ namespace gestion_de_comisiones.Repository
                 foreach (var c in ciclosR)
                 {
                     Logger.LogInformation($" usuario: {usuario} ciclosR => IdCiclo: {c.IdCiclo} Nombre: {c.Nombre} Estado: {c.Estado}");
-                    ciclos.Add(new CicloDto(c.IdCiclo, c.Nombre));
+                    ciclos.Add(new CicloDto(c.IdCiclo, c.Nombre, c.IdComision));
                 }
                 return ciclos;
             }
@@ -431,11 +437,13 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public bool handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        public async Task<bool> handleConfirmarPagosTransferenciasTodosAsync(DownloadFileTransferenciaInput body)
         {
+            using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
             {
-                Logger.LogInformation($" usuario: {body.user}, inicio repository handleConfirmarPagosTransferenciasTodos(): idciclo {body.cicloId}  ");
+                Logger.LogInformation($"Inicio repository handleConfirmarPagosTransferenciasTodos()");
+                Utils.Utils.ShowValueFields(body, Logger);
                 var usuarioId = ContextMulti.Usuarios
                     .Where(x => x.Usuario1 == body.user)
                     .Select(u => new
@@ -443,7 +451,7 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
-                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasTodos()");
+                Logger.LogInformation($"handleConfirmarPagosTransferenciasTodos - usuarioId: {usuarioId}");
                 var parameterReturn = new SqlParameter[] {
                                new SqlParameter  {
                                             ParameterName = "ReturnValue",
@@ -469,26 +477,91 @@ namespace gestion_de_comisiones.Repository
                                             Value = usuarioId.usuarioId
                               }
                            };
-
-                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS] @CicloId,  @EmpresaId, @UsuarioId  ", parameterReturn);
+                Logger.LogInformation($"handleConfirmarPagosTransferenciasTodos(): paramentros de entrada al sp SP_CONFIRMAR_TRANSFERENCIAS_TODOS");
+                foreach (SqlParameter param in parameterReturn)
+                {
+                    if(param.SqlValue != null) { 
+                        Logger.LogInformation($"param: {param.ParameterName}: {param.SqlValue}");
+                    }
+                }
+                var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_CONFIRMAR_TRANSFERENCIAS_TODOS] @CicloId,  @EmpresaId, @UsuarioId ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, inicio repository handleConfirmarPagosTransferenciasTodos(): SP_CONFIRMAR_TRANSFERENCIAS_TODOS returnValue {returnValue}  ");
                 if (returnValue == 0)
-                {
-                    return true;
+                {                   
+                    // Verificamos si la empresa esta activa para generar comprobantes de banco y contable.
+                    if(!IDS_EMPRESAS_ACTIVAS.Contains(body.empresaId)) {
+                        Logger.LogInformation($"Repository handleConfirmarPagosTransferenciasTodos - GenerarComprobanteBancoService() la empresaId: {body.empresaId} no está activa.");
+                        return false;
+                    }
+                    
+                    GenerarComprobanteInput i = new GenerarComprobanteInput
+                    {
+                        cicloId = body.cicloId,
+                        comisionId = body.comisionId,
+                        empresaId = body.empresaId,
+                        usuarioId = usuarioId.usuarioId,
+                        username = body.user
+                    };
+                    if(await generarComprobanteBancoAsync(i))
+                    {
+                        await dbcontextTransaction.CommitAsync();
+                        Logger.LogInformation($"FIN Repository handleConfirmarPagosTransferenciasTodos - GenerarComprobanteBancoService() return true");
+                        return true;
+                    } else
+                    {
+                        await dbcontextTransaction.RollbackAsync();
+                        Logger.LogInformation($"FIN Repository handleConfirmarPagosTransferenciasTodos - GenerarComprobanteBancoService() return false");
+                        return false;
+                    }                    
                 }
                 else
                 {
+                    await dbcontextTransaction.RollbackAsync();
+                    Logger.LogInformation($"FIN Repository handleConfirmarPagosTransferenciasTodos - GenerarComprobanteBancoService() return false");
                     return false;
                 }
-                //return 0;
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {body.user} error catch handleDownloadFileEmpresas() mensaje : {ex}");
-                List<VwObtenerEmpresasComisionesDetalleEmpresa> list = new List<VwObtenerEmpresasComisionesDetalleEmpresa>();
+                Logger.LogWarning($" usuario: {body.user} error catch handleConfirmarPagosTransferenciasTodos() mensaje : {ex}");
+                await dbcontextTransaction.RollbackAsync();
                 return false;
             }
+        }
+
+        private async Task<bool> generarComprobanteBancoAsync(GenerarComprobanteInput i, int process = 1)
+        {
+            var ev = new List<GenerarComprobanteEvent>();
+            switch(process)
+            {
+                case CONFIRMAR_TODOS:
+                    ev = await GenerarComprobanteBancoService.GenerarTodos(i);
+                    break;
+                case CONFIRMAR_SELECCION:
+                    ev = await GenerarComprobanteBancoService.GenerarParcial(i);
+                    break;
+            }            
+            bool b = true;
+            foreach (GenerarComprobanteEvent e in ev)
+            {
+                Logger.LogInformation($"Repository GestionPagoRepository - generarComprobanteBancoAsync() eventType: {e.eventType}  ");
+                Logger.LogInformation($"Repository GestionPagoRepository - generarComprobanteBancoAsync() message: {e.message}  ");
+                switch(e.eventType)
+                {
+                    case GenerarComprobanteEvent.SUCCESS_GENERACION_COMPROBANTE_BANCO:
+                        b = true;
+                        break;
+                    //case GenerarComprobanteEvent.CATCH_GENERAR_COMPROBANTE:
+                    //    b = false;
+                    //    break;
+                    default:
+                        b = false;                        
+                        break;
+                }              
+            }
+            Logger.LogInformation($"FIN Repository GestionPagoRepository - generarComprobanteBancoAsync() = {b}");
+            return b;
         }
 
         public GestionPagosEvent handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
@@ -714,7 +787,7 @@ namespace gestion_de_comisiones.Repository
             }
         }
 
-        public GestionPagosEvent handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput body)
+        public async Task<GestionPagosEvent> handleConfirmarPagosTransferenciasAsync(ConfirmarPagosTransferenciasInput body, string serverIp)
         {
             using var dbcontextTransaction = ContextMulti.Database.BeginTransaction();
             try
@@ -728,9 +801,11 @@ namespace gestion_de_comisiones.Repository
                         usuarioId = u.IdUsuario
                     }).FirstOrDefault();
 
-                Logger.LogInformation($" usuarioId: {usuarioId}, inicio confirmarTransferidosSeleccionados en repository handleConfirmarPagosTransferencias()");
+                Logger.LogInformation($" usuarioId: {usuarioId}, inicio repository handleConfirmarPagosTransferenciasAsync.confirmarTransferidosSeleccionados()");
                 if (!confirmarTransferidosSeleccionados(body, usuarioId))
                 {
+                    Logger.LogInformation($"GestionPagoRepositoty.handleConfirmarPagosTransferenciasAsync() !confirmarTransferidosSeleccionados()");
+                    Logger.LogInformation($"FIN GestionPagoRepositoty.handleConfirmarPagosTransferenciasAsync()");
                     return postEvent(GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS, "No se pudo realizar la confirmación de los pagos por transferencia a confirmados, verifique e intente nuevamente.");
                 }
 
@@ -743,6 +818,8 @@ namespace gestion_de_comisiones.Repository
 
                 if (!confirmarTransferidosNoSeleccionados(body, usuarioId, l))
                 {
+                    Logger.LogInformation($"GestionPagoRepositoty.handleConfirmarPagosTransferenciasAsync() !confirmarTransferidosNoSeleccionados()");
+                    Logger.LogInformation($"FIN GestionPagoRepositoty.handleConfirmarPagosTransferenciasAsync()");
                     return postEvent(GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS, "No se pudo realizar la confirmación de los pagos por transferencia a rechazados, verifique e intente nuevamente.");
                 }
 
@@ -787,43 +864,71 @@ namespace gestion_de_comisiones.Repository
                                             Value = estadoComisionRezagadoId
                               }
                            };
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn ReturnValue: {parameterReturn[0].Value}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn CicloId: {parameterReturn[1].Value}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn EmpresaId: {parameterReturn[2].Value}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn UsuarioId: {parameterReturn[3].Value}");
-                Logger.LogInformation($"repository handleConfirmarPagosTransferencias inicio SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS parameterReturn TipoPago: {parameterReturn[4].Value}");
+                Logger.LogInformation($"handleConfirmarPagosTransferenciasAsync(): paramentros de entrada al sp SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS");
+                foreach (SqlParameter param in parameterReturn)
+                {
+                    if (param.SqlValue != null)
+                    {
+                        Logger.LogInformation($"param: {param.ParameterName}: {param.SqlValue}");
+                    }
+                }
                 var result = ContextMulti.Database.ExecuteSqlRaw("EXEC @returnValue = [dbo].[SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS] @EstadoComision, @CicloId,  @EmpresaId, @UsuarioId, @TipoPago ", parameterReturn);
                 int returnValue = (int)parameterReturn[0].Value;
                 Logger.LogInformation($" result: {result}, repository handleConfirmarPagosTransferencias fin SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS returnValue: {returnValue}  ");
                 if (returnValue == -1)
                 {
                     // Entro al catch del SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS hizo Rollback
-                    Logger.LogWarning($"repository handleConfirmarPagosTransferencias() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
+                    Logger.LogWarning($"repository handleConfirmarPagosTransferenciasAsync() SP_REGISTRAR_REZAGADOS_POR_PAGOS_RECHAZADOS @returnValue: {returnValue}");
                     dbcontextTransaction.Rollback();
                     return postEvent(GestionPagosEvent.CATCH_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.");
+                }                
+
+                // Verificamos si la empresa esta activa para generar comprobantes de banco y contable.
+                if (!IDS_EMPRESAS_ACTIVAS.Contains(body.empresaId))
+                {
+                    Logger.LogInformation($"Repository handleConfirmarPagosTransferenciasTodos - GenerarComprobanteBancoService() la empresaId: {body.empresaId} no está activa.");
+                    return postEvent(GestionPagosEvent.ERROR_EMPRESA_NO_ACTIVA, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
                 }
 
-
-                List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
-                    .Where(x => x.IdCiclo == body.cicloId && x.IdComision == returnValue && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
-                            x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
-                    .ToList();
-                dbcontextTransaction.Commit();
-                Logger.LogInformation($" usuario: {body.user}, despues del commit");
-                // Si returnValue no es -1 ni 2, es 1
-                if (rezagados.Count > 0)
+                GenerarComprobanteInput i = new GenerarComprobanteInput
                 {
-                    string asunto = "Rechazados ciclo " + rezagados.ElementAt(0).Glosa + " - " + rezagados.ElementAt(0).Empresa;
-                    EnvioCorreoService.EnviarCorreoRezagados(rezagados, asunto);
+                    cicloId = body.cicloId,
+                    comisionId = body.comisionId,
+                    empresaId = body.empresaId,
+                    usuarioId = usuarioId.usuarioId,
+                    username = body.user
+                };
+                if (await generarComprobanteBancoAsync(i, CONFIRMAR_SELECCION))
+                {
+                    // LISTA DE RECHAZADOS ENVIO CORREO
+                    List<VwObtenerRezagadosPago> rezagados = ContextMulti.VwObtenerRezagadosPagos
+                        .Where(x => x.IdCiclo == body.cicloId && x.IdComision == returnValue && x.IdEmpresa == body.empresaId && x.IdTipoPago == tipoPagoTransferencia &&
+                                x.IdEstadoComisionDetalleEmpresa != idEstadoComisionDetalleEmpresaConfirmado)
+                        .ToList();
+                    await dbcontextTransaction.CommitAsync();
+                    Logger.LogInformation($" usuario: {body.user}, despues del commit");
+                    // Si returnValue no es -1 ni 2, es 1
+                    if (rezagados.Count > 0)
+                    {
+                        string asunto = "Rechazados ciclo " + rezagados.ElementAt(0).Glosa + " - " + rezagados.ElementAt(0).Empresa;
+                        EnvioCorreoService.EnviarCorreoRezagados(rezagados, asunto, body.user, serverIp);
+                    }
                     
+                    Logger.LogInformation($"FIN repository GestionPagoRepository.handleConfirmarPagosTransferenciasAsync()");
+                    return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
+                }
+                else
+                {
+                    await dbcontextTransaction.RollbackAsync();
+                    Logger.LogInformation($"FIN repository GestionPagoRepository.handleConfirmarPagosTransferenciasAsync()");
+                    return postEvent(GestionPagosEvent.ERROR_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "No se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
                 }                
-                return postEvent(GestionPagosEvent.SUCCESS_SP_REGISTRAR_REZAGADOS_POR_PAGOS_TRANSFERENCIAS_RECHAZADOS, "Se realizó correctamente la confirmación para pagos por transferencias de los ACI seleccionados.");
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($" usuario: {body.user} CATCH handleConfirmarPagosTransferencias() mensaje : {ex}");
-                dbcontextTransaction.Rollback();
-                return postEvent(GestionPagosEvent.ERROR, $"NO se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
+                Logger.LogWarning($" usuario: {body.user} CATCH handleConfirmarPagosTransferenciasAsync() mensaje : {ex}");
+                await dbcontextTransaction.RollbackAsync();
+                return postEvent(GestionPagosEvent.ERROR, $"No se pudo realizar la confirmación de los pagos por transferencia, verifique e intente nuevamente. Mensaje: {ex.Message}");
             }
         }
 

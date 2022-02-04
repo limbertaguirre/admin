@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Modelos.GestionPagosRezagados;
@@ -14,9 +15,9 @@ namespace gestion_de_comisiones.Repository.Interfaces
         public dynamic handleTransferenciasEmpresas(ComisionesPagosInput param);
         public GestionPagosRezagadosEvent handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
-        GestionPagosRezagadosEvent ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
+        Task<GestionPagosRezagadosEvent> ConfirmarPagosRezagadosTransferenciasAsync(ConfirmarPagosRezagadosTransferenciasInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
-        bool handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
+        Task<GestionPagosRezagadosEvent> handleConfirmarPagosTransferenciasTodosAsync(ObtenerRezagadosPagosTransferenciasInput body);
         public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         public bool PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
         public RespuestaSionPayModel VerificarPagoRezagadoSionPay(PagoRezagadoInput param, int idEstadoComision, int idTipoComision, int idTipoFormaPagoSionPay, int idEstadoListaFormaPago);

@@ -10,6 +10,7 @@ namespace gestion_de_comisiones.Modelos.GestionPagos
         public string user { get; set; }
         public int cicloId { get; set; }
         public int empresaId { get; set; }
+        public int comisionId { get; set; }
         public int idComisionDetalle { get; set; }
         public List<int> confirmados { get; set; }
         public List<int> rechazados { get; set; }

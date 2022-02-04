@@ -16,9 +16,9 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);
         object handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
-        object handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
+        Task<object> handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
         object handleVerificarPagosTransferenciasTodos(DownloadFileTransferenciaInput body);
-        object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param);
+        Task<object> handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param, string serverIp);
         object handleObtenerPagosTransferencias(DownloadFileTransferenciaInput param);
         object handleRechazadosPagosTransferencias(ConfirmarPagosTransferenciasInput param);
         public object FiltrarComisionesPorTipoPago(FiltroComisionTipoPagoInput param);

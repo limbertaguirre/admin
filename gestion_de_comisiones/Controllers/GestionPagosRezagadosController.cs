@@ -111,7 +111,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.user} inicio el controlador ConfirmarPagosRezagadosTransferencias() parametro: idciclo:{param.cicloId}, idcomision:{param.comisionId}");
-                return Ok(Service.ConfirmarPagosRezagadosTransferencias(param));
+                return Ok((Service.ConfirmarPagosRezagadosTransferenciasAsync(param)).Result);
             }
             catch
             {
@@ -141,7 +141,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el controller handleConfirmarTodos() parametro: cicloId: {body.cicloId}");
-                return Ok(Service.handleConfirmarPagosTransferenciasTodos(body));
+                return Ok((Service.handleConfirmarPagosTransferenciasTodosAsync(body)).Result);
             }
             catch
             {

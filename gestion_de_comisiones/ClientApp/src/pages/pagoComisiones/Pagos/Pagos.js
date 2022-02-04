@@ -471,6 +471,7 @@ const Pagos = (props) => {
       {empresasTransferencias && (
         <TransferenciasDialog
           cicloId={idCiclo}
+          cicloObj={listCiclo.find(x => x.idCiclo === idCiclo)}
           openDialog={openTransferenciasDialog}
           closeTransferenciasDialog={handleCloseTransferencias}
           empresas={empresasTransferencias}

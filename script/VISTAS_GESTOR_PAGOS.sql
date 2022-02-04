@@ -61,6 +61,7 @@ CREATE VIEW [dbo].[vwObtenerCiclos]
 AS
 	SELECT
 		C.id_ciclo,
+		cc.id_comision,		
 		C.nombre,
 		C.descripcion,
 		E.id_estado_comision,
@@ -210,7 +211,8 @@ go
 go
    CREATE VIEW [dbo].[vwObtenerInfoExcelFormatoBanco]
 	as
-	select 
+	select
+	c.id_comision, 
 	c.id_ciclo,
 	cde.id_empresa,
 	TRIM(e.nombre) as empresa,
@@ -249,7 +251,7 @@ go
 	and c.id_tipo_comision = 1
 	and cec.id_estado_comision = 10 -- CERRADO FORMA DE PAGO
 	and l.id_lista_formas_pago not in (select dl.id_lista_formas_pago from BDMultinivel.dbo.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL dl where dl.habilitado = 1 and dl.id_estado_listado_forma_pago = 1)
-	group by l.id_lista_formas_pago, l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, b.nombre, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago, f.id_ficha
+	group by c.id_comision, l.id_lista_formas_pago, l.id_comisiones_detalle, cde.id_comision_detalle_empresa, cde.estado, f.codigo_cnx, b.nombre, f.cuenta_bancaria, c.id_ciclo, f.nombres, f.apellidos, f.ci, l.monto_neto, cde.id_empresa, e.nombre, ci.nombre, l.id_tipo_pago, b.id_banco, b.codigo, ciu.id_pais, ciu.codigo, cde.fecha_pago, f.id_ficha
 
   GO
 

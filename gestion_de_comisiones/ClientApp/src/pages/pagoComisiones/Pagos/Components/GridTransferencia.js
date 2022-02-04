@@ -378,8 +378,8 @@ const GridTransferencia = (props) => {
   };
 
   const confirmarModal = () => {
-    if (idCiclo && idCiclo !== 0) {
-      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId );
+    if (idCiclo && idCiclo !== 0 && list && list.length > 0) {
+      prosesarConfirmarTransferencia( userName, idUsuario, idCiclo, selected, empresaId, list[0].idComision);
     }
   };
 
@@ -388,9 +388,10 @@ const GridTransferencia = (props) => {
     usuarioId,
     cicloId,
     list,
-    idEmpresa
+    idEmpresa,
+    idComision
   ) {
-    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, dispatch);
+    let response = await Actions.handleConfirmarPagosTransferencias( userN, usuarioId, cicloId, list, idEmpresa, idComision, dispatch);
     if (response && response.code == 0) {
       setOpenModalConfirmation(false);
       dispatch(

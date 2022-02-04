@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TransferenciasDialog = ({
   cicloId,
+  cicloObj,
   openDialog,
   closeTransferenciasDialog,
   empresas,
@@ -205,11 +206,12 @@ const TransferenciasDialog = ({
   };
 
   const handleConfirmarPagosTransferenciasTodos = async (user, empresaId) => {
-    if (cicloId && cicloId !== 0 && empresaId && empresaId != -1) {
+    if (cicloId && cicloId !== 0 && empresaId && empresaId != -1 && cicloObj) {      
       let response = await Actions.handleConfirmarPagosTransferenciasTodos(
         user,
         cicloId,
         empresaId,
+        cicloObj.comisionId,
         dispatch
       );
      

@@ -75,6 +75,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IIncentivoSionPayService, IncentivoSionPayService>();
             services.AddScoped<IFormasPagosRezagadosService, FormasPagosRezagadosService>();
             services.AddScoped<ISeguridadService, SeguridadService>();
+            services.AddScoped<IGenerarComprobanteBancoService, GenerarComprobanteBancoService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
@@ -90,8 +91,10 @@ namespace gestion_de_comisiones
             services.AddScoped<IReporteRepository, ReporteRepository>();
             services.AddScoped<IIncentivoSionPayRepository, IncentivoSionPayRepository>();
             services.AddScoped<IFormasPagosRezagadosRepository, FormasPagosRezagadosRepository>();
+            services.AddScoped<IGenerarComprobanteBancoRepository, GenerarComprobanteBancoRepository>();
 
-            services.AddScoped<BDMultinivelContext>();
+            services.AddSingleton<BDMultinivelContext>();
+            //services.AddScoped<BDMultinivelContext>();
             services.AddScoped<grdsionContext>();
             services.AddScoped<BDPuntosCashContext>();
 
@@ -104,7 +107,8 @@ namespace gestion_de_comisiones
 
             //configuracion y conexion al db context
 
-
+            services.AddControllers().AddNewtonsoftJson(x =>
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -155,6 +159,9 @@ namespace gestion_de_comisiones
                 {
                     spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
+                } else if(env.IsProduction())
+                {
+
                 }
             });
         }

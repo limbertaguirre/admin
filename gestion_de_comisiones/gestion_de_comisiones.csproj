@@ -33,6 +33,7 @@
     <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="5.0.0" />
    
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <None Remove="EPPlus" />
     <None Remove="Controllers\Events\" />
     <None Remove="Modelos\Reporte\" />
+    <None Remove="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
   </ItemGroup>
 
   <ItemGroup>
