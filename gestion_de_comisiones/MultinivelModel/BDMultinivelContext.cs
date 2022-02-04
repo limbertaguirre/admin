@@ -1,8 +1,6 @@
 ﻿using System;
-using gestion_de_comisiones.Servicios;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -10,21 +8,14 @@ namespace gestion_de_comisiones.MultinivelModel
 {
     public partial class BDMultinivelContext : DbContext
     {
-        public BDMultinivelContext(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        public IConfiguration Configuration { get; }
-        public BDMultinivelContext(DbContextOptions<BDMultinivelContext> options)
-            : base(options)
-        {
-        }
-
         public BDMultinivelContext()
         {
         }
 
-        SeguridadService Seguridad = new SeguridadService();
+        public BDMultinivelContext(DbContextOptions<BDMultinivelContext> options)
+            : base(options)
+        {
+        }
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
@@ -61,7 +52,10 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<Incentivo> Incentivoes { get; set; }
         public virtual DbSet<IncentivoPagoComision> IncentivoPagoComisions { get; set; }
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
+        public virtual DbSet<LogComprobanteBanco> LogComprobanteBancoes { get; set; }
+        public virtual DbSet<LogComprobanteContable> LogComprobanteContables { get; set; }
         public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
+        public virtual DbSet<LogPagoComisionTransferenciaPorEmpresa> LogPagoComisionTransferenciaPorEmpresas { get; set; }
         public virtual DbSet<LogPagoMasivoSionPayComisionOEmpresaFail> LogPagoMasivoSionPayComisionOEmpresaFails { get; set; }
         public virtual DbSet<Modulo> Moduloes { get; set; }
         public virtual DbSet<Nivel> Nivels { get; set; }
@@ -104,9 +98,8 @@ namespace gestion_de_comisiones.MultinivelModel
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string conexEnc = Configuration.GetConnectionString("ConnectionBD");              
-                optionsBuilder.UseSqlServer(Seguridad.DesEncriptarAes("tSALHdk0DPD6pvV5RElJ023gvxC+dQWG7La6z//aKuA4flsEKrRTqw3R22cuxz8hl4U8IGvCJNdkvuMT38CYqZaiQrA416W5KljoDd59WZ8="));                
-                // optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
             }
         }
 
@@ -1841,6 +1834,68 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasComment("Es el monto neto con el descuento inclido de una forma de producto.");
             });
 
+            modelBuilder.Entity<LogComprobanteBanco>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("LOG_COMPROBANTE_BANCO");
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(5, 2)");
+
+                entity.Property(e => e.DateRegisterTransaction).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ErrorID");
+
+                entity.Property(e => e.ErrorMessage).IsUnicode(false);
+
+                entity.Property(e => e.ErrorProcedure).IsUnicode(false);
+
+                entity.Property(e => e.Glosa).IsUnicode(false);
+
+                entity.Property(e => e.NameFreelance)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<LogComprobanteContable>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("LOG_COMPROBANTE_CONTABLE");
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(5, 2)");
+
+                entity.Property(e => e.DateRegisterTransaction).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ErrorID");
+
+                entity.Property(e => e.ErrorMessage).IsUnicode(false);
+
+                entity.Property(e => e.ErrorProcedure).IsUnicode(false);
+
+                entity.Property(e => e.Glosa).IsUnicode(false);
+
+                entity.Property(e => e.NameFreelance)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<LogDetalleComisionEmpresaFail>(entity =>
             {
                 entity.HasKey(e => e.IdDetalleComisioEmpresaFail)
@@ -1885,6 +1940,79 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnType("decimal(18, 2)")
                     .HasColumnName("total_monto_Bruto")
                     .HasComment("Es el monto total bruto de la comision de freelancer");
+            });
+
+            modelBuilder.Entity<LogPagoComisionTransferenciaPorEmpresa>(entity =>
+            {
+                entity.ToTable("LOG_PAGO_COMISION_TRANSFERENCIA_POR_EMPRESA");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Banco)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("banco");
+
+                entity.Property(e => e.Ci)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("ci");
+
+                entity.Property(e => e.CicloId).HasColumnName("ciclo_id");
+
+                entity.Property(e => e.CodigoRespSp)
+                    .HasColumnName("codigo_resp_sp")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.ComisionDetalleEmpresaId).HasColumnName("comision_detalle_empresa_id");
+
+                entity.Property(e => e.ComisionDetalleId).HasColumnName("comision_detalle_id");
+
+                entity.Property(e => e.ComisionId).HasColumnName("comision_id");
+
+                entity.Property(e => e.Descripcion)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.EmpresaId).HasColumnName("empresa_id");
+
+                entity.Property(e => e.EmpresaIdCnx).HasColumnName("empresa_id_cnx");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_actualizacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FechaCreacion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha_creacion")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FichaId).HasColumnName("ficha_id");
+
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("monto");
+
+                entity.Property(e => e.NombreCompleto)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_completo");
+
+                entity.Property(e => e.NombreSp)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre_sp");
+
+                entity.Property(e => e.NroCuentaBanco)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nro_cuenta_banco");
+
+                entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
             });
 
             modelBuilder.Entity<LogPagoMasivoSionPayComisionOEmpresaFail>(entity =>
@@ -2984,6 +3112,8 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
 
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
+
                 entity.Property(e => e.IdEstadoComision).HasColumnName("id_estado_comision");
 
                 entity.Property(e => e.IdTipoComision).HasColumnName("id_tipo_comision");
@@ -3255,6 +3385,8 @@ namespace gestion_de_comisiones.MultinivelModel
                     .HasColumnName("GLOSA");
 
                 entity.Property(e => e.IdCiclo).HasColumnName("id_ciclo");
+
+                entity.Property(e => e.IdComision).HasColumnName("id_comision");
 
                 entity.Property(e => e.IdComisionDetalleEmpresa).HasColumnName("id_comision_detalle_empresa");
 
