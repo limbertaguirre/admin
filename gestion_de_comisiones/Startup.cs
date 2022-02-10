@@ -159,9 +159,6 @@ namespace gestion_de_comisiones
                 {
                     spa.Options.StartupTimeout = System.TimeSpan.FromSeconds(180);
                     spa.UseReactDevelopmentServer(npmScript: "start");
-                } else if(env.IsProduction())
-                {
-
                 }
             });
         }
