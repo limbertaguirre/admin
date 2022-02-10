@@ -1,14 +1,10 @@
 ﻿using gestion_de_comisiones.Modelos;
-using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
