@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using gestion_de_comisiones.Servicios;
+using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -11,11 +13,14 @@ namespace gestion_de_comisiones.MultinivelModel
         public BDMultinivelContext()
         {
         }
+        public IConfiguration Configuration { get; }
 
         public BDMultinivelContext(DbContextOptions<BDMultinivelContext> options)
             : base(options)
         {
         }
+        
+        SeguridadService Seguridad = new SeguridadService();
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }
         public virtual DbSet<Area> Areas { get; set; }
@@ -54,6 +59,7 @@ namespace gestion_de_comisiones.MultinivelModel
         public virtual DbSet<ListadoFormasPago> ListadoFormasPagoes { get; set; }
         public virtual DbSet<LogComprobanteBanco> LogComprobanteBancoes { get; set; }
         public virtual DbSet<LogComprobanteContable> LogComprobanteContables { get; set; }
+        public virtual DbSet<LogComprobanteContableSionPay> LogComprobanteContableSionPays { get; set; }
         public virtual DbSet<LogDetalleComisionEmpresaFail> LogDetalleComisionEmpresaFails { get; set; }
         public virtual DbSet<LogPagoComisionTransferenciaPorEmpresa> LogPagoComisionTransferenciaPorEmpresas { get; set; }
         public virtual DbSet<LogPagoMasivoSionPayComisionOEmpresaFail> LogPagoMasivoSionPayComisionOEmpresaFails { get; set; }
@@ -98,8 +104,9 @@ namespace gestion_de_comisiones.MultinivelModel
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
+                string conexEnc = Configuration.GetConnectionString("ConnectionBD");
+                optionsBuilder.UseSqlServer(Seguridad.DesEncriptarAes("tSALHdk0DPD6pvV5RElJ023gvxC+dQWG7La6z//aKuA4flsEKrRTqw3R22cuxz8hl4U8IGvCJNdkvuMT38CYqZaiQrA416W5KljoDd59WZ8="));
+                // optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
             }
         }
 
@@ -1844,6 +1851,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.DateRegisterTransaction).HasColumnType("datetime");
 
+                entity.Property(e => e.DocId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ErrorId)
@@ -1858,6 +1869,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.NameFreelance)
                     .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserConexion)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
 
                 entity.Property(e => e.UserName)
@@ -1875,6 +1890,10 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.DateRegisterTransaction).HasColumnType("datetime");
 
+                entity.Property(e => e.DocId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ErrorId)
@@ -1889,6 +1908,49 @@ namespace gestion_de_comisiones.MultinivelModel
 
                 entity.Property(e => e.NameFreelance)
                     .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserConexion)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<LogComprobanteContableSionPay>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("LOG_COMPROBANTE_CONTABLE_SION_PAY");
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(5, 2)");
+
+                entity.Property(e => e.DateRegisterTransaction).HasColumnType("datetime");
+
+                entity.Property(e => e.DocId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ErrorDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.ErrorId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ErrorID");
+
+                entity.Property(e => e.ErrorMessage).IsUnicode(false);
+
+                entity.Property(e => e.ErrorProcedure).IsUnicode(false);
+
+                entity.Property(e => e.Glosa).IsUnicode(false);
+
+                entity.Property(e => e.NameFreelance)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserConexion)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
 
                 entity.Property(e => e.UserName)

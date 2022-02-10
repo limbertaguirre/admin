@@ -16,9 +16,11 @@ namespace gestion_de_comisiones.MultinivelModel
         public string ErrorProcedure { get; set; }
         public string ErrorMessage { get; set; }
         public DateTime? ErrorDateTime { get; set; }
+        public string DocId { get; set; }
         public string NameFreelance { get; set; }
         public string Glosa { get; set; }
         public decimal? Amount { get; set; }
         public DateTime? DateRegisterTransaction { get; set; }
+        public string UserConexion { get; set; }
     }
 }
