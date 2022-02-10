@@ -13,7 +13,7 @@ Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=gr
 
 ## base de datos Actualizar modelo
 ## Windows
-Scaffold-DbContext "Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
+Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
 ## Mac Os
 dotnet ef dbcontext scaffold "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -o MultinivelModel -f
 
