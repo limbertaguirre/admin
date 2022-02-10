@@ -10,8 +10,9 @@ namespace gestion_de_comisiones.MultinivelModel
 {
     public partial class BDMultinivelContext : DbContext
     {
-        public BDMultinivelContext()
+        public BDMultinivelContext(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
 
