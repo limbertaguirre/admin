@@ -1,13 +1,10 @@
 ﻿using gestion_de_comisiones.Modelos;
-using gestion_de_comisiones.Modelos.FormaPago;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Servicios.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -161,7 +158,10 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($"usuario : {param.user} inicio el controlador handleConfirmarPagosTransferencias() parametro: idciclo:{param.cicloId}");
-                return Ok(Service.handleConfirmarPagosTransferencias(param));
+                var serverIp = HttpContext.Connection.RemoteIpAddress.ToString();
+                Task<object> o = Service.handleConfirmarPagosTransferencias(param, serverIp);
+                Logger.LogInformation($"FIN controlador handleConfirmarPagosTransferencias()");
+                return Ok(o.Result);
             }
             catch
             {
@@ -203,8 +203,12 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {body.user} inicio el controller handleConfirmarTodos() parametro: cicloId: {body.cicloId}");
-                return Ok(Service.handleConfirmarPagosTransferenciasTodos(body));
+                Logger.LogInformation($"usuario : {body.user} INICIO controller handleConfirmarPagosTransferenciasTodos()");
+                Utils.Utils.ShowValueFields(body, Logger);
+                //Result o = (Result);
+                Task<object> o = Service.handleConfirmarPagosTransferenciasTodos(body);
+                Logger.LogInformation($"FIN controller handleConfirmarPagosTransferenciasTodos()");
+                return Ok(o.Result);
             }
             catch
             {
@@ -264,7 +268,7 @@ namespace gestion_de_comisiones.Controllers
         {
             try
             {
-                Logger.LogInformation($"usuario : {param.user} inicio el controller BuscarFreelancerPagosTransferencias() parametros: idciclo:{param.cicloId}, idempresa:{param.empresaId}");
+                Logger.LogInformation($"usuario : {param.user} inicio el controller BuscarFreelancerPagosTransferencias() parametros: idciclo:{param.cicloId}, idempresa:{param.empresaId}");                               
                 return Ok(Service.BuscarFreelancerPagosTransferencias(param));
             }
             catch

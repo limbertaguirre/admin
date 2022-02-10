@@ -184,12 +184,21 @@ const usePagoRezagado = () => {
           " Puntos."
       );
     } else {
-      dispatch(
-        showMessage({
-          message: response.message,
-          variant: "error",
-        })
-      );
+      if(response) {
+        dispatch(
+          showMessage({
+            message: response.message,
+            variant: "error",
+          })
+        );
+      } else {
+        dispatch(
+          showMessage({
+            message: "Ocurrió un problema en el servidor, intente más tarde.",
+            variant: "error",
+          })
+        );
+      }   
     }
   }
 

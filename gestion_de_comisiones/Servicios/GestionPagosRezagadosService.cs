@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using gestion_de_comisiones.Controllers.Events;
 using gestion_de_comisiones.Dtos;
 using gestion_de_comisiones.Modelos.FormaPago;
@@ -134,12 +135,12 @@ namespace gestion_de_comisiones.Servicios
                 return Respuesta.ReturnResultdo(1, "problemas al obtener la Lista de rezagados", "problemas en el servidor, intente mas tarde");
             }
         }
-        public object ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param)
+        public async Task<object> ConfirmarPagosRezagadosTransferenciasAsync(ConfirmarPagosRezagadosTransferenciasInput param)
         {
             try
             {
                 Logger.LogInformation($"GestionPagosRezagadosService - usuario : {param.user} inicio el servicio ConfirmarPagosRezagadosTransferencias() body: {param}");
-                GestionPagosRezagadosEvent r = Repository.ConfirmarPagosRezagadosTransferencias(param);
+                GestionPagosRezagadosEvent r = await Repository.ConfirmarPagosRezagadosTransferenciasAsync(param);
                 Logger.LogInformation($"GestionPagosRezagadosService Repuesta del repository ConfirmarPagosRezagadosTransferencias() eventType: {r.eventType}, message: {r.message}");
                 if (r.eventType == GestionPagosRezagadosEvent.ERROR || r.eventType == GestionPagosRezagadosEvent.ROLLBACK_ERROR ||
                     r.eventType == GestionPagosRezagadosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
@@ -178,13 +179,13 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body)
+        public async Task<object> handleConfirmarPagosTransferenciasTodosAsync(ObtenerRezagadosPagosTransferenciasInput body)
         {
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
-                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);
-                if (confirm)
+                GestionPagosRezagadosEvent e = await Repository.handleConfirmarPagosTransferenciasTodosAsync(body);
+                if (e.eventType == GestionPagosRezagadosEvent.SUCCESS_CONFIRMAR_TODOS)
                 {
                     return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
                 }

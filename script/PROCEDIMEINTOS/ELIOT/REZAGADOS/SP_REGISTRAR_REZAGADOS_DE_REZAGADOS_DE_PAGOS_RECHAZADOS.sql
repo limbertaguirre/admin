@@ -1,6 +1,6 @@
 USE BDMultinivel;
 GO
-alter PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tipoComision INT, @estadoComision INT, @comisionId INT, @cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
+CREATE PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tipoComision INT, @estadoComision INT, @comisionId INT, @cicloId INT, @empresaId INT, @usuarioId INT, @tipoPago INT)
     AS
     BEGIN TRANSACTION
     BEGIN TRY
@@ -166,6 +166,9 @@ alter PROC [dbo].[SP_REGISTRAR_REZAGADOS_DE_REZAGADOS_DE_PAGOS_RECHAZADOS](@tipo
                     SELECT @esMontoCero AS esMontoCero, ' select fila 159'                
                     IF(@esMontoCero = 0)
                     BEGIN
+                        -- Actualizamos todas las tuplas deshabilitándolas.
+                        UPDATE BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL SET habilitado = @deshabilitado WHERE id_lista_formas_pago = (SELECT top 1 l.id_lista_formas_pago FROM BDMultinivel.DBO.LISTADO_FORMAS_PAGO l
+                                                                                                                                                            WHERE l.id_comisiones_detalle = @idComisionDetalle)
                         -- Al ser monto neto igual a cero esa comision detalle rechazada, la agregamos a la tabla intermedia de lista forma pago con estado 4 (rechazado).
                         INSERT INTO BDMultinivel.DBO.GP_DETALLE_ESTADO_LISTADO_FORMA_PAGOL (habilitado, id_lista_formas_pago, id_estado_listado_forma_pago, id_usuario) SELECT @habilitado, l.id_lista_formas_pago, @idEstadoDetalleRechazadoEnPagoTransferencia, @usuarioId
                                                                                                                                                             FROM BDMultinivel.DBO.LISTADO_FORMAS_PAGO l

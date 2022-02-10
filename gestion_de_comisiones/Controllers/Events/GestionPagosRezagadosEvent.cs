@@ -5,7 +5,11 @@ namespace gestion_de_comisiones.Controllers.Events
 {
     public class GestionPagosRezagadosEvent
     {
-        internal static readonly int EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS;
+        internal static int EXISTE_DOS_REGISTROS_COMISIONES_REZAGADOS = 24;
+        internal static int SUCCESS_CONFIRMAR_TODOS = 23;
+        internal static int ERROR_SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS = 22;
+        internal static int CATCH_SP_CONFIRMAR_TRANSFERENCIAS_REZAGADOS_TODOS = 21;
+        internal static int ERROR_GENERAR_COMPROBANTE = 20;
         public static int SUCCESS = 0;
         public static int ERROR = 1;
         public static int ROLLBACK_ERROR = 2;

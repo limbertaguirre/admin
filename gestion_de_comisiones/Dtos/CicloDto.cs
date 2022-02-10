@@ -12,6 +12,15 @@ namespace gestion_de_comisiones.Dtos
             this.IdCiclo = IdCiclo;
             this.Nombre = Nombre;
         }
+
+        public CicloDto(int IdCiclo, string Nombre, int comisionId)
+        {
+            this.IdCiclo = IdCiclo;
+            this.Nombre = Nombre;
+            this.comisionId = comisionId;
+        }
+
+        public int comisionId { get; set; }
         public int IdCiclo { get; set; }
         public string Nombre { get; set; }
     }

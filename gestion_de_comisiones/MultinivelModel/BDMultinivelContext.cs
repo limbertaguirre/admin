@@ -20,9 +20,11 @@ namespace gestion_de_comisiones.MultinivelModel
             : base(options)
         {
         }
+        
         public BDMultinivelContext()
-        {
+        {            
         }
+
         SeguridadService Seguridad = new SeguridadService();
 
         public virtual DbSet<AplicacionDetalleProducto> AplicacionDetalleProductoes { get; set; }

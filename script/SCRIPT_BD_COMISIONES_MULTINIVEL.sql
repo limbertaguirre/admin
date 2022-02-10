@@ -1559,4 +1559,29 @@ GO
 --------------------------------------------SE AÑADEN AGENTES EN BDPUNTOSCASH LOS AGENTES DE PAGOS INCENTIVOS, REZAGADOS------------------------------------
 insert into BDPuntosCash.dbo.AGENTE VALUES (27, 'Pago de Comisiones por Gestor' ,'PAGO_COMISIONES_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
 insert into BDPuntosCash.dbo.AGENTE VALUES (28, 'Pago de Incentivos por Gestor' ,'PAGO_INCENTIVOS_GESTOR' , 'c974ba133f12287a0168e272e90e7e34')
-   
+
+GO
+
+CREATE TABLE [dbo].[LOG_PAGO_COMISION_TRANSFERENCIA_POR_EMPRESA](
+	id int PRIMARY KEY IDENTITY(1,1) NOT NULL,
+	ciclo_id int NOT NULL,
+	comision_id int NOT NULL,
+	comision_detalle_id int NOT NULL,
+	comision_detalle_empresa_id int NOT NULL,
+	empresa_id int NOT NULL,
+	empresa_id_cnx int NOT NULL,
+    ficha_id int NOT NULL,
+    ci VARCHAR(50) NOT NULL,
+    nombre_completo VARCHAR(255) NOT NULL,
+    nro_cuenta_banco VARCHAR(255) NOT NULL,
+    banco VARCHAR(255) NOT NULL,
+	monto decimal(18, 2) NOT NULL DEFAULT 0,
+	descripcion varchar(max) NULL,
+    nombre_sp VARCHAR(max) NULL,
+    codigo_resp_sp INT NULL DEFAULT 0,
+    usuario_id INT NOT NULL,
+	fecha_creacion datetime NOT NULL DEFAULT GETDATE(),
+	fecha_actualizacion datetime NULL DEFAULT GETDATE()
+);
+
+GO

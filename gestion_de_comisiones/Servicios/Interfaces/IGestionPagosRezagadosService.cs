@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using gestion_de_comisiones.Modelos.GestionPagos;
 using gestion_de_comisiones.Modelos.GestionPagosRezagados;
 
@@ -11,9 +12,9 @@ namespace gestion_de_comisiones.Servicios.Interfaces
         public object handleTransferenciasEmpresas(ComisionesPagosInput param);
         object handleVerificarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
         public object ObtenerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
-        public object ConfirmarPagosRezagadosTransferencias(ConfirmarPagosRezagadosTransferenciasInput param);
+        public Task<object> ConfirmarPagosRezagadosTransferenciasAsync(ConfirmarPagosRezagadosTransferenciasInput param);
         object handleDownloadFileEmpresas(DownloadFileTransferenciaInput body);
-        object handleConfirmarPagosTransferenciasTodos(ObtenerRezagadosPagosTransferenciasInput body);
+        Task<object> handleConfirmarPagosTransferenciasTodosAsync(ObtenerRezagadosPagosTransferenciasInput body);
         public object BuscarFreelancerPagosRezagadosTransferencias(ObtenerPagosRezagadosTransferenciasInput param);
         public object PagarComisionRezagadosSionPayTodo(PagoRezagadoInput param);
         public object VerificarPagoSionPayCiclo(VerificarPagoSionPayInput param);

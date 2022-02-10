@@ -189,13 +189,15 @@ export async function handleConfirmarPagosTransferenciasTodos(
     user,
     cicloId,
     empresaId,
+    comisionId,
     dispatch
 ) {
     return new Promise((resolve) => {
         const data = {
             user: user,
             cicloId: cicloId,
-            empresaId: empresaId
+            empresaId: empresaId,
+            comisionId
         };
 
         requestPost(
@@ -214,6 +216,7 @@ export async function handleConfirmarPagosTransferencias(
     idCiclo,
     lista,
     empresaId,
+    comisionId,
     dispatch
 ) {
     return new Promise((resolve) => {
@@ -222,7 +225,8 @@ export async function handleConfirmarPagosTransferencias(
             idUsuario: parseInt(usuarioId),
             cicloId: parseInt(idCiclo),
             confirmados: lista,
-            empresaId: empresaId
+            empresaId: empresaId,
+            comisionId
         };
         requestPost("gestionPagos/handleConfirmarPagosTransferencias", data, dispatch).then(
             (response) => {

@@ -184,12 +184,14 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
+        public async Task<object> handleConfirmarPagosTransferenciasTodos(DownloadFileTransferenciaInput body)
         {
             try
             {
                 Logger.LogInformation($"usuario : {body.user} inicio el servicio handleConfirmarPagosTransferenciasTodos() ");
-                var confirm = Repository.handleConfirmarPagosTransferenciasTodos(body);
+                var confirm = await Repository.handleConfirmarPagosTransferenciasTodosAsync(body);
+                Logger.LogInformation($"RESPUESTA del repositorio handleConfirmarPagosTransferenciasTodosAsync(): {confirm}");
+                Logger.LogInformation($"FIN el servicio handleConfirmarPagosTransferenciasTodos() ");
                 if (confirm)
                 {
                     return Respuesta.ReturnResultdo(0, "Se realizó la confirmación correctamente.", "");
@@ -206,13 +208,13 @@ namespace gestion_de_comisiones.Servicios
             }
         }
 
-        public object handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param)
+        public async Task<object> handleConfirmarPagosTransferencias(ConfirmarPagosTransferenciasInput param, string serverIp)
         {
             try
             {
                 Logger.LogInformation($"GestionPagosServices - usuario : {param.user} inicio el servicio handleConfirmarPagosTransferencias() body: {param}");
-                GestionPagosEvent r = Repository.handleConfirmarPagosTransferencias(param);
-                Logger.LogInformation($"GestionPagosServices Repuesta del repository handleConfirmarPagosTransferencias() eventType: {r.eventType}, message: {r.message}");
+                GestionPagosEvent r = await Repository.handleConfirmarPagosTransferenciasAsync(param, serverIp);
+                Logger.LogInformation($"GestionPagosServices RESPUESTA del repository handleConfirmarPagosTransferencias() eventType: {r.eventType}, message: {r.message}");
                 if (r.eventType == GestionPagosEvent.ERROR || r.eventType == GestionPagosEvent.ROLLBACK_ERROR ||
                     r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_SELECCIONADOS ||
                     r.eventType == GestionPagosEvent.ERROR_CONFIRMAR_TRANSFERIDOS_NO_SELECCIONADOS ||
@@ -221,12 +223,13 @@ namespace gestion_de_comisiones.Servicios
                 {
                     throw new Exception(r.message);
                 }
+                Logger.LogInformation($"FIN del servicio handleConfirmarPagosTransferencias() ");
                 return Respuesta.ReturnResultdo(0, r.message, "");
             }
             catch (Exception ex)
             {
                 Logger.LogInformation($"GestionPagosServices - usuario : {param.user} CATCH handleConfirmarPagosTransferencias(), error {ex}");
-                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "problemas en el servidor, intente mas tarde");
+                return Respuesta.ReturnResultdo(1, "Pasó algo inesperado, no se pudo registrar a los ACI rechazados.", "");
             }
         }
 
