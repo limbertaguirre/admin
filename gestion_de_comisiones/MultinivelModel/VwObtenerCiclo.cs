@@ -8,6 +8,7 @@ namespace gestion_de_comisiones.MultinivelModel
     public partial class VwObtenerCiclo
     {
         public int IdCiclo { get; set; }
+        public int IdComision { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public int IdEstadoComision { get; set; }

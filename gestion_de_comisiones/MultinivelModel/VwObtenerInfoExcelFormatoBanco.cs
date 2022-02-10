@@ -7,6 +7,7 @@ namespace gestion_de_comisiones.MultinivelModel
 {
     public partial class VwObtenerInfoExcelFormatoBanco
     {
+        public int IdComision { get; set; }
         public int? IdCiclo { get; set; }
         public int IdEmpresa { get; set; }
         public string Empresa { get; set; }
