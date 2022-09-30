@@ -7,7 +7,7 @@ const  AcordionListModulos =(props)=>  {
     const recargarModulos =(todosModulo)=>{
        
         
-        let nroModules=todosModulo.length;
+        let nroModules= todosModulo?todosModulo.length:0;
         let newListModulos=[];
         for(let i=0; i<nroModules; i++){
                let objModulo=todosModulo[i];

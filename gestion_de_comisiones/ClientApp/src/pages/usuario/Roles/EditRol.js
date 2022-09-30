@@ -82,6 +82,10 @@ const  EditRol =(props)=>  {
     const [listaSelecionada, setListaSelecionada]= useState([]);
 
     useEffect(()=>{
+      dispatch(Action.getPaginas());
+    },[]);
+    useEffect(()=>{
+
         setIdRol(props.location.state.idRol)
         setRolName(objetoRol.nombre);
         setRolDescripcion(objetoRol.descripcion);
@@ -109,6 +113,7 @@ const  EditRol =(props)=>  {
 
 
     };
+    console.log('hisotryModules',hisotryModules)
     useEffect(()=>{
 
     },[allModules]);
@@ -337,11 +342,15 @@ const  EditRol =(props)=>  {
                         />      
                 </Grid>               
                 <div className={style.rootAcordion}>
+                  {hisotryModules&& 
+                    <>
                     {hisotryModules.map((value, index)=>{                               
                         return( 
                                  <EditAcordionModulo key={index} modulo={value} selecionoPermiso={selecionoPermiso} desSelecionoPermiso={desSelecionoPermiso} />
                         )
-                     })}                           
+                     })}        
+                     </>              
+                    }     
                 </div>                                 
             </div>  
             <EditModalConfirm open={open} handConfirm={handConfirm} handleCloseModal={handleCloseModal} listaSelecionada={listaSelecionada} />    

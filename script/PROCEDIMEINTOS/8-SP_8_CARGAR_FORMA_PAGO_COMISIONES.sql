@@ -46,7 +46,7 @@
    SET @TIPO_PAGO_COMSION = 1;
 
    DECLARE @CICLO_SELEC int 
-   SET @CICLO_SELEC=90;
+   SET @CICLO_SELEC=91;
 
 	select TOP(1) @IDCICLO_SELECCIONADO = id_ciclo from BDMultinivel.dbo.CICLO where id_ciclo=@CICLO_SELEC
 	IF @IDCICLO_SELECCIONADO > 0
