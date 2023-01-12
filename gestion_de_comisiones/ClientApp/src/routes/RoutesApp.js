@@ -5,11 +5,11 @@ import Pages from './Pages';
 import RouteRedirect from '../components/RouteRedirect';
 import * as Action from '../redux/actions/homeAction';
 import {useSelector,useDispatch} from "react-redux";
-import useSocket from '../hooks/useSocket';
+//import useSocket from '../hooks/useSocket';
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
  const RoutesApp =()=>  {
       const routerRef = useRef();
-      const {socket} = useSocket({routerRef})
+      //const {socket} = useSocket({routerRef})
      const dispatch = useDispatch();
      dispatch(Action.cargarMenu());
      const {load} =useSelector((stateSelector)=>{ return stateSelector.load});
@@ -28,7 +28,7 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
                 <RouteRedirect path='/forma/pago' element={Pages.FormaPago} exact />  
                 <RouteRedirect exact path='/pagos-gestor' element={Pages.Pagos}  />                
                 <RouteRedirect exact path='/gestion/roles' element={Pages.GestionRol}  />     
-                <RouteRedirect path='/gestion/nuevo/roles' element={Pages.Roles} exact /> 
+                <RouteRedirect exact path='/gestion/nuevo/roles' element={Pages.Roles}  /> 
                 <Route path='/gestion/edit/rol' component={Pages.EditRol} exact />        
                 <RouteRedirect path='/page/sin-acceso' element={Pages.SinAcceso} exact />  
                 <RouteRedirect path='/clientes' element={Pages.Cliente} exact />  

@@ -111,7 +111,7 @@ namespace gestion_de_comisiones.MultinivelModel
             {
                 string conexEnc = Configuration.GetConnectionString("ConnectionBD");
                // optionsBuilder.UseSqlServer(Seguridad.DesEncriptarAes("tSALHdk0DPD6pvV5RElJ023gvxC+dQWG7La6z//aKuA4flsEKrRTqw3R22cuxz8hl4U8IGvCJNdkvuMT38CYqZaiQrA416W5KljoDd59WZ8="));
-                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;");
+                optionsBuilder.UseSqlServer("Server=10.2.10.15;Database=BDMultinivelBase; User Id=sa;password=Passw0rd;");
             }
         }
 
