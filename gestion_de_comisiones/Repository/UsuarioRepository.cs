@@ -1,5 +1,4 @@
 ﻿using gestion_de_comisiones.Modelos.Usuario;
-using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +8,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using gestion_de_comisiones.OperacionModel;
 
 namespace gestion_de_comisiones.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
 
-        private readonly BDMultinivelContext multinivelDbContext;
+        private readonly BDOperacionContext multinivelDbContext;
         private readonly ILogger<UsuarioRepository> logger;
         private readonly IConfiguration Config;
-        public UsuarioRepository(IConfiguration config, BDMultinivelContext multinivelDbContext, ILogger<UsuarioRepository> logger)
+        public UsuarioRepository(IConfiguration config, BDOperacionContext multinivelDbContext, ILogger<UsuarioRepository> logger)
         {
             this.multinivelDbContext = multinivelDbContext;
             this.logger = logger;
@@ -166,7 +166,7 @@ namespace gestion_de_comisiones.Repository
         }
 
 
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
 
         public UsuarioModel ObtenerUsuarioPorId(string usuario)
         {

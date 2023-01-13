@@ -369,3 +369,31 @@ go
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Id del aps.net core.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'net_session_id'
 	EXECUTE sp_addextendedproperty 'MS_Description', 'Estado del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'estado'
 	go
+
+	--primer usuario
+	  ----RELACIONAR ROL CON PAGINA-----------------------------------------------------------------------------------------------------------
+				--insert into BDOperacion.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion) values(1,1,1,1,GETDATE(),GETDATE())
+				--insert into BDOperacion.dbo.ROL_PAGINA_I(habilitado,id_rol, id_pagina, id_usuario, fecha_creacion, fecha_actualizacion) values(1,1,2,1,GETDATE(),GETDATE())
+		  --INSERTAR PERMISO VISUALIZAR-----------------------------------------------------
+				insert into BDOperacion.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				values(1, 1, 1, 1, GETDATE(), GETDATE())
+		  ---- INSERTAR PERMISO CREAR----------------------------------------------------------
+				insert into BDOperacion.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				values(1, 1, 2, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ACTUALIZAR------------------------------------------------------
+				insert into BDOperacion.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				values(1, 1, 3, 1, GETDATE(), GETDATE())
+		  --INSERTAR PERMISO ELIMINAR--------------------------------------------------------
+				--insert into BDMultinivel.dbo.ROL_PAGINA_PERMISO_I(habilitado,id_rol_pagina, id_permiso,id_usuario, fecha_creacion,fecha_actualizacion)
+				--values(1, 1, 4, 1, GETDATE(), GETDATE())
+
+			--ASIGNAR ROL A USUARIO
+	
+			insert into BDOperacion.dbo.USUARIOS_ROLES(id_usuario, id_rol,estado, usuario_id, fecha_creacion, fecha_actualizacion)
+			values(1, --id_usuario
+				1, --id_rol
+				1,-- estado
+				1,--usuario_id
+				GETDATE(), 
+			GETDATE()
+			); 

@@ -1,5 +1,4 @@
-﻿using gestion_de_comisiones.MultinivelModel;
-using gestion_de_comisiones.Repository;
+﻿using gestion_de_comisiones.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

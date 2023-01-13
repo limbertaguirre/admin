@@ -2,7 +2,7 @@
 using gestion_de_comisiones.Modelos.Pagina;
 using gestion_de_comisiones.Modelos.Rol;
 using gestion_de_comisiones.Modelos.Rol.Perfiles;
-using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.OperacionModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,7 +16,7 @@ namespace gestion_de_comisiones.Repository
 {
     public class RolRepository : IRolRepository
     {
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
         private readonly ILogger<RolRepository> Logger;
         public RolRepository(ILogger<RolRepository> logger)
         {
@@ -87,7 +87,7 @@ namespace gestion_de_comisiones.Repository
         public bool actualizarRoles(int idRol, string nombreRol, string descripcionRol, List<PaginaResulModelWithPermisos> paginas, int idUsuario)
         {
             
-            using (BDMultinivelContext context = new BDMultinivelContext())
+            using (BDOperacionContext context = new BDOperacionContext())
             {
                 using(var dbcontextTransaction= context.Database.BeginTransaction())
                 {

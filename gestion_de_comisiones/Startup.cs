@@ -1,4 +1,4 @@
-using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.OperacionModel;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -68,7 +68,7 @@ namespace gestion_de_comisiones
             services.AddScoped<IPaisRepository, PaisRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-            services.AddSingleton<BDMultinivelContext>();
+            services.AddSingleton<BDOperacionContext>();
             //services.AddScoped<BDMultinivelContext>();
             
 

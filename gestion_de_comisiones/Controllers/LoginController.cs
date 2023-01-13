@@ -6,12 +6,12 @@ using gestion_de_comisiones.Modelos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.DirectoryServices.AccountManagement;
-using gestion_de_comisiones.MultinivelModel;
 using gestion_de_comisiones.Modelos.Usuario;
 using gestion_de_comisiones.Servicios;
 using gestion_de_comisiones.Servicios.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using gestion_de_comisiones.OperacionModel;
 
 namespace gestion_de_comisiones.Controllers
 {
@@ -39,7 +39,7 @@ namespace gestion_de_comisiones.Controllers
             try
             {
                 Logger.LogInformation($" usuario : {model.userName} inicio el servicio Sesion() ");
-                BDMultinivelContext contextMulti = new BDMultinivelContext();
+                BDOperacionContext contextMulti = new BDOperacionContext();
 
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain, "gruposionbo.scz"))
                 {

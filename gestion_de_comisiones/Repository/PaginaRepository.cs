@@ -1,5 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos.Pagina;
-using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.OperacionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace gestion_de_comisiones.Repository
 {
     public class PaginaRepository
     {
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
         public List<PaginaModel> ObtenerPaginas(int idModulo)
         {
             try

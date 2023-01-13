@@ -1,5 +1,5 @@
 ﻿using gestion_de_comisiones.Modelos.Pais;
-using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.OperacionModel;
 using gestion_de_comisiones.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,7 +11,7 @@ namespace gestion_de_comisiones.Repository
 {
     public class PaisRepository : IPaisRepository
     {
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
         private readonly ILogger<PaisRepository> Logger;
 
         public PaisRepository(ILogger<PaisRepository> logger)

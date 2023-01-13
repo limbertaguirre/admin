@@ -1,6 +1,6 @@
 ﻿using gestion_de_comisiones.Modelos.Permiso;
 using gestion_de_comisiones.Modelos.Rol;
-using gestion_de_comisiones.MultinivelModel;
+using gestion_de_comisiones.OperacionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace gestion_de_comisiones.Repository
     public class PermisoRepository
     {
 
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
         public List<PermisoResulModel> obtenerPermisos()
         {
             try

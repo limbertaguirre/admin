@@ -1,4 +1,4 @@
-﻿using gestion_de_comisiones.MultinivelModel;
+﻿using gestion_de_comisiones.OperacionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace gestion_de_comisiones.Repository
 {
     public class RolesPaginasRepository
     {
-        BDMultinivelContext contextMulti = new BDMultinivelContext();
+        BDOperacionContext contextMulti = new BDOperacionContext();
         public int AgregarRolPagina(bool habilitado ,int idRol, int idPagina, int usuarioId)
         {
             try
