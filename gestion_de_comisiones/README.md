@@ -1,6 +1,6 @@
 
 ## base de datos correr primera vez
-   Scaffold-DbContext "Server=10.2.10.20;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel   
+   Scaffold-DbContext "Server=10.2.10.15;Database=BDOperacion; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir BDOperacion   
 ## base de datos de sion pay
    Scaffold-DbContext "Server=10.2.10.15;Database=BDPuntosCash; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir SionPayModels -Tables CUENTA, USUARIO   
 
@@ -13,9 +13,9 @@ Scaffold-DbContext "server=10.2.10.222;uid=montesion; pwd=CndFZz75u8;database=gr
 
 ## base de datos Actualizar modelo
 ## Windows
-Scaffold-DbContext "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir MultinivelModel -F
+Scaffold-DbContext "Server=10.2.10.15;Database=BDOperacion; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir BDOperacion -F
 ## Mac Os
-dotnet ef dbcontext scaffold "Server=10.2.10.15;Database=BDMultinivel; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -o MultinivelModel -f
+dotnet ef dbcontext scaffold "Server=10.2.10.15;Database=BDOperacion; User Id=sa;password=Passw0rd;" Microsoft.EntityFrameworkCore.SqlServer -o BDOperacion -f
 
 ## se instalo package nuGet un nuevo SeriLog.Extensions.Loggin.File
 ## reemplazar <aspNetCore> en el web config, al ser compilado para ser, PARA QUE PUEDA IMPRIMIR logs Y ASEGURARSE QUE LA PUBLICACION EN EL IIS ESTE EN EL GRUPO DE "DefaultAppPool" YA QUE ESTE TIENE ACCESO DE LECTURA Y ESCRITURA. 
