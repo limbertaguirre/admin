@@ -21,7 +21,7 @@ namespace gestion_de_comisiones.Controllers
         public LoginController(ILogger<RolController> logger, ILoginService service)
         {
             Logger = logger;
-            Service = service;
+            Service = service;  
 
         }
         public ILoginService Service { get; }

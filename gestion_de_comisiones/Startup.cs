@@ -1,6 +1,4 @@
-using gestion_de_comisiones.GuardianModels;
 using gestion_de_comisiones.MultinivelModel;
-using gestion_de_comisiones.BDSionPayModels;
 using gestion_de_comisiones.Repository;
 using gestion_de_comisiones.Repository.Interfaces;
 using gestion_de_comisiones.Servicios;
@@ -61,42 +59,18 @@ namespace gestion_de_comisiones
             //interfaces de servicios
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IRolService, RolService>();
-            services.AddScoped<IClienteService, ClienteService>();
-            services.AddScoped<IFacturaService, FacturaService>();
-            services.AddScoped<IAplicacionesService, AplicacionesService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IProrrateadoService, ProrrateadoService>();
-            services.AddScoped<IFormaPagoService, FormaPagoService>();
-            services.AddScoped<IGestionPagosService, GestionPagosService>();
-            services.AddScoped<IGestionPagosRezagadosService, GestionPagosRezagadosService>();
-            services.AddScoped<IReporteService, ReporteService>();
             services.AddScoped<INotificacionSocketService, NotificacionSocketService>();
-            services.AddScoped<IEnvioCorreoRezagadoService, EnvioCorreoRezagadoService>();
-            services.AddScoped<IIncentivoSionPayService, IncentivoSionPayService>();
-            services.AddScoped<IFormasPagosRezagadosService, FormasPagosRezagadosService>();
             services.AddScoped<ISeguridadService, SeguridadService>();
-            services.AddScoped<IGenerarComprobanteBancoService, GenerarComprobanteBancoService>();
 
             //interfaces de repositorios
             services.AddScoped<IRolRepository, RolRepository>();
-            services.AddScoped<IClienteRepository, ClienteRespository>();
             services.AddScoped<IPaisRepository, PaisRepository>();
-            services.AddScoped<IFacturaRepository, FacturaRepository>();
-            services.AddScoped<IAplicacionesRepository, AplicacionesRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<IProrrateadoRepository, ProrrateadoRepository>();
-            services.AddScoped<IFormaPagoRepository, FormaPagoRespository>();
-            services.AddScoped<IGestionPagoRepository, GestionPagoRepository>();
-            services.AddScoped<IGestionPagosRezagadosRepository, GestionPagosRezagadosRepository>();
-            services.AddScoped<IReporteRepository, ReporteRepository>();
-            services.AddScoped<IIncentivoSionPayRepository, IncentivoSionPayRepository>();
-            services.AddScoped<IFormasPagosRezagadosRepository, FormasPagosRezagadosRepository>();
-            services.AddScoped<IGenerarComprobanteBancoRepository, GenerarComprobanteBancoRepository>();
 
             services.AddSingleton<BDMultinivelContext>();
             //services.AddScoped<BDMultinivelContext>();
-            services.AddScoped<grdsionContext>();
-            services.AddScoped<BDPuntosCashContext>();
+            
 
 
             // In production, the React files will be served from this directory
