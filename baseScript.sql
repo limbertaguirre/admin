@@ -22,7 +22,10 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Si el registro actual está hab
 EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del último usuario que modificó el registro.', 'SCHEMA', 'dbo', 'TABLE', 'ROL', N'COLUMN', N'id_usuario'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'ROL', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'ROL', N'COLUMN', N'fecha_actualizacion'
-
+go
+	insert into ROL(nombre,descripcion,habilitado,id_usuario,fecha_creacion,fecha_actualizacion) values('ADMINISTRADOR','Usuario Con acceso total','true',1,GETDATE(),GETDATE())
+	insert into ROL(nombre,descripcion,habilitado,id_usuario,fecha_creacion,fecha_actualizacion) values('DEVELOP','Desarrolador web','true',1,GETDATE(),GETDATE())
+go
 create table AREA
 (
     id_area int not null primary key IDENTITY,
@@ -83,22 +86,22 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación de
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'CIUDAD', N'COLUMN', N'fecha_actualizacion'
 go
       ----- correr insert primera vej, PAIS  Y CIUADAD	 la condicion es porq esa ciudad esta duplicada en 
-      insert ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE(),'' from BDComisiones.dbo.PECIUDAD c   where IDCIUDAD != 4090
+  --    insert ciudad select c.IDCIUDAD, c.DESCRIPCION, c.IDPAIS, 1, GETDATE(), GETDATE(),'' from BDComisiones.dbo.PECIUDAD c   where IDCIUDAD != 4090
 
-		update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
-		update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
-		update CIUDAD set codigo = 'CBB' where id_ciudad = 3
-		update CIUDAD set codigo = 'TJA' where id_ciudad = 4
-		update CIUDAD set codigo = 'POT' where id_ciudad = 5
-		update CIUDAD set codigo = 'ORU' where id_ciudad = 6
-		update CIUDAD set codigo = 'SUC' where id_ciudad = 7
-		update CIUDAD set codigo = 'TRI' where id_ciudad = 8
-		update CIUDAD set codigo = 'COB' where id_ciudad = 9
-		update CIUDAD set codigo = 'TJA' where id_ciudad = 10
-		update CIUDAD set codigo = 'LPZ' where id_ciudad = 11
-		update CIUDAD set codigo = 'SCZ' where id_ciudad = 4084
-		update CIUDAD set codigo = 'CBB' where id_ciudad = 4086
-		update CIUDAD set codigo = 'SCZ' where id_ciudad = 10000
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 1
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 2
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 3
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 4
+		--update CIUDAD set codigo = 'POT' where id_ciudad = 5
+		--update CIUDAD set codigo = 'ORU' where id_ciudad = 6
+		--update CIUDAD set codigo = 'SUC' where id_ciudad = 7
+		--update CIUDAD set codigo = 'TRI' where id_ciudad = 8
+		--update CIUDAD set codigo = 'COB' where id_ciudad = 9
+		--update CIUDAD set codigo = 'TJA' where id_ciudad = 10
+		--update CIUDAD set codigo = 'LPZ' where id_ciudad = 11
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 4084
+		--update CIUDAD set codigo = 'CBB' where id_ciudad = 4086
+		--update CIUDAD set codigo = 'SCZ' where id_ciudad = 10000
 
 go
 create table SUCURSAL
@@ -266,10 +269,10 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación de
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'PERMISO', N'COLUMN', N'fecha_actualizacion'
 
 go
-  --insert into PERMISO (permiso,descripcion, id_usuario) values('VISUALIZAR','este te permite visualizar  y acceder',1);
-  --insert into PERMISO (permiso,descripcion, id_usuario) values('CREAR','este te permite crear un registro',1);
-  --insert into PERMISO (permiso,descripcion, id_usuario) values('ACTUALIZAR','este te permite actualizr un registro',1);
-  --insert into PERMISO (permiso,descripcion, id_usuario) values('ELIMINAR','este te permite eliminar un registro',1);
+	  --insert into PERMISO (permiso,descripcion, id_usuario) values('VISUALIZAR','este te permite visualizar  y acceder',1);
+	  --insert into PERMISO (permiso,descripcion, id_usuario) values('CREAR','este te permite crear un registro',1);
+	  --insert into PERMISO (permiso,descripcion, id_usuario) values('ACTUALIZAR','este te permite actualizr un registro',1);
+	  --insert into PERMISO (permiso,descripcion, id_usuario) values('ELIMINAR','este te permite eliminar un registro',1);
 go
 create table ROL_PAGINA_I
 (
@@ -349,3 +352,20 @@ EXECUTE sp_addextendedproperty 'MS_Description', 'El id_usuario es el id del últ
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de creación del registro', 'SCHEMA', 'dbo', 'TABLE', 'BITACORA_DETALLE', N'COLUMN', N'fecha_creacion'
 EXECUTE sp_addextendedproperty 'MS_Description', 'Es el timestamp de actualización del registro', 'SCHEMA', 'dbo', 'TABLE', 'BITACORA_DETALLE', N'COLUMN', N'fecha_actualizacion'
 go
+	CREATE TABLE [dbo].[CONTROL_USUARIO](
+		id_control_usuario int primary key IDENTITY(1,1) NOT NULL,
+		usuario varchar (255) NULL,
+		cantidad_intentos int NULL,
+		fecha_bloquedo datetime NULL,
+		fecha_desbloqueo datetime NULL,
+		net_session_id varchar(255) NULL,
+		estado int NOT  NULL,
+		)
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Llave primaria de la tabla.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'id_control_usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Usuario que intenta iniciar session (Dominio).', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'usuario'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Cantidad de intentos que el usuario fallo al iniciar session', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'cantidad_intentos'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de bloqueo del usuario', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_bloquedo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Fecha de desbloqueo del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'fecha_desbloqueo'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Id del aps.net core.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'net_session_id'
+	EXECUTE sp_addextendedproperty 'MS_Description', 'Estado del usuario.', 'SCHEMA', 'dbo', 'TABLE', 'CONTROL_USUARIO', N'COLUMN', N'estado'
+	go
