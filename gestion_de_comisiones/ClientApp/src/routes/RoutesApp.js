@@ -16,7 +16,7 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
     return (
       <BrowserRouter basename={baseUrl} ref={routerRef}>
         {load?
-         <Layout title={'GESTOR DE COMISIONES'}>
+         <Layout title={'OPERACIONES 2.0'}>
             <Switch>
                 <Route exact path='/' component={Pages.Home} />
                 <RouteRedirect exact path='/gestion/roles' element={Pages.GestionRol}  />
